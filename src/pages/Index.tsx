@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PricingCard from '../components/PricingCard';
 import FeatureCard from '../components/FeatureCard';
+import DomainPricing from '../components/DomainPricing';
 
 const Index = () => {
   useEffect(() => {
@@ -73,7 +74,7 @@ const Index = () => {
               <div className="relative">
                 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden p-6 md:p-8">
                   <img 
-                    src="https://placehold.co/600x400/3b82f6/FFFFFF/png?text=VirtuaServe+Infrastructure&font=Montserrat" 
+                    src="https://placehold.co/600x400/3b82f6/FFFFFF/png?text=NovinVDS+Infrastructure&font=Montserrat" 
                     alt="سرور" 
                     className="rounded-lg w-full object-cover"
                   />
@@ -108,11 +109,51 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Domain Search Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 md:p-10 shadow-xl">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-white mb-3">دامنه مورد نظر خود را جستجو کنید</h2>
+              <p className="text-blue-100">
+                بیش از 50 پسوند دامنه با قیمت‌های مناسب
+              </p>
+            </div>
+            
+            <form className="flex flex-col md:flex-row gap-3">
+              <div className="flex-1 relative">
+                <input 
+                  type="text" 
+                  placeholder="دامنه مورد نظر خود را وارد کنید..." 
+                  className="w-full px-4 py-3 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  .com
+                </div>
+              </div>
+              
+              <button type="submit" className="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
+                جستجو
+              </button>
+            </form>
+            
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.com</span>
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.net</span>
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.org</span>
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.ir</span>
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.co.ir</span>
+              <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">.io</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Features Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">چرا سرویس‌های ما را انتخاب کنید؟</h2>
+            <h2 className="text-3xl font-bold mb-4">چرا NovinVDS را انتخاب کنید؟</h2>
             <p className="text-gray-600 max-w-3xl mx-auto">
               ما بهترین راهکارهای هاستینگ، سرور و شبکه را با فناوری‌های پیشرفته و پشتیبانی 24/7 ارائه می‌دهیم
             </p>
@@ -123,31 +164,37 @@ const Index = () => {
               title="سرعت و کارایی بالا" 
               description="سرورهای قدرتمند با سخت‌افزارهای نسل جدید و شبکه پرسرعت برای اجرای سریع برنامه‌های شما"
               icon={<Cpu size={24} />}
+              gradient={true}
             />
             <FeatureCard 
               title="امنیت پیشرفته" 
               description="محافظت از داده‌ها و سرورهای شما با جدیدترین فناوری‌های امنیتی و پروتکل‌های رمزنگاری"
               icon={<Shield size={24} />}
+              gradient={true}
             />
             <FeatureCard 
               title="پشتیبانی 24/7" 
               description="تیم پشتیبانی متخصص و پاسخگو در تمام ساعات شبانه‌روز و در تمام روزهای هفته"
               icon={<Clock size={24} />}
+              gradient={true}
             />
             <FeatureCard 
               title="آپ‌تایم 99.99%" 
               description="اطمینان از دسترسی همیشگی به سرویس‌ها با ضمانت آپ‌تایم 99.99 درصد"
               icon={<CheckCircle size={24} />}
+              gradient={true}
             />
             <FeatureCard 
               title="مقیاس‌پذیری آسان" 
               description="امکان ارتقا و توسعه منابع متناسب با نیاز شما و رشد کسب و کارتان"
               icon={<Database size={24} />}
+              gradient={true}
             />
             <FeatureCard 
               title="شبکه جهانی" 
               description="دسترسی به شبکه‌ای از دیتاسنترهای پیشرفته در سراسر جهان با کمترین تأخیر"
               icon={<Globe size={24} />}
+              gradient={true}
             />
           </div>
         </div>
@@ -172,7 +219,7 @@ const Index = () => {
               features={[
                 { text: "2 هسته پردازشی", available: true },
                 { text: "2 گیگابایت رم", available: true },
-                { text: "50 گیگابایت فضای SSD", available: true },
+                { text: "50 گیگابایت فضای SSD NVMe", available: true },
                 { text: "ترافیک نامحدود", available: true },
                 { text: "1 آدرس IP اختصاصی", available: true },
                 { text: "پشتیبانی از پنل کنترل", available: true },
@@ -189,7 +236,7 @@ const Index = () => {
               features={[
                 { text: "4 هسته پردازشی", available: true },
                 { text: "8 گیگابایت رم", available: true },
-                { text: "100 گیگابایت فضای SSD", available: true },
+                { text: "100 گیگابایت فضای SSD NVMe", available: true },
                 { text: "ترافیک نامحدود", available: true },
                 { text: "1 آدرس IP اختصاصی", available: true },
                 { text: "پشتیبانی از پنل کنترل", available: true },
@@ -207,7 +254,7 @@ const Index = () => {
               features={[
                 { text: "8 هسته پردازشی", available: true },
                 { text: "16 گیگابایت رم", available: true },
-                { text: "200 گیگابایت فضای SSD", available: true },
+                { text: "200 گیگابایت فضای SSD NVMe", available: true },
                 { text: "ترافیک نامحدود", available: true },
                 { text: "2 آدرس IP اختصاصی", available: true },
                 { text: "پشتیبانی از پنل کنترل", available: true },
@@ -225,8 +272,28 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Domain Pricing */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">قیمت دامنه‌ها</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              قیمت برخی از پسوندهای محبوب دامنه ها
+            </p>
+          </div>
+          
+          <DomainPricing />
+          
+          <div className="text-center mt-12">
+            <Link to="/domain" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+              مشاهده همه پسوندها <ArrowRight size={16} className="mr-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+      
       {/* Hosting Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center">
             <div className="lg:w-1/2 lg:pr-12 mb-10 lg:mb-0">
@@ -241,8 +308,8 @@ const Index = () => {
                     <CheckCircle size={16} className="text-green-600" />
                   </div>
                   <div className="mr-3">
-                    <h4 className="font-medium">دیسک‌های SSD سریع</h4>
-                    <p className="text-gray-600 text-sm">تمام هاستینگ‌ها روی دیسک‌های SSD با سرعت خواندن و نوشتن بالا</p>
+                    <h4 className="font-medium">دیسک‌های SSD NVMe سریع</h4>
+                    <p className="text-gray-600 text-sm">تمام هاستینگ‌ها روی دیسک‌های SSD NVMe با سرعت خواندن و نوشتن فوق‌العاده بالا</p>
                   </div>
                 </div>
                 
@@ -311,187 +378,10 @@ const Index = () => {
         </div>
       </section>
       
-      {/* License Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row-reverse items-center">
-            <div className="lg:w-1/2 lg:pl-12 mb-10 lg:mb-0">
-              <h2 className="text-3xl font-bold mb-6">فروش لایسنس‌های اصلی نرم‌افزاری</h2>
-              <p className="text-gray-600 mb-6">
-                لایسنس‌های اصلی و معتبر انواع نرم‌افزارها با قیمت مناسب و تحویل آنی. لایسنس‌های ما شامل موارد زیر می‌شوند:
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h4 className="font-medium mb-2">سیستم عامل‌ها</h4>
-                  <ul className="space-y-1 text-gray-600 text-sm">
-                    <li>Windows Server</li>
-                    <li>Windows Desktop</li>
-                    <li>Distros Linux</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h4 className="font-medium mb-2">آنتی ویروس‌ها</h4>
-                  <ul className="space-y-1 text-gray-600 text-sm">
-                    <li>Kaspersky</li>
-                    <li>ESET</li>
-                    <li>Bitdefender</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h4 className="font-medium mb-2">نرم‌افزارهای اداری</h4>
-                  <ul className="space-y-1 text-gray-600 text-sm">
-                    <li>Microsoft Office</li>
-                    <li>Adobe Creative Cloud</li>
-                    <li>AutoCAD</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h4 className="font-medium mb-2">خدمات ابری</h4>
-                  <ul className="space-y-1 text-gray-600 text-sm">
-                    <li>Microsoft 365</li>
-                    <li>Google Workspace</li>
-                    <li>Dropbox Business</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <Link to="/license" className="btn-gradient px-6 py-3 rounded-lg font-medium inline-block">
-                  مشاهده لایسنس‌ها
-                </Link>
-              </div>
-            </div>
-            
-            <div className="lg:w-1/2">
-              <div className="relative">
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <img 
-                    src="https://placehold.co/600x400/6d28d9/FFFFFF/png?text=Software+Licenses&font=Montserrat" 
-                    alt="لایسنس نرم‌افزاری" 
-                    className="w-full object-cover"
-                  />
-                </div>
-                
-                <div className="absolute -top-5 -left-5 bg-white rounded-lg shadow-lg p-4 animate-float" style={{ animationDelay: '0.3s' }}>
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <Shield className="h-5 w-5 text-indigo-600" />
-                    </div>
-                    <div className="ml-3">
-                      <p className="font-semibold">100% اصل</p>
-                      <p className="text-gray-600 text-sm">تضمین اصالت</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Network Services Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">خدمات شبکه</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              راهکارهای جامع شبکه برای کسب و کارها با طراحی اختصاصی و پشتیبانی حرفه‌ای
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
-              <div className="bg-orange-50 w-14 h-14 rounded-lg flex items-center justify-center text-orange-600 mb-5">
-                <Globe size={24} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">راه‌اندازی شبکه</h3>
-              <p className="text-gray-600 mb-4">
-                طراحی و پیاده‌سازی زیرساخت‌های شبکه برای سازمان‌ها با تجهیزات پیشرفته
-              </p>
-              <ul className="space-y-2 text-gray-600 mb-6">
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>شبکه‌های LAN و WAN</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>تجهیزات Cisco و Mikrotik</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>مشاوره و طراحی شبکه</span>
-                </li>
-              </ul>
-              <Link to="/network" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                اطلاعات بیشتر <ArrowRight size={16} className="mr-1" />
-              </Link>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
-              <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center text-blue-600 mb-5">
-                <Shield size={24} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">امنیت شبکه</h3>
-              <p className="text-gray-600 mb-4">
-                محافظت از زیرساخت‌های شبکه در برابر تهدیدات با پیشرفته‌ترین راهکارهای امنیتی
-              </p>
-              <ul className="space-y-2 text-gray-600 mb-6">
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>فایروال‌های سخت‌افزاری و نرم‌افزاری</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>سیستم‌های تشخیص و جلوگیری از نفوذ</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>رمزنگاری داده‌ها و VPN</span>
-                </li>
-              </ul>
-              <Link to="/network/security" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                اطلاعات بیشتر <ArrowRight size={16} className="mr-1" />
-              </Link>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300">
-              <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center text-green-600 mb-5">
-                <Server size={24} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">پشتیبانی شبکه</h3>
-              <p className="text-gray-600 mb-4">
-                خدمات پشتیبانی و نگهداری شبکه به صورت حضوری و از راه دور برای اطمینان از عملکرد بهینه
-              </p>
-              <ul className="space-y-2 text-gray-600 mb-6">
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>نظارت 24/7 بر سرورها و شبکه</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>عیب‌یابی و رفع مشکلات</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle size={16} className="text-green-600 ml-2" />
-                  <span>بروزرسانی و مدیریت زیرساخت</span>
-                </li>
-              </ul>
-              <Link to="/network/support" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                اطلاعات بیشتر <ArrowRight size={16} className="mr-1" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">آماده همکاری با ما هستید؟</h2>
+          <h2 className="text-3xl font-bold mb-6">آماده همکاری با ما هستید؟</h2>
           <p className="max-w-2xl mx-auto mb-8 opacity-90">
             با ما تماس بگیرید تا مشاوران ما به شما در انتخاب بهترین راهکار متناسب با نیازهای کسب و کار شما کمک کنند
           </p>
