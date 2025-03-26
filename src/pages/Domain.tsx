@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Check, Globe, Shield, RefreshCw } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -12,6 +11,7 @@ const Domain = () => {
   
   const [domain, setDomain] = useState('');
   const [extensions, setExtensions] = useState<string[]>(['.com']);
+  const [selectedExtension, setSelectedExtension] = useState('.com');
   const [searchResult, setSearchResult] = useState<null | { available: boolean, domain: string, price: string }>(null);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -27,7 +27,7 @@ const Domain = () => {
       const available = Math.random() > 0.3; // 70% chance domain is available
       setSearchResult({
         available,
-        domain: domain + extensions[0],
+        domain: domain + selectedExtension,
         price: '390,000'
       });
       setIsSearching(false);
@@ -35,9 +35,8 @@ const Domain = () => {
   };
 
   const handleExtensionChange = (ext: string) => {
-    if (extensions.includes(ext)) {
-      setExtensions(extensions.filter(e => e !== ext));
-    } else {
+    setSelectedExtension(ext);
+    if (!extensions.includes(ext)) {
       setExtensions([...extensions, ext]);
     }
   };
@@ -55,7 +54,7 @@ const Domain = () => {
               بیش از 50 پسوند مختلف با قیمت‌های مناسب و تحویل آنی
             </p>
             
-            {/* Domain Search Form */}
+            {/* Domain Search Form - Updated with correct extension display */}
             <div className="bg-white p-6 rounded-xl shadow-md mb-8">
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
@@ -68,7 +67,7 @@ const Domain = () => {
                       onChange={(e) => setDomain(e.target.value)}
                     />
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      {extensions[0]}
+                      {selectedExtension}
                     </div>
                   </div>
                 </div>
@@ -89,37 +88,37 @@ const Domain = () => {
               <div className="mt-4 flex flex-wrap gap-3">
                 <div 
                   onClick={() => handleExtensionChange('.com')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.com') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.com' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .com
                 </div>
                 <div 
                   onClick={() => handleExtensionChange('.net')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.net') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.net' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .net
                 </div>
                 <div 
                   onClick={() => handleExtensionChange('.org')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.org') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.org' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .org
                 </div>
                 <div 
                   onClick={() => handleExtensionChange('.ir')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.ir') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.ir' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .ir
                 </div>
                 <div 
                   onClick={() => handleExtensionChange('.co.ir')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.co.ir') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.co.ir' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .co.ir
                 </div>
                 <div 
                   onClick={() => handleExtensionChange('.io')} 
-                  className={`px-3 py-1 rounded-md cursor-pointer border ${extensions.includes('.io') ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
+                  className={`px-3 py-1 rounded-md cursor-pointer border ${selectedExtension === '.io' ? 'bg-blue-50 border-blue-300 text-blue-600' : 'bg-gray-50 border-gray-300 text-gray-600'}`}
                 >
                   .io
                 </div>
