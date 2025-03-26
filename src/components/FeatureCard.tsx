@@ -7,6 +7,8 @@ type FeatureCardProps = {
   icon: ReactNode;
   className?: string;
   gradient?: boolean;
+  hoverEffect?: 'lift' | 'scale' | 'glow' | 'none';
+  onClick?: () => void;
 };
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -15,10 +17,28 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   className = '',
   gradient = false,
+  hoverEffect = 'lift',
+  onClick,
 }) => {
+  const getHoverClass = () => {
+    switch (hoverEffect) {
+      case 'lift':
+        return 'hover:-translate-y-1';
+      case 'scale':
+        return 'hover:scale-105';
+      case 'glow':
+        return 'hover:shadow-lg hover:shadow-blue-100';
+      case 'none':
+        return '';
+      default:
+        return 'hover:-translate-y-1';
+    }
+  };
+
   return (
     <div 
-      className={`bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${className}`}
+      className={`bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 ${getHoverClass()} ${className}`}
+      onClick={onClick}
     >
       <div 
         className={`w-14 h-14 rounded-lg flex items-center justify-center mb-5 ${
