@@ -14,7 +14,8 @@ import {
   LogOut, 
   LayoutDashboard, 
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Check
 } from 'lucide-react';
 import { 
   NavigationMenu,
