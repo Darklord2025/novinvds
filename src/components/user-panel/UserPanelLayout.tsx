@@ -9,6 +9,7 @@ import TicketsPage from './TicketsPage';
 import WalletPage from './WalletPage';
 import ServicesPage from './ServicesPage';
 import DownloadsPage from './DownloadsPage';
+import ServiceCalculator from './ServiceCalculator';
 
 const sidebarItems = [
   { id: 'dashboard', label: 'داشبورد' },
@@ -17,6 +18,7 @@ const sidebarItems = [
   { id: 'domains', label: 'دامنه‌ها' },
   { id: 'hosting', label: 'هاستینگ' },
   { id: 'cloud', label: 'سرور ابری' },
+  { id: 'calculator', label: 'محاسبه هزینه' },
   { id: 'tickets', label: 'تیکت‌ها' },
   { id: 'invoices', label: 'فاکتورها' },
   { id: 'transactions', label: 'تراکنش‌ها' },
@@ -53,6 +55,8 @@ const UserPanelLayout = () => {
             <WalletPage />
           ) : activeTab === 'downloads' ? (
             <DownloadsPage />
+          ) : activeTab === 'calculator' ? (
+            <ServiceCalculator />
           ) : activeTab === 'servers' || activeTab === 'dedicated' || activeTab === 'hosting' || activeTab === 'domains' || activeTab === 'cloud' ? (
             <ServicesPage serviceType={activeTab} />
           ) : (

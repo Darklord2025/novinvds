@@ -2,7 +2,12 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Inbox, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PlusCircle, Inbox, CheckCircle, Clock, AlertCircle, Search } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import TicketDetail from './TicketDetail';
+import CreateTicketForm from './CreateTicketForm';
 
 interface Ticket {
   id: string;
@@ -14,20 +19,53 @@ interface Ticket {
 
 const TicketsPage = () => {
   const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
+  const [showCreateTicket, setShowCreateTicket] = useState(false);
   
   const ticketsData: Ticket[] = [
     { id: '#4321', title: 'مشکل در اتصال به سرور مجازی', department: 'سرور مجازی', status: 'open', lastUpdated: '1402/03/15' },
     { id: '#4225', title: 'درخواست افزایش منابع سرور', department: 'سرور اختصاصی', status: 'answered', lastUpdated: '1402/03/10' },
     { id: '#4112', title: 'مشکل در تمدید دامنه', department: 'دامنه', status: 'closed', lastUpdated: '1402/02/25' },
     { id: '#3998', title: 'درخواست بازیابی اطلاعات', department: 'هاستینگ', status: 'pending', lastUpdated: '1402/02/18' },
+    { id: '#3965', title: 'مشکل در پنل کنترل سرور ابری', department: 'سرور ابری', status: 'open', lastUpdated: '1402/02/10' },
+    { id: '#3912', title: 'درخواست تغییر IP سرور', department: 'سرور مجازی', status: 'answered', lastUpdated: '1402/02/05' },
+    { id: '#3876', title: 'سوال در مورد لایسنس SQL Server', department: 'لایسنس', status: 'closed', lastUpdated: '1402/01/28' },
+    { id: '#3811', title: 'مشکل در ست کردن رکورد DNS', department: 'دامنه', status: 'closed', lastUpdated: '1402/01/20' },
   ];
   
-  const filteredTickets = activeTab === 'all' ? 
-    ticketsData : 
-    ticketsData.filter(ticket => 
-      activeTab === 'open' ? ticket.status === 'open' || ticket.status === 'answered' || ticket.status === 'pending' : 
-      ticket.status === activeTab
-    );
+  const departments = [
+    { value: 'all', label: 'همه دپارتمان‌ها' },
+    { value: 'سرور مجازی', label: 'سرور مجازی' },
+    { value: 'سرور اختصاصی', label: 'سرور اختصاصی' },
+    { value: 'سرور ابری', label: 'سرور ابری' },
+    { value: 'هاستینگ', label: 'هاستینگ' },
+    { value: 'دامنه', label: 'دامنه' },
+    { value: 'لایسنس', label: 'لایسنس' },
+    { value: 'مالی', label: 'مالی' },
+    { value: 'فنی', label: 'فنی' },
+  ];
+  
+  const filteredTickets = ticketsData.filter(ticket => {
+    // Filter by status
+    if (activeTab !== 'all' && ticket.status !== activeTab) {
+      return false;
+    }
+    
+    // Filter by department
+    if (departmentFilter !== 'all' && ticket.department !== departmentFilter) {
+      return false;
+    }
+    
+    // Filter by search term
+    if (searchTerm && !ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
+        !ticket.id.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+    
+    return true;
+  });
   
   const getStatusIcon = (status: string) => {
     switch(status) {
@@ -53,9 +91,42 @@ const TicketsPage = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">تیکت‌های پشتیبانی</h1>
-        <Button className="bg-blue-600">
+        <Button className="bg-blue-600" onClick={() => setShowCreateTicket(true)}>
           <PlusCircle className="ml-2 h-4 w-4" /> تیکت جدید
         </Button>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="relative">
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Input 
+            placeholder="جستجو در تیکت‌ها..." 
+            className="pl-10 pr-10" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              onClick={() => setSearchTerm('')}
+            >
+              ×
+            </button>
+          )}
+        </div>
+        
+        <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+          <SelectTrigger>
+            <SelectValue placeholder="همه دپارتمان‌ها" />
+          </SelectTrigger>
+          <SelectContent>
+            {departments.map(dept => (
+              <SelectItem key={dept.value} value={dept.value}>
+                {dept.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       
       <Tabs defaultValue="all" className="w-full" value={activeTab} onValueChange={setActiveTab}>
@@ -82,7 +153,11 @@ const TicketsPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredTickets.length > 0 ? (
                   filteredTickets.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-gray-50 cursor-pointer">
+                    <tr 
+                      key={ticket.id} 
+                      className="hover:bg-gray-50 cursor-pointer transition-colors"
+                      onClick={() => setSelectedTicket(ticket.id)}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{ticket.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.title}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.department}</td>
@@ -107,6 +182,34 @@ const TicketsPage = () => {
           </div>
         </TabsContent>
       </Tabs>
+      
+      {/* Ticket Detail Dialog */}
+      {selectedTicket && (
+        <Dialog open={!!selectedTicket} onOpenChange={(open) => !open && setSelectedTicket(null)}>
+          <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
+            <TicketDetail 
+              ticketId={selectedTicket} 
+              onClose={() => setSelectedTicket(null)} 
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+      
+      {/* Create Ticket Dialog */}
+      <Dialog open={showCreateTicket} onOpenChange={setShowCreateTicket}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>ثبت تیکت جدید</DialogTitle>
+            <DialogDescription>
+              لطفاً اطلاعات مورد نیاز برای ثبت تیکت را وارد کنید.
+            </DialogDescription>
+          </DialogHeader>
+          <CreateTicketForm 
+            onSubmit={() => setShowCreateTicket(false)} 
+            departments={departments.filter(d => d.value !== 'all')} 
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

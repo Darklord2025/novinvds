@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HardDrive, Server, Globe, Database, Cloud } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { HardDrive, Server, Globe, Database, Cloud, ExternalLink, RefreshCw, Play, Cpu, Memory, Zap } from 'lucide-react';
 
 type ServiceTypes = 'servers' | 'dedicated' | 'domains' | 'hosting' | 'cloud';
 
@@ -17,6 +18,13 @@ type BaseService = {
 type VpsService = BaseService & {
   location: string;
   ip: string;
+  isCloud?: boolean;
+  resources?: {
+    cpu: number;
+    ram: number;
+    disk: number;
+    bandwidth: number;
+  };
 };
 
 type DomainService = BaseService & {
@@ -34,7 +42,8 @@ interface ServicesPageProps {
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
-  const [services, setServices] = useState<Service[]>([
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [services] = useState<Service[]>([
     {
       id: '1',
       name: 'VPS سرور لینوکس',
@@ -42,6 +51,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
       status: 'active',
       ip: '152.89.125.156',
       expiryDate: '2024/06/25',
+      resources: {
+        cpu: 2,
+        ram: 4,
+        disk: 50,
+        bandwidth: 2
+      }
     },
     {
       id: '2',
@@ -50,6 +65,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
       status: 'active',
       ip: '185.231.59.87',
       expiryDate: '2024/05/12',
+      resources: {
+        cpu: 4,
+        ram: 8,
+        disk: 100,
+        bandwidth: 5
+      }
     },
     {
       id: '3',
@@ -58,6 +79,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
       status: 'suspended',
       ip: '89.145.172.23',
       expiryDate: '2024/02/05',
+      resources: {
+        cpu: 8,
+        ram: 32,
+        disk: 1000,
+        bandwidth: 50
+      }
     },
     {
       id: '4',
@@ -89,11 +116,33 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
     },
     {
       id: '8',
-      name: 'سرور ابری',
+      name: 'سرور ابری اقتصادی',
       location: 'آلمان',
       status: 'active',
       ip: '176.54.128.93',
       expiryDate: '2024/12/15',
+      isCloud: true,
+      resources: {
+        cpu: 2,
+        ram: 4,
+        disk: 80,
+        bandwidth: 3
+      }
+    },
+    {
+      id: '9',
+      name: 'سرور ابری حرفه‌ای',
+      location: 'هلند',
+      status: 'active',
+      ip: '188.132.65.74',
+      expiryDate: '2024/11/05',
+      isCloud: true,
+      resources: {
+        cpu: 6,
+        ram: 16,
+        disk: 250,
+        bandwidth: 10
+      }
     },
   ]);
   
@@ -124,7 +173,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
   const [activeTab, setActiveTab] = useState<ServiceTypes>(mapServiceTypeToTab(serviceType));
   
   const filteredServices = services.filter(service => {
-    if (activeTab === 'servers' && 'ip' in service && !('domain' in service)) {
+    if (activeTab === 'servers' && 'ip' in service && !('domain' in service) && !service.isCloud) {
       return true;
     }
     if (activeTab === 'dedicated' && 'ip' in service && service.name.includes('اختصاصی')) {
@@ -136,11 +185,15 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
     if (activeTab === 'hosting' && 'autoRenew' in service) {
       return true;
     }
-    if (activeTab === 'cloud' && 'ip' in service && service.name.includes('ابری')) {
+    if (activeTab === 'cloud' && 'ip' in service && service.isCloud) {
       return true;
     }
     return false;
   });
+  
+  const openManagementPage = (service: Service) => {
+    setSelectedService(service);
+  };
   
   const getRenderContent = (service: Service) => {
     if ('domain' in service) {
@@ -154,7 +207,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
           <div className="flex flex-col items-end gap-2">
             {getStatusBadge(service.status)}
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm">مدیریت DNS</Button>
+              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
+                مدیریت DNS
+              </Button>
               <Button variant="outline" size="sm">تمدید</Button>
             </div>
           </div>
@@ -168,11 +223,33 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
             <p className="text-sm text-gray-500">IP: {service.ip}</p>
             <p className="text-sm text-gray-500">موقعیت: {service.location}</p>
             <p className="text-sm text-gray-500">تاریخ انقضا: {service.expiryDate}</p>
+            {service.resources && (
+              <div className="flex gap-6 mt-2">
+                <span className="flex items-center text-sm text-gray-600">
+                  <Cpu className="h-4 w-4 ml-1" />
+                  {service.resources.cpu} هسته
+                </span>
+                <span className="flex items-center text-sm text-gray-600">
+                  <Memory className="h-4 w-4 ml-1" />
+                  {service.resources.ram} GB
+                </span>
+                <span className="flex items-center text-sm text-gray-600">
+                  <Database className="h-4 w-4 ml-1" />
+                  {service.resources.disk} GB
+                </span>
+                <span className="flex items-center text-sm text-gray-600">
+                  <Zap className="h-4 w-4 ml-1" />
+                  {service.resources.bandwidth} TB
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-end gap-2">
             {getStatusBadge(service.status)}
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm">مدیریت سرور</Button>
+              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
+                مدیریت سرور
+              </Button>
               <Button variant="outline" size="sm">تمدید</Button>
             </div>
           </div>
@@ -189,7 +266,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
           <div className="flex flex-col items-end gap-2">
             {getStatusBadge(service.status)}
             <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm">کنترل پنل</Button>
+              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
+                کنترل پنل
+              </Button>
               <Button variant="outline" size="sm">تمدید</Button>
             </div>
           </div>
@@ -315,6 +394,223 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
           )}
         </TabsContent>
       </Tabs>
+      
+      {/* Service Management Dialog */}
+      {selectedService && (
+        <Dialog open={!!selectedService} onOpenChange={(open) => !open && setSelectedService(null)}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="text-xl">
+                {selectedService.name} - مدیریت سرویس
+              </DialogTitle>
+              <DialogDescription>
+                از این بخش می‌توانید سرویس خود را مدیریت کنید
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6 p-4">
+              {'ip' in selectedService ? (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">آدرس IP</p>
+                      <p className="font-medium">{selectedService.ip}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">موقعیت</p>
+                      <p className="font-medium">{selectedService.location}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">وضعیت</p>
+                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
+                      <p className="font-medium">{selectedService.expiryDate}</p>
+                    </div>
+                  </div>
+                  
+                  {selectedService.resources && (
+                    <div>
+                      <h3 className="font-medium mb-3">منابع سرور</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-blue-50 p-3 rounded-lg flex flex-col items-center">
+                          <Cpu className="h-8 w-8 text-blue-500 mb-2" />
+                          <p className="text-sm text-gray-600">پردازنده</p>
+                          <p className="font-bold">{selectedService.resources.cpu} هسته</p>
+                        </div>
+                        <div className="bg-green-50 p-3 rounded-lg flex flex-col items-center">
+                          <Memory className="h-8 w-8 text-green-500 mb-2" />
+                          <p className="text-sm text-gray-600">حافظه</p>
+                          <p className="font-bold">{selectedService.resources.ram} گیگابایت</p>
+                        </div>
+                        <div className="bg-purple-50 p-3 rounded-lg flex flex-col items-center">
+                          <Database className="h-8 w-8 text-purple-500 mb-2" />
+                          <p className="text-sm text-gray-600">فضای ذخیره‌سازی</p>
+                          <p className="font-bold">{selectedService.resources.disk} گیگابایت</p>
+                        </div>
+                        <div className="bg-yellow-50 p-3 rounded-lg flex flex-col items-center">
+                          <Zap className="h-8 w-8 text-yellow-500 mb-2" />
+                          <p className="text-sm text-gray-600">پهنای باند</p>
+                          <p className="font-bold">{selectedService.resources.bandwidth} ترابایت</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="pt-4">
+                    <h3 className="font-medium mb-3">عملیات سرور</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Button className="bg-green-600">
+                        <Play className="ml-2 h-4 w-4" />
+                        روشن کردن
+                      </Button>
+                      <Button variant="outline">
+                        راه‌اندازی مجدد
+                      </Button>
+                      <Button variant="outline">
+                        خاموش کردن
+                      </Button>
+                      <Button variant="outline">
+                        <RefreshCw className="ml-2 h-4 w-4" />
+                        بازسازی
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <h3 className="font-medium mb-3">دسترسی به سرور</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        کنسول VNC
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        کنترل پنل مدیریت
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        تنظیمات DNS
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مانیتورینگ
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        بکاپ و بازیابی
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        فایروال
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : 'domain' in selectedService ? (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">نام دامنه</p>
+                      <p className="font-medium">{selectedService.domain}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">وضعیت</p>
+                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
+                      <p className="font-medium">{selectedService.expiryDate}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <h3 className="font-medium mb-3">مدیریت دامنه</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت رکوردهای DNS
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت انتقال دامنه
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت Nameserver
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت WHOIS
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        فعال/غیرفعال سازی قفل دامنه
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت تمدید خودکار
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">نام سرویس</p>
+                      <p className="font-medium">{selectedService.name}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">وضعیت</p>
+                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
+                      <p className="font-medium">{selectedService.expiryDate}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-500">تمدید خودکار</p>
+                      <p className="font-medium">{'autoRenew' in selectedService && (selectedService.autoRenew ? 'فعال' : 'غیرفعال')}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <h3 className="font-medium mb-3">مدیریت هاستینگ</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        ورود به کنترل پنل
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت ایمیل
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت دیتابیس
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت ساب‌دامین‌ها
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت دامنه‌های اضافی
+                      </Button>
+                      <Button variant="outline" className="justify-start">
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                        مدیریت SSL
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

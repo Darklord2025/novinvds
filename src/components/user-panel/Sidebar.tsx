@@ -17,7 +17,8 @@ import {
   Wallet,
   Download,
   Database,
-  Cloud
+  Cloud,
+  Calculator
 } from 'lucide-react';
 
 type SidebarItemType = {
@@ -41,6 +42,7 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
     { id: 'cloud', label: 'سرور ابری', icon: <Cloud size={20} /> },
     { id: 'hosting', label: 'هاستینگ', icon: <Database size={20} /> },
     { id: 'domains', label: 'دامنه‌ها', icon: <Globe size={20} /> },
+    { id: 'calculator', label: 'محاسبه هزینه', icon: <Calculator size={20} /> },
     { id: 'tickets', label: 'تیکت‌ها', icon: <MessageSquare size={20} /> },
     { id: 'invoices', label: 'فاکتورها', icon: <FileText size={20} /> },
     { id: 'transactions', label: 'تراکنش‌ها', icon: <CreditCard size={20} /> },
