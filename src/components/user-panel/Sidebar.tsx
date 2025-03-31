@@ -13,7 +13,11 @@ import {
   LogOut, 
   LayoutDashboard, 
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Wallet,
+  Download,
+  Database,
+  Cloud
 } from 'lucide-react';
 
 type SidebarItemType = {
@@ -34,10 +38,14 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
     { id: 'dashboard', label: 'داشبورد', icon: <LayoutDashboard size={20} /> },
     { id: 'servers', label: 'سرورهای مجازی', icon: <Server size={20} /> },
     { id: 'dedicated', label: 'سرورهای اختصاصی', icon: <HardDrive size={20} /> },
+    { id: 'cloud', label: 'سرور ابری', icon: <Cloud size={20} /> },
+    { id: 'hosting', label: 'هاستینگ', icon: <Database size={20} /> },
     { id: 'domains', label: 'دامنه‌ها', icon: <Globe size={20} /> },
+    { id: 'tickets', label: 'تیکت‌ها', icon: <MessageSquare size={20} /> },
     { id: 'invoices', label: 'فاکتورها', icon: <FileText size={20} /> },
     { id: 'transactions', label: 'تراکنش‌ها', icon: <CreditCard size={20} /> },
-    { id: 'tickets', label: 'تیکت‌ها', icon: <MessageSquare size={20} /> },
+    { id: 'wallet', label: 'کیف پول', icon: <Wallet size={20} /> },
+    { id: 'downloads', label: 'دانلودها', icon: <Download size={20} /> },
     { id: 'profile', label: 'پروفایل', icon: <User size={20} /> },
     { id: 'settings', label: 'تنظیمات', icon: <Settings size={20} /> },
   ];

@@ -5,15 +5,23 @@ import Header from './Header';
 import Dashboard from './Dashboard';
 import DevelopmentMessage from './DevelopmentMessage';
 import ProfilePage from './ProfilePage';
+import TicketsPage from './TicketsPage';
+import WalletPage from './WalletPage';
+import ServicesPage from './ServicesPage';
+import DownloadsPage from './DownloadsPage';
 
 const sidebarItems = [
   { id: 'dashboard', label: 'داشبورد' },
   { id: 'servers', label: 'سرورهای مجازی' },
   { id: 'dedicated', label: 'سرورهای اختصاصی' },
   { id: 'domains', label: 'دامنه‌ها' },
+  { id: 'hosting', label: 'هاستینگ' },
+  { id: 'cloud', label: 'سرور ابری' },
+  { id: 'tickets', label: 'تیکت‌ها' },
   { id: 'invoices', label: 'فاکتورها' },
   { id: 'transactions', label: 'تراکنش‌ها' },
-  { id: 'tickets', label: 'تیکت‌ها' },
+  { id: 'wallet', label: 'کیف پول' },
+  { id: 'downloads', label: 'دانلودها' },
   { id: 'profile', label: 'پروفایل' },
   { id: 'settings', label: 'تنظیمات' },
 ];
@@ -39,6 +47,14 @@ const UserPanelLayout = () => {
             <Dashboard />
           ) : activeTab === 'profile' ? (
             <ProfilePage />
+          ) : activeTab === 'tickets' ? (
+            <TicketsPage />
+          ) : activeTab === 'wallet' ? (
+            <WalletPage />
+          ) : activeTab === 'downloads' ? (
+            <DownloadsPage />
+          ) : activeTab === 'servers' || activeTab === 'dedicated' || activeTab === 'hosting' || activeTab === 'domains' || activeTab === 'cloud' ? (
+            <ServicesPage serviceType={activeTab} />
           ) : (
             <DevelopmentMessage />
           )}
