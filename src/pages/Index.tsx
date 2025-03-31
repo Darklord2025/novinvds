@@ -9,7 +9,7 @@ import VpsPlansSection from '../components/home/VpsPlansSection';
 import DomainPricingSection from '../components/home/DomainPricingSection';
 import HostingSection from '../components/home/HostingSection';
 import CTASection from '../components/home/CTASection';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const Index = () => {
   useEffect(() => {
