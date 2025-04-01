@@ -40,42 +40,18 @@ const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => {
-  try {
-    // Use the correct context - can't directly access TabsContext
-    // Instead, check if we're within a Tabs component by getting the value prop
-    const value = React.useContext(TabsPrimitive.ContentContext)?.value;
-    
-    // If no value is found, we're likely not inside a Tabs component
-    if (process.env.NODE_ENV !== "production" && !value) {
-      console.warn(
-        "TabsContent was rendered outside of a Tabs component. It will not function correctly."
-      );
-    }
-    
-    return (
-      <TabsPrimitive.Content
-        ref={ref}
-        className={cn(
-          "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          className
-        )}
-        {...props}
-      />
-    );
-  } catch (error) {
-    console.error("Error in TabsContent:", error);
-    // Gracefully handle the error by rendering a div with the same classes
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
+  // Instead of trying to access ContentContext which doesn't exist,
+  // We'll do a simpler implementation that doesn't depend on internal contexts
+  return (
+    <TabsPrimitive.Content
+      ref={ref}
+      className={cn(
+        "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        className
+      )}
+      {...props}
+    />
+  );
 })
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
