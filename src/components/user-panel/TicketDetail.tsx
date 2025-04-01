@@ -189,7 +189,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
         )}
       </div>
       
-      <Tabs defaultValue="messages" className="flex-1 flex flex-col" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
         <TabsList className="mb-4">
           <TabsTrigger value="messages">پیام‌ها</TabsTrigger>
           <TabsTrigger value="attachments">پیوست‌ها</TabsTrigger>

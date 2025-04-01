@@ -1,23 +1,45 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import ServerList from './ServerList';
 import DashboardCards from './DashboardCards';
 import ActivityFeed from './ActivityFeed';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, Server, HardDrive, Cloud, Database, Globe, ShieldCheck, Code, PenTool, Network, Package, Cpu, CircuitBoard } from 'lucide-react';
+import { ArrowRight, Server, HardDrive, Cloud, Database, Globe, ShieldCheck, Code, PenTool, Network, Package, Cpu, CircuitBoard, ChevronDown } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface ServiceCategory {
   title: string;
   services: Array<{ name: string; link: string }>;
 }
 
-interface DashboardProps {
-  serviceCategories?: ServiceCategory[];
+interface OperatingSystem {
+  id: string;
+  name: string;
 }
 
-const Dashboard = ({ serviceCategories = [] }: DashboardProps) => {
+interface OperatingSystems {
+  linux: OperatingSystem[];
+  windows: OperatingSystem[];
+  specialized: OperatingSystem[];
+}
+
+interface DashboardProps {
+  serviceCategories?: ServiceCategory[];
+  navigateToServiceOrderPage?: (link: string) => void;
+  operatingSystems?: OperatingSystems;
+}
+
+const Dashboard = ({ 
+  serviceCategories = [], 
+  navigateToServiceOrderPage = () => {}, 
+  operatingSystems = { linux: [], windows: [], specialized: [] }
+}: DashboardProps) => {
   // مشخصات تماس و ایمیل‌های پشتیبانی
   const contactInfo = {
     phone: "09335732119",
@@ -32,6 +54,154 @@ const Dashboard = ({ serviceCategories = [] }: DashboardProps) => {
       support: "support@novinvds.ir"
     }
   };
+  
+  // سرویس‌های فوری که در داشبورد نمایش داده می‌شوند
+  const quickServices = [
+    { 
+      id: 'vps',
+      title: 'سرور مجازی', 
+      icon: <Server className="h-8 w-8 mb-2" />,
+      color: 'bg-blue-600',
+      links: [
+        { name: 'سرور مجازی لینوکس', link: '/vps?os=linux' },
+        { name: 'سرور مجازی ویندوز', link: '/vps?os=windows' },
+        { name: 'سرور مجازی تخصصی', link: '/vps?os=specialized' },
+        { name: 'دیدن همه پلن‌ها', link: '/vps' }
+      ]
+    },
+    { 
+      id: 'dedicated',
+      title: 'سرور اختصاصی', 
+      icon: <HardDrive className="h-8 w-8 mb-2" />,
+      color: 'bg-purple-600',
+      links: [
+        { name: 'سرور اختصاصی لینوکس', link: '/dedicated?os=linux' },
+        { name: 'سرور اختصاصی ویندوز', link: '/dedicated?os=windows' },
+        { name: 'سرور اختصاصی تخصصی', link: '/dedicated?os=specialized' },
+        { name: 'دیدن همه پلن‌ها', link: '/dedicated' }
+      ]
+    },
+    { 
+      id: 'cloud',
+      title: 'سرور ابری', 
+      icon: <Cloud className="h-8 w-8 mb-2" />,
+      color: 'bg-green-600',
+      links: [
+        { name: 'سرور ابری لینوکس', link: '/cloud?os=linux' },
+        { name: 'سرور ابری ویندوز', link: '/cloud?os=windows' },
+        { name: 'سرور ابری تخصصی', link: '/cloud?os=specialized' },
+        { name: 'دیدن همه پلن‌ها', link: '/cloud' }
+      ]
+    },
+    { 
+      id: 'hosting',
+      title: 'هاستینگ', 
+      icon: <Database className="h-8 w-8 mb-2" />,
+      color: 'bg-amber-600',
+      links: [
+        { name: 'هاست لینوکس', link: '/hosting?type=linux' },
+        { name: 'هاست ویندوز', link: '/hosting?type=windows' },
+        { name: 'هاست وردپرس', link: '/hosting?type=wordpress' },
+        { name: 'دیدن همه پلن‌ها', link: '/hosting' }
+      ]
+    },
+    { 
+      id: 'domain',
+      title: 'دامنه', 
+      icon: <Globe className="h-8 w-8 mb-2" />,
+      color: 'bg-cyan-600',
+      links: [
+        { name: 'ثبت دامنه جدید', link: '/domain' },
+        { name: 'انتقال دامنه', link: '/domain/transfer' },
+        { name: 'تمدید دامنه', link: '/domain/renew' },
+        { name: 'مدیریت دامنه‌ها', link: '/domain/manage' }
+      ]
+    },
+    { 
+      id: 'ssl',
+      title: 'گواهی SSL', 
+      icon: <ShieldCheck className="h-8 w-8 mb-2" />,
+      color: 'bg-rose-600',
+      links: [
+        { name: 'SSL ساده (DV)', link: '/ssl?type=dv' },
+        { name: 'SSL سازمانی (OV)', link: '/ssl?type=ov' },
+        { name: 'SSL تجاری (EV)', link: '/ssl?type=ev' },
+        { name: 'دیدن همه گواهی‌ها', link: '/ssl' }
+      ]
+    },
+    { 
+      id: 'network',
+      title: 'خدمات شبکه', 
+      icon: <Network className="h-8 w-8 mb-2" />,
+      color: 'bg-indigo-600',
+      links: [
+        { name: 'IP اختصاصی', link: '/network/ip' },
+        { name: 'VPN سازمانی', link: '/network/vpn' },
+        { name: 'CDN', link: '/network/cdn' },
+        { name: 'خدمات شبکه بیشتر', link: '/network' }
+      ]
+    },
+    { 
+      id: 'web',
+      title: 'طراحی سایت', 
+      icon: <Code className="h-8 w-8 mb-2" />,
+      color: 'bg-orange-600',
+      links: [
+        { name: 'طراحی سایت شرکتی', link: '/webdesign?type=corporate' },
+        { name: 'طراحی فروشگاه آنلاین', link: '/webdesign?type=ecommerce' },
+        { name: 'سایت شخصی و وبلاگ', link: '/webdesign?type=personal' },
+        { name: 'مشاوره طراحی سایت', link: '/webdesign' }
+      ]
+    },
+    { 
+      id: 'licenses',
+      title: 'لایسنس‌ها', 
+      icon: <Package className="h-8 w-8 mb-2" />,
+      color: 'bg-teal-600',
+      links: [
+        { name: 'لایسنس ویندوز', link: '/license?type=windows' },
+        { name: 'لایسنس آنتی‌ویروس', link: '/license?type=antivirus' },
+        { name: 'لایسنس cPanel', link: '/license?type=cpanel' },
+        { name: 'همه لایسنس‌ها', link: '/license' }
+      ]
+    },
+    { 
+      id: 'hardware',
+      title: 'سخت‌افزار', 
+      icon: <Cpu className="h-8 w-8 mb-2" />,
+      color: 'bg-pink-600',
+      links: [
+        { name: 'سرور HP', link: '/hardware?brand=hp' },
+        { name: 'سرور Dell', link: '/hardware?brand=dell' },
+        { name: 'تجهیزات شبکه', link: '/hardware?type=network' },
+        { name: 'همه سخت‌افزارها', link: '/hardware' }
+      ]
+    },
+    { 
+      id: 'special',
+      title: 'سرویس‌های ویژه', 
+      icon: <CircuitBoard className="h-8 w-8 mb-2" />,
+      color: 'bg-gray-600',
+      links: [
+        { name: 'سرور مقاوم DDoS', link: '/special?type=ddos' },
+        { name: 'سرور های پرسرعت NVMe', link: '/special?type=nvme' },
+        { name: 'راهکارهای ابری', link: '/special?type=cloud' },
+        { name: 'همه سرویس‌های ویژه', link: '/special' }
+      ]
+    },
+    { 
+      id: 'other',
+      title: 'سایر خدمات', 
+      icon: <PenTool className="h-8 w-8 mb-2" />,
+      color: 'bg-blue-800',
+      links: [
+        { name: 'خدمات SEO', link: '/seo' },
+        { name: 'پشتیبانی فنی VIP', link: '/support?type=vip' },
+        { name: 'مشاوره‌ی IT', link: '/consulting' },
+        { name: 'همه خدمات', link: '/services' }
+      ]
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -76,55 +246,34 @@ const Dashboard = ({ serviceCategories = [] }: DashboardProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="bg-blue-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Server className="h-8 w-8 mb-2" />
-              <span>سرور مجازی</span>
-            </Button>
-            <Button className="bg-purple-600 h-auto py-6 flex flex-col items-center justify-center">
-              <HardDrive className="h-8 w-8 mb-2" />
-              <span>سرور اختصاصی</span>
-            </Button>
-            <Button className="bg-green-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Cloud className="h-8 w-8 mb-2" />
-              <span>سرور ابری</span>
-            </Button>
-            <Button className="bg-amber-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Database className="h-8 w-8 mb-2" />
-              <span>هاستینگ</span>
-            </Button>
-            <Button className="bg-cyan-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Globe className="h-8 w-8 mb-2" />
-              <span>دامنه</span>
-            </Button>
-            <Button className="bg-rose-600 h-auto py-6 flex flex-col items-center justify-center">
-              <ShieldCheck className="h-8 w-8 mb-2" />
-              <span>گواهی SSL</span>
-            </Button>
-            <Button className="bg-indigo-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Network className="h-8 w-8 mb-2" />
-              <span>خدمات شبکه</span>
-            </Button>
-            <Button className="bg-orange-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Code className="h-8 w-8 mb-2" />
-              <span>طراحی سایت</span>
-            </Button>
-            <Button className="bg-teal-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Package className="h-8 w-8 mb-2" />
-              <span>لایسنس‌ها</span>
-            </Button>
-            <Button className="bg-pink-600 h-auto py-6 flex flex-col items-center justify-center">
-              <Cpu className="h-8 w-8 mb-2" />
-              <span>سخت‌افزار</span>
-            </Button>
-            <Button className="bg-gray-600 h-auto py-6 flex flex-col items-center justify-center">
-              <CircuitBoard className="h-8 w-8 mb-2" />
-              <span>سرویس‌های ویژه</span>
-            </Button>
-            <Button className="bg-blue-800 h-auto py-6 flex flex-col items-center justify-center">
-              <PenTool className="h-8 w-8 mb-2" />
-              <span>سایر خدمات</span>
-            </Button>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {quickServices.map((service) => (
+              <Popover key={service.id}>
+                <PopoverTrigger asChild>
+                  <Button className={`${service.color} h-auto py-6 flex flex-col items-center justify-center w-full`}>
+                    {service.icon}
+                    <span className="flex items-center gap-1">
+                      {service.title}
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56">
+                  <div className="space-y-2">
+                    {service.links.map((link, index) => (
+                      <Button 
+                        key={index} 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        onClick={() => navigateToServiceOrderPage(link.link)}
+                      >
+                        {link.name}
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            ))}
           </div>
           
           {serviceCategories.length > 0 && (
@@ -138,6 +287,10 @@ const Dashboard = ({ serviceCategories = [] }: DashboardProps) => {
                         <a 
                           href={service.link}
                           className="flex items-center justify-between text-gray-700 hover:text-blue-600 transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigateToServiceOrderPage(service.link);
+                          }}
                         >
                           <span>{service.name}</span>
                           <ArrowRight className="h-4 w-4" />

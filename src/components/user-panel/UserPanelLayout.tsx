@@ -10,6 +10,8 @@ import WalletPage from './WalletPage';
 import ServicesPage from './ServicesPage';
 import DownloadsPage from './DownloadsPage';
 import ServiceCalculator from './ServiceCalculator';
+import InvoicesPage from './InvoicesPage';
+import TransactionsPage from './TransactionsPage';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
@@ -27,7 +29,6 @@ const sidebarItems = [
   { id: 'tickets', label: 'تیکت‌ها', icon: 'TicketCheck' },
   { id: 'invoices', label: 'فاکتورها', icon: 'Receipt' },
   { id: 'transactions', label: 'تراکنش‌ها', icon: 'History' },
-  { id: 'wallet', label: 'کیف پول', icon: 'Wallet' },
   { id: 'downloads', label: 'دانلودها', icon: 'Download' },
   { id: 'profile', label: 'پروفایل', icon: 'User' },
   { id: 'settings', label: 'تنظیمات', icon: 'Settings' },
@@ -97,26 +98,108 @@ const contactInfo = {
   }
 };
 
+// تنظیمات سیستم‌عامل های قابل انتخاب
+const operatingSystems = {
+  linux: [
+    { id: 'ubuntu_22_04', name: 'Ubuntu 22.04 LTS' },
+    { id: 'ubuntu_20_04', name: 'Ubuntu 20.04 LTS' },
+    { id: 'ubuntu_18_04', name: 'Ubuntu 18.04 LTS' },
+    { id: 'debian_11', name: 'Debian 11' },
+    { id: 'debian_10', name: 'Debian 10' },
+    { id: 'centos_9_stream', name: 'CentOS Stream 9' },
+    { id: 'centos_8_stream', name: 'CentOS Stream 8' },
+    { id: 'almalinux_9', name: 'AlmaLinux 9' },
+    { id: 'almalinux_8', name: 'AlmaLinux 8' },
+    { id: 'rocky_9', name: 'Rocky Linux 9' },
+    { id: 'rocky_8', name: 'Rocky Linux 8' },
+    { id: 'fedora_37', name: 'Fedora 37' }
+  ],
+  windows: [
+    { id: 'win_2022', name: 'Windows Server 2022' },
+    { id: 'win_2019', name: 'Windows Server 2019' },
+    { id: 'win_2016', name: 'Windows Server 2016' },
+    { id: 'win_10', name: 'Windows 10' },
+    { id: 'win_11', name: 'Windows 11' }
+  ],
+  specialized: [
+    { id: 'proxmox_7', name: 'Proxmox VE 7' },
+    { id: 'proxmox_8', name: 'Proxmox VE 8' },
+    { id: 'esxi_7', name: 'VMware ESXi 7.0' },
+    { id: 'esxi_8', name: 'VMware ESXi 8.0' },
+    { id: 'mikrotik_7', name: 'MikroTik RouterOS 7' },
+    { id: 'freebsd_13', name: 'FreeBSD 13' },
+    { id: 'openbsd_7', name: 'OpenBSD 7.3' },
+    { id: 'pfsense_2_6', name: 'pfSense 2.6' }
+  ]
+};
+
 const UserPanelLayout = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [whmcsStatus, setWhmcsStatus] = useState('connected'); // connected, disconnected, connecting
+  const [showWhcmsNotification, setShowWhcmsNotification] = useState(false);
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(3600); // 1 hour in seconds
   const { toast } = useToast();
   const navigate = useNavigate();
   
   useEffect(() => {
+    // Set page direction to RTL and language to Farsi
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'fa';
+    
     // اتصال به WHMCS در زمان بارگذاری
     // این بخش در حالت واقعی با استفاده از API به WHMCS متصل می‌شود
+    setWhmcsStatus('connecting');
     const timer = setTimeout(() => {
       setWhmcsStatus('connected');
-      toast({
-        title: "اتصال به WHMCS برقرار شد",
-        description: "اطلاعات سرویس‌ها و فاکتورهای شما با موفقیت بارگذاری شد.",
-      });
+      // فقط در صورت تغییر وضعیت اعلان نمایش داده شود
+      setShowWhcmsNotification(true);
+      setTimeout(() => {
+        setShowWhcmsNotification(false);
+      }, 3000);
     }, 2000);
     
-    return () => clearTimeout(timer);
+    // Setup session timer countdown
+    const sessionTimer = setInterval(() => {
+      setSessionTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(sessionTimer);
+          toast({
+            title: "پایان نشست",
+            description: "نشست شما به پایان رسیده است. لطفاً مجدداً وارد شوید.",
+            variant: "destructive"
+          });
+          // در حالت واقعی، کاربر به صفحه ورود هدایت می‌شود
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(
+        registration => {
+          console.log('PWA service worker registered successfully:', registration);
+        },
+        error => {
+          console.error('PWA service worker registration failed:', error);
+        }
+      );
+    }
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(sessionTimer);
+    };
   }, [toast]);
+  
+  // تابع تبدیل ثانیه به فرمت زمان
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
   
   // نمایش پیام برای سرویس‌های در دست توسعه
   const showDevelopmentToast = (feature: string) => {
@@ -127,34 +210,49 @@ const UserPanelLayout = () => {
     });
   };
   
+  // هدایت به صفحه سفارش سرویس
+  const navigateToServiceOrderPage = (serviceLink: string) => {
+    navigate(serviceLink);
+  };
+  
   // بازگشت به صفحه اصلی
   const handleReturnToHome = () => {
     navigate('/');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex user-panel-container">
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         items={sidebarItems}
         onHomeClick={handleReturnToHome}
+        className="user-panel-sidebar"
       />
       
-      <div className="flex-1">
+      <div className="flex-1 user-panel-content">
         <Header 
           activeTab={activeTab} 
           sidebarItems={sidebarItems} 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          sessionTimeLeft={formatTime(sessionTimeLeft)}
         />
+        
+        {showWhcmsNotification && whmcsStatus === 'connected' && (
+          <Alert className="m-6">
+            <AlertDescription>
+              اطلاعات سرویس‌ها و فاکتورهای شما با موفقیت بارگذاری شد.
+            </AlertDescription>
+          </Alert>
+        )}
         
         {whmcsStatus === 'connecting' && (
           <Alert className="m-6">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>در حال اتصال به WHMCS</AlertTitle>
+            <AlertTitle>در حال بارگذاری اطلاعات</AlertTitle>
             <AlertDescription>
-              لطفاً صبر کنید، در حال برقراری ارتباط با سیستم مدیریت مشتریان هستیم...
+              لطفاً صبر کنید، در حال بارگذاری اطلاعات هستیم...
             </AlertDescription>
           </Alert>
         )}
@@ -162,16 +260,20 @@ const UserPanelLayout = () => {
         {whmcsStatus === 'disconnected' && (
           <Alert variant="destructive" className="m-6">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>خطا در اتصال به WHMCS</AlertTitle>
+            <AlertTitle>خطا در بارگذاری اطلاعات</AlertTitle>
             <AlertDescription>
-              اتصال به سیستم مدیریت مشتریان با مشکل مواجه شد. لطفاً صفحه را مجدداً بارگذاری کنید یا با پشتیبانی تماس بگیرید.
+              بارگذاری اطلاعات با مشکل مواجه شد. لطفاً صفحه را مجدداً بارگذاری کنید یا با پشتیبانی تماس بگیرید.
             </AlertDescription>
           </Alert>
         )}
         
         <main className="p-6">
           {activeTab === 'dashboard' ? (
-            <Dashboard serviceCategories={serviceCategories} />
+            <Dashboard 
+              serviceCategories={serviceCategories} 
+              navigateToServiceOrderPage={navigateToServiceOrderPage}
+              operatingSystems={operatingSystems}
+            />
           ) : activeTab === 'profile' ? (
             <ProfilePage />
           ) : activeTab === 'tickets' ? (
@@ -181,9 +283,16 @@ const UserPanelLayout = () => {
           ) : activeTab === 'downloads' ? (
             <DownloadsPage />
           ) : activeTab === 'calculator' ? (
-            <ServiceCalculator />
+            <ServiceCalculator operatingSystems={operatingSystems} />
+          ) : activeTab === 'invoices' ? (
+            <InvoicesPage />
+          ) : activeTab === 'transactions' ? (
+            <TransactionsPage />
           ) : activeTab === 'servers' || activeTab === 'dedicated' || activeTab === 'hosting' || activeTab === 'domains' || activeTab === 'cloud' ? (
-            <ServicesPage serviceType={activeTab} />
+            <ServicesPage 
+              serviceType={activeTab} 
+              operatingSystems={operatingSystems}
+            />
           ) : (
             <DevelopmentMessage />
           )}
@@ -203,7 +312,7 @@ const UserPanelLayout = () => {
                         className="text-gray-600 hover:text-blue-600 transition-colors"
                         onClick={(e) => {
                           e.preventDefault();
-                          showDevelopmentToast(service.name);
+                          navigateToServiceOrderPage(service.link);
                         }}
                       >
                         {service.name}
@@ -230,8 +339,6 @@ const UserPanelLayout = () => {
               >
                 {contactInfo.email}
               </a>
-              <span>|</span>
-              <span className="text-green-600">وضعیت WHMCS: {whmcsStatus === 'connected' ? 'متصل' : whmcsStatus === 'connecting' ? 'در حال اتصال' : 'قطع'}</span>
             </div>
           </div>
         </footer>
