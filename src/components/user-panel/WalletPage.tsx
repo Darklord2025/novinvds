@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wallet, CreditCard, Coins, Bitcoin, RefreshCw, Check, Clock, AlertTriangle } from 'lucide-react';
+import { Wallet, CreditCard, Coins, Bitcoin, RefreshCw, Check, Clock, AlertTriangle, Server, Database, Globe } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 
