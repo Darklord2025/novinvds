@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle, Clock, Download, MessageSquare, Paperclip, SendHorizonal, X } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   id: string;
@@ -25,13 +26,15 @@ interface TicketDetailProps {
 const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
   const [reply, setReply] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [ticketStatus, setTicketStatus] = useState<'open' | 'closed' | 'pending' | 'answered'>('open');
+  const { toast } = useToast();
   
   // Sample data - in a real app this would come from an API
   const ticketDetails = {
     id: ticketId,
     title: 'مشکل در اتصال به سرور مجازی',
     department: 'سرور مجازی',
-    status: 'open' as 'open' | 'closed' | 'pending' | 'answered',
+    status: ticketStatus,
     priority: 'متوسط',
     createdAt: '1402/03/15 14:30',
     lastUpdated: '1402/03/16 10:45',
@@ -68,8 +71,22 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
   ];
   
   const handleReply = () => {
+    // Check if ticket is closed, reopen it when replying
+    if (ticketStatus === 'closed') {
+      setTicketStatus('open');
+      toast({
+        title: "تیکت مجدداً باز شد",
+        description: "تیکت با ارسال پاسخ جدید مجدداً باز شد.",
+        variant: "default"
+      });
+    }
+
     // In a real app, this would send the reply to an API
-    alert('پاسخ شما با موفقیت ارسال شد');
+    toast({
+      title: "پاسخ ارسال شد",
+      description: "پاسخ شما با موفقیت ثبت شد.",
+    });
+    
     setReply('');
     setAttachments([]);
   };
@@ -85,6 +102,14 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
     const newAttachments = [...attachments];
     newAttachments.splice(index, 1);
     setAttachments(newAttachments);
+  };
+  
+  const handleCloseTicket = () => {
+    setTicketStatus('closed');
+    toast({
+      title: "تیکت بسته شد",
+      description: "تیکت با موفقیت بسته شد.",
+    });
   };
   
   const getStatusIcon = (status: string) => {
@@ -133,7 +158,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
         </div>
       </div>
       
-      {/* Messages */}
+      {/* Messages - Fixed to ensure content is visible */}
       <div className="flex-1 overflow-y-auto py-4 space-y-6">
         {messages.map((message) => (
           <div 
@@ -158,7 +183,8 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
                 <span className="text-sm text-gray-500">{message.timestamp}</span>
               </div>
               
-              <div className="whitespace-pre-line">{message.content}</div>
+              {/* Ensure content is properly displayed */}
+              <div className="whitespace-pre-wrap text-gray-800">{message.content}</div>
               
               {message.attachments && message.attachments.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200">
@@ -184,8 +210,25 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
         ))}
       </div>
       
-      {/* Reply Box */}
-      {ticketDetails.status !== 'closed' && (
+      {/* Reply Box - Updated for closed tickets and reopening */}
+      {ticketStatus === 'closed' ? (
+        <Card className="mt-4 bg-gray-50">
+          <CardContent className="py-6">
+            <div className="text-center">
+              <CheckCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+              <h3 className="text-lg font-medium mb-1">این تیکت بسته شده است</h3>
+              <p className="text-gray-500 mb-4">برای ادامه گفتگو، می‌توانید پاسخ جدیدی ارسال کنید تا تیکت مجدداً باز شود.</p>
+              <Button 
+                onClick={() => setTicketStatus('open')}
+                className="bg-blue-600"
+              >
+                <MessageSquare className="h-4 w-4 ml-2" />
+                باز کردن مجدد تیکت
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
         <Card className="mt-4">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">پاسخ به تیکت</CardTitle>
@@ -249,11 +292,11 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
                   <DialogHeader>
                     <DialogTitle>بستن تیکت</DialogTitle>
                     <DialogDescription>
-                      آیا از بستن این تیکت اطمینان دارید؟ پس از بستن تیکت، امکان پاسخ دادن وجود نخواهد داشت.
+                      آیا از بستن این تیکت اطمینان دارید؟ می‌توانید با ارسال پاسخ جدید، تیکت را مجدداً باز کنید.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex justify-end space-x-2 space-x-reverse pt-4">
-                    <Button variant="destructive">
+                    <Button variant="destructive" onClick={handleCloseTicket}>
                       بستن تیکت
                     </Button>
                     <Button variant="outline">

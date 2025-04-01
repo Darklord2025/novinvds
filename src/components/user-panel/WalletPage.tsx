@@ -2,15 +2,155 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wallet, CreditCard, Coins, Bitcoin, RefreshCw, Check, Clock, AlertTriangle, Server, Database, Globe } from 'lucide-react';
+import { Wallet, CreditCard, Coins, Bitcoin, RefreshCw, Check, Clock, AlertTriangle, Server, Database, Globe, Receipt, FileText, Download } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+type Transaction = {
+  id: string;
+  amount: number;
+  type: 'deposit' | 'withdrawal' | 'payment' | 'automatic';
+  status: 'successful' | 'pending' | 'failed';
+  method: string;
+  description: string;
+  date: string;
+  reference?: string;
+};
+
+type Invoice = {
+  id: string;
+  amount: number;
+  status: 'paid' | 'unpaid' | 'overdue' | 'cancelled';
+  description: string;
+  date: string;
+  dueDate: string;
+  items: {
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
+};
 
 const WalletPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('zarinpal');
   const [amount, setAmount] = useState('');
   const [isAutoRenew, setIsAutoRenew] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [activeInvoiceTab, setActiveInvoiceTab] = useState('all');
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const { toast } = useToast();
+  
+  // Sample transactions data
+  const transactions: Transaction[] = [
+    {
+      id: 'TRX-12345',
+      amount: 500000,
+      type: 'deposit',
+      status: 'successful',
+      method: 'زرین‌پال',
+      description: 'افزایش موجودی کیف پول',
+      date: '1402/05/15',
+      reference: 'ZP-987654'
+    },
+    {
+      id: 'TRX-12346',
+      amount: -350000,
+      type: 'payment',
+      status: 'successful',
+      method: 'کیف پول',
+      description: 'پرداخت فاکتور شماره INV-54321',
+      date: '1402/05/17'
+    },
+    {
+      id: 'TRX-12347',
+      amount: -120000,
+      type: 'automatic',
+      status: 'successful',
+      method: 'کیف پول',
+      description: 'تمدید خودکار سرور مجازی لینوکس',
+      date: '1402/05/20'
+    },
+    {
+      id: 'TRX-12348',
+      amount: 300000,
+      type: 'deposit',
+      status: 'pending',
+      method: 'ارز دیجیتال (USDT)',
+      description: 'افزایش موجودی کیف پول',
+      date: '1402/05/22'
+    }
+  ];
+
+  // Sample invoices data
+  const invoices: Invoice[] = [
+    {
+      id: 'INV-54321',
+      amount: 350000,
+      status: 'paid',
+      description: 'سرور مجازی لینوکس - یک ماهه',
+      date: '1402/05/15',
+      dueDate: '1402/05/25',
+      items: [
+        {
+          name: 'سرور مجازی لینوکس - اوبونتو 22.04',
+          quantity: 1,
+          price: 300000
+        },
+        {
+          name: 'آی‌پی اضافی',
+          quantity: 1,
+          price: 20000
+        },
+        {
+          name: 'مالیات بر ارزش افزوده (9%)',
+          quantity: 1,
+          price: 30000
+        }
+      ]
+    },
+    {
+      id: 'INV-54322',
+      amount: 1200000,
+      status: 'unpaid',
+      description: 'هاست وردپرس - یک ساله',
+      date: '1402/05/20',
+      dueDate: '1402/05/30',
+      items: [
+        {
+          name: 'هاست وردپرس - پلن پیشرفته',
+          quantity: 1,
+          price: 1100000
+        },
+        {
+          name: 'مالیات بر ارزش افزوده (9%)',
+          quantity: 1,
+          price: 100000
+        }
+      ]
+    },
+    {
+      id: 'INV-54323',
+      amount: 850000,
+      status: 'overdue',
+      description: 'سرور ابری - سه ماهه',
+      date: '1402/04/10',
+      dueDate: '1402/04/20',
+      items: [
+        {
+          name: 'سرور ابری - پلن استاندارد',
+          quantity: 1,
+          price: 780000
+        },
+        {
+          name: 'مالیات بر ارزش افزوده (9%)',
+          quantity: 1,
+          price: 70000
+        }
+      ]
+    }
+  ];
   
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow numbers
@@ -18,9 +158,10 @@ const WalletPage = () => {
     setAmount(value);
   };
   
-  const formatNumber = (num: string) => {
+  const formatNumber = (num: string | number) => {
     if (!num) return '';
-    return Number(num).toLocaleString('fa-IR');
+    const numValue = typeof num === 'string' ? Number(num) : num;
+    return numValue.toLocaleString('fa-IR');
   };
 
   const handlePayment = () => {
@@ -46,6 +187,51 @@ const WalletPage = () => {
       });
     }, 2000);
   };
+
+  const getStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+      case 'successful':
+        return <Badge className="bg-green-500">موفق</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-500">در حال پردازش</Badge>;
+      case 'failed':
+        return <Badge className="bg-red-500">ناموفق</Badge>;
+      default:
+        return <Badge>نامشخص</Badge>;
+    }
+  };
+
+  const getInvoiceStatusBadge = (status: Invoice['status']) => {
+    switch (status) {
+      case 'paid':
+        return <Badge className="bg-green-500">پرداخت شده</Badge>;
+      case 'unpaid':
+        return <Badge className="bg-blue-500">پرداخت نشده</Badge>;
+      case 'overdue':
+        return <Badge className="bg-red-500">سررسید شده</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-gray-500">لغو شده</Badge>;
+      default:
+        return <Badge>نامشخص</Badge>;
+    }
+  };
+
+  const filteredTransactions = transactions.filter(transaction => {
+    if (activeTab === 'all') return true;
+    return transaction.type === activeTab;
+  });
+
+  const filteredInvoices = invoices.filter(invoice => {
+    if (activeInvoiceTab === 'all') return true;
+    return invoice.status === activeInvoiceTab;
+  });
+
+  const handlePayInvoice = (invoice: Invoice) => {
+    toast({
+      title: "در حال انتقال به صفحه پرداخت",
+      description: `فاکتور شماره ${invoice.id} به مبلغ ${formatNumber(invoice.amount)} تومان`,
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -63,7 +249,7 @@ const WalletPage = () => {
             <div className="flex items-center">
               <Wallet className="h-8 w-8 text-blue-500 ml-3" />
               <div>
-                <p className="text-2xl font-bold">0 تومان</p>
+                <p className="text-2xl font-bold">330,000 تومان</p>
                 <p className="text-sm text-gray-500">قابل استفاده</p>
               </div>
             </div>
@@ -223,45 +409,215 @@ const WalletPage = () => {
         </CardContent>
       </Card>
       
+      {/* تراکنش‌ها */}
       <Card>
         <CardHeader>
           <CardTitle>تاریخچه تراکنش‌ها</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all">
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="all">همه تراکنش‌ها</TabsTrigger>
-              <TabsTrigger value="deposits">افزایش موجودی</TabsTrigger>
-              <TabsTrigger value="withdrawals">برداشت و پرداخت</TabsTrigger>
+              <TabsTrigger value="deposit">افزایش موجودی</TabsTrigger>
+              <TabsTrigger value="payment">پرداخت</TabsTrigger>
               <TabsTrigger value="automatic">پرداخت‌های خودکار</TabsTrigger>
             </TabsList>
-            <TabsContent value="all" className="mt-6">
-              <div className="text-center py-8 text-gray-500">
-                <Coins className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>هنوز تراکنشی انجام نداده‌اید.</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="deposits" className="mt-6">
-              <div className="text-center py-8 text-gray-500">
-                <Coins className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>هنوز تراکنش افزایش موجودی انجام نداده‌اید.</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="withdrawals" className="mt-6">
-              <div className="text-center py-8 text-gray-500">
-                <Coins className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>هنوز تراکنش برداشت یا پرداختی انجام نداده‌اید.</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="automatic" className="mt-6">
-              <div className="text-center py-8 text-gray-500">
-                <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>هنوز پرداخت خودکاری انجام نشده است.</p>
-              </div>
+            <TabsContent value={activeTab} className="mt-6">
+              {filteredTransactions.length > 0 ? (
+                <div className="rounded-md border">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-100 border-b">
+                          <th className="py-3 px-4 text-right font-medium">شناسه</th>
+                          <th className="py-3 px-4 text-right font-medium">تاریخ</th>
+                          <th className="py-3 px-4 text-right font-medium">توضیحات</th>
+                          <th className="py-3 px-4 text-right font-medium">روش</th>
+                          <th className="py-3 px-4 text-right font-medium">وضعیت</th>
+                          <th className="py-3 px-4 text-right font-medium">مبلغ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredTransactions.map((transaction) => (
+                          <tr key={transaction.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">{transaction.id}</td>
+                            <td className="py-3 px-4">{transaction.date}</td>
+                            <td className="py-3 px-4">{transaction.description}</td>
+                            <td className="py-3 px-4">{transaction.method}</td>
+                            <td className="py-3 px-4">{getStatusBadge(transaction.status)}</td>
+                            <td className={`py-3 px-4 font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {transaction.amount > 0 ? '+' : ''}{formatNumber(transaction.amount)} تومان
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Coins className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>هنوز تراکنشی در این دسته انجام نداده‌اید.</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* فاکتورها */}
+      <Card>
+        <CardHeader>
+          <CardTitle>فاکتورها</CardTitle>
+          <CardDescription>مدیریت و پرداخت فاکتورهای سرویس‌ها</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="all" value={activeInvoiceTab} onValueChange={setActiveInvoiceTab}>
+            <TabsList>
+              <TabsTrigger value="all">همه فاکتورها</TabsTrigger>
+              <TabsTrigger value="unpaid">پرداخت نشده</TabsTrigger>
+              <TabsTrigger value="paid">پرداخت شده</TabsTrigger>
+              <TabsTrigger value="overdue">سررسید شده</TabsTrigger>
+            </TabsList>
+            <TabsContent value={activeInvoiceTab} className="mt-6">
+              {filteredInvoices.length > 0 ? (
+                <div className="rounded-md border">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-100 border-b">
+                          <th className="py-3 px-4 text-right font-medium">شماره فاکتور</th>
+                          <th className="py-3 px-4 text-right font-medium">تاریخ صدور</th>
+                          <th className="py-3 px-4 text-right font-medium">تاریخ سررسید</th>
+                          <th className="py-3 px-4 text-right font-medium">توضیحات</th>
+                          <th className="py-3 px-4 text-right font-medium">وضعیت</th>
+                          <th className="py-3 px-4 text-right font-medium">مبلغ</th>
+                          <th className="py-3 px-4 text-right font-medium">عملیات</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredInvoices.map((invoice) => (
+                          <tr key={invoice.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">{invoice.id}</td>
+                            <td className="py-3 px-4">{invoice.date}</td>
+                            <td className="py-3 px-4">{invoice.dueDate}</td>
+                            <td className="py-3 px-4">{invoice.description}</td>
+                            <td className="py-3 px-4">{getInvoiceStatusBadge(invoice.status)}</td>
+                            <td className="py-3 px-4 font-medium">
+                              {formatNumber(invoice.amount)} تومان
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="h-8"
+                                  onClick={() => setSelectedInvoice(invoice)}
+                                >
+                                  <FileText className="h-4 w-4 ml-1" />
+                                  مشاهده
+                                </Button>
+                                
+                                {invoice.status !== 'paid' && (
+                                  <Button 
+                                    size="sm" 
+                                    className="h-8 bg-blue-600"
+                                    onClick={() => handlePayInvoice(invoice)}
+                                  >
+                                    <CreditCard className="h-4 w-4 ml-1" />
+                                    پرداخت
+                                  </Button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Receipt className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>فاکتوری در این دسته یافت نشد.</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Invoice Detail Dialog */}
+      {selectedInvoice && (
+        <Dialog open={!!selectedInvoice} onOpenChange={(isOpen) => !isOpen && setSelectedInvoice(null)}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>فاکتور شماره {selectedInvoice.id}</DialogTitle>
+              <DialogDescription>جزئیات فاکتور و آیتم‌های شامل شده</DialogDescription>
+            </DialogHeader>
+            
+            <div className="p-6 border rounded-lg">
+              <div className="flex justify-between mb-6">
+                <div>
+                  <h3 className="font-bold text-lg">فاکتور NovinVDS</h3>
+                  <p className="text-sm text-gray-500">شرکت نوین وی دی اس</p>
+                  <p className="text-sm text-gray-500">info@novinvds.ir</p>
+                  <p className="text-sm text-gray-500">09335732119</p>
+                </div>
+                <div className="text-left">
+                  <p className="text-sm"><span className="font-medium">شماره فاکتور:</span> {selectedInvoice.id}</p>
+                  <p className="text-sm"><span className="font-medium">تاریخ صدور:</span> {selectedInvoice.date}</p>
+                  <p className="text-sm"><span className="font-medium">تاریخ سررسید:</span> {selectedInvoice.dueDate}</p>
+                  <div className="mt-2">{getInvoiceStatusBadge(selectedInvoice.status)}</div>
+                </div>
+              </div>
+              
+              <div className="border rounded-md mt-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-100 border-b">
+                      <th className="py-3 px-4 text-right font-medium">شرح</th>
+                      <th className="py-3 px-4 text-center font-medium">تعداد</th>
+                      <th className="py-3 px-4 text-left font-medium">قیمت واحد (تومان)</th>
+                      <th className="py-3 px-4 text-left font-medium">قیمت کل (تومان)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedInvoice.items.map((item, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="py-3 px-4">{item.name}</td>
+                        <td className="py-3 px-4 text-center">{item.quantity}</td>
+                        <td className="py-3 px-4 text-left">{formatNumber(item.price)}</td>
+                        <td className="py-3 px-4 text-left">{formatNumber(item.price * item.quantity)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-gray-50">
+                      <td colSpan={3} className="py-3 px-4 text-left font-medium">جمع کل:</td>
+                      <td className="py-3 px-4 text-left font-bold">{formatNumber(selectedInvoice.amount)} تومان</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+              <div className="mt-6 flex justify-between">
+                <Button variant="outline" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  دانلود فاکتور
+                </Button>
+                
+                {selectedInvoice.status !== 'paid' && (
+                  <Button className="bg-blue-600 gap-2" onClick={() => handlePayInvoice(selectedInvoice)}>
+                    <CreditCard className="h-4 w-4" />
+                    پرداخت فاکتور
+                  </Button>
+                )}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
