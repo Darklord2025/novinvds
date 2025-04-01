@@ -33,6 +33,10 @@ interface DashboardProps {
   operatingSystems?: OperatingSystems;
 }
 
+interface ServerListProps {
+  type: string;
+}
+
 const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSystems }: DashboardProps) => {
   return (
     <div className="space-y-6">

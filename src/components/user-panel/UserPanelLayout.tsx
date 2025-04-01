@@ -219,6 +219,11 @@ const UserPanelLayout = () => {
   const handleReturnToHome = () => {
     navigate('/');
   };
+  
+  // Handle sidebar item click
+  const handleSidebarItemClick = (itemId: string) => {
+    setActiveTab(itemId);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex user-panel-container">
@@ -227,6 +232,7 @@ const UserPanelLayout = () => {
         setActiveTab={setActiveTab} 
         items={sidebarItems}
         onHomeClick={handleReturnToHome}
+        className=""
       />
       
       <div className="flex-1 user-panel-content">
@@ -236,6 +242,7 @@ const UserPanelLayout = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           sessionTimeLeft={formatTime(sessionTimeLeft)}
+          onSidebarItemClick={handleSidebarItemClick}
         />
         
         {showWhcmsNotification && whmcsStatus === 'connected' && (

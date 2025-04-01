@@ -21,14 +21,28 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   sessionTimeLeft?: string;
+  onSidebarItemClick?: (itemId: string) => void;
 }
 
-const Header = ({ activeTab, sidebarItems, searchQuery, setSearchQuery, sessionTimeLeft = "60:00" }: HeaderProps) => {
+const Header: React.FC<HeaderProps> = ({ 
+  activeTab, 
+  sidebarItems, 
+  searchQuery, 
+  setSearchQuery, 
+  sessionTimeLeft = "60:00",
+  onSidebarItemClick 
+}) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
   const getPageTitle = () => {
     const item = sidebarItems.find(item => item.id === activeTab);
     return item ? item.label : 'داشبورد';
+  };
+  
+  const handleSidebarItemClick = (itemId: string) => {
+    if (onSidebarItemClick) {
+      onSidebarItemClick(itemId);
+    }
   };
   
   return (
@@ -55,7 +69,7 @@ const Header = ({ activeTab, sidebarItems, searchQuery, setSearchQuery, sessionT
                           ? "w-full flex items-center px-4 py-2 text-sm text-right text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
                           : "w-full flex items-center px-4 py-2 text-sm text-right text-gray-700 hover:bg-gray-100"
                       }
-                      onClick={() => window.location.reload()}
+                      onClick={() => handleSidebarItemClick(item.id)}
                     >
                       <span>{item.label}</span>
                     </button>

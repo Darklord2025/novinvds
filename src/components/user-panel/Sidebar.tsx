@@ -9,10 +9,10 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
   items?: Array<{ id: string; label: string; icon: string }>;
   onHomeClick?: () => void;
-  className?: string; // Added className prop
+  className?: string;
 }
 
-const Sidebar = ({ activeTab, setActiveTab, items = [], onHomeClick, className }: SidebarProps) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], onHomeClick, className }) => {
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
     switch (iconName) {
       case 'LayoutDashboard': return <LayoutDashboard className={className} />;
