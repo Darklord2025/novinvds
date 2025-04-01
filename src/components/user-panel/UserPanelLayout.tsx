@@ -227,7 +227,6 @@ const UserPanelLayout = () => {
         setActiveTab={setActiveTab} 
         items={sidebarItems}
         onHomeClick={handleReturnToHome}
-        className="user-panel-sidebar"
       />
       
       <div className="flex-1 user-panel-content">

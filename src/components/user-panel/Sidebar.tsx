@@ -9,9 +9,10 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
   items?: Array<{ id: string; label: string; icon: string }>;
   onHomeClick?: () => void;
+  className?: string; // Added className prop
 }
 
-const Sidebar = ({ activeTab, setActiveTab, items = [], onHomeClick }: SidebarProps) => {
+const Sidebar = ({ activeTab, setActiveTab, items = [], onHomeClick, className }: SidebarProps) => {
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
     switch (iconName) {
       case 'LayoutDashboard': return <LayoutDashboard className={className} />;
@@ -33,7 +34,7 @@ const Sidebar = ({ activeTab, setActiveTab, items = [], onHomeClick }: SidebarPr
   };
 
   return (
-    <div className="w-64 bg-white border-l shadow-sm hidden md:block">
+    <div className={cn("w-64 bg-white border-l shadow-sm hidden md:block", className)}>
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-blue-600">نوین وی‌دی‌اس</h2>

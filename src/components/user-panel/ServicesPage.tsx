@@ -1,615 +1,644 @@
+
 import React, { useState } from 'react';
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { HardDrive, Server, Globe, Database, Cloud, ExternalLink, RefreshCw, Play, Cpu, MemoryStick, Zap } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { CheckCircle, Server, HardDrive, Database, Clock, AlertTriangle, Power, PowerOff, RotateCw, Trash2, Edit, ExternalLink, Plus } from 'lucide-react';
 
-type ServiceTypes = 'servers' | 'dedicated' | 'domains' | 'hosting' | 'cloud';
-
-type BaseService = {
+interface OperatingSystem {
   id: string;
   name: string;
-  status: string;
-  expiryDate: string;
-};
-
-type VpsService = BaseService & {
-  location: string;
-  ip: string;
-  isCloud?: boolean;
-  resources?: {
-    cpu: number;
-    ram: number;
-    disk: number;
-    bandwidth: number;
-  };
-};
-
-type DomainService = BaseService & {
-  domain: string;
-};
-
-type DomainWithRenewal = BaseService & {
-  autoRenew: boolean;
-};
-
-type Service = VpsService | DomainService | DomainWithRenewal;
-
-interface ServicesPageProps {
-  serviceType: string;
 }
 
-const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [services] = useState<Service[]>([
-    {
-      id: '1',
-      name: 'VPS سرور لینوکس',
-      location: 'آلمان',
-      status: 'active',
-      ip: '152.89.125.156',
-      expiryDate: '2024/06/25',
-      resources: {
-        cpu: 2,
-        ram: 4,
-        disk: 50,
-        bandwidth: 2
-      }
-    },
-    {
-      id: '2',
-      name: 'VPS سرور ویندوز',
-      location: 'هلند',
-      status: 'active',
-      ip: '185.231.59.87',
-      expiryDate: '2024/05/12',
-      resources: {
-        cpu: 4,
-        ram: 8,
-        disk: 100,
-        bandwidth: 5
-      }
-    },
-    {
-      id: '3',
-      name: 'سرور اختصاصی',
-      location: 'فرانسه',
-      status: 'suspended',
-      ip: '89.145.172.23',
-      expiryDate: '2024/02/05',
-      resources: {
-        cpu: 8,
-        ram: 32,
-        disk: 1000,
-        bandwidth: 50
-      }
-    },
-    {
-      id: '4',
-      name: 'novinvds.com',
-      status: 'active',
-      domain: 'novinvds.com',
-      expiryDate: '2025/01/15',
-    },
-    {
-      id: '5',
-      name: 'novinvds.ir',
-      status: 'active',
-      domain: 'novinvds.ir',
-      expiryDate: '2024/08/20',
-    },
-    {
-      id: '6',
-      name: 'هاست لینوکس',
-      status: 'active',
-      expiryDate: '2024/09/10',
-      autoRenew: true,
-    },
-    {
-      id: '7',
-      name: 'هاست ویندوز',
-      status: 'active',
-      expiryDate: '2024/11/30',
-      autoRenew: false,
-    },
-    {
-      id: '8',
-      name: 'سرور ابری اقتصادی',
-      location: 'آلمان',
-      status: 'active',
-      ip: '176.54.128.93',
-      expiryDate: '2024/12/15',
-      isCloud: true,
-      resources: {
-        cpu: 2,
-        ram: 4,
-        disk: 80,
-        bandwidth: 3
-      }
-    },
-    {
-      id: '9',
-      name: 'سرور ابری حرفه‌ای',
-      location: 'هلند',
-      status: 'active',
-      ip: '188.132.65.74',
-      expiryDate: '2024/11/05',
-      isCloud: true,
-      resources: {
-        cpu: 6,
-        ram: 16,
-        disk: 250,
-        bandwidth: 10
-      }
-    },
-  ]);
+interface OperatingSystems {
+  linux: OperatingSystem[];
+  windows: OperatingSystem[];
+  specialized: OperatingSystem[];
+}
+
+export interface ServicesPageProps {
+  serviceType: string;
+  operatingSystems?: OperatingSystems;
+}
+
+const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
+  const [view, setView] = useState('active');
+  const [filter, setFilter] = useState('all');
   
-  const getStatusBadge = (status: string) => {
+  // Mock data for services
+  const services = {
+    servers: [
+      {
+        id: 'VPS-1001',
+        name: 'Ubuntu Server',
+        status: 'active',
+        details: {
+          os: 'Ubuntu 20.04 LTS',
+          cpu: '2 vCPU',
+          ram: '4 GB',
+          storage: '80 GB SSD',
+          ip: '123.456.789.101',
+          location: 'تهران',
+          bandwidth: '500 GB',
+          price: 1250000,
+          nextPayment: '1402/05/15'
+        }
+      },
+      {
+        id: 'VPS-1002',
+        name: 'Windows Server',
+        status: 'active',
+        details: {
+          os: 'Windows Server 2019',
+          cpu: '4 vCPU',
+          ram: '8 GB',
+          storage: '120 GB SSD',
+          ip: '123.456.789.102',
+          location: 'تهران',
+          bandwidth: '1 TB',
+          price: 2750000,
+          nextPayment: '1402/05/20'
+        }
+      },
+      {
+        id: 'VPS-1003',
+        name: 'Development Server',
+        status: 'suspended',
+        details: {
+          os: 'CentOS 8',
+          cpu: '1 vCPU',
+          ram: '2 GB',
+          storage: '40 GB SSD',
+          ip: '123.456.789.103',
+          location: 'تهران',
+          bandwidth: '300 GB',
+          price: 850000,
+          nextPayment: '1402/04/25'
+        }
+      }
+    ],
+    dedicated: [
+      {
+        id: 'DED-501',
+        name: 'High Performance',
+        status: 'active',
+        details: {
+          cpu: 'Intel Xeon E5-2680 v4',
+          cores: '14 Cores / 28 Threads',
+          ram: '64 GB DDR4',
+          storage: '2 × 1TB SSD NVMe',
+          ip: '185.165.169.12',
+          location: 'تهران',
+          bandwidth: '20 TB',
+          price: 12500000,
+          nextPayment: '1402/06/15'
+        }
+      }
+    ],
+    hosting: [
+      {
+        id: 'HST-2001',
+        name: 'شرکتی پلاس',
+        status: 'active',
+        details: {
+          type: 'Linux Hosting',
+          storage: '25 GB SSD',
+          bandwidth: 'نامحدود',
+          domainCount: '5',
+          databaseCount: '10',
+          price: 2200000,
+          nextPayment: '1402/07/10'
+        }
+      },
+      {
+        id: 'HST-2002',
+        name: 'فروشگاهی',
+        status: 'active',
+        details: {
+          type: 'Linux Hosting',
+          storage: '10 GB SSD',
+          bandwidth: 'نامحدود',
+          domainCount: '1',
+          databaseCount: '3',
+          price: 950000,
+          nextPayment: '1402/05/25'
+        }
+      }
+    ],
+    domains: [
+      {
+        id: 'DOM-5001',
+        name: 'example.com',
+        status: 'active',
+        details: {
+          registrar: 'نوین وی‌دی‌اس',
+          registrationDate: '1400/05/15',
+          expiryDate: '1402/05/15',
+          autoRenew: true,
+          nameservers: ['ns1.novinvds.ir', 'ns2.novinvds.ir'],
+          price: 650000,
+          nextPayment: '1402/05/15'
+        }
+      },
+      {
+        id: 'DOM-5002',
+        name: 'example.net',
+        status: 'active',
+        details: {
+          registrar: 'نوین وی‌دی‌اس',
+          registrationDate: '1401/02/10',
+          expiryDate: '1402/02/10',
+          autoRenew: true,
+          nameservers: ['ns1.novinvds.ir', 'ns2.novinvds.ir'],
+          price: 850000,
+          nextPayment: '1402/02/10'
+        }
+      },
+      {
+        id: 'DOM-5003',
+        name: 'example.org',
+        status: 'expired',
+        details: {
+          registrar: 'نوین وی‌دی‌اس',
+          registrationDate: '1400/10/05',
+          expiryDate: '1401/10/05',
+          autoRenew: false,
+          nameservers: ['ns1.novinvds.ir', 'ns2.novinvds.ir'],
+          price: 750000,
+          nextPayment: 'منقضی شده'
+        }
+      }
+    ],
+    cloud: [
+      {
+        id: 'CLD-301',
+        name: 'Cloud Server Pro',
+        status: 'active',
+        details: {
+          cores: '8 vCPU',
+          ram: '16 GB',
+          storage: '250 GB SSD',
+          backupStorage: '500 GB',
+          location: 'تهران',
+          bandwidth: '5 TB',
+          price: 4500000,
+          nextPayment: '1402/08/15'
+        }
+      }
+    ]
+  };
+  
+  // Get the appropriate services based on the serviceType
+  const getServices = () => {
+    switch (serviceType) {
+      case 'servers':
+        return services.servers;
+      case 'dedicated':
+        return services.dedicated;
+      case 'hosting':
+        return services.hosting;
+      case 'domains':
+        return services.domains;
+      case 'cloud':
+        return services.cloud;
+      default:
+        return [];
+    }
+  };
+  
+  // Filter services based on status
+  const filteredServices = getServices().filter(service => {
+    if (view === 'active') return service.status === 'active';
+    if (view === 'suspended') return service.status === 'suspended';
+    if (view === 'expired') return service.status === 'expired';
+    return true;
+  });
+  
+  // Get service type title for display
+  const getServiceTypeTitle = () => {
+    switch (serviceType) {
+      case 'servers':
+        return 'سرورهای مجازی';
+      case 'dedicated':
+        return 'سرورهای اختصاصی';
+      case 'hosting':
+        return 'هاستینگ';
+      case 'domains':
+        return 'دامنه‌ها';
+      case 'cloud':
+        return 'سرور ابری';
+      default:
+        return 'سرویس‌ها';
+    }
+  };
+  
+  // Get status badge component
+  const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
         return <Badge className="bg-green-500">فعال</Badge>;
       case 'suspended':
-        return <Badge className="bg-yellow-500">معلق</Badge>;
+        return <Badge className="bg-amber-500">معلق</Badge>;
       case 'expired':
         return <Badge className="bg-red-500">منقضی شده</Badge>;
       default:
-        return <Badge className="bg-gray-500">نامشخص</Badge>;
+        return <Badge>{status}</Badge>;
     }
   };
   
-  const mapServiceTypeToTab = (type: string): ServiceTypes => {
-    switch (type) {
-      case 'servers': return 'servers';
-      case 'dedicated': return 'dedicated';
-      case 'domains': return 'domains';
-      case 'hosting': return 'hosting';
-      case 'cloud': return 'cloud';
-      default: return 'servers';
-    }
-  };
-  
-  const [activeTab, setActiveTab] = useState<ServiceTypes>(mapServiceTypeToTab(serviceType));
-  
-  const filteredServices = services.filter(service => {
-    if (activeTab === 'servers' && 'ip' in service && !('domain' in service) && !service.isCloud) {
-      return true;
-    }
-    if (activeTab === 'dedicated' && 'ip' in service && service.name.includes('اختصاصی')) {
-      return true;
-    }
-    if (activeTab === 'domains' && 'domain' in service) {
-      return true;
-    }
-    if (activeTab === 'hosting' && 'autoRenew' in service) {
-      return true;
-    }
-    if (activeTab === 'cloud' && 'ip' in service && service.isCloud) {
-      return true;
-    }
-    return false;
-  });
-  
-  const openManagementPage = (service: Service) => {
-    setSelectedService(service);
-  };
-  
-  const getRenderContent = (service: Service) => {
-    if ('domain' in service) {
-      return (
-        <div className="flex justify-between items-center p-4 border rounded-lg mb-3">
-          <div>
-            <h3 className="font-medium">{service.name}</h3>
-            <p className="text-sm text-gray-500">دامنه: {service.domain}</p>
-            <p className="text-sm text-gray-500">تاریخ انقضا: {service.expiryDate}</p>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            {getStatusBadge(service.status)}
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
-                مدیریت DNS
-              </Button>
-              <Button variant="outline" size="sm">تمدید</Button>
-            </div>
-          </div>
-        </div>
-      );
-    } else if ('ip' in service) {
-      return (
-        <div className="flex justify-between items-center p-4 border rounded-lg mb-3">
-          <div>
-            <h3 className="font-medium">{service.name}</h3>
-            <p className="text-sm text-gray-500">IP: {service.ip}</p>
-            <p className="text-sm text-gray-500">موقعیت: {service.location}</p>
-            <p className="text-sm text-gray-500">تاریخ انقضا: {service.expiryDate}</p>
-            {service.resources && (
-              <div className="flex gap-6 mt-2">
-                <span className="flex items-center text-sm text-gray-600">
-                  <Cpu className="h-4 w-4 ml-1" />
-                  {service.resources.cpu} هسته
-                </span>
-                <span className="flex items-center text-sm text-gray-600">
-                  <MemoryStick className="h-4 w-4 ml-1" />
-                  {service.resources.ram} GB
-                </span>
-                <span className="flex items-center text-sm text-gray-600">
-                  <Database className="h-4 w-4 ml-1" />
-                  {service.resources.disk} GB
-                </span>
-                <span className="flex items-center text-sm text-gray-600">
-                  <Zap className="h-4 w-4 ml-1" />
-                  {service.resources.bandwidth} TB
-                </span>
+  // Get service card based on service type
+  const getServiceCard = (service) => {
+    switch (serviceType) {
+      case 'servers':
+      case 'cloud':
+        return (
+          <Card key={service.id}>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center">
+                    <Server className="h-5 w-5 mr-2" />
+                    {service.name}
+                  </CardTitle>
+                  <CardDescription>{service.id}</CardDescription>
+                </div>
+                <div>{getStatusBadge(service.status)}</div>
               </div>
-            )}
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            {getStatusBadge(service.status)}
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
-                مدیریت سرور
-              </Button>
-              <Button variant="outline" size="sm">تمدید</Button>
-            </div>
-          </div>
-        </div>
-      );
-    } else if ('autoRenew' in service) {
-      return (
-        <div className="flex justify-between items-center p-4 border rounded-lg mb-3">
-          <div>
-            <h3 className="font-medium">{service.name}</h3>
-            <p className="text-sm text-gray-500">تاریخ انقضا: {service.expiryDate}</p>
-            <p className="text-sm text-gray-500">تمدید خودکار: {service.autoRenew ? 'فعال' : 'غیرفعال'}</p>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            {getStatusBadge(service.status)}
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" onClick={() => openManagementPage(service)}>
-                کنترل پنل
-              </Button>
-              <Button variant="outline" size="sm">تمدید</Button>
-            </div>
-          </div>
-        </div>
-      );
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">سیستم عامل:</span>
+                    <span>{service.details.os}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">CPU:</span>
+                    <span>{service.details.cpu}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">RAM:</span>
+                    <span>{service.details.ram}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">دیسک:</span>
+                    <span>{service.details.storage}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">IP:</span>
+                    <span>{service.details.ip}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">مکان:</span>
+                    <span>{service.details.location}</span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-500">تاریخ تمدید بعدی:</span>
+                  <span>{service.details.nextPayment}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>هزینه ماهانه:</span>
+                  <span>{new Intl.NumberFormat('fa-IR').format(service.details.price)} تومان</span>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {service.status === 'active' && (
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Power className="h-4 w-4 mr-1" />
+                      <span>ریستارت</span>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    <span>مدیریت</span>
+                  </Button>
+                  <Button size="sm" className="flex-1">
+                    <RotateCw className="h-4 w-4 mr-1" />
+                    <span>تمدید</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      case 'dedicated':
+        return (
+          <Card key={service.id}>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center">
+                    <HardDrive className="h-5 w-5 mr-2" />
+                    {service.name}
+                  </CardTitle>
+                  <CardDescription>{service.id}</CardDescription>
+                </div>
+                <div>{getStatusBadge(service.status)}</div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">پردازنده:</span>
+                    <span>{service.details.cpu}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">هسته/ترد:</span>
+                    <span>{service.details.cores}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">RAM:</span>
+                    <span>{service.details.ram}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">دیسک:</span>
+                    <span>{service.details.storage}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">IP:</span>
+                    <span>{service.details.ip}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">مکان:</span>
+                    <span>{service.details.location}</span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-500">تاریخ تمدید بعدی:</span>
+                  <span>{service.details.nextPayment}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>هزینه ماهانه:</span>
+                  <span>{new Intl.NumberFormat('fa-IR').format(service.details.price)} تومان</span>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {service.status === 'active' && (
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Power className="h-4 w-4 mr-1" />
+                      <span>ریبوت</span>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    <span>مدیریت</span>
+                  </Button>
+                  <Button size="sm" className="flex-1">
+                    <RotateCw className="h-4 w-4 mr-1" />
+                    <span>تمدید</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+        
+      case 'hosting':
+        return (
+          <Card key={service.id}>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center">
+                    <Database className="h-5 w-5 mr-2" />
+                    {service.name}
+                  </CardTitle>
+                  <CardDescription>{service.id}</CardDescription>
+                </div>
+                <div>{getStatusBadge(service.status)}</div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">نوع:</span>
+                    <span>{service.details.type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">فضا:</span>
+                    <span>{service.details.storage}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">پهنای باند:</span>
+                    <span>{service.details.bandwidth}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">تعداد دامنه:</span>
+                    <span>{service.details.domainCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">تعداد دیتابیس:</span>
+                    <span>{service.details.databaseCount}</span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-500">تاریخ تمدید بعدی:</span>
+                  <span>{service.details.nextPayment}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>هزینه سالانه:</span>
+                  <span>{new Intl.NumberFormat('fa-IR').format(service.details.price)} تومان</span>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    <span>مدیریت سی پنل</span>
+                  </Button>
+                  <Button size="sm" className="flex-1">
+                    <RotateCw className="h-4 w-4 mr-1" />
+                    <span>تمدید</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      case 'domains':
+        return (
+          <Card key={service.id}>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between">
+                <div>
+                  <CardTitle className="text-lg">{service.name}</CardTitle>
+                  <CardDescription>{service.id}</CardDescription>
+                </div>
+                <div>{getStatusBadge(service.status)}</div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">ثبت کننده:</span>
+                    <span>{service.details.registrar}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">تاریخ ثبت:</span>
+                    <span>{service.details.registrationDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">تاریخ انقضا:</span>
+                    <span>{service.details.expiryDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">تمدید خودکار:</span>
+                    <span>{service.details.autoRenew ? 'فعال' : 'غیرفعال'}</span>
+                  </div>
+                </div>
+                
+                <div className="text-sm space-y-1">
+                  <div className="text-gray-500">نیم سرورها:</div>
+                  {service.details.nameservers.map((ns, index) => (
+                    <div key={index} className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <span>{ns}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-500">تاریخ تمدید بعدی:</span>
+                  <span>{service.details.nextPayment}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>هزینه سالانه:</span>
+                  <span>{new Intl.NumberFormat('fa-IR').format(service.details.price)} تومان</span>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <Switch id={`autorenew-${service.id}`} defaultChecked={service.details.autoRenew} />
+                    <Label htmlFor={`autorenew-${service.id}`}>تمدید خودکار</Label>
+                  </div>
+                  <Button size="sm">
+                    {service.status === 'expired' ? 'فعالسازی مجدد' : 'تمدید'}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      default:
+        return (
+          <Card key={service.id}>
+            <CardHeader>
+              <div className="flex justify-between">
+                <CardTitle>{service.name}</CardTitle>
+                <div>{getStatusBadge(service.status)}</div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p>{service.id}</p>
+            </CardContent>
+          </Card>
+        );
     }
-    return null;
   };
-
-  const getServiceIcon = (tab: ServiceTypes) => {
-    switch (tab) {
-      case 'servers': return <Server className="h-5 w-5" />;
-      case 'dedicated': return <HardDrive className="h-5 w-5" />;
-      case 'domains': return <Globe className="h-5 w-5" />;
-      case 'hosting': return <Database className="h-5 w-5" />;
-      case 'cloud': return <Cloud className="h-5 w-5" />;
-    }
-  };
-
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">سرویس‌های من</h2>
-        <Button>سفارش سرویس جدید</Button>
+        <h1 className="text-2xl font-bold">{getServiceTypeTitle()}</h1>
+        <Button>
+          <Plus className="h-4 w-4 mr-1" />
+          <span>سفارش جدید</span>
+        </Button>
       </div>
       
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ServiceTypes)}>
-        <TabsList className="grid grid-cols-5 mb-6">
-          <TabsTrigger value="servers" className="flex items-center gap-2">
-            <Server className="h-4 w-4" />
-            <span>سرورهای مجازی</span>
-          </TabsTrigger>
-          <TabsTrigger value="dedicated" className="flex items-center gap-2">
-            <HardDrive className="h-4 w-4" />
-            <span>سرورهای اختصاصی</span>
-          </TabsTrigger>
-          <TabsTrigger value="cloud" className="flex items-center gap-2">
-            <Cloud className="h-4 w-4" />
-            <span>سرورهای ابری</span>
-          </TabsTrigger>
-          <TabsTrigger value="hosting" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            <span>هاستینگ</span>
-          </TabsTrigger>
-          <TabsTrigger value="domains" className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            <span>دامنه‌ها</span>
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={view} onValueChange={setView}>
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="all">همه</TabsTrigger>
+            <TabsTrigger value="active">فعال</TabsTrigger>
+            <TabsTrigger value="suspended">معلق</TabsTrigger>
+            <TabsTrigger value="expired">منقضی شده</TabsTrigger>
+          </TabsList>
+          
+          <div className="flex gap-2">
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="فیلتر" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">همه</SelectItem>
+                <SelectItem value="date-asc">تاریخ (صعودی)</SelectItem>
+                <SelectItem value="date-desc">تاریخ (نزولی)</SelectItem>
+                <SelectItem value="name-asc">نام (صعودی)</SelectItem>
+                <SelectItem value="name-desc">نام (نزولی)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         
-        <TabsContent value="servers" className="space-y-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map(service => (
-              <div key={service.id}>{getRenderContent(service)}</div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <Server className="mx-auto h-10 w-10 text-gray-400" />
-              <h3 className="mt-2 text-lg font-medium">هیچ سرور مجازی یافت نشد</h3>
-              <p className="mt-1 text-gray-500">برای سفارش سرور مجازی جدید کلیک کنید</p>
-              <Button className="mt-4">سفارش سرور مجازی</Button>
+        <TabsContent value="all" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map(service => getServiceCard(service))}
+          </div>
+          {filteredServices.length === 0 && (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <AlertTriangle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ سرویسی یافت نشد</h3>
+              <p className="text-gray-500 mb-4">در حال حاضر هیچ سرویسی با وضعیت انتخاب شده وجود ندارد.</p>
+              <Button>سفارش سرویس جدید</Button>
             </div>
           )}
         </TabsContent>
         
-        <TabsContent value="dedicated" className="space-y-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map(service => (
-              <div key={service.id}>{getRenderContent(service)}</div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <HardDrive className="mx-auto h-10 w-10 text-gray-400" />
-              <h3 className="mt-2 text-lg font-medium">هیچ سرور اختصاصی یافت نشد</h3>
-              <p className="mt-1 text-gray-500">برای سفارش سرور اختصاصی جدید کلیک کنید</p>
-              <Button className="mt-4">سفارش سرور اختصاصی</Button>
+        <TabsContent value="active" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map(service => getServiceCard(service))}
+          </div>
+          {filteredServices.length === 0 && (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <AlertTriangle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ سرویس فعالی یافت نشد</h3>
+              <p className="text-gray-500 mb-4">در حال حاضر هیچ سرویس فعالی وجود ندارد.</p>
+              <Button>سفارش سرویس جدید</Button>
             </div>
           )}
         </TabsContent>
         
-        <TabsContent value="cloud" className="space-y-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map(service => (
-              <div key={service.id}>{getRenderContent(service)}</div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <Cloud className="mx-auto h-10 w-10 text-gray-400" />
-              <h3 className="mt-2 text-lg font-medium">هیچ سرور ابری یافت نشد</h3>
-              <p className="mt-1 text-gray-500">برای سفارش سرور ابری جدید کلیک کنید</p>
-              <Button className="mt-4">سفارش سرور ابری</Button>
+        <TabsContent value="suspended" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map(service => getServiceCard(service))}
+          </div>
+          {filteredServices.length === 0 && (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <AlertTriangle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ سرویس معلقی یافت نشد</h3>
+              <p className="text-gray-500 mb-4">در حال حاضر هیچ سرویس معلقی وجود ندارد.</p>
             </div>
           )}
         </TabsContent>
         
-        <TabsContent value="hosting" className="space-y-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map(service => (
-              <div key={service.id}>{getRenderContent(service)}</div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <Database className="mx-auto h-10 w-10 text-gray-400" />
-              <h3 className="mt-2 text-lg font-medium">هیچ هاستینگی یافت نشد</h3>
-              <p className="mt-1 text-gray-500">برای سفارش هاستینگ جدید کلیک کنید</p>
-              <Button className="mt-4">سفارش هاستینگ</Button>
-            </div>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="domains" className="space-y-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map(service => (
-              <div key={service.id}>{getRenderContent(service)}</div>
-            ))
-          ) : (
-            <div className="text-center py-10">
-              <Globe className="mx-auto h-10 w-10 text-gray-400" />
-              <h3 className="mt-2 text-lg font-medium">هیچ دامنه‌ای یافت نشد</h3>
-              <p className="mt-1 text-gray-500">برای ثبت دامنه جدید کلیک کنید</p>
-              <Button className="mt-4">ثبت دامنه</Button>
+        <TabsContent value="expired" className="mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map(service => getServiceCard(service))}
+          </div>
+          {filteredServices.length === 0 && (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <AlertTriangle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ سرویس منقضی شده‌ای یافت نشد</h3>
+              <p className="text-gray-500 mb-4">در حال حاضر هیچ سرویس منقضی شده‌ای وجود ندارد.</p>
             </div>
           )}
         </TabsContent>
       </Tabs>
-      
-      {/* Service Management Dialog */}
-      {selectedService && (
-        <Dialog open={!!selectedService} onOpenChange={(open) => !open && setSelectedService(null)}>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle className="text-xl">
-                {selectedService.name} - مدیریت سرویس
-              </DialogTitle>
-              <DialogDescription>
-                از این بخش می‌توانید سرویس خود را مدیریت کنید
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-6 p-4">
-              {'ip' in selectedService ? (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">آدرس IP</p>
-                      <p className="font-medium">{selectedService.ip}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">موقعیت</p>
-                      <p className="font-medium">{selectedService.location}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">وضعیت</p>
-                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
-                      <p className="font-medium">{selectedService.expiryDate}</p>
-                    </div>
-                  </div>
-                  
-                  {selectedService.resources && (
-                    <div>
-                      <h3 className="font-medium mb-3">منابع سرور</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-blue-50 p-3 rounded-lg flex flex-col items-center">
-                          <Cpu className="h-8 w-8 text-blue-500 mb-2" />
-                          <p className="text-sm text-gray-600">پردازنده</p>
-                          <p className="font-bold">{selectedService.resources.cpu} هسته</p>
-                        </div>
-                        <div className="bg-green-50 p-3 rounded-lg flex flex-col items-center">
-                          <MemoryStick className="h-8 w-8 text-green-500 mb-2" />
-                          <p className="text-sm text-gray-600">حافظه</p>
-                          <p className="font-bold">{selectedService.resources.ram} گیگابایت</p>
-                        </div>
-                        <div className="bg-purple-50 p-3 rounded-lg flex flex-col items-center">
-                          <Database className="h-8 w-8 text-purple-500 mb-2" />
-                          <p className="text-sm text-gray-600">فضای ذخیره‌سازی</p>
-                          <p className="font-bold">{selectedService.resources.disk} گیگابایت</p>
-                        </div>
-                        <div className="bg-yellow-50 p-3 rounded-lg flex flex-col items-center">
-                          <Zap className="h-8 w-8 text-yellow-500 mb-2" />
-                          <p className="text-sm text-gray-600">پهنای باند</p>
-                          <p className="font-bold">{selectedService.resources.bandwidth} ترابایت</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="pt-4">
-                    <h3 className="font-medium mb-3">عملیات سرور</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <Button className="bg-green-600">
-                        <Play className="ml-2 h-4 w-4" />
-                        روشن کردن
-                      </Button>
-                      <Button variant="outline">
-                        راه‌اندازی مجدد
-                      </Button>
-                      <Button variant="outline">
-                        خاموش کردن
-                      </Button>
-                      <Button variant="outline">
-                        <RefreshCw className="ml-2 h-4 w-4" />
-                        بازسازی
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <h3 className="font-medium mb-3">دسترسی به سرور</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        کنسول VNC
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        کنترل پنل مدیریت
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        تنظیمات DNS
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مانیتورینگ
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        بکاپ و بازیابی
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        فایروال
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : 'domain' in selectedService ? (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">نام دامنه</p>
-                      <p className="font-medium">{selectedService.domain}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">وضعیت</p>
-                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
-                      <p className="font-medium">{selectedService.expiryDate}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <h3 className="font-medium mb-3">مدیریت دامنه</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت رکوردهای DNS
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت انتقال دامنه
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت Nameserver
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت WHOIS
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        فعال/غیرفعال سازی قفل دامنه
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت تمدید خودکار
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">نام سرویس</p>
-                      <p className="font-medium">{selectedService.name}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">وضعیت</p>
-                      <p className="font-medium">{selectedService.status === 'active' ? 'فعال' : selectedService.status === 'suspended' ? 'معلق' : 'منقضی شده'}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">تاریخ انقضا</p>
-                      <p className="font-medium">{selectedService.expiryDate}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">تمدید خودکار</p>
-                      <p className="font-medium">{'autoRenew' in selectedService && (selectedService.autoRenew ? 'فعال' : 'غیرفعال')}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <h3 className="font-medium mb-3">مدیریت هاستینگ</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        ورود به کنترل پنل
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت ایمیل
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت دیتابیس
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت ساب‌دامین‌ها
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت دامنه‌های اضافی
-                      </Button>
-                      <Button variant="outline" className="justify-start">
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                        مدیریت SSL
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 };

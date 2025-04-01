@@ -288,7 +288,7 @@ const TransactionsPage = () => {
             </TableHeader>
             <TableBody>
               {filterTransactions().map((tx) => {
-                const typeInfo = getTransactionTypeInfo(tx.type);
+                const typeInfo = getTransactionTypeInfo(tx.type, tx.amount);
                 return (
                   <TableRow key={tx.id}>
                     <TableCell>{tx.id}</TableCell>
