@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PaperClip, Send, Lock, CheckCircle, Clock, AlertCircle, Inbox } from 'lucide-react';
+import { Paperclip, Send, Lock, CheckCircle, Clock, AlertCircle, Inbox } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from '@/components/ui/label';
 
@@ -216,7 +216,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
                     <div className="mt-2">
                       {message.attachments.map((attachment, idx) => (
                         <div key={idx} className="flex items-center space-x-2 space-x-reverse">
-                          <PaperClip className="h-4 w-4 text-gray-500" />
+                          <Paperclip className="h-4 w-4 text-gray-500" />
                           <span className="text-sm text-blue-600 hover:underline cursor-pointer">
                             {attachment.name} ({attachment.size})
                           </span>
@@ -237,7 +237,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
               message.attachments.map((attachment, idx) => (
                 <div key={`${message.id}-${idx}`} className="flex items-center justify-between p-3 border rounded-md">
                   <div className="flex items-center space-x-3 space-x-reverse">
-                    <PaperClip className="h-5 w-5 text-gray-500" />
+                    <Paperclip className="h-5 w-5 text-gray-500" />
                     <div>
                       <p className="font-medium">{attachment.name}</p>
                       <p className="text-sm text-gray-500">آپلود شده توسط: {message.user} - {message.date}</p>
@@ -279,7 +279,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
               />
               <Button variant="outline" size="sm" asChild>
                 <label htmlFor="attachment" className="cursor-pointer flex items-center">
-                  <PaperClip className="mr-2 h-4 w-4" />
+                  <Paperclip className="mr-2 h-4 w-4" />
                   افزودن فایل
                 </label>
               </Button>
