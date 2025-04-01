@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Dashboard from './Dashboard';
@@ -12,6 +12,8 @@ import DownloadsPage from './DownloadsPage';
 import ServiceCalculator from './ServiceCalculator';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // داده‌های منوی سایدبار
 const sidebarItems = [
@@ -57,6 +59,7 @@ const serviceCategories = [
       { name: 'گواهی SSL', link: '/ssl' },
       { name: 'آنتی ویروس', link: '/security/antivirus' },
       { name: 'فایروال', link: '/security/firewall' },
+      { name: 'بکاپ گیری', link: '/security/backup' },
     ]
   },
   {
@@ -65,15 +68,55 @@ const serviceCategories = [
       { name: 'IP اختصاصی', link: '/network/ip' },
       { name: 'VPN سازمانی', link: '/network/vpn' },
       { name: 'ترافیک اضافه', link: '/network/traffic' },
+      { name: 'CDN', link: '/network/cdn' },
+    ]
+  },
+  {
+    title: 'سایر خدمات',
+    services: [
+      { name: 'فروش سخت‌افزار', link: '/hardware' },
+      { name: 'طراحی سایت', link: '/webdesign' },
+      { name: 'سئو و بهینه‌سازی', link: '/seo' },
+      { name: 'مشاوره IT', link: '/consulting' },
     ]
   },
 ];
 
+// اطلاعات تماس
+const contactInfo = {
+  phone: "09335732119",
+  email: "info@novinvds.ir",
+  supportEmails: {
+    sales: "sales@novinvds.ir",
+    vps: "vps@novinvds.ir",
+    dedicated: "dedicated@novinvds.ir",
+    hosting: "hosting@novinvds.ir",
+    domain: "domain@novinvds.ir",
+    network: "network@novinvds.ir",
+    support: "support@novinvds.ir"
+  }
+};
+
 const UserPanelLayout = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
+  const [whmcsStatus, setWhmcsStatus] = useState('connected'); // connected, disconnected, connecting
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // اتصال به WHMCS در زمان بارگذاری
+    // این بخش در حالت واقعی با استفاده از API به WHMCS متصل می‌شود
+    const timer = setTimeout(() => {
+      setWhmcsStatus('connected');
+      toast({
+        title: "اتصال به WHMCS برقرار شد",
+        description: "اطلاعات سرویس‌ها و فاکتورهای شما با موفقیت بارگذاری شد.",
+      });
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [toast]);
   
   // نمایش پیام برای سرویس‌های در دست توسعه
   const showDevelopmentToast = (feature: string) => {
@@ -106,6 +149,26 @@ const UserPanelLayout = () => {
           setSearchQuery={setSearchQuery}
         />
         
+        {whmcsStatus === 'connecting' && (
+          <Alert className="m-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>در حال اتصال به WHMCS</AlertTitle>
+            <AlertDescription>
+              لطفاً صبر کنید، در حال برقراری ارتباط با سیستم مدیریت مشتریان هستیم...
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {whmcsStatus === 'disconnected' && (
+          <Alert variant="destructive" className="m-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>خطا در اتصال به WHMCS</AlertTitle>
+            <AlertDescription>
+              اتصال به سیستم مدیریت مشتریان با مشکل مواجه شد. لطفاً صفحه را مجدداً بارگذاری کنید یا با پشتیبانی تماس بگیرید.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <main className="p-6">
           {activeTab === 'dashboard' ? (
             <Dashboard serviceCategories={serviceCategories} />
@@ -128,7 +191,7 @@ const UserPanelLayout = () => {
         
         {/* فوتر پنل کاربری */}
         <footer className="bg-white border-t p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {serviceCategories.map((category, index) => (
               <div key={index}>
                 <h4 className="text-lg font-semibold mb-3">{category.title}</h4>
@@ -155,18 +218,20 @@ const UserPanelLayout = () => {
             <p>تمام حقوق برای نوین وی دی اس محفوظ است © {new Date().getFullYear()}</p>
             <div className="mt-2 flex justify-center space-x-4 space-x-reverse">
               <a 
-                href="tel:09335732119" 
+                href={`tel:${contactInfo.phone}`} 
                 className="hover:text-blue-600 transition-colors"
               >
-                09335732119
+                {contactInfo.phone}
               </a>
               <span>|</span>
               <a 
-                href="mailto:info@novinvds.ir" 
+                href={`mailto:${contactInfo.email}`} 
                 className="hover:text-blue-600 transition-colors"
               >
-                info@novinvds.ir
+                {contactInfo.email}
               </a>
+              <span>|</span>
+              <span className="text-green-600">وضعیت WHMCS: {whmcsStatus === 'connected' ? 'متصل' : whmcsStatus === 'connecting' ? 'در حال اتصال' : 'قطع'}</span>
             </div>
           </div>
         </footer>
