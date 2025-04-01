@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Server, HardDrive, Memory, Cpu, Database, Cloud, CreditCard } from 'lucide-react';
+import { Server, HardDrive, Cpu, Database, Cloud, CreditCard, MemoryStick } from 'lucide-react';
 
 interface ResourcePricing {
   cpu: number;
@@ -175,7 +175,7 @@ const ServiceCalculator = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label className="flex items-center gap-2">
-                  <Memory className="h-4 w-4" />
+                  <MemoryStick className="h-4 w-4" />
                   RAM (گیگابایت)
                 </Label>
                 <span className="text-sm font-semibold">{ram} GB</span>

@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { HardDrive, Server, Globe, Database, Cloud, ExternalLink, RefreshCw, Play, Cpu, Memory, Zap } from 'lucide-react';
+import { HardDrive, Server, Globe, Database, Cloud, ExternalLink, RefreshCw, Play, Cpu, MemoryStick, Zap } from 'lucide-react';
 
 type ServiceTypes = 'servers' | 'dedicated' | 'domains' | 'hosting' | 'cloud';
 
@@ -230,7 +229,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
                   {service.resources.cpu} هسته
                 </span>
                 <span className="flex items-center text-sm text-gray-600">
-                  <Memory className="h-4 w-4 ml-1" />
+                  <MemoryStick className="h-4 w-4 ml-1" />
                   {service.resources.ram} GB
                 </span>
                 <span className="flex items-center text-sm text-gray-600">
@@ -440,7 +439,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ serviceType }) => {
                           <p className="font-bold">{selectedService.resources.cpu} هسته</p>
                         </div>
                         <div className="bg-green-50 p-3 rounded-lg flex flex-col items-center">
-                          <Memory className="h-8 w-8 text-green-500 mb-2" />
+                          <MemoryStick className="h-8 w-8 text-green-500 mb-2" />
                           <p className="text-sm text-gray-600">حافظه</p>
                           <p className="font-bold">{selectedService.resources.ram} گیگابایت</p>
                         </div>
