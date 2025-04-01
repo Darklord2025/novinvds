@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -187,6 +186,12 @@ const TicketsPage = () => {
       {selectedTicket && (
         <Dialog open={!!selectedTicket} onOpenChange={(open) => !open && setSelectedTicket(null)}>
           <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle>جزئیات تیکت {selectedTicket}</DialogTitle>
+              <DialogDescription>
+                مشاهده و پاسخ به تیکت
+              </DialogDescription>
+            </DialogHeader>
             <TicketDetail 
               ticketId={selectedTicket} 
               onClose={() => setSelectedTicket(null)} 
