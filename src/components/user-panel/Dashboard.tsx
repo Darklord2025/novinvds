@@ -36,13 +36,13 @@ const Dashboard = ({ serviceCategories = [] }: DashboardProps) => {
               <TabsTrigger value="expired">منقضی شده</TabsTrigger>
             </TabsList>
             <TabsContent value="active">
-              <ServerList status="active" />
+              <ServerList />
             </TabsContent>
             <TabsContent value="pending">
-              <ServerList status="pending" />
+              <ServerList />
             </TabsContent>
             <TabsContent value="expired">
-              <ServerList status="expired" />
+              <ServerList />
             </TabsContent>
           </Tabs>
         </div>
