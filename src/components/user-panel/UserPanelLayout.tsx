@@ -6,12 +6,15 @@ import Dashboard from './Dashboard';
 import DevelopmentMessage from './DevelopmentMessage';
 import ProfilePage from './ProfilePage';
 import TicketsPage from './TicketsPage';
+import TicketDetail from './TicketDetail';
 import WalletPage from './WalletPage';
 import ServicesPage from './ServicesPage';
 import DownloadsPage from './DownloadsPage';
 import ServiceCalculator from './ServiceCalculator';
 import InvoicesPage from './InvoicesPage';
 import TransactionsPage from './TransactionsPage';
+import CreateTicketForm from './CreateTicketForm';
+import NotificationsPage from './NotificationsPage';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
@@ -66,19 +69,19 @@ const serviceCategories = [
   {
     title: 'خدمات شبکه',
     services: [
-      { name: 'IP اختصاصی', link: '/network/ip' },
-      { name: 'VPN سازمانی', link: '/network/vpn' },
-      { name: 'ترافیک اضافه', link: '/network/traffic' },
-      { name: 'CDN', link: '/network/cdn' },
+      { name: 'نصب نرم افزار مدیریت شبکه', link: '/network/software' },
+      { name: 'خدمات VoIP', link: '/network/voip' },
+      { name: 'پیکربندی شبکه', link: '/network/config' },
+      { name: 'مانیتورینگ شبکه', link: '/network/monitoring' },
     ]
   },
   {
     title: 'سایر خدمات',
     services: [
-      { name: 'فروش سخت‌افزار', link: '/hardware' },
-      { name: 'طراحی سایت', link: '/webdesign' },
-      { name: 'سئو و بهینه‌سازی', link: '/seo' },
-      { name: 'مشاوره IT', link: '/consulting' },
+      { name: 'طراحی قالب سایت', link: '/webdesign/template' },
+      { name: 'فروش قالب‌های آماده', link: '/webdesign/templates' },
+      { name: 'طراحی لوگو', link: '/design/logo' },
+      { name: 'خدمات سئو', link: '/seo' },
     ]
   },
 ];
@@ -139,6 +142,9 @@ const UserPanelLayout = () => {
   const [whmcsStatus, setWhmcsStatus] = useState('connected'); // connected, disconnected, connecting
   const [showWhcmsNotification, setShowWhcmsNotification] = useState(false);
   const [sessionTimeLeft, setSessionTimeLeft] = useState(3600); // 1 hour in seconds
+  const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
+  const [showCreateTicket, setShowCreateTicket] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -212,6 +218,47 @@ const UserPanelLayout = () => {
   
   // هدایت به صفحه سفارش سرویس
   const navigateToServiceOrderPage = (serviceLink: string) => {
+    if (serviceLink === '/tickets/new') {
+      setShowCreateTicket(true);
+      return;
+    }
+    
+    if (serviceLink === '/tickets') {
+      setActiveTab('tickets');
+      return;
+    }
+    
+    if (serviceLink === '/invoices') {
+      setActiveTab('invoices');
+      return;
+    }
+    
+    if (serviceLink.startsWith('/vps')) {
+      setActiveTab('servers');
+      return;
+    }
+    
+    if (serviceLink.startsWith('/dedicated')) {
+      setActiveTab('dedicated');
+      return;
+    }
+    
+    if (serviceLink.startsWith('/hosting')) {
+      setActiveTab('hosting');
+      return;
+    }
+    
+    if (serviceLink.startsWith('/domain')) {
+      setActiveTab('domains');
+      return;
+    }
+    
+    if (serviceLink.startsWith('/cloud')) {
+      setActiveTab('cloud');
+      return;
+    }
+    
+    // For other links, navigate to the external page
     navigate(serviceLink);
   };
   
@@ -223,7 +270,35 @@ const UserPanelLayout = () => {
   // Handle sidebar item click
   const handleSidebarItemClick = (itemId: string) => {
     setActiveTab(itemId);
+    setShowNotifications(false);
+    setShowCreateTicket(false);
+    setActiveTicketId(null);
   };
+  
+  // Handle ticket creation
+  const handleTicketSubmit = () => {
+    setShowCreateTicket(false);
+    toast({
+      title: "تیکت ارسال شد",
+      description: "تیکت شما با موفقیت ثبت شد و در اسرع وقت به آن رسیدگی خواهد شد.",
+      duration: 3000,
+    });
+  };
+  
+  // View all notifications
+  const handleViewAllNotifications = () => {
+    setShowNotifications(true);
+    setShowCreateTicket(false);
+    setActiveTicketId(null);
+  };
+  
+  // Get ticket departments
+  const getTicketDepartments = () => [
+    { value: 'technical', label: 'پشتیبانی فنی' },
+    { value: 'billing', label: 'امور مالی' },
+    { value: 'sales', label: 'فروش' },
+    { value: 'general', label: 'عمومی' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex user-panel-container">
@@ -243,6 +318,7 @@ const UserPanelLayout = () => {
           setSearchQuery={setSearchQuery}
           sessionTimeLeft={formatTime(sessionTimeLeft)}
           onSidebarItemClick={handleSidebarItemClick}
+          onViewAllNotifications={handleViewAllNotifications}
         />
         
         {showWhcmsNotification && whmcsStatus === 'connected' && (
@@ -274,7 +350,22 @@ const UserPanelLayout = () => {
         )}
         
         <main className="p-6">
-          {activeTab === 'dashboard' ? (
+          {showCreateTicket ? (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-bold mb-6">ارسال تیکت جدید</h2>
+              <CreateTicketForm 
+                onSubmit={handleTicketSubmit} 
+                departments={getTicketDepartments()} 
+              />
+            </div>
+          ) : showNotifications ? (
+            <NotificationsPage />
+          ) : activeTicketId ? (
+            <TicketDetail 
+              ticketId={activeTicketId} 
+              onBack={() => setActiveTicketId(null)} 
+            />
+          ) : activeTab === 'dashboard' ? (
             <Dashboard 
               serviceCategories={serviceCategories} 
               navigateToServiceOrderPage={navigateToServiceOrderPage}
@@ -283,7 +374,10 @@ const UserPanelLayout = () => {
           ) : activeTab === 'profile' ? (
             <ProfilePage />
           ) : activeTab === 'tickets' ? (
-            <TicketsPage />
+            <TicketsPage 
+              onViewTicket={(ticketId) => setActiveTicketId(ticketId)} 
+              onCreateNewTicket={() => setShowCreateTicket(true)}
+            />
           ) : activeTab === 'wallet' ? (
             <WalletPage />
           ) : activeTab === 'downloads' ? (

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardCards from "./DashboardCards";
 import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
+import ServiceOrderSection from "./ServiceOrderSection";
 
 // Define the types for dashboard props
 interface ServiceCategory {
@@ -31,10 +32,6 @@ interface DashboardProps {
   serviceCategories: ServiceCategory[];
   navigateToServiceOrderPage: (serviceLink: string) => void;
   operatingSystems?: OperatingSystems;
-}
-
-interface ServerListProps {
-  type: string;
 }
 
 const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSystems }: DashboardProps) => {
@@ -77,40 +74,12 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
         </div>
       </div>
       
+      <ServiceOrderSection 
+        serviceCategories={serviceCategories} 
+        navigateToServiceOrderPage={navigateToServiceOrderPage} 
+      />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>سفارش سرویس جدید</CardTitle>
-            <CardDescription>
-              سرویس جدیدی سفارش دهید
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {serviceCategories.slice(0, 3).map((category, index) => (
-                <div key={index}>
-                  <h3 className="text-sm font-semibold mb-2">{category.title}</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {category.services.slice(0, 4).map((service, serviceIndex) => (
-                      <Button 
-                        key={serviceIndex} 
-                        variant="outline" 
-                        className="justify-start text-sm h-auto py-2"
-                        onClick={() => navigateToServiceOrderPage(service.link)}
-                      >
-                        {service.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              <Button className="w-full" onClick={() => window.open('/services', '_blank')}>
-                مشاهده همه خدمات
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
         <Card>
           <CardHeader>
             <CardTitle>تیکت‌های پشتیبانی</CardTitle>
@@ -138,10 +107,10 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               </div>
               
               <div className="pt-2">
-                <Button className="w-full" variant="outline" onClick={() => window.open('/tickets', '_blank')}>
+                <Button className="w-full" variant="outline" onClick={() => navigateToServiceOrderPage('/tickets')}>
                   مشاهده همه تیکت‌ها
                 </Button>
-                <Button className="w-full mt-2" onClick={() => window.open('/tickets/new', '_blank')}>
+                <Button className="w-full mt-2" onClick={() => navigateToServiceOrderPage('/tickets/new')}>
                   ارسال تیکت جدید
                 </Button>
               </div>
@@ -174,7 +143,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
                 <span className="text-xs font-semibold">پرداخت شده</span>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => window.open('/invoices', '_blank')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/invoices')}>
                 مشاهده همه فاکتورها
               </Button>
             </div>

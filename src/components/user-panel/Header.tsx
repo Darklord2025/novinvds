@@ -22,6 +22,7 @@ interface HeaderProps {
   setSearchQuery: (query: string) => void;
   sessionTimeLeft?: string;
   onSidebarItemClick?: (itemId: string) => void;
+  onViewAllNotifications?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -30,7 +31,8 @@ const Header: React.FC<HeaderProps> = ({
   searchQuery, 
   setSearchQuery, 
   sessionTimeLeft = "60:00",
-  onSidebarItemClick 
+  onSidebarItemClick,
+  onViewAllNotifications
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
@@ -42,6 +44,12 @@ const Header: React.FC<HeaderProps> = ({
   const handleSidebarItemClick = (itemId: string) => {
     if (onSidebarItemClick) {
       onSidebarItemClick(itemId);
+    }
+  };
+  
+  const handleViewAllNotifications = () => {
+    if (onViewAllNotifications) {
+      onViewAllNotifications();
     }
   };
   
@@ -135,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
               </DropdownMenuItem>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center text-blue-600 justify-center">
+            <DropdownMenuItem className="text-center text-blue-600 justify-center" onClick={handleViewAllNotifications}>
               مشاهده همه اعلان‌ها
             </DropdownMenuItem>
           </DropdownMenuContent>
