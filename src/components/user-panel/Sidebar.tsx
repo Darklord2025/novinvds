@@ -1,116 +1,86 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  User, 
-  Settings, 
-  Server, 
-  HardDrive, 
-  Globe, 
-  CreditCard, 
-  FileText, 
-  MessageSquare, 
-  LogOut, 
-  LayoutDashboard, 
-  ChevronRight,
-  ChevronLeft,
-  Wallet,
-  Download,
-  Database,
-  Cloud,
-  Calculator
-} from 'lucide-react';
+import React from 'react';
+import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, ChevronRight, Home } from 'lucide-react';
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-type SidebarItemType = {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-};
-
-type SidebarProps = {
+interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-};
+  items?: Array<{ id: string; label: string; icon: string }>;
+  onHomeClick?: () => void;
+}
 
-const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  const sidebarItems: SidebarItemType[] = [
-    { id: 'dashboard', label: 'داشبورد', icon: <LayoutDashboard size={20} /> },
-    { id: 'servers', label: 'سرورهای مجازی', icon: <Server size={20} /> },
-    { id: 'dedicated', label: 'سرورهای اختصاصی', icon: <HardDrive size={20} /> },
-    { id: 'cloud', label: 'سرور ابری', icon: <Cloud size={20} /> },
-    { id: 'hosting', label: 'هاستینگ', icon: <Database size={20} /> },
-    { id: 'domains', label: 'دامنه‌ها', icon: <Globe size={20} /> },
-    { id: 'calculator', label: 'محاسبه هزینه', icon: <Calculator size={20} /> },
-    { id: 'tickets', label: 'تیکت‌ها', icon: <MessageSquare size={20} /> },
-    { id: 'invoices', label: 'فاکتورها', icon: <FileText size={20} /> },
-    { id: 'transactions', label: 'تراکنش‌ها', icon: <CreditCard size={20} /> },
-    { id: 'wallet', label: 'کیف پول', icon: <Wallet size={20} /> },
-    { id: 'downloads', label: 'دانلودها', icon: <Download size={20} /> },
-    { id: 'profile', label: 'پروفایل', icon: <User size={20} /> },
-    { id: 'settings', label: 'تنظیمات', icon: <Settings size={20} /> },
-  ];
+const Sidebar = ({ activeTab, setActiveTab, items = [], onHomeClick }: SidebarProps) => {
+  const getIcon = (iconName: string, className: string = "h-5 w-5") => {
+    switch (iconName) {
+      case 'LayoutDashboard': return <LayoutDashboard className={className} />;
+      case 'Server': return <Server className={className} />;
+      case 'HardDrive': return <HardDrive className={className} />;
+      case 'Globe': return <Globe className={className} />;
+      case 'Database': return <Database className={className} />;
+      case 'Cloud': return <Cloud className={className} />;
+      case 'Calculator': return <Calculator className={className} />;
+      case 'TicketCheck': return <TicketCheck className={className} />;
+      case 'Receipt': return <Receipt className={className} />;
+      case 'History': return <History className={className} />;
+      case 'Wallet': return <Wallet className={className} />;
+      case 'Download': return <Download className={className} />;
+      case 'User': return <User className={className} />;
+      case 'Settings': return <Settings className={className} />;
+      default: return <div className={className} />;
+    }
+  };
 
   return (
-    <aside 
-      className={`bg-white shadow-md transition-all duration-300 h-screen sticky top-0 ${
-        collapsed ? 'w-20' : 'w-64'
-      }`}
-    >
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b">
-          <Link to="/" className={`flex items-center ${collapsed ? 'mr-8' : ''}`}>
-            {!collapsed && (
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                NovinVDS
-              </span>
-            )}
-          </Link>
-          <button 
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
+    <div className="w-64 bg-white border-l shadow-sm hidden md:block">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-blue-600">نوین وی‌دی‌اس</h2>
+          {onHomeClick && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              title="بازگشت به صفحه اصلی"
+              onClick={onHomeClick}
+            >
+              <Home className="h-5 w-5" />
+            </Button>
+          )}
         </div>
-        
-        <div className="flex-1 overflow-y-auto p-4">
-          <ul className="space-y-2">
-            {sidebarItems.map(item => (
-              <li key={item.id}>
-                <button
-                  className={`flex items-center w-full p-3 rounded-lg transition-colors ${
-                    activeTab === item.id 
-                      ? 'bg-blue-50 text-blue-600' 
-                      : 'hover:bg-gray-100 text-gray-700'
-                  }`}
-                  onClick={() => setActiveTab(item.id)}
-                >
-                  <div className="flex items-center justify-center">
-                    {item.icon}
-                  </div>
-                  {!collapsed && (
-                    <span className="mr-3 font-medium">{item.label}</span>
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        <div className="p-4 border-t">
-          <button 
-            className={`flex items-center w-full p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors ${
-              collapsed ? 'justify-center' : ''
-            }`}
-          >
-            <LogOut size={20} />
-            {!collapsed && <span className="mr-3 font-medium">خروج</span>}
-          </button>
-        </div>
+        <p className="text-sm text-gray-500 mt-1">پنل کاربری</p>
       </div>
-    </aside>
+      
+      <div className="py-4">
+        <ul className="space-y-1">
+          {items.map((item) => (
+            <li key={item.id}>
+              <button
+                className={cn(
+                  "w-full flex items-center px-4 py-2 text-sm text-right transition-colors",
+                  activeTab === item.id
+                    ? "text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
+                    : "text-gray-700 hover:bg-gray-100"
+                )}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <span className="ml-2">{getIcon(item.icon)}</span>
+                <span>{item.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className="mt-auto p-4 border-t">
+        <button
+          className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+        >
+          <LogOut className="h-5 w-5 ml-2" />
+          <span>خروج از حساب</span>
+        </button>
+      </div>
+    </div>
   );
 };
 

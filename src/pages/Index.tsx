@@ -31,6 +31,8 @@ const Index = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="NovinVDS - میزبانی وب، سرور مجازی و اختصاصی" />
         <meta name="twitter:description" content="ارائه دهنده خدمات تخصصی هاستینگ، سرور مجازی، سرور اختصاصی و راهکارهای شبکه با بالاترین کیفیت" />
+        <meta name="contact" content="09335732119" />
+        <meta name="email" content="info@novinvds.ir" />
       </Helmet>
       
       <Navbar />
@@ -40,7 +42,19 @@ const Index = () => {
       <VpsPlansSection />
       <DomainPricingSection />
       <HostingSection />
-      <CTASection />
+      <CTASection contactInfo={{
+        phone: "09335732119",
+        email: "info@novinvds.ir",
+        supportEmails: {
+          sales: "sales@novinvds.ir",
+          vps: "vps@novinvds.ir",
+          dedicated: "dedicated@novinvds.ir",
+          hosting: "hosting@novinvds.ir",
+          domain: "domain@novinvds.ir",
+          network: "network@novinvds.ir",
+          support: "support@novinvds.ir"
+        }
+      }} />
       <Footer />
     </div>
   );
