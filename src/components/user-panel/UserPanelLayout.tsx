@@ -435,7 +435,7 @@ const UserPanelLayout = () => {
               <a 
                 href={`mailto:${contactInfo.email}`} 
                 className="hover:text-blue-600 transition-colors"
-                >
+              >
                 {contactInfo.email}
               </a>
             </div>
