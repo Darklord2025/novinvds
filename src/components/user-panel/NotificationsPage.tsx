@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, CheckCircle, Bell, Trash2, Check, RefreshCw } from 'lucide-react';
+import { AlertCircle, CheckCircle, Bell, Trash2, Check, RefreshCw, ArrowLeft } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 interface Notification {
   id: string;
@@ -210,12 +210,17 @@ const NotificationsPage = () => {
           <div className="py-4 text-sm">
             {selectedNotification?.message}
           </div>
-          <DialogFooter className="sm:justify-start">
+          <DialogFooter className="sm:justify-start flex items-center justify-between">
             <Button variant="destructive" onClick={() => selectedNotification && deleteNotification(selectedNotification.id)}>
               <Trash2 className="h-4 w-4 mr-2" />
               حذف اعلان
             </Button>
-            <Button variant="outline" onClick={() => setSelectedNotification(null)}>بستن</Button>
+            <DialogClose asChild>
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4 ml-2" />
+                بستن
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

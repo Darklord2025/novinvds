@@ -24,6 +24,18 @@ const UserPanel = () => {
         <title>پنل کاربری - نوین وی دی اس | مدیریت سرویس‌ها و خدمات</title>
         <meta name="description" content="پنل کاربری نوین وی دی اس برای مدیریت سرویس‌های هاستینگ، سرور مجازی، سرور اختصاصی، سرور ابری، دامنه و غیره" />
         <meta name="keywords" content="پنل کاربری، مدیریت سرویس‌ها، سرور مجازی، هاستینگ، سرور اختصاصی، پشتیبانی" />
+        <style>
+          {`
+            body {
+              direction: rtl;
+              font-family: Vazirmatn, system-ui, sans-serif;
+            }
+            
+            .rtl {
+              direction: rtl;
+            }
+          `}
+        </style>
       </Helmet>
       <UserPanelLayout />
     </>

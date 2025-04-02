@@ -152,6 +152,7 @@ const UserPanelLayout = () => {
     // Set page direction to RTL and language to Farsi
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'fa';
+    document.body.classList.add('rtl');
     
     // اتصال به WHMCS در زمان بارگذاری
     // این بخش در حالت واقعی با استفاده از API به WHMCS متصل می‌شود
@@ -222,6 +223,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(true);
       setShowNotifications(false);
       setActiveTicketId(null);
+      setActiveTab('tickets');
       return;
     }
     
@@ -281,7 +283,7 @@ const UserPanelLayout = () => {
       return;
     }
     
-    // For other links, navigate to the external page
+    // برای لینک‌های دیگر، به صفحه خارجی هدایت کنید
     navigate(serviceLink);
   };
   
@@ -293,6 +295,8 @@ const UserPanelLayout = () => {
   // Handle sidebar item click
   const handleSidebarItemClick = (itemId: string) => {
     setActiveTab(itemId);
+    
+    // برای حل مشکل تیکت و عدم امکان بازگشت به منوهای دیگر
     setShowNotifications(false);
     setShowCreateTicket(false);
     setActiveTicketId(null);
@@ -301,6 +305,8 @@ const UserPanelLayout = () => {
   // Handle ticket creation
   const handleTicketSubmit = () => {
     setShowCreateTicket(false);
+    setActiveTab('tickets');
+    
     toast({
       title: "تیکت ارسال شد",
       description: "تیکت شما با موفقیت ثبت شد و در اسرع وقت به آن رسیدگی خواهد شد.",
@@ -387,7 +393,9 @@ const UserPanelLayout = () => {
           ) : activeTicketId ? (
             <TicketDetail 
               ticketId={activeTicketId} 
-              onClose={() => setActiveTicketId(null)} 
+              onClose={() => {
+                setActiveTicketId(null);
+              }} 
             />
           ) : activeTab === 'dashboard' ? (
             <Dashboard 
@@ -399,8 +407,12 @@ const UserPanelLayout = () => {
             <ProfilePage />
           ) : activeTab === 'tickets' ? (
             <TicketsPage 
-              onViewTicket={(ticketId) => setActiveTicketId(ticketId)} 
-              onCreateNewTicket={() => setShowCreateTicket(true)}
+              onViewTicket={(ticketId) => {
+                setActiveTicketId(ticketId);
+              }} 
+              onCreateNewTicket={() => {
+                setShowCreateTicket(true);
+              }}
             />
           ) : activeTab === 'wallet' ? (
             <WalletPage />
