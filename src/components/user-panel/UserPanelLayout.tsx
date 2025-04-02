@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -35,6 +34,7 @@ const sidebarItems = [
   { id: 'downloads', label: 'دانلودها', icon: 'Download' },
   { id: 'profile', label: 'پروفایل', icon: 'User' },
   { id: 'settings', label: 'تنظیمات', icon: 'Settings' },
+  { id: 'notifications', label: 'اعلان‌ها', icon: 'Bell' }
 ];
 
 // دسته‌بندی خدمات
@@ -313,6 +313,7 @@ const UserPanelLayout = () => {
     setShowNotifications(true);
     setShowCreateTicket(false);
     setActiveTicketId(null);
+    setActiveTab('notifications'); // Add this to highlight the notifications item in sidebar
   };
   
   // Get ticket departments
@@ -327,7 +328,7 @@ const UserPanelLayout = () => {
     <div className="min-h-screen bg-gray-50 flex user-panel-container">
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={handleSidebarItemClick} 
         items={sidebarItems}
         onHomeClick={handleReturnToHome}
         className=""
@@ -381,7 +382,7 @@ const UserPanelLayout = () => {
                 departments={getTicketDepartments()} 
               />
             </div>
-          ) : showNotifications ? (
+          ) : showNotifications || activeTab === 'notifications' ? (
             <NotificationsPage />
           ) : activeTicketId ? (
             <TicketDetail 

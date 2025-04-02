@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Server, Database, Globe, Shield, Network, Code } from 'lucide-react';
+import { Server, Database, Globe, Shield, Network, Code, HeadphonesIcon } from 'lucide-react';
 
 // Define the types for service order section props
 interface ServiceCategory {
@@ -52,7 +52,7 @@ const ServiceOrderSection = ({ serviceCategories, navigateToServiceOrderPage }: 
               <span>سایر خدمات</span>
             </TabsTrigger>
             <TabsTrigger value="support" className="flex items-center">
-              <Server className="h-4 w-4 mr-2" />
+              <HeadphonesIcon className="h-4 w-4 mr-2" />
               <span>پشتیبانی آنلاین</span>
             </TabsTrigger>
           </TabsList>
@@ -169,11 +169,11 @@ const ServiceOrderSection = ({ serviceCategories, navigateToServiceOrderPage }: 
           <TabsContent value="support" className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/tickets/new')}>
-                <Server className="h-8 w-8 mb-2" />
+                <HeadphonesIcon className="h-8 w-8 mb-2" />
                 <span>درخواست پشتیبانی آنلاین</span>
               </Button>
               <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/tickets')}>
-                <Server className="h-8 w-8 mb-2" />
+                <HeadphonesIcon className="h-8 w-8 mb-2" />
                 <span>تیکت‌های پشتیبانی</span>
               </Button>
             </div>
