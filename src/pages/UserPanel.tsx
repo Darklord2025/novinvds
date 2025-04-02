@@ -5,8 +5,17 @@ import { Helmet } from "react-helmet-async";
 
 const UserPanel = () => {
   useEffect(() => {
+    // تنظیم جهت و زبان صفحه
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'fa';
+    
+    // اضافه کردن کلاس RTL به بدنه سند
+    document.body.classList.add('rtl');
+    
+    return () => {
+      // پاکسازی کلاس RTL هنگام خروج از کامپوننت
+      document.body.classList.remove('rtl');
+    };
   }, []);
 
   return (

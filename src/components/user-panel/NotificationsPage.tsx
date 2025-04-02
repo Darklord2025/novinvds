@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, CheckCircle, Server, CreditCard, Bell, Trash2, Check } from 'lucide-react';
+import { AlertCircle, CheckCircle, Bell, Trash2, Check } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -116,11 +116,34 @@ const NotificationsPage = () => {
     }
   };
   
+  // تازه‌سازی صفحه
+  const refreshNotifications = () => {
+    const newNotification = {
+      id: Date.now().toString(),
+      title: 'اعلان جدید',
+      message: 'این یک اعلان جدید آزمایشی است که به لیست اضافه شده است.',
+      date: '1402/03/16 10:00',
+      type: 'info' as const,
+      read: false
+    };
+    
+    setNotifications([newNotification, ...notifications]);
+    
+    toast({
+      title: "تازه‌سازی",
+      description: "اطلاعات اعلان‌ها با موفقیت به‌روزرسانی شد.",
+    });
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">اعلان‌ها</h1>
         <div className="space-x-2 space-x-reverse">
+          <Button variant="outline" onClick={refreshNotifications} className="flex items-center">
+            <Bell className="ml-2 h-4 w-4" />
+            بازخوانی
+          </Button>
           <Button variant="outline" onClick={markAllAsRead} className="flex items-center">
             <Check className="ml-2 h-4 w-4" />
             خواندن همه
@@ -177,9 +200,9 @@ const NotificationsPage = () => {
         </TabsContent>
       </Tabs>
       
-      {/* Notification Details Dialog */}
+      {/* دیالوگ جزئیات اعلان */}
       <Dialog open={!!selectedNotification} onOpenChange={(open) => !open && setSelectedNotification(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{selectedNotification?.title}</DialogTitle>
             <DialogDescription className="text-right">{selectedNotification?.date}</DialogDescription>
