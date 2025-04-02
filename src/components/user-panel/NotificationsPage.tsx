@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, CheckCircle, Bell, Trash2, Check, RefreshCw, ArrowLeft } from 'lucide-react';
+import { AlertCircle, CheckCircle, Bell, Trash2, Check, RefreshCw, ArrowLeft, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface Notification {
   id: string;
@@ -58,6 +59,22 @@ const NotificationsPage = () => {
       date: '1402/03/01 08:45',
       type: 'info',
       read: true
+    },
+    {
+      id: '6',
+      title: 'ارتقاء سرورهای هاستینگ',
+      message: 'به اطلاع می‌رساند سرورهای هاستینگ لینوکس در روز جمعه ۵ خرداد ۱۴۰۲ از ساعت ۲۳ الی ۰۱ بامداد به‌منظور ارتقاء نرم‌افزاری با اختلال موقت همراه خواهند بود.',
+      date: '1402/02/28 10:20',
+      type: 'warning',
+      read: true
+    },
+    {
+      id: '7',
+      title: 'باقی‌مانده اعتبار',
+      message: 'کیف پول شما با مبلغ ۵۰۰,۰۰۰ تومان شارژ شد.',
+      date: '1402/02/25 14:35',
+      type: 'success',
+      read: true
     }
   ]);
   
@@ -78,6 +95,7 @@ const NotificationsPage = () => {
   
   const clearAllNotifications = () => {
     setNotifications([]);
+    setSelectedNotification(null);
     toast({
       title: "حذف اعلان‌ها",
       description: "تمام اعلان‌ها با موفقیت حذف شدند.",
@@ -100,6 +118,13 @@ const NotificationsPage = () => {
     });
   };
   
+  const getUnreadCount = (type = 'all') => {
+    if (type === 'all') {
+      return notifications.filter(n => !n.read).length;
+    }
+    return notifications.filter(n => !n.read && n.type === type).length;
+  };
+  
   const filteredNotifications = notifications.filter(notification => {
     if (activeTab === 'all') return true;
     if (activeTab === 'unread') return !notification.read;
@@ -112,11 +137,10 @@ const NotificationsPage = () => {
       case 'success': return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'warning': return <AlertCircle className="h-5 w-5 text-yellow-500" />;
       case 'error': return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'info': default: return <Bell className="h-5 w-5 text-blue-500" />;
+      case 'info': default: return <Info className="h-5 w-5 text-blue-500" />;
     }
   };
   
-  // تازه‌سازی صفحه
   const refreshNotifications = () => {
     const newNotification = {
       id: Date.now().toString(),
@@ -157,12 +181,47 @@ const NotificationsPage = () => {
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full">
-          <TabsTrigger value="all">همه</TabsTrigger>
-          <TabsTrigger value="unread">خوانده نشده</TabsTrigger>
+          <TabsTrigger value="all" className="relative">
+            همه
+            {getUnreadCount() > 0 && (
+              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
+                {getUnreadCount()}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="unread" className="relative">
+            خوانده نشده
+            {getUnreadCount() > 0 && (
+              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
+                {getUnreadCount()}
+              </Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="read">خوانده شده</TabsTrigger>
-          <TabsTrigger value="info">اطلاعات</TabsTrigger>
-          <TabsTrigger value="success">موفقیت</TabsTrigger>
-          <TabsTrigger value="warning">هشدار</TabsTrigger>
+          <TabsTrigger value="info" className="relative">
+            اطلاعات
+            {getUnreadCount('info') > 0 && (
+              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
+                {getUnreadCount('info')}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="success" className="relative">
+            موفقیت
+            {getUnreadCount('success') > 0 && (
+              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
+                {getUnreadCount('success')}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="warning" className="relative">
+            هشدار
+            {getUnreadCount('warning') > 0 && (
+              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
+                {getUnreadCount('warning')}
+              </Badge>
+            )}
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value={activeTab} className="mt-6">

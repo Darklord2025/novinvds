@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -15,6 +16,7 @@ import TransactionsPage from './TransactionsPage';
 import CreateTicketForm from './CreateTicketForm';
 import NotificationsPage from './NotificationsPage';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
+import SettingsPage from './SettingsPage';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
@@ -32,6 +34,7 @@ const sidebarItems = [
   { id: 'tickets', label: 'تیکت‌ها', icon: 'TicketCheck' },
   { id: 'invoices', label: 'فاکتورها', icon: 'Receipt' },
   { id: 'transactions', label: 'تراکنش‌ها', icon: 'History' },
+  { id: 'wallet', label: 'کیف پول', icon: 'Wallet' },
   { id: 'downloads', label: 'دانلودها', icon: 'Download' },
   { id: 'profile', label: 'پروفایل', icon: 'User' },
   { id: 'settings', label: 'تنظیمات', icon: 'Settings' },
@@ -39,24 +42,41 @@ const sidebarItems = [
   { id: 'announcements', label: 'اطلاعیه‌های مهم', icon: 'MegaphoneIcon' }
 ];
 
-// داده‌های منوی سایدبار
-
 // دسته‌بندی خدمات
 const serviceCategories = [
   { 
     title: 'خدمات میزبانی وب',
     services: [
-      { name: 'هاست لینوکس', link: '/hosting?type=linux' },
+      { name: 'هاست لینوکس ECO', link: '/hosting?type=linux-eco' },
+      { name: 'هاست لینوکس PRO', link: '/hosting?type=linux-pro' },
+      { name: 'هاست لینوکس ایران', link: '/hosting?type=linux-iran' },
+      { name: 'هاست وردپرس', link: '/hosting?type=wordpress' },
       { name: 'هاست ویندوز', link: '/hosting?type=windows' },
-      { name: 'سرور مجازی', link: '/vps' },
-      { name: 'سرور اختصاصی', link: '/dedicated' },
-      { name: 'سرور ابری', link: '/cloud' },
+    ]
+  },
+  {
+    title: 'سرور مجازی',
+    services: [
+      { name: 'سرور مجازی لینوکس', link: '/vps?type=linux' },
+      { name: 'سرور مجازی ویندوز', link: '/vps?type=windows' },
+      { name: 'سرور مجازی لینوکس ایران', link: '/vps?type=linux-iran' },
+      { name: 'سرور مجازی ویندوز ایران', link: '/vps?type=windows-iran' },
+      { name: 'سرور مجازی روزانه', link: '/vps?type=daily' },
+    ]
+  },
+  {
+    title: 'سرور اختصاصی',
+    services: [
+      { name: 'سرور اختصاصی ایران', link: '/dedicated?location=iran' },
+      { name: 'سرور اختصاصی اروپا', link: '/dedicated?location=europe' },
+      { name: 'سرور اختصاصی آمریکا', link: '/dedicated?location=america' },
+      { name: 'سرور اختصاصی آسیا', link: '/dedicated?location=asia' },
     ]
   },
   {
     title: 'خدمات دامنه',
     services: [
-      { name: 'ثبت دامنه', link: '/domain' },
+      { name: 'ثبت دامنه', link: '/domain/register' },
       { name: 'انتقال دامنه', link: '/domain/transfer' },
       { name: 'تمدید دامنه', link: '/domain/renew' },
     ]
@@ -68,24 +88,6 @@ const serviceCategories = [
       { name: 'آنتی ویروس', link: '/security/antivirus' },
       { name: 'فایروال', link: '/security/firewall' },
       { name: 'بکاپ گیری', link: '/security/backup' },
-    ]
-  },
-  {
-    title: 'خدمات شبکه',
-    services: [
-      { name: 'نصب نرم افزار مدیریت شبکه', link: '/network/software' },
-      { name: 'خدمات VoIP', link: '/network/voip' },
-      { name: 'پیکربندی شبکه', link: '/network/config' },
-      { name: 'مانیتورینگ شبکه', link: '/network/monitoring' },
-    ]
-  },
-  {
-    title: 'سایر خدمات',
-    services: [
-      { name: 'طراحی قالب سایت', link: '/webdesign/template' },
-      { name: 'فروش قالب‌های آماده', link: '/webdesign/templates' },
-      { name: 'طراحی لوگو', link: '/design/logo' },
-      { name: 'خدمات سئو', link: '/seo' },
     ]
   },
 ];
@@ -203,6 +205,11 @@ const UserPanelLayout = () => {
     return () => {
       clearTimeout(timer);
       clearInterval(sessionTimer);
+      
+      // پاکسازی تنظیمات RTL هنگام خروج از کامپوننت
+      document.body.classList.remove('rtl');
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
     };
   }, [toast]);
   
@@ -224,9 +231,11 @@ const UserPanelLayout = () => {
   
   // هدایت به صفحه سفارش سرویس
   const navigateToServiceOrderPage = (serviceLink: string) => {
+    // حالت‌های خاص مسیریابی
     if (serviceLink === '/tickets/new') {
       setShowCreateTicket(true);
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setActiveTicketId(null);
       setActiveTab('tickets');
       return;
@@ -235,6 +244,7 @@ const UserPanelLayout = () => {
     if (serviceLink === '/tickets') {
       setActiveTab('tickets');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
@@ -243,15 +253,18 @@ const UserPanelLayout = () => {
     if (serviceLink === '/invoices') {
       setActiveTab('invoices');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
     }
     
+    // مسیریابی برای انواع سرور
     if (serviceLink.startsWith('/vps')) {
       setActiveTab('servers');
       setShowNotifications(false);
       setShowCreateTicket(false);
+      setShowAnnouncements(false);
       setActiveTicketId(null);
       return;
     }
@@ -259,6 +272,7 @@ const UserPanelLayout = () => {
     if (serviceLink.startsWith('/dedicated')) {
       setActiveTab('dedicated');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
@@ -267,6 +281,7 @@ const UserPanelLayout = () => {
     if (serviceLink.startsWith('/hosting')) {
       setActiveTab('hosting');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
@@ -275,6 +290,7 @@ const UserPanelLayout = () => {
     if (serviceLink.startsWith('/domain')) {
       setActiveTab('domains');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
@@ -283,6 +299,7 @@ const UserPanelLayout = () => {
     if (serviceLink.startsWith('/cloud')) {
       setActiveTab('cloud');
       setShowNotifications(false);
+      setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
       return;
@@ -302,10 +319,10 @@ const UserPanelLayout = () => {
     setActiveTab(itemId);
     
     // Reset all panel states when changing tabs
-    setShowNotifications(false);
+    setShowNotifications(itemId === 'notifications');
+    setShowAnnouncements(itemId === 'announcements');
     setShowCreateTicket(false);
     setActiveTicketId(null);
-    setShowAnnouncements(false);
   };
   
   // Handle ticket creation
@@ -323,9 +340,10 @@ const UserPanelLayout = () => {
   // View all notifications
   const handleViewAllNotifications = () => {
     setShowNotifications(true);
+    setShowAnnouncements(false);
     setShowCreateTicket(false);
     setActiveTicketId(null);
-    setActiveTab('notifications'); // Add this to highlight the notifications item in sidebar
+    setActiveTab('notifications');
   };
   
   // View important announcements
@@ -344,6 +362,11 @@ const UserPanelLayout = () => {
     { value: 'sales', label: 'فروش' },
     { value: 'general', label: 'عمومی' },
   ];
+
+  // Close ticket detail and go back to tickets page
+  const handleCloseTicketDetail = () => {
+    setActiveTicketId(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex user-panel-container">
@@ -411,9 +434,7 @@ const UserPanelLayout = () => {
           ) : activeTicketId ? (
             <TicketDetail 
               ticketId={activeTicketId} 
-              onClose={() => {
-                setActiveTicketId(null);
-              }} 
+              onClose={handleCloseTicketDetail} 
             />
           ) : activeTab === 'dashboard' ? (
             <Dashboard 
@@ -423,6 +444,8 @@ const UserPanelLayout = () => {
             />
           ) : activeTab === 'profile' ? (
             <ProfilePage />
+          ) : activeTab === 'settings' ? (
+            <SettingsPage />
           ) : activeTab === 'tickets' ? (
             <TicketsPage 
               onViewTicket={(ticketId) => {
