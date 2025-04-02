@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bell, Search, Menu, User, Clock } from 'lucide-react';
+import { Bell, Search, Menu, User, Clock, MegaphoneIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -23,6 +23,7 @@ interface HeaderProps {
   sessionTimeLeft?: string;
   onSidebarItemClick?: (itemId: string) => void;
   onViewAllNotifications?: () => void;
+  onViewImportantAnnouncements?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -32,7 +33,8 @@ const Header: React.FC<HeaderProps> = ({
   setSearchQuery, 
   sessionTimeLeft = "60:00",
   onSidebarItemClick,
-  onViewAllNotifications
+  onViewAllNotifications,
+  onViewImportantAnnouncements
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
@@ -50,6 +52,12 @@ const Header: React.FC<HeaderProps> = ({
   const handleViewAllNotifications = () => {
     if (onViewAllNotifications) {
       onViewAllNotifications();
+    }
+  };
+  
+  const handleViewImportantAnnouncements = () => {
+    if (onViewImportantAnnouncements) {
+      onViewImportantAnnouncements();
     }
   };
   
@@ -110,6 +118,18 @@ const Header: React.FC<HeaderProps> = ({
           <Clock className="h-4 w-4 ml-1" />
           <span className="text-sm">{sessionTimeLeft}</span>
         </div>
+        
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative"
+          onClick={handleViewImportantAnnouncements}
+        >
+          <MegaphoneIcon className="h-5 w-5" />
+          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
+            2
+          </Badge>
+        </Button>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

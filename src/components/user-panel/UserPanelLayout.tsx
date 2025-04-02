@@ -14,6 +14,7 @@ import InvoicesPage from './InvoicesPage';
 import TransactionsPage from './TransactionsPage';
 import CreateTicketForm from './CreateTicketForm';
 import NotificationsPage from './NotificationsPage';
+import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
@@ -34,8 +35,11 @@ const sidebarItems = [
   { id: 'downloads', label: 'دانلودها', icon: 'Download' },
   { id: 'profile', label: 'پروفایل', icon: 'User' },
   { id: 'settings', label: 'تنظیمات', icon: 'Settings' },
-  { id: 'notifications', label: 'اعلان‌ها', icon: 'Bell' }
+  { id: 'notifications', label: 'اعلان‌ها', icon: 'Bell' },
+  { id: 'announcements', label: 'اطلاعیه‌های مهم', icon: 'MegaphoneIcon' }
 ];
+
+// داده‌های منوی سایدبار
 
 // دسته‌بندی خدمات
 const serviceCategories = [
@@ -145,6 +149,7 @@ const UserPanelLayout = () => {
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [showCreateTicket, setShowCreateTicket] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAnnouncements, setShowAnnouncements] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -296,10 +301,11 @@ const UserPanelLayout = () => {
   const handleSidebarItemClick = (itemId: string) => {
     setActiveTab(itemId);
     
-    // برای حل مشکل تیکت و عدم امکان بازگشت به منوهای دیگر
+    // Reset all panel states when changing tabs
     setShowNotifications(false);
     setShowCreateTicket(false);
     setActiveTicketId(null);
+    setShowAnnouncements(false);
   };
   
   // Handle ticket creation
@@ -320,6 +326,15 @@ const UserPanelLayout = () => {
     setShowCreateTicket(false);
     setActiveTicketId(null);
     setActiveTab('notifications'); // Add this to highlight the notifications item in sidebar
+  };
+  
+  // View important announcements
+  const handleViewImportantAnnouncements = () => {
+    setShowAnnouncements(true);
+    setShowNotifications(false);
+    setShowCreateTicket(false);
+    setActiveTicketId(null);
+    setActiveTab('announcements');
   };
   
   // Get ticket departments
@@ -349,6 +364,7 @@ const UserPanelLayout = () => {
           sessionTimeLeft={formatTime(sessionTimeLeft)}
           onSidebarItemClick={handleSidebarItemClick}
           onViewAllNotifications={handleViewAllNotifications}
+          onViewImportantAnnouncements={handleViewImportantAnnouncements}
         />
         
         {showWhcmsNotification && whmcsStatus === 'connected' && (
@@ -390,6 +406,8 @@ const UserPanelLayout = () => {
             </div>
           ) : showNotifications || activeTab === 'notifications' ? (
             <NotificationsPage />
+          ) : showAnnouncements || activeTab === 'announcements' ? (
+            <ImportantAnnouncementsPage />
           ) : activeTicketId ? (
             <TicketDetail 
               ticketId={activeTicketId} 

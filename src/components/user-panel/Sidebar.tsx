@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, ChevronRight, Home } from 'lucide-react';
+import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, ChevronRight, Home, Bell, Megaphone } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -29,6 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], 
       case 'Download': return <Download className={className} />;
       case 'User': return <User className={className} />;
       case 'Settings': return <Settings className={className} />;
+      case 'Bell': return <Bell className={className} />;
+      case 'MegaphoneIcon': return <Megaphone className={className} />;
       default: return <div className={className} />;
     }
   };
