@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -363,7 +362,7 @@ const UserPanelLayout = () => {
           ) : activeTicketId ? (
             <TicketDetail 
               ticketId={activeTicketId} 
-              onBack={() => setActiveTicketId(null)} 
+              onClose={() => setActiveTicketId(null)} 
             />
           ) : activeTab === 'dashboard' ? (
             <Dashboard 

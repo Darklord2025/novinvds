@@ -50,13 +50,13 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <TabsTrigger value="hosting">هاستینگ</TabsTrigger>
             </TabsList>
             <TabsContent value="servers" className="mt-6">
-              <ServerList type="vps" />
+              <ServerList serviceType="vps" />
             </TabsContent>
             <TabsContent value="domains" className="mt-6">
-              <ServerList type="domain" />
+              <ServerList serviceType="domain" />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
-              <ServerList type="hosting" />
+              <ServerList serviceType="hosting" />
             </TabsContent>
           </Tabs>
         </div>
