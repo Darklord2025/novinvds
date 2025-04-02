@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Server, HardDrive, Database, Globe, Shield, Network, Laptop, Headphones } from 'lucide-react';
+import { Server, Database, Globe, Shield, Network, Code } from 'lucide-react';
 
+// Define the types for service order section props
 interface ServiceCategory {
   title: string;
   services: Array<{
@@ -18,156 +19,166 @@ interface ServiceOrderSectionProps {
   navigateToServiceOrderPage: (serviceLink: string) => void;
 }
 
-const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ 
-  serviceCategories, 
-  navigateToServiceOrderPage 
-}) => {
-  const [activeCategory, setActiveCategory] = useState('web-hosting');
-  
-  // Define new service categories with updated information
-  const updatedServiceCategories = [
-    {
-      id: 'web-hosting',
-      title: 'میزبانی وب',
-      icon: <Database className="h-6 w-6" />,
-      color: 'bg-blue-500',
-      services: [
-        { name: 'هاست لینوکس', link: '/hosting?type=linux' },
-        { name: 'هاست ویندوز', link: '/hosting?type=windows' },
-        { name: 'سرور مجازی', link: '/vps' },
-        { name: 'سرور اختصاصی', link: '/dedicated' },
-        { name: 'سرور ابری', link: '/cloud' },
-      ]
-    },
-    {
-      id: 'domain',
-      title: 'خدمات دامنه',
-      icon: <Globe className="h-6 w-6" />,
-      color: 'bg-green-500',
-      services: [
-        { name: 'ثبت دامنه', link: '/domain' },
-        { name: 'انتقال دامنه', link: '/domain/transfer' },
-        { name: 'تمدید دامنه', link: '/domain/renew' },
-      ]
-    },
-    {
-      id: 'security',
-      title: 'خدمات امنیتی',
-      icon: <Shield className="h-6 w-6" />,
-      color: 'bg-red-500',
-      services: [
-        { name: 'گواهی SSL', link: '/ssl' },
-        { name: 'آنتی ویروس', link: '/security/antivirus' },
-        { name: 'فایروال', link: '/security/firewall' },
-        { name: 'بکاپ گیری', link: '/security/backup' },
-      ]
-    },
-    {
-      id: 'network',
-      title: 'خدمات شبکه',
-      icon: <Network className="h-6 w-6" />,
-      color: 'bg-purple-500',
-      services: [
-        { name: 'نصب نرم افزار مدیریت شبکه', link: '/network/software' },
-        { name: 'خدمات VoIP', link: '/network/voip' },
-        { name: 'پیکربندی شبکه', link: '/network/config' },
-        { name: 'مانیتورینگ شبکه', link: '/network/monitoring' },
-      ]
-    },
-    {
-      id: 'other',
-      title: 'سایر خدمات',
-      icon: <Laptop className="h-6 w-6" />,
-      color: 'bg-amber-500',
-      services: [
-        { name: 'طراحی قالب سایت', link: '/webdesign/template' },
-        { name: 'فروش قالب‌های آماده', link: '/webdesign/templates' },
-        { name: 'طراحی لوگو', link: '/design/logo' },
-        { name: 'خدمات سئو', link: '/seo' },
-      ]
-    },
-    {
-      id: 'support',
-      title: 'پشتیبانی تخصصی',
-      icon: <Headphones className="h-6 w-6" />,
-      color: 'bg-teal-500',
-      services: [
-        { name: 'پشتیبانی شبکه', link: '/support/network' },
-        { name: 'پشتیبانی سرور', link: '/support/server' },
-        { name: 'مشاوره تخصصی IT', link: '/support/consulting' },
-        { name: 'آموزش مدیریت سرور', link: '/support/training' },
-      ]
-    }
-  ];
-  
-  const getServiceIcon = (categoryId: string) => {
-    switch (categoryId) {
-      case 'web-hosting': return <Database className="h-6 w-6" />;
-      case 'domain': return <Globe className="h-6 w-6" />;
-      case 'security': return <Shield className="h-6 w-6" />;
-      case 'network': return <Network className="h-6 w-6" />;
-      case 'other': return <Laptop className="h-6 w-6" />;
-      case 'support': return <Headphones className="h-6 w-6" />;
-      default: return <Database className="h-6 w-6" />;
-    }
-  };
-  
+const ServiceOrderSection = ({ serviceCategories, navigateToServiceOrderPage }: ServiceOrderSectionProps) => {
   return (
-    <Card>
+    <Card className="mt-6">
       <CardHeader>
         <CardTitle>سفارش سرویس جدید</CardTitle>
         <CardDescription>
-          از میان خدمات زیر، سرویس مورد نظر خود را انتخاب کنید
+          از طریق این بخش می‌توانید سرویس‌های مورد نیاز خود را سفارش دهید
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {updatedServiceCategories.map((category) => (
-            <button
-              key={category.id}
-              className={`flex flex-col items-center justify-center p-3 rounded-lg transition-colors ${
-                activeCategory === category.id 
-                  ? `${category.color} text-white` 
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-              }`}
-              onClick={() => setActiveCategory(category.id)}
-            >
-              {category.icon}
-              <span className="mt-1 text-sm font-medium">{category.title}</span>
-            </button>
-          ))}
-        </div>
-        
-        <div className="space-y-4">
-          {updatedServiceCategories.map((category) => (
-            activeCategory === category.id && (
-              <div key={`content-${category.id}`} className="space-y-4 animate-in fade-in-50 duration-300">
-                <h3 className="text-lg font-semibold">{category.title}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {category.services.map((service, serviceIndex) => (
-                    <Button 
-                      key={serviceIndex} 
-                      variant="outline" 
-                      className="justify-start text-sm h-auto py-2 border-2 hover:border-blue-500 hover:bg-blue-50"
-                      onClick={() => navigateToServiceOrderPage(service.link)}
-                    >
-                      {service.name}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )
-          ))}
-        </div>
-        
-        <div className="mt-6">
-          <Button 
-            className="w-full" 
-            onClick={() => navigateToServiceOrderPage('/services')}
-          >
-            مشاهده همه خدمات
-          </Button>
-        </div>
+        <Tabs defaultValue="web-hosting">
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mb-6">
+            <TabsTrigger value="web-hosting" className="flex items-center">
+              <Database className="h-4 w-4 mr-2" />
+              <span>میزبانی وب</span>
+            </TabsTrigger>
+            <TabsTrigger value="domains" className="flex items-center">
+              <Globe className="h-4 w-4 mr-2" />
+              <span>دامنه‌ها</span>
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center">
+              <Shield className="h-4 w-4 mr-2" />
+              <span>امنیتی</span>
+            </TabsTrigger>
+            <TabsTrigger value="network" className="flex items-center">
+              <Network className="h-4 w-4 mr-2" />
+              <span>شبکه</span>
+            </TabsTrigger>
+            <TabsTrigger value="other" className="flex items-center">
+              <Code className="h-4 w-4 mr-2" />
+              <span>سایر خدمات</span>
+            </TabsTrigger>
+            <TabsTrigger value="support" className="flex items-center">
+              <Server className="h-4 w-4 mr-2" />
+              <span>پشتیبانی آنلاین</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="web-hosting" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/hosting?type=linux')}>
+                <Database className="h-8 w-8 mb-2" />
+                <span>هاست لینوکس</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/hosting?type=windows')}>
+                <Database className="h-8 w-8 mb-2" />
+                <span>هاست ویندوز</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/vps')}>
+                <Server className="h-8 w-8 mb-2" />
+                <span>سرور مجازی</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/dedicated')}>
+                <Server className="h-8 w-8 mb-2" />
+                <span>سرور اختصاصی</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/cloud')}>
+                <Server className="h-8 w-8 mb-2" />
+                <span>سرور ابری</span>
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="domains" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/domain')}>
+                <Globe className="h-8 w-8 mb-2" />
+                <span>ثبت دامنه</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/domain/transfer')}>
+                <Globe className="h-8 w-8 mb-2" />
+                <span>انتقال دامنه</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/domain/renew')}>
+                <Globe className="h-8 w-8 mb-2" />
+                <span>تمدید دامنه</span>
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="security" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/ssl')}>
+                <Shield className="h-8 w-8 mb-2" />
+                <span>گواهی SSL</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/security/antivirus')}>
+                <Shield className="h-8 w-8 mb-2" />
+                <span>آنتی ویروس</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/security/firewall')}>
+                <Shield className="h-8 w-8 mb-2" />
+                <span>فایروال</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/security/backup')}>
+                <Shield className="h-8 w-8 mb-2" />
+                <span>بکاپ گیری</span>
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="network" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/network/software')}>
+                <Network className="h-8 w-8 mb-2" />
+                <span>نصب نرم افزار مدیریت شبکه</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/network/voip')}>
+                <Network className="h-8 w-8 mb-2" />
+                <span>خدمات VoIP</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/network/config')}>
+                <Network className="h-8 w-8 mb-2" />
+                <span>پیکربندی شبکه</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/network/monitoring')}>
+                <Network className="h-8 w-8 mb-2" />
+                <span>مانیتورینگ شبکه</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/network/traffic')}>
+                <Network className="h-8 w-8 mb-2" />
+                <span>ترافیک اضافه</span>
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="other" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/webdesign/template')}>
+                <Code className="h-8 w-8 mb-2" />
+                <span>طراحی قالب سایت</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/webdesign/templates')}>
+                <Code className="h-8 w-8 mb-2" />
+                <span>فروش قالب‌های آماده</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/design/logo')}>
+                <Code className="h-8 w-8 mb-2" />
+                <span>طراحی لوگو</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/seo')}>
+                <Code className="h-8 w-8 mb-2" />
+                <span>خدمات سئو</span>
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="support" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/tickets/new')}>
+                <Server className="h-8 w-8 mb-2" />
+                <span>درخواست پشتیبانی آنلاین</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-4 flex flex-col" onClick={() => navigateToServiceOrderPage('/tickets')}>
+                <Server className="h-8 w-8 mb-2" />
+                <span>تیکت‌های پشتیبانی</span>
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

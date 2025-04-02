@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -219,41 +220,64 @@ const UserPanelLayout = () => {
   const navigateToServiceOrderPage = (serviceLink: string) => {
     if (serviceLink === '/tickets/new') {
       setShowCreateTicket(true);
+      setShowNotifications(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink === '/tickets') {
       setActiveTab('tickets');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink === '/invoices') {
       setActiveTab('invoices');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink.startsWith('/vps')) {
       setActiveTab('servers');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink.startsWith('/dedicated')) {
       setActiveTab('dedicated');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink.startsWith('/hosting')) {
       setActiveTab('hosting');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink.startsWith('/domain')) {
       setActiveTab('domains');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
     if (serviceLink.startsWith('/cloud')) {
       setActiveTab('cloud');
+      setShowNotifications(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
       return;
     }
     
