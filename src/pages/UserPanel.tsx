@@ -1,7 +1,7 @@
-
 import React, { useEffect } from 'react';
 import UserPanelLayout from '../components/user-panel/UserPanelLayout';
 import { Helmet } from "react-helmet-async";
+import { Button } from "@/components/ui/button";
 
 const UserPanel = () => {
   useEffect(() => {
