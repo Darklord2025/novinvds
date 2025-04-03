@@ -18,6 +18,7 @@ import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
 import SettingsPage from './SettingsPage';
 import DomainManagement from './DomainManagement';
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";

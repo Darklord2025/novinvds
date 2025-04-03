@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,9 +23,12 @@ interface OperatingSystems {
 export interface ServicesPageProps {
   serviceType: string;
   operatingSystems?: OperatingSystems;
+  onManage?: (serviceType: string, id: string) => void;
+  onReset?: (serviceType: string, id: string) => void;
+  onRenew?: (serviceType: string, id: string) => void;
 }
 
-const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
+const ServicesPage = ({ serviceType, operatingSystems, onManage, onReset, onRenew }: ServicesPageProps) => {
   const [view, setView] = useState('active');
   const [filter, setFilter] = useState('all');
   
@@ -309,20 +311,38 @@ const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {service.status === 'active' && (
-                    <Button size="sm" variant="outline" className="flex-1">
+                  {service.status === 'active' && onReset && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onReset(serviceType, service.id)}
+                    >
                       <Power className="h-4 w-4 mr-1" />
                       <span>ریستارت</span>
                     </Button>
                   )}
-                  <Button size="sm" variant="outline" className="flex-1">
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    <span>مدیریت</span>
-                  </Button>
-                  <Button size="sm" className="flex-1">
-                    <RotateCw className="h-4 w-4 mr-1" />
-                    <span>تمدید</span>
-                  </Button>
+                  {onManage && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onManage(serviceType, service.id)}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-1" />
+                      <span>مدیریت</span>
+                    </Button>
+                  )}
+                  {onRenew && (
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => onRenew(serviceType, service.id)}
+                    >
+                      <RotateCw className="h-4 w-4 mr-1" />
+                      <span>تمدید</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -383,20 +403,38 @@ const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {service.status === 'active' && (
-                    <Button size="sm" variant="outline" className="flex-1">
+                  {service.status === 'active' && onReset && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onReset(serviceType, service.id)}
+                    >
                       <Power className="h-4 w-4 mr-1" />
                       <span>ریبوت</span>
                     </Button>
                   )}
-                  <Button size="sm" variant="outline" className="flex-1">
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    <span>مدیریت</span>
-                  </Button>
-                  <Button size="sm" className="flex-1">
-                    <RotateCw className="h-4 w-4 mr-1" />
-                    <span>تمدید</span>
-                  </Button>
+                  {onManage && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onManage(serviceType, service.id)}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-1" />
+                      <span>مدیریت</span>
+                    </Button>
+                  )}
+                  {onRenew && (
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => onRenew(serviceType, service.id)}
+                    >
+                      <RotateCw className="h-4 w-4 mr-1" />
+                      <span>تمدید</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -453,14 +491,27 @@ const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <Button size="sm" variant="outline" className="flex-1">
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    <span>مدیریت سی پنل</span>
-                  </Button>
-                  <Button size="sm" className="flex-1">
-                    <RotateCw className="h-4 w-4 mr-1" />
-                    <span>تمدید</span>
-                  </Button>
+                  {onManage && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onManage(serviceType, service.id)}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-1" />
+                      <span>مدیریت سی پنل</span>
+                    </Button>
+                  )}
+                  {onRenew && (
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => onRenew(serviceType, service.id)}
+                    >
+                      <RotateCw className="h-4 w-4 mr-1" />
+                      <span>تمدید</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -524,9 +575,25 @@ const ServicesPage = ({ serviceType, operatingSystems }: ServicesPageProps) => {
                     <Switch id={`autorenew-${service.id}`} defaultChecked={service.details.autoRenew} />
                     <Label htmlFor={`autorenew-${service.id}`}>تمدید خودکار</Label>
                   </div>
-                  <Button size="sm">
-                    {service.status === 'expired' ? 'فعالسازی مجدد' : 'تمدید'}
-                  </Button>
+                  {onManage && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onManage(serviceType, service.id)}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-1" />
+                      <span>مدیریت دامنه</span>
+                    </Button>
+                  )}
+                  {onRenew && (
+                    <Button 
+                      size="sm"
+                      onClick={() => onRenew(serviceType, service.id)}
+                    >
+                      {service.status === 'expired' ? 'فعالسازی مجدد' : 'تمدید'}
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
