@@ -24,6 +24,7 @@ import {
   Wifi,
   LucideIcon 
 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 // Define the interface for service categories
 interface ServiceCategory {
@@ -219,6 +220,10 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
   const handleItemClick = (link: string) => {
     if (navigateToServiceOrderPage) {
       navigateToServiceOrderPage(link);
+      toast({
+        title: "هدایت به صفحه سفارش",
+        description: `در حال انتقال به صفحه سفارش سرویس...`,
+      });
       setIsServiceDialogOpen(false);
     }
   };
@@ -227,6 +232,18 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
   const handleCategorySelect = (category: ServiceCategory) => {
     setCurrentCategory(category);
     setIsServiceDialogOpen(true);
+  };
+
+  const handleOrderDetails = (orderId: number) => {
+    toast({
+      title: "مشاهده جزئیات سفارش",
+      description: `در حال بارگذاری جزئیات سفارش ${orderId}...`,
+      action: (
+        <Button variant="outline" onClick={() => toast({ title: "عملیات موفق" })}>
+          تأیید
+        </Button>
+      )
+    });
   };
 
   return (
@@ -325,9 +342,31 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
                       }</span>
                   </div>
                   <p className="text-gray-600 text-sm">تاریخ سفارش: {order.date}</p>
-                  <Button asChild variant="outline" className="mt-4 w-full">
-                    <Link to={`/order/${order.id}`}>مشاهده جزئیات</Link>
-                  </Button>
+                  <div className="flex flex-col space-y-2 mt-4">
+                    <Button onClick={() => handleOrderDetails(order.id)} variant="outline" className="w-full">
+                      مشاهده جزئیات
+                    </Button>
+                    {order.status === 'pending' && (
+                      <Button variant="default" className="w-full" onClick={() => {
+                        toast({
+                          title: "پرداخت فاکتور",
+                          description: "در حال انتقال به درگاه پرداخت...",
+                        });
+                      }}>
+                        پرداخت فاکتور
+                      </Button>
+                    )}
+                    {order.status !== 'cancelled' && (
+                      <Button variant="outline" className="w-full" onClick={() => {
+                        toast({
+                          title: "دانلود فاکتور",
+                          description: "در حال آماده‌سازی فاکتور برای دانلود...",
+                        });
+                      }}>
+                        دانلود فاکتور
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}

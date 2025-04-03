@@ -74,6 +74,25 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
     if (onReset) {
       onReset(serverToReset.type, serverToReset.id);
     }
+    
+    // Show progress toast
+    toast({
+      title: "در حال ریست سرور",
+      description: `لطفاً صبر کنید... سرور ${serverToReset.id} در حال ریست است.`
+    });
+    
+    // Simulate reset process
+    setTimeout(() => {
+      toast({
+        title: "ریست سرور انجام شد",
+        description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        )
+      });
+    }, 3000);
   };
 
   const handleManage = (id: string) => {
@@ -85,6 +104,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
   const handleRenew = (id: string) => {
     if (onRenew) {
       onRenew(getMappedServiceType(), id);
+      
+      toast({
+        title: "تمدید سرویس",
+        description: `درخواست تمدید سرویس ${id} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
+        action: (
+          <Button variant="outline">
+            ادامه به پرداخت
+          </Button>
+        )
+      });
     }
   };
 
