@@ -1,287 +1,199 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bell, Check, Info, AlertTriangle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, CheckCircle, Bell, Trash2, Check, RefreshCw, ArrowLeft, Info } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+
+// Define notification types
+type NotificationType = 'info' | 'warning' | 'success' | 'error';
 
 interface Notification {
-  id: string;
+  id: number;
   title: string;
-  message: string;
+  content: string;
   date: string;
-  type: 'success' | 'warning' | 'error' | 'info';
+  type: NotificationType;
   read: boolean;
 }
 
 const NotificationsPage = () => {
-  const { toast } = useToast();
+  // Sample notification data
   const [notifications, setNotifications] = useState<Notification[]>([
     {
-      id: '1',
-      title: 'تیکت پاسخ داده شد',
-      message: 'تیکت شماره #4321 با موضوع "مشکل در اتصال به سرور مجازی" پاسخ داده شده است.',
-      date: '1402/03/15 17:25',
+      id: 1,
+      title: 'سرویس شما نیاز به تمدید دارد',
+      content: 'سرور مجازی شما با شناسه VPS-124578 تا ۱۰ روز دیگر منقضی می‌شود. لطفا نسبت به تمدید آن اقدام کنید.',
+      date: '۱۴۰۲/۱۱/۱۵',
+      type: 'warning',
+      read: false
+    },
+    {
+      id: 2,
+      title: 'پرداخت موفق',
+      content: 'پرداخت شما به مبلغ ۱,۲۰۰,۰۰۰ تومان با موفقیت انجام شد. فاکتور خرید به ایمیل شما ارسال شده است.',
+      date: '۱۴۰۲/۱۱/۱۴',
+      type: 'success',
+      read: true
+    },
+    {
+      id: 3,
+      title: 'تیکت پشتیبانی پاسخ داده شد',
+      content: 'تیکت شماره #12458 با موضوع "مشکل در اتصال به سرور" توسط کارشناسان پشتیبانی پاسخ داده شد.',
+      date: '۱۴۰۲/۱۱/۱۰',
       type: 'info',
       read: false
     },
     {
-      id: '2',
-      title: 'سرور راه‌اندازی شد',
-      message: 'سرور مجازی شما با مشخصات Ubuntu 20.04 با موفقیت راه‌اندازی شد و آماده استفاده است.',
-      date: '1402/03/14 09:10',
-      type: 'success',
-      read: false
-    },
-    {
-      id: '3',
-      title: 'فاکتور جدید صادر شد',
-      message: 'فاکتور جدید به شماره #INV-1234 برای سرویس سرور مجازی شما صادر شده است. لطفاً نسبت به پرداخت آن اقدام نمایید.',
-      date: '1402/03/10 14:30',
-      type: 'warning',
-      read: true
-    },
-    {
-      id: '4',
-      title: 'اتمام فضای دیسک',
-      message: 'فضای دیسک سرور مجازی آلمان ۱ به بیش از 90% رسیده است. لطفاً نسبت به افزایش فضا یا پاکسازی فایل‌های اضافی اقدام نمایید.',
-      date: '1402/03/05 11:15',
+      id: 4,
+      title: 'هشدار استفاده از منابع',
+      content: 'سرور شما بیش از ۹۰٪ از منابع CPU را در ۲۴ ساعت گذشته استفاده کرده است. لطفا این موضوع را بررسی کنید.',
+      date: '۱۴۰۲/۱۱/۰۵',
       type: 'error',
+      read: false
+    },
+    {
+      id: 5,
+      title: 'ارتقاء سرویس',
+      content: 'ارتقاء سرویس هاستینگ شما با موفقیت انجام شد. منابع جدید از هم‌اکنون در دسترس هستند.',
+      date: '۱۴۰۲/۱۱/۰۱',
+      type: 'success',
       read: true
     },
     {
-      id: '5',
-      title: 'تخفیف ویژه',
-      message: 'به مناسبت عید سعید فطر، 20% تخفیف ویژه برای تمامی سرویس‌های هاستینگ و سرور مجازی در نظر گرفته شده است.',
-      date: '1402/03/01 08:45',
-      type: 'info',
-      read: true
-    },
-    {
-      id: '6',
-      title: 'ارتقاء سرورهای هاستینگ',
-      message: 'به اطلاع می‌رساند سرورهای هاستینگ لینوکس در روز جمعه ۵ خرداد ۱۴۰۲ از ساعت ۲۳ الی ۰۱ بامداد به‌منظور ارتقاء نرم‌افزاری با اختلال موقت همراه خواهند بود.',
-      date: '1402/02/28 10:20',
+      id: 6,
+      title: 'به‌روزرسانی نرم‌افزاری',
+      content: 'یک به‌روزرسانی امنیتی مهم برای سرور شما موجود است. توصیه می‌کنیم در اسرع وقت سرور خود را به‌روزرسانی کنید.',
+      date: '۱۴۰۲/۱۰/۲۵',
       type: 'warning',
       read: true
     },
     {
-      id: '7',
-      title: 'باقی‌مانده اعتبار',
-      message: 'کیف پول شما با مبلغ ۵۰۰,۰۰۰ تومان شارژ شد.',
-      date: '1402/02/25 14:35',
-      type: 'success',
+      id: 7,
+      title: 'تخفیف ویژه',
+      content: 'به مناسبت عید نوروز، ۳۰٪ تخفیف برای تمامی سرویس‌های میزبانی وب اعمال شده است. از کد تخفیف NOWRUZ1403 استفاده کنید.',
+      date: '۱۴۰۲/۱۰/۲۰',
+      type: 'info',
       read: true
     }
   ]);
-  
-  const [activeTab, setActiveTab] = useState('all');
+
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
-  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Mark notification as read
+  const markAsRead = (id: number) => {
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === id ? { ...notification, read: true } : notification
+      )
+    );
+  };
+
+  // Mark all notifications as read
   const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({
-      ...notification,
-      read: true
-    })));
-    
-    toast({
-      title: "خوانده شدن اعلان‌ها",
-      description: "تمام اعلان‌ها به عنوان خوانده شده علامت‌گذاری شدند.",
-    });
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification => ({ ...notification, read: true }))
+    );
   };
-  
-  const clearAllNotifications = () => {
-    setNotifications([]);
-    setSelectedNotification(null);
-    toast({
-      title: "حذف اعلان‌ها",
-      description: "تمام اعلان‌ها با موفقیت حذف شدند.",
-    });
-  };
-  
-  const markAsRead = (id: string) => {
-    setNotifications(notifications.map(notification => 
-      notification.id === id ? { ...notification, read: true } : notification
-    ));
-  };
-  
-  const deleteNotification = (id: string) => {
-    setNotifications(notifications.filter(notification => notification.id !== id));
-    setSelectedNotification(null);
-    
-    toast({
-      title: "حذف اعلان",
-      description: "اعلان با موفقیت حذف شد.",
-    });
-  };
-  
-  const getUnreadCount = (type = 'all') => {
-    if (type === 'all') {
-      return notifications.filter(n => !n.read).length;
-    }
-    return notifications.filter(n => !n.read && n.type === type).length;
-  };
-  
-  const filteredNotifications = notifications.filter(notification => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'unread') return !notification.read;
-    if (activeTab === 'read') return notification.read;
-    return notification.type === activeTab;
-  });
-  
-  const getNotificationIcon = (type: string) => {
-    switch(type) {
-      case 'success': return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'warning': return <AlertCircle className="h-5 w-5 text-yellow-500" />;
-      case 'error': return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'info': default: return <Info className="h-5 w-5 text-blue-500" />;
+
+  // Get icon based on notification type
+  const getNotificationIcon = (type: NotificationType) => {
+    switch (type) {
+      case 'info':
+        return <Info size={18} className="text-blue-500" />;
+      case 'warning':
+        return <AlertTriangle size={18} className="text-yellow-500" />;
+      case 'success':
+        return <Check size={18} className="text-green-500" />;
+      case 'error':
+        return <X size={18} className="text-red-500" />;
+      default:
+        return <Bell size={18} className="text-gray-500" />;
     }
   };
-  
-  const refreshNotifications = () => {
-    const newNotification = {
-      id: Date.now().toString(),
-      title: 'اعلان جدید',
-      message: 'این یک اعلان جدید آزمایشی است که به لیست اضافه شده است.',
-      date: '1402/03/16 10:00',
-      type: 'info' as const,
-      read: false
-    };
-    
-    setNotifications([newNotification, ...notifications]);
-    
-    toast({
-      title: "تازه‌سازی",
-      description: "اطلاعات اعلان‌ها با موفقیت به‌روزرسانی شد.",
-    });
+
+  // Handle notification click
+  const handleNotificationClick = (notification: Notification) => {
+    setSelectedNotification(notification);
+    markAsRead(notification.id);
+    setIsDialogOpen(true);
   };
-  
+
+  const unreadCount = notifications.filter(notification => !notification.read).length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">اعلان‌ها</h1>
-        <div className="space-x-2 space-x-reverse">
-          <Button variant="outline" onClick={refreshNotifications} className="flex items-center">
-            <RefreshCw className="ml-2 h-4 w-4" />
-            بازخوانی
-          </Button>
-          <Button variant="outline" onClick={markAllAsRead} className="flex items-center">
-            <Check className="ml-2 h-4 w-4" />
-            خواندن همه
-          </Button>
-          <Button variant="outline" onClick={clearAllNotifications} className="flex items-center">
-            <Trash2 className="ml-2 h-4 w-4" />
-            پاک کردن همه
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold">اعلان‌ها</h1>
+          <p className="text-gray-500">مدیریت اعلان‌های سیستم</p>
+        </div>
+        <div className="flex space-x-2 space-x-reverse">
+          {unreadCount > 0 && (
+            <Button variant="outline" onClick={markAllAsRead}>
+              خواندن همه
+            </Button>
+          )}
+          <Badge variant="secondary">{unreadCount} اعلان خوانده نشده</Badge>
         </div>
       </div>
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full">
-          <TabsTrigger value="all" className="relative">
-            همه
-            {getUnreadCount() > 0 && (
-              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
-                {getUnreadCount()}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="unread" className="relative">
-            خوانده نشده
-            {getUnreadCount() > 0 && (
-              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
-                {getUnreadCount()}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="read">خوانده شده</TabsTrigger>
-          <TabsTrigger value="info" className="relative">
-            اطلاعات
-            {getUnreadCount('info') > 0 && (
-              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
-                {getUnreadCount('info')}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="success" className="relative">
-            موفقیت
-            {getUnreadCount('success') > 0 && (
-              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
-                {getUnreadCount('success')}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="warning" className="relative">
-            هشدار
-            {getUnreadCount('warning') > 0 && (
-              <Badge className="absolute -top-1 -left-1 h-5 w-5 flex items-center justify-center p-0">
-                {getUnreadCount('warning')}
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="mt-6">
-          {filteredNotifications.length > 0 ? (
-            <div className="space-y-4">
-              {filteredNotifications.map((notification) => (
-                <Card key={notification.id} className={`cursor-pointer transition-all hover:shadow-md ${!notification.read ? 'bg-blue-50 border-blue-200' : ''}`}>
-                  <CardContent className="p-4" onClick={() => {
-                    setSelectedNotification(notification);
-                    markAsRead(notification.id);
-                  }}>
-                    <div className="flex items-start space-x-4 space-x-reverse">
-                      <div className="p-2 rounded-full bg-gray-100">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-medium">{notification.title}</h3>
-                          <span className="text-xs text-gray-500">{notification.date}</span>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+      <div className="grid gap-4">
+        {notifications.map(notification => (
+          <Card 
+            key={notification.id} 
+            className={`cursor-pointer transition-colors hover:bg-gray-50 ${!notification.read ? 'border-r-4 border-blue-500' : ''}`}
+            onClick={() => handleNotificationClick(notification)}
+          >
+            <CardContent className="p-4 flex items-start">
+              <div className="flex-shrink-0 ml-4 mt-1">
+                {getNotificationIcon(notification.type)}
+              </div>
+              <div className="flex-grow">
+                <div className="flex justify-between">
+                  <h3 className={`font-semibold ${!notification.read ? 'text-blue-600' : ''}`}>{notification.title}</h3>
+                  <span className="text-sm text-gray-500">{notification.date}</span>
+                </div>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.content}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {notifications.length === 0 && (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Bell className="mx-auto text-gray-400 mb-4" size={48} />
+              <h3 className="text-lg font-medium text-gray-500">هیچ اعلانی وجود ندارد</h3>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        {selectedNotification && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center">
+                {getNotificationIcon(selectedNotification.type)}
+                <span className="mr-2">{selectedNotification.title}</span>
+              </DialogTitle>
+              <DialogDescription className="text-left text-gray-500">
+                {selectedNotification.date}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4">
+              <p className="text-gray-700">{selectedNotification.content}</p>
             </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <Bell className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ اعلانی یافت نشد</h3>
-              <p className="text-gray-500">در حال حاضر هیچ اعلانی برای نمایش وجود ندارد.</p>
+            <div className="mt-6 flex justify-end">
+              <DialogClose asChild>
+                <Button variant="outline">بستن</Button>
+              </DialogClose>
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
-      
-      {/* دیالوگ جزئیات اعلان */}
-      <Dialog open={!!selectedNotification} onOpenChange={(open) => !open && setSelectedNotification(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{selectedNotification?.title}</DialogTitle>
-            <DialogDescription className="text-right">{selectedNotification?.date}</DialogDescription>
-          </DialogHeader>
-          <div className="py-4 text-sm">
-            {selectedNotification?.message}
-          </div>
-          <DialogFooter className="sm:justify-start flex items-center justify-between">
-            <Button variant="destructive" onClick={() => selectedNotification && deleteNotification(selectedNotification.id)}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              حذف اعلان
-            </Button>
-            <DialogClose asChild>
-              <Button variant="outline">
-                <ArrowLeft className="h-4 w-4 ml-2" />
-                بستن
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
+          </DialogContent>
+        )}
       </Dialog>
     </div>
   );

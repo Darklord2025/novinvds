@@ -29,7 +29,7 @@ interface OperatingSystems {
 }
 
 interface DashboardProps {
-  serviceCategories: ServiceCategory[];
+  serviceCategories?: ServiceCategory[];
   navigateToServiceOrderPage: (serviceLink: string) => void;
   operatingSystems?: OperatingSystems;
 }
@@ -74,9 +74,8 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
         </div>
       </div>
       
-      {/* Pass the correct props to ServiceOrderSection */}
+      {/* Pass the navigateToServiceOrderPage prop to ServiceOrderSection */}
       <ServiceOrderSection 
-        serviceCategories={serviceCategories}
         navigateToServiceOrderPage={navigateToServiceOrderPage}
       />
       
