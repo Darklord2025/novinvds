@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Server, Globe, Database, HardDrive, Shield, Network, Code, Headset, LayoutTemplate, Monitor } from "lucide-react";
+import { Server, Globe, Database, HardDrive, Shield, Network, Code, Headset, LayoutTemplate, Monitor, LucideIcon } from "lucide-react";
 
 // Define the interface for service categories
 interface ServiceCategory {
@@ -20,7 +20,7 @@ interface ServiceOrder {
   title: string;
   date: string;
   status: 'active' | 'pending' | 'completed' | 'cancelled';
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement> & { size?: number }>; // Add size prop here
+  icon: LucideIcon; // Use the LucideIcon type directly
 }
 
 // Define the component props
