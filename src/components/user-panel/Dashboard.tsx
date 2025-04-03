@@ -74,9 +74,10 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
         </div>
       </div>
       
+      {/* Pass the correct props to ServiceOrderSection */}
       <ServiceOrderSection 
-        serviceCategories={serviceCategories} 
-        navigateToServiceOrderPage={navigateToServiceOrderPage} 
+        serviceCategories={serviceCategories}
+        navigateToServiceOrderPage={navigateToServiceOrderPage}
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

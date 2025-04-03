@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -5,15 +6,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Server, Globe, Database, HardDrive, Shield, Network, Code, Headset, LayoutTemplate, Monitor } from "lucide-react";
 
+// Define the interface for service categories
+interface ServiceCategory {
+  title: string;
+  services: Array<{
+    name: string;
+    link: string;
+  }>;
+}
+
 interface ServiceOrder {
   id: number;
   title: string;
   date: string;
   status: 'active' | 'pending' | 'completed' | 'cancelled';
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement> & { size?: number }>; // Add size prop here
 }
 
-const ServiceOrderSection: React.FC = () => {
+// Define the component props
+interface ServiceOrderSectionProps {
+  serviceCategories?: ServiceCategory[];
+  navigateToServiceOrderPage?: (serviceLink: string) => void;
+}
+
+const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCategories, navigateToServiceOrderPage }) => {
   const [activeTab, setActiveTab] = useState('vps');
 
   const serviceOrders: ServiceOrder[] = [
@@ -30,6 +46,13 @@ const ServiceOrderSection: React.FC = () => {
   ];
 
   const filteredOrders = (type: string) => serviceOrders.filter(order => order.title.toLowerCase().includes(type));
+
+  // Handle item click if navigateToServiceOrderPage is provided
+  const handleItemClick = (link: string) => {
+    if (navigateToServiceOrderPage) {
+      navigateToServiceOrderPage(link);
+    }
+  };
 
   return (
     <section className="container mx-auto px-4 py-12">
