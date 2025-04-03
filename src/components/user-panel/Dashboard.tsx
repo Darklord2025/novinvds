@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/components/ui/use-toast";
 import DashboardCards from "./DashboardCards";
 import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
 import ServiceOrderSection from "./ServiceOrderSection";
+import { LucideIcon } from 'lucide-react';
 
 // Define the types for dashboard props
 interface ServiceCategory {
@@ -35,6 +37,57 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSystems }: DashboardProps) => {
+  const [activeTab, setActiveTab] = useState('servers');
+  
+  const handleReset = (serverType: string, serverId: string) => {
+    toast({
+      title: "تأیید ریست سرور",
+      description: `آیا از ریست سرور ${serverId} اطمینان دارید؟`,
+      action: (
+        <div className="flex gap-2 mt-2">
+          <Button variant="destructive" onClick={() => confirmReset(serverType, serverId)}>
+            تأیید
+          </Button>
+          <Button variant="outline" onClick={() => toast({ title: "عملیات لغو شد" })}>
+            انصراف
+          </Button>
+        </div>
+      )
+    });
+  };
+
+  const confirmReset = (serverType: string, serverId: string) => {
+    toast({
+      title: "در حال ریست سرور",
+      description: `لطفاً صبر کنید... سرور ${serverId} در حال ریست است.`
+    });
+    
+    // Simulate reset process
+    setTimeout(() => {
+      toast({
+        title: "ریست سرور انجام شد",
+        description: `ریست سرور ${serverId} با موفقیت انجام شد.`,
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        )
+      });
+    }, 3000);
+  };
+  
+  const handleRenew = (serviceType: string, serviceId: string) => {
+    toast({
+      title: "تمدید سرویس",
+      description: `درخواست تمدید سرویس ${serviceId} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
+      action: (
+        <Button variant="outline" onClick={() => navigateToServiceOrderPage(`/renew/${serviceType}/${serviceId}`)}>
+          ادامه
+        </Button>
+      )
+    });
+  };
+  
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">داشبورد</h1>
@@ -43,20 +96,51 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Tabs defaultValue="servers">
-            <TabsList className="grid w-full grid-cols-3">
+          <Tabs defaultValue="servers" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="servers">سرورهای مجازی</TabsTrigger>
+              <TabsTrigger value="dedicated">سرورهای اختصاصی</TabsTrigger>
+              <TabsTrigger value="cloud">سرورهای ابری</TabsTrigger>
               <TabsTrigger value="domains">دامنه‌ها</TabsTrigger>
               <TabsTrigger value="hosting">هاستینگ</TabsTrigger>
             </TabsList>
             <TabsContent value="servers" className="mt-6">
-              <ServerList serviceType="vps" />
+              <ServerList 
+                serviceType="vps" 
+                onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
+                onReset={(id) => handleReset('vps', id)} 
+                onRenew={(id) => handleRenew('vps', id)} 
+              />
+            </TabsContent>
+            <TabsContent value="dedicated" className="mt-6">
+              <ServerList 
+                serviceType="dedicated" 
+                onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
+                onReset={(id) => handleReset('dedicated', id)} 
+                onRenew={(id) => handleRenew('dedicated', id)} 
+              />
+            </TabsContent>
+            <TabsContent value="cloud" className="mt-6">
+              <ServerList 
+                serviceType="cloud" 
+                onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
+                onReset={(id) => handleReset('cloud', id)} 
+                onRenew={(id) => handleRenew('cloud', id)} 
+              />
             </TabsContent>
             <TabsContent value="domains" className="mt-6">
-              <ServerList serviceType="domain" />
+              <ServerList 
+                serviceType="domain" 
+                onManage={(id) => navigateToServiceOrderPage(`/manage/domain/${id}`)} 
+                onRenew={(id) => handleRenew('domain', id)} 
+              />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
-              <ServerList serviceType="hosting" />
+              <ServerList 
+                serviceType="hosting" 
+                onManage={(id) => navigateToServiceOrderPage(`/manage/hosting/${id}`)} 
+                onRenew={(id) => handleRenew('hosting', id)} 
+              />
             </TabsContent>
           </Tabs>
         </div>

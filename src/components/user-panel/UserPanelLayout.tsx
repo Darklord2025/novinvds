@@ -16,6 +16,7 @@ import CreateTicketForm from './CreateTicketForm';
 import NotificationsPage from './NotificationsPage';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
 import SettingsPage from './SettingsPage';
+import DomainManagement from './DomainManagement';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
@@ -151,6 +152,7 @@ const UserPanelLayout = () => {
   const [showCreateTicket, setShowCreateTicket] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
+  const [activeDomainId, setActiveDomainId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -228,14 +230,15 @@ const UserPanelLayout = () => {
     });
   };
   
-  // هدایت به صفحه سفارش سرویس
+  // Handle redirection to service order page
   const navigateToServiceOrderPage = (serviceLink: string) => {
-    // حالت‌های خاص مسیریابی
+    // Handle special navigation cases
     if (serviceLink === '/tickets/new') {
       setShowCreateTicket(true);
       setShowNotifications(false);
       setShowAnnouncements(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       setActiveTab('tickets');
       return;
     }
@@ -246,6 +249,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
@@ -255,16 +259,30 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
-    // مسیریابی برای انواع سرور
+    // Handle domain management navigation
+    if (serviceLink.startsWith('/manage/domain/')) {
+      const domainId = serviceLink.split('/').pop() || '';
+      setActiveTab('domains');
+      setActiveDomainId(domainId);
+      setShowNotifications(false);
+      setShowAnnouncements(false);
+      setShowCreateTicket(false);
+      setActiveTicketId(null);
+      return;
+    }
+    
+    // Handle service type navigation
     if (serviceLink.startsWith('/vps')) {
       setActiveTab('servers');
       setShowNotifications(false);
       setShowCreateTicket(false);
       setShowAnnouncements(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
@@ -274,6 +292,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
@@ -283,6 +302,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
@@ -292,6 +312,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
@@ -301,10 +322,11 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveDomainId(null);
       return;
     }
     
-    // برای لینک‌های دیگر، به صفحه خارجی هدایت کنید
+    // For other links, navigate to external page
     navigate(serviceLink);
   };
   
@@ -322,6 +344,7 @@ const UserPanelLayout = () => {
     setShowAnnouncements(itemId === 'announcements');
     setShowCreateTicket(false);
     setActiveTicketId(null);
+    setActiveDomainId(null);
   };
   
   // Handle ticket creation
@@ -342,6 +365,7 @@ const UserPanelLayout = () => {
     setShowAnnouncements(false);
     setShowCreateTicket(false);
     setActiveTicketId(null);
+    setActiveDomainId(null);
     setActiveTab('notifications');
   };
   
@@ -351,6 +375,7 @@ const UserPanelLayout = () => {
     setShowNotifications(false);
     setShowCreateTicket(false);
     setActiveTicketId(null);
+    setActiveDomainId(null);
     setActiveTab('announcements');
   };
   
@@ -365,6 +390,11 @@ const UserPanelLayout = () => {
   // Close ticket detail and go back to tickets page
   const handleCloseTicketDetail = () => {
     setActiveTicketId(null);
+  };
+
+  // Handle close domain management
+  const handleCloseDomainManagement = () => {
+    setActiveDomainId(null);
   };
 
   return (
@@ -435,6 +465,11 @@ const UserPanelLayout = () => {
               ticketId={activeTicketId} 
               onClose={handleCloseTicketDetail} 
             />
+          ) : activeDomainId ? (
+            <DomainManagement 
+              domainId={activeDomainId}
+              onClose={handleCloseDomainManagement}
+            />
           ) : activeTab === 'dashboard' ? (
             <Dashboard 
               serviceCategories={serviceCategories} 
@@ -468,6 +503,59 @@ const UserPanelLayout = () => {
             <ServicesPage 
               serviceType={activeTab} 
               operatingSystems={operatingSystems}
+              onManage={(serviceType, id) => {
+                if (serviceType === 'domain') {
+                  setActiveDomainId(id);
+                } else {
+                  navigateToServiceOrderPage(`/manage/${serviceType}/${id}`);
+                }
+              }}
+              onReset={(serviceType, id) => {
+                const serverType = serviceType === 'servers' ? 'vps' : serviceType;
+                toast({
+                  title: "تأیید ریست سرور",
+                  description: `آیا از ریست سرور ${id} اطمینان دارید؟`,
+                  action: (
+                    <div className="flex gap-2 mt-2">
+                      <Button variant="destructive" onClick={() => {
+                        toast({
+                          title: "در حال ریست سرور",
+                          description: `لطفاً صبر کنید... سرور ${id} در حال ریست است.`
+                        });
+                        
+                        // Simulate reset process
+                        setTimeout(() => {
+                          toast({
+                            title: "ریست سرور انجام شد",
+                            description: `ریست سرور ${id} با موفقیت انجام شد.`,
+                            action: (
+                              <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+                                تأیید
+                              </Button>
+                            )
+                          });
+                        }, 3000);
+                      }}>
+                        تأیید
+                      </Button>
+                      <Button variant="outline" onClick={() => toast({ title: "عملیات لغو شد" })}>
+                        انصراف
+                      </Button>
+                    </div>
+                  )
+                });
+              }}
+              onRenew={(serviceType, id) => {
+                toast({
+                  title: "تمدید سرویس",
+                  description: `درخواست تمدید سرویس ${id} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
+                  action: (
+                    <Button variant="outline" onClick={() => navigateToServiceOrderPage(`/renew/${serviceType}/${id}`)}>
+                      ادامه
+                    </Button>
+                  )
+                });
+              }}
             />
           ) : (
             <DevelopmentMessage />

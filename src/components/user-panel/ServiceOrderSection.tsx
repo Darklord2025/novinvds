@@ -4,7 +4,26 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Server, Globe, Database, HardDrive, Shield, Network, Code, Headset, LayoutTemplate, Monitor, LucideIcon, Cloud, Download, ShoppingCart, Tag, CreditCard, Settings, Wifi } from "lucide-react";
+import { 
+  Server, 
+  Globe, 
+  Database, 
+  HardDrive, 
+  Shield, 
+  Network, 
+  Code, 
+  Headset, 
+  LayoutTemplate, 
+  Monitor, 
+  Cloud, 
+  Download, 
+  ShoppingCart, 
+  Tag, 
+  CreditCard, 
+  Settings, 
+  Wifi,
+  LucideIcon 
+} from "lucide-react";
 
 // Define the interface for service categories
 interface ServiceCategory {
@@ -121,7 +140,10 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         { name: 'ترافیک اضافه', link: '/network/traffic', description: 'خرید ترافیک اضافه برای سرورها' },
         { name: 'IP اختصاصی', link: '/network/ip', description: 'آدرس IP اختصاصی برای سرورها' },
         { name: 'VPN اختصاصی', link: '/network/vpn', description: 'سرویس VPN اختصاصی برای کسب و کارها' },
-        { name: 'CDN', link: '/network/cdn', description: 'شبکه توزیع محتوا برای وب‌سایت‌ها' }
+        { name: 'CDN', link: '/network/cdn', description: 'شبکه توزیع محتوا برای وب‌سایت‌ها' },
+        { name: 'هارد اضافه', link: '/network/extra-storage', description: 'افزودن فضای ذخیره‌سازی اضافی' },
+        { name: 'رم اضافه', link: '/network/extra-ram', description: 'افزایش حافظه رم سرور' },
+        { name: 'سی پی یو اضافه', link: '/network/extra-cpu', description: 'افزایش توان پردازشی سرور' }
       ]
     },
     {
@@ -132,7 +154,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         { name: 'cPanel', link: '/panels/cpanel', description: 'پنل مدیریت هاستینگ cPanel' },
         { name: 'DirectAdmin', link: '/panels/directadmin', description: 'پنل مدیریت هاستینگ DirectAdmin' },
         { name: 'Plesk', link: '/panels/plesk', description: 'پنل مدیریت هاستینگ Plesk' },
-        { name: 'WHM', link: '/panels/whm', description: 'پنل مدیریت هاستینگ WHM' }
+        { name: 'WHM', link: '/panels/whm', description: 'پنل مدیریت هاستینگ WHM' },
+        { name: 'Virtualmin', link: '/panels/virtualmin', description: 'پنل مدیریت هاستینگ Virtualmin' },
+        { name: 'Webmin', link: '/panels/webmin', description: 'پنل مدیریت سرور Webmin' }
       ]
     },
     {
@@ -143,7 +167,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         { name: 'طراحی قالب سایت', link: '/design/template', description: 'طراحی اختصاصی قالب وب‌سایت' },
         { name: 'قالب‌های آماده', link: '/design/ready', description: 'فروش قالب‌های آماده وب‌سایت' },
         { name: 'طراحی لوگو', link: '/design/logo', description: 'طراحی لوگو برای کسب و کارها' },
-        { name: 'طراحی UI/UX', link: '/design/ui-ux', description: 'طراحی رابط کاربری و تجربه کاربری' }
+        { name: 'طراحی UI/UX', link: '/design/ui-ux', description: 'طراحی رابط کاربری و تجربه کاربری' },
+        { name: 'طراحی اپلیکیشن', link: '/design/app', description: 'طراحی اپلیکیشن موبایل و وب' }
       ]
     },
     {
@@ -154,7 +179,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         { name: 'پشتیبانی فنی', link: '/support/technical', description: 'پشتیبانی فنی برای سرورها و هاستینگ' },
         { name: 'پشتیبانی شبکه', link: '/support/network', description: 'پشتیبانی برای مشکلات شبکه' },
         { name: 'پشتیبانی امنیتی', link: '/support/security', description: 'مشاوره و پشتیبانی امنیتی' },
-        { name: 'پشتیبانی توسعه', link: '/support/development', description: 'پشتیبانی برای مسائل برنامه‌نویسی و توسعه' }
+        { name: 'پشتیبانی توسعه', link: '/support/development', description: 'پشتیبانی برای مسائل برنامه‌نویسی و توسعه' },
+        { name: 'آموزش و راهنمایی', link: '/support/training', description: 'آموزش‌های کاربردی و راهنمایی‌ها' }
       ]
     }
   ];
