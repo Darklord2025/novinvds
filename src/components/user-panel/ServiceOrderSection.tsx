@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { 
   Server, 
   Globe, 
@@ -54,6 +55,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
   const [activeTab, setActiveTab] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedServices, setSelectedServices] = useState<Array<any>>([]);
+  const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState<ServiceCategory | null>(null);
 
   // Define all service categories
   const allServiceCategories: ServiceCategory[] = [
@@ -216,19 +219,14 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
   const handleItemClick = (link: string) => {
     if (navigateToServiceOrderPage) {
       navigateToServiceOrderPage(link);
+      setIsServiceDialogOpen(false);
     }
   };
 
   // Handle category selection
-  const handleCategorySelect = (categoryTitle: string) => {
-    if (selectedCategory === categoryTitle) {
-      setSelectedCategory(null);
-      setSelectedServices([]);
-    } else {
-      setSelectedCategory(categoryTitle);
-      const category = allServiceCategories.find(cat => cat.title === categoryTitle);
-      setSelectedServices(category ? category.services : []);
-    }
+  const handleCategorySelect = (category: ServiceCategory) => {
+    setCurrentCategory(category);
+    setIsServiceDialogOpen(true);
   };
 
   return (
@@ -239,13 +237,11 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         {allServiceCategories.map((category, index) => (
           <Card 
             key={index} 
-            className={`cursor-pointer hover:shadow-lg transition-shadow ${
-              selectedCategory === category.title ? 'ring-2 ring-offset-2 ring-blue-500' : ''
-            }`}
-            onClick={() => handleCategorySelect(category.title)}
+            className="cursor-pointer hover:shadow-lg transition-shadow group"
+            onClick={() => handleCategorySelect(category)}
           >
             <CardContent className="p-4 flex flex-col items-center text-center">
-              <div className={`w-16 h-16 rounded-full ${category.color} flex items-center justify-center text-white mb-3 mt-3`}>
+              <div className={`w-16 h-16 rounded-full ${category.color} flex items-center justify-center text-white mb-3 mt-3 transition-transform group-hover:scale-110`}>
                 <category.icon size={32} />
               </div>
               <h3 className="font-bold text-lg mb-2">{category.title}</h3>
@@ -255,15 +251,21 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         ))}
       </div>
 
-      {selectedCategory && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">سرویس‌های {selectedCategory}</h3>
-            <Button variant="outline" onClick={() => setSelectedCategory(null)}>بستن</Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {selectedServices.map((service, serviceIndex) => (
-              <Card key={serviceIndex} className="hover:shadow-md transition-shadow">
+      {/* Dialog for displaying services */}
+      <Dialog open={isServiceDialogOpen} onOpenChange={setIsServiceDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl">
+              {currentCategory?.title}
+            </DialogTitle>
+            <DialogDescription>
+              لیست سرویس‌های قابل سفارش در دسته {currentCategory?.title}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+            {currentCategory?.services.map((service, idx) => (
+              <Card key={idx} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <h4 className="font-bold mb-2">{service.name}</h4>
                   {service.description && <p className="text-sm text-gray-600 mb-3">{service.description}</p>}
@@ -278,8 +280,14 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
               </Card>
             ))}
           </div>
-        </div>
-      )}
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">بستن</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <h2 className="text-2xl font-bold mb-6 mt-10">سفارشات فعلی</h2>
       
@@ -297,7 +305,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
         <TabsContent value={activeTab}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredOrders(activeTab).map(order => (
-              <Card key={order.id} className="bg-white shadow-md rounded-lg overflow-hidden">
+              <Card key={order.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center">

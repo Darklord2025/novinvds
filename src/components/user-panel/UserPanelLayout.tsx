@@ -512,7 +512,6 @@ const UserPanelLayout = () => {
                 }
               }}
               onReset={(serviceType, id) => {
-                const serverType = serviceType === 'servers' ? 'vps' : serviceType;
                 toast({
                   title: "تأیید ریست سرور",
                   description: `آیا از ریست سرور ${id} اطمینان دارید؟`,

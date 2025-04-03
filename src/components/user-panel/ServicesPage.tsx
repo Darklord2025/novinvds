@@ -21,9 +21,9 @@ interface OperatingSystems {
 interface ServicesPageProps {
   serviceType: string;
   operatingSystems?: OperatingSystems;
-  onManage: (serviceType: string, id: string) => void;
-  onReset: (serviceType: string, id: string) => void;
-  onRenew: (serviceType: string, id: string) => void;
+  onManage?: (serviceType: string, id: string) => void;
+  onReset?: (serviceType: string, id: string) => void;
+  onRenew?: (serviceType: string, id: string) => void;
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ 

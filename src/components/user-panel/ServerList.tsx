@@ -1,9 +1,11 @@
 
 import React from 'react';
-import { Server, Database, Globe, HardDrive, Cloud } from 'lucide-react';
+import { Server, Database, Globe, HardDrive, Cloud, RefreshCw, Settings, ArrowRightLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/use-toast";
 
 interface ServerListProps {
   serviceType: 'vps' | 'dedicated' | 'cloud' | 'hosting' | 'domain';
@@ -13,6 +15,9 @@ interface ServerListProps {
 }
 
 const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset, onRenew }) => {
+  const [resetConfirmOpen, setResetConfirmOpen] = React.useState(false);
+  const [currentServerId, setCurrentServerId] = React.useState<string | null>(null);
+
   // Sample data for different service types
   const services = {
     vps: [
@@ -62,6 +67,38 @@ const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset,
   };
 
   const ServiceIcon = getServiceIcon();
+
+  // Handle reset confirmation
+  const handleResetRequest = (id: string) => {
+    setCurrentServerId(id);
+    setResetConfirmOpen(true);
+  };
+  
+  const confirmReset = () => {
+    setResetConfirmOpen(false);
+    if (onReset && currentServerId) {
+      onReset(currentServerId);
+      
+      // Show progress toast
+      toast({
+        title: "در حال ریست سرور",
+        description: `لطفاً صبر کنید... سرور ${currentServerId} در حال ریست است.`
+      });
+      
+      // Simulate reset process
+      setTimeout(() => {
+        toast({
+          title: "ریست سرور انجام شد",
+          description: `ریست سرور ${currentServerId} با موفقیت انجام شد.`,
+          action: (
+            <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+              تأیید
+            </Button>
+          )
+        });
+      }, 3000);
+    }
+  };
 
   // Function to render status badge
   const renderStatusBadge = (status: string) => {
@@ -151,7 +188,7 @@ const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset,
         </div>
       ) : (
         serviceData.map((service: any) => (
-          <Card key={service.id} className="overflow-hidden">
+          <Card key={service.id} className="overflow-hidden hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center mb-4 md:mb-0">
@@ -172,24 +209,41 @@ const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset,
                       size="sm"
                       onClick={() => onManage(service.id)}
                     >
+                      <Settings className="ml-1 h-4 w-4" />
                       مدیریت
                     </Button>
                   )}
-                  {onReset && serviceType !== 'domain' && serviceType !== 'hosting' && (
+                  
+                  {onReset && (serviceType === 'vps' || serviceType === 'dedicated' || serviceType === 'cloud') && (
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => onReset(service.id)}
+                      onClick={() => handleResetRequest(service.id)}
                     >
+                      <RefreshCw className="ml-1 h-4 w-4" />
                       ریست
                     </Button>
                   )}
+                  
                   {onRenew && (
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => onRenew(service.id)}
+                      onClick={() => {
+                        if (onRenew) onRenew(service.id);
+                        
+                        toast({
+                          title: "تمدید سرویس",
+                          description: `درخواست تمدید سرویس ${service.id} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
+                          action: (
+                            <Button variant="outline">
+                              ادامه به پرداخت
+                            </Button>
+                          )
+                        });
+                      }}
                     >
+                      <ArrowRightLeft className="ml-1 h-4 w-4" />
                       تمدید
                     </Button>
                   )}
@@ -208,6 +262,22 @@ const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset,
           </Card>
         ))
       )}
+      
+      {/* Reset confirmation dialog */}
+      <AlertDialog open={resetConfirmOpen} onOpenChange={setResetConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأیید ریست سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا از ریست سرور {currentServerId} اطمینان دارید؟ تمام اطلاعات و تنظیمات به حالت اولیه بازخواهند گشت.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset}>تأیید ریست</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
