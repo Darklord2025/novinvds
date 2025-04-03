@@ -18,7 +18,6 @@ import {
   Cloud, 
   Download, 
   ShoppingCart, 
-  Tag, 
   CreditCard, 
   Settings, 
   Wifi,
@@ -54,6 +53,7 @@ interface ServiceOrderSectionProps {
 const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCategories, navigateToServiceOrderPage }) => {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedServices, setSelectedServices] = useState<Array<any>>([]);
 
   // Define all service categories
   const allServiceCategories: ServiceCategory[] = [
@@ -221,14 +221,21 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
 
   // Handle category selection
   const handleCategorySelect = (categoryTitle: string) => {
-    setSelectedCategory(categoryTitle === selectedCategory ? null : categoryTitle);
+    if (selectedCategory === categoryTitle) {
+      setSelectedCategory(null);
+      setSelectedServices([]);
+    } else {
+      setSelectedCategory(categoryTitle);
+      const category = allServiceCategories.find(cat => cat.title === categoryTitle);
+      setSelectedServices(category ? category.services : []);
+    }
   };
 
   return (
-    <section className="container mx-auto px-4 py-8">
+    <section className="space-y-8">
       <h2 className="text-2xl font-bold mb-6">سفارش خدمات جدید</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {allServiceCategories.map((category, index) => (
           <Card 
             key={index} 
@@ -249,30 +256,27 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCatego
       </div>
 
       {selectedCategory && (
-        <div className="mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold">سرویس‌های {selectedCategory}</h3>
             <Button variant="outline" onClick={() => setSelectedCategory(null)}>بستن</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {allServiceCategories
-              .find(cat => cat.title === selectedCategory)
-              ?.services.map((service, serviceIndex) => (
-                <Card key={serviceIndex} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <h4 className="font-bold mb-2">{service.name}</h4>
-                    {service.description && <p className="text-sm text-gray-600 mb-3">{service.description}</p>}
-                    <Button 
-                      variant="default" 
-                      className="w-full"
-                      onClick={() => handleItemClick(service.link)}
-                    >
-                      سفارش
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))
-            }
+            {selectedServices.map((service, serviceIndex) => (
+              <Card key={serviceIndex} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <h4 className="font-bold mb-2">{service.name}</h4>
+                  {service.description && <p className="text-sm text-gray-600 mb-3">{service.description}</p>}
+                  <Button 
+                    variant="default" 
+                    className="w-full"
+                    onClick={() => handleItemClick(service.link)}
+                  >
+                    سفارش
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       )}

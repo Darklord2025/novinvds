@@ -8,7 +8,7 @@ import DashboardCards from "./DashboardCards";
 import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
 import ServiceOrderSection from "./ServiceOrderSection";
-import { LucideIcon } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 // Define the types for dashboard props
 interface ServiceCategory {
@@ -38,35 +38,26 @@ interface DashboardProps {
 
 const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSystems }: DashboardProps) => {
   const [activeTab, setActiveTab] = useState('servers');
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
   
-  const handleReset = (serverType: string, serverId: string) => {
-    toast({
-      title: "تأیید ریست سرور",
-      description: `آیا از ریست سرور ${serverId} اطمینان دارید؟`,
-      action: (
-        <div className="flex gap-2 mt-2">
-          <Button variant="destructive" onClick={() => confirmReset(serverType, serverId)}>
-            تأیید
-          </Button>
-          <Button variant="outline" onClick={() => toast({ title: "عملیات لغو شد" })}>
-            انصراف
-          </Button>
-        </div>
-      )
-    });
+  const handleReset = (serverId: string) => {
+    setServerToReset({ type: 'vps', id: serverId });
+    setResetDialogOpen(true);
   };
 
-  const confirmReset = (serverType: string, serverId: string) => {
+  const confirmReset = () => {
+    setResetDialogOpen(false);
     toast({
       title: "در حال ریست سرور",
-      description: `لطفاً صبر کنید... سرور ${serverId} در حال ریست است.`
+      description: `لطفاً صبر کنید... سرور ${serverToReset.id} در حال ریست است.`
     });
     
     // Simulate reset process
     setTimeout(() => {
       toast({
         title: "ریست سرور انجام شد",
-        description: `ریست سرور ${serverId} با موفقیت انجام شد.`,
+        description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
         action: (
           <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
             تأیید
@@ -108,7 +99,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="vps" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
-                onReset={(id) => handleReset('vps', id)} 
+                onReset={(id) => handleReset(id)} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
             </TabsContent>
@@ -116,7 +107,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="dedicated" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
-                onReset={(id) => handleReset('dedicated', id)} 
+                onReset={(id) => handleReset(id)} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
             </TabsContent>
@@ -124,7 +115,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="cloud" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
-                onReset={(id) => handleReset('cloud', id)} 
+                onReset={(id) => handleReset(id)} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
             </TabsContent>
@@ -234,6 +225,22 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
           </CardContent>
         </Card>
       </div>
+
+      {/* Reset Server Dialog */}
+      <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأیید ریست سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا از ریست سرور {serverToReset.id} اطمینان دارید؟ تمام اطلاعات و تنظیمات به حالت اولیه بازخواهند گشت.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset}>تأیید ریست</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

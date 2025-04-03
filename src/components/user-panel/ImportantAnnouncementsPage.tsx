@@ -1,243 +1,237 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, CheckCircle, MegaphoneIcon, Trash2, CalendarIcon, ArrowLeft } from 'lucide-react';
+import { Megaphone, AlertCircle, Calendar, InfoIcon, Server } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
 interface Announcement {
   id: string;
   title: string;
-  message: string;
+  summary: string;
+  content: string;
   date: string;
-  type: 'critical' | 'maintenance' | 'update' | 'promotion';
+  category: 'maintenance' | 'update' | 'service' | 'security' | 'promotion';
+  importance: 'low' | 'medium' | 'high';
   read: boolean;
-  expiryDate?: string;
 }
 
 const ImportantAnnouncementsPage = () => {
-  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([
     {
       id: '1',
-      title: 'بروزرسانی سرورهای هاستینگ',
-      message: 'در تاریخ 25 خرداد 1402 از ساعت 2 تا 5 صبح، سرورهای هاستینگ برای بروزرسانی نرم‌افزاری موقتاً در دسترس نخواهند بود. لطفاً برنامه‌ریزی لازم را انجام دهید.',
-      date: '1402/03/20',
-      type: 'maintenance',
-      read: false,
-      expiryDate: '1402/03/25'
+      title: 'به‌روزرسانی امنیتی سرورها',
+      summary: 'به‌روزرسانی امنیتی سرورهای لینوکس',
+      content: 'به اطلاع می‌رساند که به‌روزرسانی امنیتی مهمی برای سرورهای لینوکس در تاریخ ۱۵ فروردین ۱۴۰۳ انجام خواهد شد. این به‌روزرسانی برای رفع آسیب‌پذیری‌های امنیتی اخیر ضروری است.\n\nدر طول این فرآیند، سرورهای شما ممکن است به مدت ۱۰-۱۵ دقیقه در دسترس نباشند. توصیه می‌کنیم قبل از زمان مشخص شده، برنامه‌های خود را به حالت تعمیر و نگهداری ببرید.\n\nاز همکاری شما سپاسگزاریم.',
+      date: '2024-04-01',
+      category: 'maintenance',
+      importance: 'high',
+      read: false
     },
     {
       id: '2',
-      title: 'اطلاعیه قطعی اینترنت',
-      message: 'به دلیل مشکلات فنی در مرکز داده، ممکن است سرویس‌های شما در تاریخ 22 خرداد با اختلال مواجه شوند. تیم فنی ما در تلاش برای به حداقل رساندن این اختلال است.',
-      date: '1402/03/18',
-      type: 'critical',
-      read: false,
-      expiryDate: '1402/03/22'
+      title: 'افزایش ظرفیت سرورهای مجازی',
+      summary: 'ارتقاء ظرفیت و منابع سرورهای مجازی',
+      content: 'به اطلاع مشتریان گرامی می‌رساند که در راستای بهبود کیفیت خدمات، ظرفیت و منابع سرورهای مجازی ما ارتقاء یافته است. از این پس، تمامی پلن‌های سرور مجازی با ۲۰٪ منابع بیشتر و بدون افزایش قیمت ارائه می‌شوند.\n\nمشتریان فعلی می‌توانند بدون هزینه اضافی از این ارتقاء بهره‌مند شوند. برای درخواست ارتقاء، با پشتیبانی تماس بگیرید.',
+      date: '2024-03-20',
+      category: 'service',
+      importance: 'medium',
+      read: true
     },
     {
       id: '3',
-      title: 'تخفیف ویژه عید فطر',
-      message: 'به مناسبت عید سعید فطر، 30% تخفیف ویژه برای تمامی سرویس‌های هاستینگ و سرور مجازی تا تاریخ 1 تیر 1402 در نظر گرفته شده است.',
-      date: '1402/03/15',
-      type: 'promotion',
-      read: true,
-      expiryDate: '1402/04/01'
+      title: 'تغییر در سیاست‌های قیمت‌گذاری',
+      summary: 'تغییرات در قیمت‌گذاری سرویس‌ها از خرداد ۱۴۰۳',
+      content: 'به اطلاع مشتریان گرامی می‌رساند که به دلیل تغییرات در هزینه‌های زیرساخت و نرخ ارز، قیمت‌های برخی از سرویس‌ها از ابتدای خرداد ۱۴۰۳ تغییر خواهد کرد.\n\nقراردادهای فعلی تا پایان دوره بدون تغییر باقی خواهند ماند و قیمت‌های جدید تنها برای سفارش‌های جدید و تمدیدهای پس از تاریخ مذکور اعمال می‌شود.\n\nفهرست کامل قیمت‌های جدید به زودی اعلام خواهد شد.',
+      date: '2024-03-15',
+      category: 'update',
+      importance: 'medium',
+      read: true
     },
     {
       id: '4',
-      title: 'بروزرسانی امنیتی دامنه‌ها',
-      message: 'بروزرسانی مهم امنیتی برای سیستم مدیریت دامنه‌ها اعمال شده است. لطفاً نسبت به تغییر رمز عبور پنل مدیریت دامنه‌های خود اقدام فرمایید.',
-      date: '1402/03/10',
-      type: 'update',
-      read: true
+      title: 'هشدار امنیتی: حمله DDoS',
+      summary: 'هشدار در مورد افزایش حملات DDoS',
+      content: 'به اطلاع می‌رساند که اخیراً شاهد افزایش حملات DDoS به زیرساخت‌های هاستینگ در سطح بین‌المللی بوده‌ایم. تیم امنیتی ما تمامی تدابیر لازم را برای محافظت از سرویس‌های شما به کار گرفته است.\n\nبا این حال، توصیه می‌کنیم اقدامات امنیتی اضافی را در نظر بگیرید، از جمله:\n- فعال‌سازی محافظت DDoS در پنل کاربری\n- استفاده از CDN برای وب‌سایت‌ها\n- بررسی منظم لاگ‌های سرور\n\nدر صورت مشاهده هرگونه مشکل، بلافاصله با پشتیبانی تماس بگیرید.',
+      date: '2024-03-10',
+      category: 'security',
+      importance: 'high',
+      read: false
     },
     {
       id: '5',
-      title: 'سرویس جدید امنیت ابری',
-      message: 'سرویس جدید امنیت ابری نوین وی‌دی‌اس با قابلیت محافظت در برابر حملات DDoS و امنیت لایه اپلیکیشن راه‌اندازی شد. برای اطلاعات بیشتر با پشتیبانی تماس بگیرید.',
-      date: '1402/03/05',
-      type: 'update',
+      title: 'تخفیف ویژه عید نوروز',
+      summary: 'تخفیف ۳۰٪ برای تمامی سرویس‌ها',
+      content: 'به مناسبت فرا رسیدن عید نوروز، نوین وی دی اس تخفیف ویژه ۳۰٪ برای تمامی سرویس‌های خود در نظر گرفته است. این تخفیف از تاریخ ۱ اسفند تا ۱۵ فروردین معتبر خواهد بود.\n\nبرای استفاده از این تخفیف، کافیست در هنگام سفارش، کد تخفیف NOWRUZ1403 را وارد نمایید.\n\nنوروزتان پیروز و سال نو مبارک!',
+      date: '2024-02-20',
+      category: 'promotion',
+      importance: 'medium',
       read: true
     }
   ]);
-  
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
-  
+
   const markAllAsRead = () => {
-    setAnnouncements(announcements.map(announcement => ({
-      ...announcement,
-      read: true
-    })));
+    setAnnouncements(announcements.map(a => ({ ...a, read: true })));
+  };
+
+  const handleAnnouncementClick = (announcement: Announcement) => {
+    setSelectedAnnouncement(announcement);
     
-    toast({
-      title: "خوانده شدن اطلاعیه‌ها",
-      description: "تمام اطلاعیه‌های مهم به عنوان خوانده شده علامت‌گذاری شدند.",
-    });
-  };
-  
-  const clearReadAnnouncements = () => {
-    setAnnouncements(announcements.filter(announcement => !announcement.read));
-    toast({
-      title: "پاکسازی اطلاعیه‌ها",
-      description: "تمام اطلاعیه‌های خوانده شده با موفقیت حذف شدند.",
-    });
-  };
-  
-  const markAsRead = (id: string) => {
-    setAnnouncements(announcements.map(announcement => 
-      announcement.id === id ? { ...announcement, read: true } : announcement
-    ));
-  };
-  
-  const deleteAnnouncement = (id: string) => {
-    setAnnouncements(announcements.filter(announcement => announcement.id !== id));
-    setSelectedAnnouncement(null);
-    
-    toast({
-      title: "حذف اطلاعیه",
-      description: "اطلاعیه با موفقیت حذف شد.",
-    });
-  };
-  
-  const getAnnouncementIcon = (type: string) => {
-    switch(type) {
-      case 'maintenance': return <CheckCircle className="h-5 w-5 text-yellow-500" />;
-      case 'critical': return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'update': return <CheckCircle className="h-5 w-5 text-blue-500" />;
-      case 'promotion': default: return <MegaphoneIcon className="h-5 w-5 text-green-500" />;
+    // Mark as read
+    if (!announcement.read) {
+      setAnnouncements(announcements.map(a => 
+        a.id === announcement.id ? { ...a, read: true } : a
+      ));
     }
   };
-  
-  const getAnnouncementTypeBadge = (type: string) => {
-    switch(type) {
-      case 'maintenance': 
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-300">تعمیرات</Badge>;
-      case 'critical': 
-        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100 border-red-300">بحرانی</Badge>;
-      case 'update': 
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-300">بروزرسانی</Badge>;
-      case 'promotion': 
-        return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100 border-green-300">تخفیف</Badge>;
-      default: 
-        return null;
+
+  const getCategoryIcon = (category: string) => {
+    switch(category) {
+      case 'maintenance':
+        return <Server className="h-5 w-5" />;
+      case 'security':
+        return <AlertCircle className="h-5 w-5" />;
+      case 'update':
+        return <InfoIcon className="h-5 w-5" />;
+      case 'promotion':
+        return <Calendar className="h-5 w-5" />;
+      default:
+        return <Megaphone className="h-5 w-5" />;
     }
   };
-  
-  const isExpiringSoon = (expiryDate?: string) => {
-    if (!expiryDate) return false;
-    
-    const today = new Date();
-    const expiry = new Date(expiryDate.split('/').reverse().join('/'));
-    const diffTime = expiry.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return diffDays > 0 && diffDays <= 3;
+
+  const getCategoryTitle = (category: string) => {
+    switch(category) {
+      case 'maintenance':
+        return 'تعمیر و نگهداری';
+      case 'security':
+        return 'امنیتی';
+      case 'update':
+        return 'به‌روزرسانی';
+      case 'promotion':
+        return 'تخفیف و پروموشن';
+      case 'service':
+        return 'سرویس‌ها';
+      default:
+        return category;
+    }
   };
+
+  const filteredAnnouncements = activeTab === 'all' 
+    ? announcements 
+    : announcements.filter(a => a.category === activeTab);
+
+  const unreadCount = announcements.filter(a => !a.read).length;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">اطلاعیه‌های مهم</h1>
-        <div className="space-x-2 space-x-reverse">
-          <Button variant="outline" onClick={markAllAsRead} className="flex items-center">
-            <CheckCircle className="ml-2 h-4 w-4" />
-            خواندن همه
-          </Button>
-          <Button variant="outline" onClick={clearReadAnnouncements} className="flex items-center">
-            <Trash2 className="ml-2 h-4 w-4" />
-            پاک کردن خوانده شده‌ها
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <Badge className="bg-primary">{unreadCount} اطلاعیه جدید</Badge>
+          )}
+          <Button variant="outline" size="sm" onClick={markAllAsRead}>
+            علامت‌گذاری همه به عنوان خوانده شده
           </Button>
         </div>
       </div>
       
-      {announcements.length > 0 ? (
-        <div className="space-y-4">
-          {announcements.map((announcement) => (
-            <Card 
-              key={announcement.id} 
-              className={`cursor-pointer transition-all hover:shadow-md ${
-                !announcement.read ? 'bg-blue-50 border-blue-200' : ''
-              } ${isExpiringSoon(announcement.expiryDate) ? 'border-red-300' : ''}`}
-            >
-              <CardContent className="p-4" onClick={() => {
-                setSelectedAnnouncement(announcement);
-                markAsRead(announcement.id);
-              }}>
-                <div className="flex items-start space-x-4 space-x-reverse">
-                  <div className="p-2 rounded-full bg-gray-100">
-                    {getAnnouncementIcon(announcement.type)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center space-x-2 space-x-reverse">
-                        <h3 className="font-medium">{announcement.title}</h3>
-                        {getAnnouncementTypeBadge(announcement.type)}
-                      </div>
-                      <span className="text-xs text-gray-500">{announcement.date}</span>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="all">همه</TabsTrigger>
+          <TabsTrigger value="maintenance">تعمیر و نگهداری</TabsTrigger>
+          <TabsTrigger value="security">امنیتی</TabsTrigger>
+          <TabsTrigger value="update">به‌روزرسانی</TabsTrigger>
+          <TabsTrigger value="service">سرویس‌ها</TabsTrigger>
+          <TabsTrigger value="promotion">تخفیف‌ها</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab}>
+          <div className="grid grid-cols-1 gap-4">
+            {filteredAnnouncements.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-10">
+                  <Megaphone className="h-12 w-12 text-gray-400 mb-3" />
+                  <h3 className="text-lg font-medium">اطلاعیه‌ای وجود ندارد</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    در حال حاضر هیچ اطلاعیه‌ای برای این دسته‌بندی وجود ندارد
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredAnnouncements.map((announcement) => (
+                <Card 
+                  key={announcement.id} 
+                  className={`cursor-pointer hover:border-primary transition-colors ${!announcement.read ? 'border-l-4 border-l-blue-600' : ''}`}
+                  onClick={() => handleAnnouncementClick(announcement)}
+                >
+                  <CardContent className="p-4 flex items-start">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-full mr-3 ${
+                      announcement.importance === 'high' 
+                        ? 'bg-red-100 text-red-600' 
+                        : announcement.importance === 'medium'
+                          ? 'bg-yellow-100 text-yellow-600'
+                          : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {getCategoryIcon(announcement.category)}
                     </div>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{announcement.message}</p>
-                    {announcement.expiryDate && (
-                      <div className="flex items-center mt-2 text-xs text-gray-500">
-                        <CalendarIcon className="h-3 w-3 ml-1" />
-                        <span>
-                          {isExpiringSoon(announcement.expiryDate) 
-                            ? <span className="text-red-500">تاریخ انقضا: {announcement.expiryDate}</span> 
-                            : <span>تاریخ انقضا: {announcement.expiryDate}</span>
-                          }
-                        </span>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className={`font-medium ${!announcement.read ? 'text-blue-600' : 'text-gray-900'}`}>
+                            {announcement.title}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline">
+                              {getCategoryTitle(announcement.category)}
+                            </Badge>
+                            <span className="text-xs text-gray-500">{announcement.date}</span>
+                          </div>
+                        </div>
+                        {!announcement.read && (
+                          <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <MegaphoneIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-1">هیچ اطلاعیه مهمی یافت نشد</h3>
-          <p className="text-gray-500">در حال حاضر هیچ اطلاعیه مهمی برای نمایش وجود ندارد.</p>
-        </div>
-      )}
-      
-      {/* دیالوگ جزئیات اطلاعیه */}
-      <Dialog open={!!selectedAnnouncement} onOpenChange={(open) => !open && setSelectedAnnouncement(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {selectedAnnouncement?.title}
-              {selectedAnnouncement && getAnnouncementTypeBadge(selectedAnnouncement.type)}
-            </DialogTitle>
-            <DialogDescription className="text-right flex justify-between">
-              <span>تاریخ انتشار: {selectedAnnouncement?.date}</span>
-              {selectedAnnouncement?.expiryDate && (
-                <span className={isExpiringSoon(selectedAnnouncement.expiryDate) ? "text-red-500" : ""}>
-                  تاریخ انقضا: {selectedAnnouncement.expiryDate}
-                </span>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4 text-sm">
-            {selectedAnnouncement?.message}
+                      <p className="text-sm text-gray-600 mt-2">
+                        {announcement.summary}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
-          <DialogFooter className="sm:justify-start flex items-center justify-between">
-            <Button variant="destructive" onClick={() => selectedAnnouncement && deleteAnnouncement(selectedAnnouncement.id)}>
-              <Trash2 className="h-4 w-4 ml-2" />
-              حذف اطلاعیه
-            </Button>
-            <DialogClose asChild>
-              <Button variant="outline">
-                <ArrowLeft className="h-4 w-4 ml-2" />
-                بستن
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
+        </TabsContent>
+      </Tabs>
+
+      {/* Announcement Dialog */}
+      <Dialog open={selectedAnnouncement !== null} onOpenChange={(open) => !open && setSelectedAnnouncement(null)}>
+        {selectedAnnouncement && (
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>{selectedAnnouncement.title}</DialogTitle>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge variant="outline">
+                  {getCategoryTitle(selectedAnnouncement.category)}
+                </Badge>
+                <span className="text-sm text-gray-500">{selectedAnnouncement.date}</span>
+              </div>
+            </DialogHeader>
+            <DialogDescription className="text-base py-4 whitespace-pre-line">
+              {selectedAnnouncement.content}
+            </DialogDescription>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button>بستن</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        )}
       </Dialog>
     </div>
   );
