@@ -1,19 +1,18 @@
 
 import React from 'react';
-import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, ChevronRight, Home, Bell, Megaphone } from 'lucide-react';
+import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, Home, Bell, Megaphone } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SidebarProps } from './interfaces';
 
-interface SidebarProps {
-  activeTab: string;
-  items?: Array<{ id: string; label: string; icon: string }>;
-  onItemClick?: (itemId: string) => void;
-  setActiveTab?: (tab: string) => void; // Keep for backward compatibility
-  onHomeClick?: () => void;
-  className?: string;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], onItemClick, onHomeClick, className }) => {
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeTab, 
+  setActiveTab, 
+  items = [], 
+  onItemClick, 
+  onHomeClick, 
+  className 
+}) => {
   // Handle item clicks for both interfaces
   const handleItemClick = (itemId: string) => {
     if (onItemClick) {
