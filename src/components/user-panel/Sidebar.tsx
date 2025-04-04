@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 interface SidebarProps {
   activeTab: string;
   items?: Array<{ id: string; label: string; icon: string }>;
-  onItemClick?: (itemId: string) => void; // Added onItemClick prop
+  onItemClick?: (itemId: string) => void;
   setActiveTab?: (tab: string) => void; // Keep for backward compatibility
   onHomeClick?: () => void;
   className?: string;
