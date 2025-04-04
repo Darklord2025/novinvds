@@ -6,6 +6,8 @@ import { toast } from "@/components/ui/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import ServerList from "./ServerList";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, FileDown, RefreshCw, Settings } from 'lucide-react';
 
 interface OperatingSystem {
   id: string;
@@ -35,6 +37,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
 }) => {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
+  const [selectedTab, setSelectedTab] = useState('active');
 
   const getPageTitle = () => {
     switch(serviceType) {
@@ -109,7 +112,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
         title: "تمدید سرویس",
         description: `درخواست تمدید سرویس ${id} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
         action: (
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => toast({ title: "پرداخت موفق" })}>
             ادامه به پرداخت
           </Button>
         )
@@ -117,16 +120,127 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
     }
   };
 
+  const handleDownloadInvoice = (id: string) => {
+    toast({
+      title: "دانلود فاکتور",
+      description: `فاکتور سرویس ${id} در حال آماده‌سازی برای دانلود است.`,
+    });
+    
+    // Simulate download process
+    setTimeout(() => {
+      toast({
+        title: "فاکتور آماده است",
+        description: "فاکتور با موفقیت دانلود شد.",
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        )
+      });
+    }, 1500);
+  };
+
+  const renderServiceActions = () => {
+    const actions = [];
+    
+    if (['vps', 'dedicated', 'cloud'].includes(getMappedServiceType())) {
+      actions.push(
+        <Button 
+          key="order-new" 
+          className="flex items-center"
+          onClick={() => window.location.href = `/${getMappedServiceType()}`}
+        >
+          <ExternalLink className="ml-2 h-4 w-4" />
+          سفارش {getPageTitle()} جدید
+        </Button>
+      );
+    } else if (getMappedServiceType() === 'domain') {
+      actions.push(
+        <Button 
+          key="register-domain" 
+          className="flex items-center"
+          onClick={() => window.location.href = '/domain/register'}
+        >
+          <ExternalLink className="ml-2 h-4 w-4" />
+          ثبت دامنه جدید
+        </Button>
+      );
+    } else if (getMappedServiceType() === 'hosting') {
+      actions.push(
+        <Button 
+          key="order-hosting" 
+          className="flex items-center"
+          onClick={() => window.location.href = '/hosting'}
+        >
+          <ExternalLink className="ml-2 h-4 w-4" />
+          سفارش هاستینگ جدید
+        </Button>
+      );
+    }
+    
+    return (
+      <div className="flex flex-wrap gap-2 mt-4">
+        {actions}
+        <Button 
+          variant="outline" 
+          className="flex items-center"
+          onClick={() => setSelectedTab('active')}
+        >
+          <Settings className="ml-2 h-4 w-4" />
+          مدیریت {getPageTitle()}
+        </Button>
+        <Button 
+          variant="outline" 
+          className="flex items-center"
+          onClick={() => handleDownloadInvoice('all')}
+        >
+          <FileDown className="ml-2 h-4 w-4" />
+          دانلود فاکتورها
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
+          <p className="text-gray-500 mt-1">مدیریت و مشاهده {getPageTitle()} شما</p>
+        </div>
+        
+        <div className="flex gap-2">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">فعال: 3</Badge>
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">در انتظار: 0</Badge>
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-200">منقضی شده: 1</Badge>
+        </div>
+      </div>
+      
+      {renderServiceActions()}
       
       <Card>
-        <CardHeader>
-          <CardTitle>لیست {getPageTitle()}</CardTitle>
-          <CardDescription>
-            لیست تمام {getPageTitle()} فعال شما
-          </CardDescription>
+        <CardHeader className="pb-3">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+              <CardTitle>لیست {getPageTitle()}</CardTitle>
+              <CardDescription>
+                لیست تمام {getPageTitle()} فعال شما
+              </CardDescription>
+            </div>
+            
+            <Tabs 
+              value={selectedTab} 
+              onValueChange={setSelectedTab}
+              className="mt-4 md:mt-0"
+            >
+              <TabsList>
+                <TabsTrigger value="active">فعال</TabsTrigger>
+                <TabsTrigger value="pending">در انتظار</TabsTrigger>
+                <TabsTrigger value="expired">منقضی شده</TabsTrigger>
+                <TabsTrigger value="all">همه</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </CardHeader>
         <CardContent>
           <ServerList 
@@ -149,7 +263,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>انصراف</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmReset}>تأیید ریست</AlertDialogAction>
+            <AlertDialogAction onClick={confirmReset} className="bg-red-600 hover:bg-red-700">
+              <RefreshCw className="ml-2 h-4 w-4" />
+              تأیید ریست
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

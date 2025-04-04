@@ -562,53 +562,58 @@ const UserPanelLayout = () => {
           )}
         </main>
         
-        {/* فوتر پنل کاربری */}
-        <footer className="bg-white border-t p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {serviceCategories.map((category, index) => (
-              <div key={index}>
-                <h4 className="text-lg font-semibold mb-3">{category.title}</h4>
-                <ul className="space-y-2">
-                  {category.services.map((service, serviceIndex) => (
-                    <li key={serviceIndex}>
-                      <a 
-                        href={service.link} 
-                        className="text-gray-600 hover:text-blue-600 transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigateToServiceOrderPage(service.link);
-                        }}
-                      >
-                        {service.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 pt-4 border-t text-center text-gray-500">
-            <p>تمام حقوق برای نوین وی دی اس محفوظ است © {new Date().getFullYear()}</p>
-            <div className="mt-2 flex justify-center space-x-4 space-x-reverse">
-              <a 
-                href={`tel:${contactInfo.phone}`} 
-                className="hover:text-blue-600 transition-colors"
-              >
-                {contactInfo.phone}
-              </a>
-              <span>|</span>
-              <a 
-                href={`mailto:${contactInfo.email}`} 
-                className="hover:text-blue-600 transition-colors"
-              >
-                {contactInfo.email}
-              </a>
+        {/* فوتر پنل کاربری - بازطراحی شده و گرافیکال‌تر */}
+        <footer className="bg-gradient-to-br from-gray-800 to-gray-900 text-white py-10">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {serviceCategories.map((category, index) => (
+                <div key={index} className="group">
+                  <h4 className="text-lg font-semibold mb-4 text-blue-300 relative flex items-center">
+                    {category.title}
+                    <span className="w-0 group-hover:w-full absolute bottom-0 left-0 h-0.5 bg-blue-400 transition-all duration-300"></span>
+                  </h4>
+                  <ul className="space-y-3">
+                    {category.services.map((service, serviceIndex) => (
+                      <li key={serviceIndex} className="transition-transform hover:translate-x-1 rtl:hover:-translate-x-1 duration-200">
+                        <a 
+                          href="#" 
+                          className="text-gray-300 hover:text-white transition-colors flex items-center gap-1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            // اینجا به صفحه سفارش مستقیم هدایت می‌شود به جای پنل سرویس‌های موجود
+                            navigateToServiceOrderPage(service.link);
+                          }}
+                        >
+                          <span className="text-blue-400">•</span>
+                          {service.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          </div>
-        </footer>
-      </div>
-    </div>
-  );
-};
-
-export default UserPanelLayout;
+            
+            <div className="mt-10 pt-6 border-t border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-lg font-semibold mb-2 text-blue-300">راه‌های ارتباطی</h4>
+                <div className="flex flex-col md:flex-row gap-4 text-gray-300">
+                  <a href={`tel:${contactInfo.phone}`} className="hover:text-white transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-blue-400">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                    </svg>
+                    {contactInfo.phone}
+                  </a>
+                  <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-blue-400">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    {contactInfo.email}
+                  </a>
+                </div>
+              </div>
+              <div className="text-left rtl:text-right">
+                <div className="flex justify-start rtl:justify-end items-center gap-3">
+                  <a href="#" className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors flex items-center justify-center" aria-label="Instagram">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465.668.25 1.272.644 1.772 1.153.509.5.902 1.104 1.153 1.772.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.013 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.903 4.903 0 01-1.153 1.772c-.5.509-1.104.902-1.772 1.153-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.013-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.903 4.903 0 01-1.772-1.153 4.903 4.903 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.903 4.903 0 011.153-1.772A4.903 4.903 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.9
