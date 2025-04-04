@@ -15,6 +15,7 @@ import InvoicesPage from './InvoicesPage';
 import TransactionsPage from './TransactionsPage';
 import CreateTicketForm from './CreateTicketForm';
 import NotificationsPage from './NotificationsPage';
+import NotificationDetails from './NotificationDetails';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
 import SettingsPage from './SettingsPage';
 import DomainManagement from './DomainManagement';
@@ -183,6 +184,7 @@ const UserPanelLayout = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
   const [activeDomainId, setActiveDomainId] = useState<string | null>(null);
+  const [activeNotification, setActiveNotification] = useState<any>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -260,6 +262,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       setActiveTab('tickets');
       return;
     }
@@ -271,6 +274,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -281,6 +285,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -292,6 +297,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setShowCreateTicket(false);
       setActiveTicketId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -302,6 +308,7 @@ const UserPanelLayout = () => {
       setShowAnnouncements(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -312,6 +319,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -322,6 +330,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -332,6 +341,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -342,6 +352,7 @@ const UserPanelLayout = () => {
       setShowCreateTicket(false);
       setActiveTicketId(null);
       setActiveDomainId(null);
+      setActiveNotification(null);
       return;
     }
     
@@ -360,6 +371,7 @@ const UserPanelLayout = () => {
     setShowCreateTicket(false);
     setActiveTicketId(null);
     setActiveDomainId(null);
+    setActiveNotification(null);
   };
   
   const handleTicketSubmit = () => {
@@ -379,6 +391,7 @@ const UserPanelLayout = () => {
     setShowCreateTicket(false);
     setActiveTicketId(null);
     setActiveDomainId(null);
+    setActiveNotification(null);
     setActiveTab('notifications');
   };
   
@@ -388,6 +401,7 @@ const UserPanelLayout = () => {
     setShowCreateTicket(false);
     setActiveTicketId(null);
     setActiveDomainId(null);
+    setActiveNotification(null);
     setActiveTab('announcements');
   };
   
@@ -404,6 +418,14 @@ const UserPanelLayout = () => {
 
   const handleCloseDomainManagement = () => {
     setActiveDomainId(null);
+  };
+  
+  const handleViewNotificationDetail = (notification) => {
+    setActiveNotification(notification);
+  };
+  
+  const handleCloseNotificationDetail = () => {
+    setActiveNotification(null);
   };
 
   return (
@@ -466,9 +488,27 @@ const UserPanelLayout = () => {
               />
             </div>
           ) : showNotifications || activeTab === 'notifications' ? (
-            <NotificationsPage />
+            activeNotification ? (
+              <NotificationDetails 
+                notification={activeNotification} 
+                onClose={handleCloseNotificationDetail}
+                onMarkAsRead={() => {
+                  toast({
+                    title: "اعلان خوانده شد",
+                    description: "اعلان به عنوان خوانده شده علامت‌گذاری شد."
+                  });
+                  handleCloseNotificationDetail();
+                }} 
+              />
+            ) : (
+              <NotificationsPage 
+                onViewNotification={handleViewNotificationDetail}
+              />
+            )
           ) : showAnnouncements || activeTab === 'announcements' ? (
-            <ImportantAnnouncementsPage />
+            <ImportantAnnouncementsPage 
+              onViewAnnouncement={handleViewNotificationDetail}
+            />
           ) : activeTicketId ? (
             <TicketDetail 
               ticketId={activeTicketId} 

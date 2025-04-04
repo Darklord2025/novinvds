@@ -37,6 +37,36 @@ const UserPanel = () => {
             .rtl {
               direction: rtl;
             }
+
+            /* تنظیمات انیمیشن fade-in برای منوها */
+            @keyframes fade-in {
+              0% {
+                opacity: 0;
+                transform: translateY(10px);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+
+            .animate-fade-in {
+              animation: fade-in 0.3s ease-out forwards;
+            }
+
+            /* حالت‌های مختلف کارت‌های سرویس در پنل کاربری */
+            .service-card-hover:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .category-card {
+              transition: all 0.3s ease;
+            }
+            
+            .category-card:hover {
+              transform: translateY(-5px);
+            }
           `}
         </style>
       </Helmet>

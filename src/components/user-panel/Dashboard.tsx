@@ -9,6 +9,7 @@ import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
 import ServiceOrderSection from "./ServiceOrderSection";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Download, Eye } from "lucide-react";
 
 // Define the types for dashboard props
 interface ServiceCategory {
@@ -41,8 +42,8 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
   
-  const handleReset = (serverId: string) => {
-    setServerToReset({ type: 'vps', id: serverId });
+  const handleReset = (serverId: string, serviceType: string = 'vps') => {
+    setServerToReset({ type: serviceType, id: serverId });
     setResetDialogOpen(true);
   };
 
@@ -78,6 +79,48 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
       )
     });
   };
+
+  const handleViewInvoice = (invoiceId: string, isPaid: boolean = false) => {
+    toast({
+      title: isPaid ? "مشاهده فاکتور پرداخت شده" : "مشاهده فاکتور پرداخت نشده",
+      description: `در حال بارگیری فاکتور شماره ${invoiceId}...`,
+    });
+    
+    setTimeout(() => {
+      navigateToServiceOrderPage(`/invoices/${invoiceId}`);
+    }, 500);
+  };
+  
+  const handleDownloadInvoice = (invoiceId: string) => {
+    toast({
+      title: "دانلود فاکتور",
+      description: "فاکتور در حال دانلود است...",
+    });
+    
+    // Simulate download process
+    setTimeout(() => {
+      toast({
+        title: "دانلود انجام شد",
+        description: "فاکتور با موفقیت دانلود شد.",
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        )
+      });
+    }, 1500);
+  };
+
+  const handlePayInvoice = (invoiceId: string) => {
+    toast({
+      title: "پرداخت فاکتور",
+      description: "در حال انتقال به درگاه پرداخت...",
+    });
+    
+    setTimeout(() => {
+      navigateToServiceOrderPage(`/invoices/pay/${invoiceId}`);
+    }, 1000);
+  };
   
   return (
     <div className="space-y-6">
@@ -99,7 +142,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="vps" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
-                onReset={(id) => handleReset(id)} 
+                onReset={(id) => handleReset(id, 'vps')} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
             </TabsContent>
@@ -107,7 +150,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="dedicated" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
-                onReset={(id) => handleReset(id)} 
+                onReset={(id) => handleReset(id, 'dedicated')} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
             </TabsContent>
@@ -115,7 +158,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <ServerList 
                 serviceType="cloud" 
                 onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
-                onReset={(id) => handleReset(id)} 
+                onReset={(id) => handleReset(id, 'cloud')} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
             </TabsContent>
@@ -205,17 +248,52 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
               <div className="flex justify-between items-center p-2 bg-red-50 text-red-700 rounded-md">
                 <span className="text-sm font-medium">INV-1234</span>
                 <span className="text-xs">1402/04/15</span>
-                <span className="text-xs font-semibold">پرداخت نشده</span>
+                <div className="flex gap-1">
+                  <Button size="icon" variant="ghost" title="مشاهده فاکتور" 
+                    onClick={() => handleViewInvoice('INV-1234')}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" title="دانلود فاکتور"
+                    onClick={() => handleDownloadInvoice('INV-1234')}>
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
+              <Button 
+                className="w-full bg-red-500 hover:bg-red-600 text-white" 
+                onClick={() => handlePayInvoice('INV-1234')}
+              >
+                پرداخت فاکتور
+              </Button>
+              
               <div className="flex justify-between items-center p-2 bg-green-50 text-green-700 rounded-md">
                 <span className="text-sm font-medium">INV-1233</span>
                 <span className="text-xs">1402/04/01</span>
-                <span className="text-xs font-semibold">پرداخت شده</span>
+                <div className="flex gap-1">
+                  <Button size="icon" variant="ghost" title="مشاهده فاکتور"
+                    onClick={() => handleViewInvoice('INV-1233', true)}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" title="دانلود فاکتور"
+                    onClick={() => handleDownloadInvoice('INV-1233')}>
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
+              
               <div className="flex justify-between items-center p-2 bg-green-50 text-green-700 rounded-md">
                 <span className="text-sm font-medium">INV-1232</span>
                 <span className="text-xs">1402/03/15</span>
-                <span className="text-xs font-semibold">پرداخت شده</span>
+                <div className="flex gap-1">
+                  <Button size="icon" variant="ghost" title="مشاهده فاکتور"
+                    onClick={() => handleViewInvoice('INV-1232', true)}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button size="icon" variant="ghost" title="دانلود فاکتور"
+                    onClick={() => handleDownloadInvoice('INV-1232')}>
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               
               <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/invoices')}>

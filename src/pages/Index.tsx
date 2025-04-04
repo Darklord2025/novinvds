@@ -15,6 +15,15 @@ const Index = () => {
   useEffect(() => {
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'fa';
+    
+    // پاکسازی تنظیمات خاص پنل کاربری اگر قبلاً روی آن بودیم
+    document.body.classList.remove('rtl');
+    
+    return () => {
+      // پاکسازی در صورت خروج
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
+    };
   }, []);
 
   return (
@@ -33,6 +42,14 @@ const Index = () => {
         <meta name="twitter:description" content="ارائه دهنده خدمات تخصصی هاستینگ، سرور مجازی، سرور اختصاصی و راهکارهای شبکه با بالاترین کیفیت" />
         <meta name="contact" content="09335732119" />
         <meta name="email" content="info@novinvds.ir" />
+        <style>
+          {`
+            body {
+              direction: rtl;
+              font-family: Vazirmatn, system-ui, sans-serif;
+            }
+          `}
+        </style>
       </Helmet>
       
       <Navbar />

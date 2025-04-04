@@ -1,379 +1,292 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { 
   Server, 
-  Globe, 
-  Database, 
   HardDrive, 
+  Database, 
+  Globe, 
+  Cloud, 
   Shield, 
   Network, 
-  Code, 
-  Headset, 
-  LayoutTemplate, 
-  Monitor, 
-  Cloud, 
   Download, 
-  ShoppingCart, 
-  CreditCard, 
-  Settings, 
-  Wifi,
-  LucideIcon 
-} from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+  Code, 
+  Layout, 
+  LifeBuoy
+} from 'lucide-react';
 
-// Define the interface for service categories
-interface ServiceCategory {
+interface ServiceCategoryProps {
   title: string;
-  icon: LucideIcon;
-  color: string;
+  icon: React.ElementType;
+  bgColor: string;
   services: Array<{
     name: string;
     link: string;
-    description?: string;
   }>;
+  navigateToServiceOrderPage: (link: string) => void;
 }
 
-interface ServiceOrder {
-  id: number;
-  title: string;
-  date: string;
-  status: 'active' | 'pending' | 'completed' | 'cancelled';
-  icon: LucideIcon;
-}
+const ServiceCategory: React.FC<ServiceCategoryProps> = ({ 
+  title, 
+  icon: Icon, 
+  bgColor, 
+  services, 
+  navigateToServiceOrderPage 
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <div className="relative">
+      <div 
+        className={`${bgColor} rounded-xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer`}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center">
+          <div className="p-3 bg-white rounded-lg bg-opacity-20 mr-3">
+            <Icon className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h3 className="font-bold text-white">{title}</h3>
+            <p className="text-sm text-white text-opacity-80">{services.length} خدمت</p>
+          </div>
+        </div>
+      </div>
+      
+      {isExpanded && (
+        <div className="absolute z-30 right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 animate-fade-in">
+          {services.map((service, idx) => (
+            <button
+              key={idx}
+              className="w-full text-right px-4 py-2 hover:bg-gray-50 text-sm text-gray-700 flex items-center justify-between"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToServiceOrderPage(service.link);
+              }}
+            >
+              {service.name}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
-// Define the component props
 interface ServiceOrderSectionProps {
-  serviceCategories?: ServiceCategory[];
-  navigateToServiceOrderPage?: (serviceLink: string) => void;
+  navigateToServiceOrderPage: (link: string) => void;
 }
 
-const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ serviceCategories, navigateToServiceOrderPage }) => {
-  const [activeTab, setActiveTab] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedServices, setSelectedServices] = useState<Array<any>>([]);
-  const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<ServiceCategory | null>(null);
+const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToServiceOrderPage }) => {
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("all");
 
-  // Define all service categories
-  const allServiceCategories: ServiceCategory[] = [
+  const serviceCategories = [
     {
-      title: 'میزبانی وب',
-      icon: Globe,
-      color: 'bg-blue-500',
+      id: "hosting",
+      title: "میزبانی وب",
+      icon: Database,
+      bgColor: "bg-gradient-to-r from-blue-500 to-blue-600",
       services: [
-        { name: 'هاست دانلود', link: '/hosting?type=download', description: 'مناسب برای سایت‌های دانلود و اشتراک فایل' },
-        { name: 'هاست لینوکس ECO', link: '/hosting?type=linux-eco', description: 'میزبانی مقرون به صرفه برای وب‌سایت‌های کوچک' },
-        { name: 'هاست لینوکس PRO', link: '/hosting?type=linux-pro', description: 'میزبانی حرفه‌ای برای وب‌سایت‌های پر بازدید' },
-        { name: 'هاست لینوکس PRO ایران', link: '/hosting?type=linux-pro-iran', description: 'میزبانی حرفه‌ای داخل ایران' },
-        { name: 'هاست لینوکس VIP', link: '/hosting?type=linux-vip', description: 'میزبانی با منابع اختصاصی و پشتیبانی ویژه' },
-        { name: 'هاست لینوکس ایران', link: '/hosting?type=linux-iran', description: 'میزبانی مطمئن داخل ایران' },
-        { name: 'هاست وردپرس', link: '/hosting?type=wordpress', description: 'بهینه‌سازی شده برای سایت‌های وردپرسی' },
-        { name: 'هاست ووکامرس', link: '/hosting?type=woocommerce', description: 'مناسب برای فروشگاه‌های آنلاین ووکامرس' },
-        { name: 'هاست ویندوز', link: '/hosting?type=windows', description: 'پشتیبانی از ASP.NET و تکنولوژی‌های مایکروسافت' },
-        { name: 'هاست ویندوز ایران', link: '/hosting?type=windows-iran', description: 'میزبانی ویندوز داخل ایران' },
-        { name: 'هاست پایتون', link: '/hosting?type=python', description: 'پشتیبانی از اپلیکیشن‌های پایتون' }
+        { name: 'هاست لینوکس ECO', link: '/hosting?type=linux-eco' },
+        { name: 'هاست لینوکس PRO', link: '/hosting?type=linux-pro' },
+        { name: 'هاست لینوکس PRO ایران', link: '/hosting?type=linux-pro-iran' },
+        { name: 'هاست لینوکس VIP', link: '/hosting?type=linux-vip' },
+        { name: 'هاست لینوکس ایران', link: '/hosting?type=linux-iran' },
+        { name: 'هاست وردپرس', link: '/hosting?type=wordpress' },
+        { name: 'هاست ووکامرس', link: '/hosting?type=woocommerce' },
+        { name: 'هاست ویندوز', link: '/hosting?type=windows' },
+        { name: 'هاست ویندوز ایران', link: '/hosting?type=windows-iran' },
+        { name: 'هاست پایتون', link: '/hosting?type=python' },
+        { name: 'هاست دانلود', link: '/hosting?type=download' },
       ]
     },
     {
-      title: 'سرور مجازی',
+      id: "vps",
+      title: "سرور مجازی",
       icon: Server,
-      color: 'bg-green-500',
+      bgColor: "bg-gradient-to-r from-purple-500 to-purple-600",
       services: [
-        { name: 'سرور مجازی لینوکس', link: '/vps?type=linux', description: 'سرور مجازی با سیستم عامل لینوکس' },
-        { name: 'سرور مجازی ویندوز', link: '/vps?type=windows', description: 'سرور مجازی با سیستم عامل ویندوز' },
-        { name: 'سرور مجازی اوبونتو دسکتاپ', link: '/vps?type=ubuntu-desktop', description: 'سرور مجازی با رابط گرافیکی اوبونتو' },
-        { name: 'سرور مجازی روزانه', link: '/vps?type=daily', description: 'سرور مجازی با پرداخت روزانه' },
-        { name: 'سرور مجازی لینوکس ایران', link: '/vps?type=linux-iran', description: 'سرور مجازی لینوکس در دیتاسنتر ایران' },
-        { name: 'سرور مجازی ویندوز ایران', link: '/vps?type=windows-iran', description: 'سرور مجازی ویندوز در دیتاسنتر ایران' }
+        { name: 'سرور مجازی لینوکس', link: '/vps?type=linux' },
+        { name: 'سرور مجازی ویندوز', link: '/vps?type=windows' },
+        { name: 'سرور مجازی اوبونتو دسکتاپ', link: '/vps?type=ubuntu-desktop' },
+        { name: 'سرور مجازی لینوکس ایران', link: '/vps?type=linux-iran' },
+        { name: 'سرور مجازی ویندوز ایران', link: '/vps?type=windows-iran' },
+        { name: 'سرور مجازی روزانه', link: '/vps?type=daily' },
       ]
     },
     {
-      title: 'سرور اختصاصی',
+      id: "dedicated",
+      title: "سرور اختصاصی",
       icon: HardDrive,
-      color: 'bg-purple-500',
+      bgColor: "bg-gradient-to-r from-red-500 to-red-600",
       services: [
-        { name: 'سرور اختصاصی ایران', link: '/dedicated?location=iran', description: 'سرور فیزیکی اختصاصی در دیتاسنتر ایران' },
-        { name: 'سرور اختصاصی اروپا', link: '/dedicated?location=europe', description: 'سرور فیزیکی اختصاصی در دیتاسنترهای اروپا' },
-        { name: 'سرور اختصاصی آمریکا', link: '/dedicated?location=america', description: 'سرور فیزیکی اختصاصی در دیتاسنترهای آمریکا' },
-        { name: 'سرور اختصاصی آسیا', link: '/dedicated?location=asia', description: 'سرور فیزیکی اختصاصی در دیتاسنترهای آسیا' }
+        { name: 'سرور اختصاصی ایران', link: '/dedicated?location=iran' },
+        { name: 'سرور اختصاصی اروپا', link: '/dedicated?location=europe' },
+        { name: 'سرور اختصاصی آمریکا', link: '/dedicated?location=america' },
+        { name: 'سرور اختصاصی آسیا', link: '/dedicated?location=asia' },
       ]
     },
     {
-      title: 'سرور ابری',
-      icon: Cloud,
-      color: 'bg-blue-400',
-      services: [
-        { name: 'سرور ابری لینوکس', link: '/cloud?type=linux', description: 'سرور ابری با انعطاف‌پذیری بالا و سیستم عامل لینوکس' },
-        { name: 'سرور ابری ویندوز', link: '/cloud?type=windows', description: 'سرور ابری با انعطاف‌پذیری بالا و سیستم عامل ویندوز' },
-        { name: 'سرور ابری اختصاصی', link: '/cloud?type=dedicated', description: 'سرور ابری با منابع اختصاصی' },
-        { name: 'سرور ابری ایران', link: '/cloud?type=iran', description: 'سرور ابری در دیتاسنتر ایران' }
-      ]
-    },
-    {
-      title: 'خدمات دامنه',
+      id: "domain",
+      title: "خدمات دامنه",
       icon: Globe,
-      color: 'bg-orange-500',
+      bgColor: "bg-gradient-to-r from-green-500 to-green-600",
       services: [
-        { name: 'ثبت دامنه', link: '/domain/register', description: 'ثبت انواع پسوندهای دامنه' },
-        { name: 'انتقال دامنه', link: '/domain/transfer', description: 'انتقال دامنه از شرکت‌های دیگر' },
-        { name: 'تمدید دامنه', link: '/domain/renew', description: 'تمدید دامنه‌های ثبت شده' },
-        { name: 'مدیریت DNS', link: '/domain/dns', description: 'مدیریت رکوردهای DNS دامنه' }
+        { name: 'ثبت دامنه', link: '/domain/register' },
+        { name: 'انتقال دامنه', link: '/domain/transfer' },
+        { name: 'تمدید دامنه', link: '/domain/renew' },
       ]
     },
     {
-      title: 'خدمات امنیتی',
+      id: "cloud",
+      title: "سرور ابری",
+      icon: Cloud,
+      bgColor: "bg-gradient-to-r from-sky-500 to-sky-600",
+      services: [
+        { name: 'سرور ابری لینوکس', link: '/cloud?type=linux' },
+        { name: 'سرور ابری ویندوز', link: '/cloud?type=windows' },
+        { name: 'سرور ابری اختصاصی', link: '/cloud?type=dedicated' },
+      ]
+    },
+    {
+      id: "security",
+      title: "خدمات امنیتی",
       icon: Shield,
-      color: 'bg-red-500',
+      bgColor: "bg-gradient-to-r from-yellow-500 to-amber-500",
       services: [
-        { name: 'گواهی SSL', link: '/security/ssl', description: 'گواهی‌های امنیتی SSL/TLS برای وب‌سایت' },
-        { name: 'آنتی ویروس', link: '/security/antivirus', description: 'نرم‌افزارهای آنتی ویروس و امنیتی' },
-        { name: 'فایروال', link: '/security/firewall', description: 'فایروال‌های سخت‌افزاری و نرم‌افزاری' },
-        { name: 'بکاپ گیری', link: '/security/backup', description: 'سرویس‌های پشتیبان‌گیری خودکار' }
+        { name: 'گواهی SSL', link: '/ssl' },
+        { name: 'آنتی ویروس', link: '/security/antivirus' },
+        { name: 'فایروال', link: '/security/firewall' },
+        { name: 'بکاپ گیری', link: '/security/backup' },
       ]
     },
     {
-      title: 'خدمات شبکه',
+      id: "network",
+      title: "خدمات شبکه",
       icon: Network,
-      color: 'bg-teal-500',
+      bgColor: "bg-gradient-to-r from-indigo-500 to-indigo-600",
       services: [
-        { name: 'ترافیک اضافه', link: '/network/traffic', description: 'خرید ترافیک اضافه برای سرورها' },
-        { name: 'IP اختصاصی', link: '/network/ip', description: 'آدرس IP اختصاصی برای سرورها' },
-        { name: 'VPN اختصاصی', link: '/network/vpn', description: 'سرویس VPN اختصاصی برای کسب و کارها' },
-        { name: 'CDN', link: '/network/cdn', description: 'شبکه توزیع محتوا برای وب‌سایت‌ها' },
-        { name: 'هارد اضافه', link: '/network/extra-storage', description: 'افزودن فضای ذخیره‌سازی اضافی' },
-        { name: 'رم اضافه', link: '/network/extra-ram', description: 'افزایش حافظه رم سرور' },
-        { name: 'سی پی یو اضافه', link: '/network/extra-cpu', description: 'افزایش توان پردازشی سرور' }
+        { name: 'ترافیک اضافه', link: '/network/traffic' },
+        { name: 'IP اضافه', link: '/network/ip' },
+        { name: 'CDN', link: '/network/cdn' },
+        { name: 'پشتیبانی آنلاین', link: '/support/online' },
       ]
     },
     {
-      title: 'پنل‌های مدیریت',
-      icon: Settings,
-      color: 'bg-indigo-500',
+      id: "tools",
+      title: "پنل‌های مدیریت",
+      icon: Download,
+      bgColor: "bg-gradient-to-r from-gray-600 to-gray-700",
       services: [
-        { name: 'cPanel', link: '/panels/cpanel', description: 'پنل مدیریت هاستینگ cPanel' },
-        { name: 'DirectAdmin', link: '/panels/directadmin', description: 'پنل مدیریت هاستینگ DirectAdmin' },
-        { name: 'Plesk', link: '/panels/plesk', description: 'پنل مدیریت هاستینگ Plesk' },
-        { name: 'WHM', link: '/panels/whm', description: 'پنل مدیریت هاستینگ WHM' },
-        { name: 'Virtualmin', link: '/panels/virtualmin', description: 'پنل مدیریت هاستینگ Virtualmin' },
-        { name: 'Webmin', link: '/panels/webmin', description: 'پنل مدیریت سرور Webmin' }
+        { name: 'پنل مدیریت cPanel', link: '/services/cpanel' },
+        { name: 'پنل مدیریت DirectAdmin', link: '/services/directadmin' },
+        { name: 'افزودن هارد اضافه', link: '/services/additional-storage' },
       ]
     },
     {
-      title: 'خدمات طراحی',
-      icon: LayoutTemplate,
-      color: 'bg-pink-500',
+      id: "design",
+      title: "خدمات طراحی",
+      icon: Layout,
+      bgColor: "bg-gradient-to-r from-pink-500 to-pink-600",
       services: [
-        { name: 'طراحی قالب سایت', link: '/design/template', description: 'طراحی اختصاصی قالب وب‌سایت' },
-        { name: 'قالب‌های آماده', link: '/design/ready', description: 'فروش قالب‌های آماده وب‌سایت' },
-        { name: 'طراحی لوگو', link: '/design/logo', description: 'طراحی لوگو برای کسب و کارها' },
-        { name: 'طراحی UI/UX', link: '/design/ui-ux', description: 'طراحی رابط کاربری و تجربه کاربری' },
-        { name: 'طراحی اپلیکیشن', link: '/design/app', description: 'طراحی اپلیکیشن موبایل و وب' }
+        { name: 'طراحی قالب سایت', link: '/services/web-design' },
+        { name: 'فروش قالب آماده', link: '/services/templates' },
+        { name: 'خدمات سئو', link: '/services/seo' },
       ]
     },
     {
-      title: 'پشتیبانی آنلاین',
-      icon: Headset,
-      color: 'bg-yellow-500',
+      id: "support",
+      title: "پشتیبانی",
+      icon: LifeBuoy,
+      bgColor: "bg-gradient-to-r from-teal-500 to-teal-600",
       services: [
-        { name: 'پشتیبانی فنی', link: '/support/technical', description: 'پشتیبانی فنی برای سرورها و هاستینگ' },
-        { name: 'پشتیبانی شبکه', link: '/support/network', description: 'پشتیبانی برای مشکلات شبکه' },
-        { name: 'پشتیبانی امنیتی', link: '/support/security', description: 'مشاوره و پشتیبانی امنیتی' },
-        { name: 'پشتیبانی توسعه', link: '/support/development', description: 'پشتیبانی برای مسائل برنامه‌نویسی و توسعه' },
-        { name: 'آموزش و راهنمایی', link: '/support/training', description: 'آموزش‌های کاربردی و راهنمایی‌ها' }
+        { name: 'پشتیبانی آنلاین', link: '/support/online' },
+        { name: 'مدیریت سرور', link: '/services/server-management' },
+        { name: 'راهنمای استفاده', link: '/support/guide' },
       ]
-    }
+    },
   ];
-
-  const serviceOrders: ServiceOrder[] = [
-    { id: 1, title: 'سرور مجازی آمریکا', date: '2024-01-20', status: 'active', icon: Server },
-    { id: 2, title: 'هاست لینوکس', date: '2023-12-15', status: 'completed', icon: Globe },
-    { id: 3, title: 'دیتابیس', date: '2024-02-01', status: 'pending', icon: Database },
-    { id: 4, title: 'فضای ذخیره سازی', date: '2024-01-25', status: 'cancelled', icon: HardDrive },
-    { id: 5, title: 'لایسنس امنیتی', date: '2024-02-10', status: 'active', icon: Shield },
-    { id: 6, title: 'سرویس شبکه', date: '2024-01-30', status: 'completed', icon: Network },
-    { id: 7, title: 'لایسنس توسعه', date: '2024-02-15', status: 'pending', icon: Code },
-    { id: 8, title: 'پشتیبانی فنی', date: '2024-02-20', status: 'active', icon: Headset },
-    { id: 9, title: 'قالب سایت', date: '2024-02-25', status: 'completed', icon: LayoutTemplate },
-    { id: 10, title: 'مانیتورینگ سرور', date: '2024-03-01', status: 'active', icon: Monitor },
-  ];
-
-  // Filter orders based on active tab
-  const filteredOrders = (serviceType: string) => {
-    if (serviceType === 'all') {
-      return serviceOrders;
-    }
-    return serviceOrders.filter(order => {
-      const categoryMatch = allServiceCategories.find(cat => cat.title.toLowerCase().includes(serviceType.toLowerCase()));
-      if (categoryMatch) {
-        return order.title.toLowerCase().includes(categoryMatch.title.toLowerCase());
-      }
-      return false;
-    });
-  };
-
-  // Handle item click if navigateToServiceOrderPage is provided
-  const handleItemClick = (link: string) => {
-    if (navigateToServiceOrderPage) {
-      navigateToServiceOrderPage(link);
-      toast({
-        title: "هدایت به صفحه سفارش",
-        description: `در حال انتقال به صفحه سفارش سرویس...`,
-      });
-      setIsServiceDialogOpen(false);
-    }
-  };
-
-  // Handle category selection
-  const handleCategorySelect = (category: ServiceCategory) => {
-    setCurrentCategory(category);
-    setIsServiceDialogOpen(true);
-  };
-
-  const handleOrderDetails = (orderId: number) => {
-    toast({
-      title: "مشاهده جزئیات سفارش",
-      description: `در حال بارگذاری جزئیات سفارش ${orderId}...`,
-      action: (
-        <Button variant="outline" onClick={() => toast({ title: "عملیات موفق" })}>
-          تأیید
-        </Button>
-      )
-    });
-  };
 
   return (
-    <section className="space-y-8">
-      <h2 className="text-2xl font-bold mb-6">سفارش خدمات جدید</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {allServiceCategories.map((category, index) => (
-          <Card 
-            key={index} 
-            className="cursor-pointer hover:shadow-lg transition-shadow group"
-            onClick={() => handleCategorySelect(category)}
-          >
-            <CardContent className="p-4 flex flex-col items-center text-center">
-              <div className={`w-16 h-16 rounded-full ${category.color} flex items-center justify-center text-white mb-3 mt-3 transition-transform group-hover:scale-110`}>
-                <category.icon size={32} />
-              </div>
-              <h3 className="font-bold text-lg mb-2">{category.title}</h3>
-              <p className="text-sm text-gray-500">{category.services.length} سرویس</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Dialog for displaying services */}
-      <Dialog open={isServiceDialogOpen} onOpenChange={setIsServiceDialogOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl">
-              {currentCategory?.title}
-            </DialogTitle>
-            <DialogDescription>
-              لیست سرویس‌های قابل سفارش در دسته {currentCategory?.title}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
-            {currentCategory?.services.map((service, idx) => (
-              <Card key={idx} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <h4 className="font-bold mb-2">{service.name}</h4>
-                  {service.description && <p className="text-sm text-gray-600 mb-3">{service.description}</p>}
-                  <Button 
-                    variant="default" 
-                    className="w-full"
-                    onClick={() => handleItemClick(service.link)}
-                  >
-                    سفارش
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">بستن</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <h2 className="text-2xl font-bold mb-6 mt-10">سفارشات فعلی</h2>
+    <Card className="mt-8">
+      <CardHeader>
+        <CardTitle>سفارش سرویس جدید</CardTitle>
+        <CardDescription>
+          سرویس مورد نیاز خود را انتخاب کنید
+        </CardDescription>
+      </CardHeader>
       
-      <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="mb-4 flex flex-wrap">
-          <TabsTrigger value="all">همه</TabsTrigger>
-          <TabsTrigger value="hosting">هاستینگ</TabsTrigger>
-          <TabsTrigger value="vps">سرور مجازی</TabsTrigger>
-          <TabsTrigger value="dedicated">سرور اختصاصی</TabsTrigger>
-          <TabsTrigger value="cloud">سرور ابری</TabsTrigger>
-          <TabsTrigger value="domain">دامنه</TabsTrigger>
-          <TabsTrigger value="other">سایر خدمات</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredOrders(activeTab).map(order => (
-              <Card key={order.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center">
-                      <order.icon className="text-blue-500 ml-2" size={20} />
-                      <h3 className="text-lg font-semibold">{order.title}</h3>
-                    </div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                      order.status === 'active' ? 'bg-green-100 text-green-600' :
-                        order.status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
-                          order.status === 'completed' ? 'bg-blue-100 text-blue-600' :
-                            'bg-red-100 text-red-600'
-                    }`}>{
-                        order.status === 'active' ? 'فعال' :
-                          order.status === 'pending' ? 'در انتظار' :
-                            order.status === 'completed' ? 'تکمیل شده' :
-                              'لغو شده'
-                      }</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">تاریخ سفارش: {order.date}</p>
-                  <div className="flex flex-col space-y-2 mt-4">
-                    <Button onClick={() => handleOrderDetails(order.id)} variant="outline" className="w-full">
-                      مشاهده جزئیات
+      <CardContent>
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid grid-cols-6 w-full">
+            <TabsTrigger value="all">همه</TabsTrigger>
+            <TabsTrigger value="hosting">میزبانی وب</TabsTrigger>
+            <TabsTrigger value="vps">سرور مجازی</TabsTrigger>
+            <TabsTrigger value="dedicated">سرور اختصاصی</TabsTrigger>
+            <TabsTrigger value="domain">دامنه</TabsTrigger>
+            <TabsTrigger value="security">امنیتی</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all" className="mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {serviceCategories.map((category) => (
+                <ServiceCategory
+                  key={category.id}
+                  title={category.title}
+                  icon={category.icon}
+                  bgColor={category.bgColor}
+                  services={category.services}
+                  navigateToServiceOrderPage={navigateToServiceOrderPage}
+                />
+              ))}
+            </div>
+          </TabsContent>
+          
+          {serviceCategories.map((category) => (
+            <TabsContent key={category.id} value={category.id} className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {category.services.map((service, idx) => (
+                  <div key={idx} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+                    <h3 className="font-medium mb-2">{service.name}</h3>
+                    <Button
+                      onClick={() => navigateToServiceOrderPage(service.link)}
+                      className="w-full"
+                    >
+                      سفارش
                     </Button>
-                    {order.status === 'pending' && (
-                      <Button variant="default" className="w-full" onClick={() => {
-                        toast({
-                          title: "پرداخت فاکتور",
-                          description: "در حال انتقال به درگاه پرداخت...",
-                        });
-                      }}>
-                        پرداخت فاکتور
-                      </Button>
-                    )}
-                    {order.status !== 'cancelled' && (
-                      <Button variant="outline" className="w-full" onClick={() => {
-                        toast({
-                          title: "دانلود فاکتور",
-                          description: "در حال آماده‌سازی فاکتور برای دانلود...",
-                        });
-                      }}>
-                        دانلود فاکتور
-                      </Button>
-                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+        
+        <div className="text-center mt-6">
+          <p className="text-gray-500 text-sm mb-4">نیاز به راهنمایی بیشتر دارید؟</p>
+          <div className="flex justify-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => navigateToServiceOrderPage('/support/online')}
+            >
+              <LifeBuoy className="ml-2 h-4 w-4" />
+              چت آنلاین با پشتیبانی
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigateToServiceOrderPage('/tickets/new')}
+            >
+              پرسش سوال
+            </Button>
           </div>
-        </TabsContent>
-      </Tabs>
-    </section>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
