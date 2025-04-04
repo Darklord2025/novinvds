@@ -197,6 +197,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
         navigateToServiceOrderPage={navigateToServiceOrderPage}
       />
       
+      {/* Cards for support tickets and invoices */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>

@@ -1,251 +1,179 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertTriangle, Info, AlertCircle, Bell, Check } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
-import { format } from 'date-fns';
-import { toast } from "@/components/ui/use-toast";
-import NotificationDetails from './NotificationDetails';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bell, Calendar, Check, Info, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
-// Mock data for notifications
-const mockNotifications = [
-  {
-    id: '1',
-    title: 'سرویس جدید فعال شد',
-    message: 'سرویس سرور مجازی Ubuntu شما با موفقیت فعال شد و هم‌اکنون قابل استفاده است.',
-    type: 'success' as const,
-    date: new Date(2024, 2, 15, 10, 30),
-    isRead: true
-  },
-  {
-    id: '2',
-    title: 'یادآوری تمدید سرویس',
-    message: 'سرویس هاستینگ شما تا 7 روز دیگر منقضی می‌شود. لطفاً نسبت به تمدید آن اقدام کنید.',
-    type: 'warning' as const,
-    date: new Date(2024, 2, 20, 14, 45),
-    isRead: false
-  },
-  {
-    id: '3',
-    title: 'صدور فاکتور جدید',
-    message: 'فاکتور جدیدی برای شما صادر شده است. لطفاً نسبت به پرداخت آن اقدام کنید.',
-    type: 'info' as const,
-    date: new Date(2024, 2, 25, 9, 15),
-    isRead: false
-  },
-  {
-    id: '4',
-    title: 'قطعی موقت سرویس',
-    message: 'به دلیل بروزرسانی سرورها، سرویس شما به مدت 30 دقیقه با اختلال مواجه خواهد بود.',
-    type: 'error' as const,
-    date: new Date(2024, 3, 1, 3, 0),
-    isRead: true
-  },
-  {
-    id: '5',
-    title: 'بروزرسانی کنترل پنل',
-    message: 'کنترل پنل هاستینگ شما به آخرین نسخه بروزرسانی شد.',
-    type: 'info' as const,
-    date: new Date(2024, 3, 5, 11, 20),
-    isRead: false
-  },
-  {
-    id: '6',
-    title: 'ارتقای ترافیک سرور',
-    message: 'به مناسبت عید نوروز، ترافیک سرور شما به مدت یک ماه 50% افزایش یافت.',
-    type: 'success' as const,
-    date: new Date(2024, 3, 10, 16, 0),
-    isRead: false
-  },
-  {
-    id: '7',
-    title: 'اطلاعیه امنیتی',
-    message: 'لطفاً در اسرع وقت رمز عبور پنل کاربری خود را تغییر دهید.',
-    type: 'warning' as const,
-    date: new Date(2024, 3, 12, 8, 30),
-    isRead: true
-  },
-  {
-    id: '8',
-    title: 'تیکت پشتیبانی پاسخ داده شد',
-    message: 'تیکت شماره 254789 شما توسط کارشناسان پشتیبانی پاسخ داده شد.',
-    type: 'success' as const,
-    date: new Date(2024, 3, 15, 13, 45),
-    isRead: false
-  }
-];
+interface Notification {
+  id: string;
+  title: string;
+  content: string;
+  type: "error" | "info" | "warning" | "success";
+  date: string;
+  read: boolean;
+}
 
 interface NotificationsPageProps {
-  onViewNotification?: (notification: any) => void;
+  onViewNotification: (notification: Notification) => void;
 }
 
 const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotification }) => {
-  const [notifications, setNotifications] = useState(mockNotifications);
   const [activeTab, setActiveTab] = useState('all');
-  const [selectedNotification, setSelectedNotification] = useState<typeof mockNotifications[0] | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Filter notifications based on active tab
-  const filteredNotifications = notifications.filter(notification => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'unread') return !notification.isRead;
-    return notification.type === activeTab;
-  });
-
-  // Mark all as read
-  const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map(notif => ({ ...notif, isRead: true })));
-    toast({
-      title: "همه اعلان‌ها خوانده شد",
-      description: "تمام اعلان‌های شما به عنوان خوانده شده علامت‌گذاری شدند.",
-    });
-  };
-
-  // Mark a single notification as read
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(notifications.map(notif => 
-      notif.id === id ? { ...notif, isRead: true } : notif
-    ));
-    toast({
-      title: "اعلان خوانده شد",
-      description: "اعلان مورد نظر به عنوان خوانده شده علامت‌گذاری شد.",
-    });
-  };
-
-  // View notification details
-  const handleViewDetails = (notification: typeof mockNotifications[0]) => {
-    if (onViewNotification) {
-      onViewNotification(notification);
-    } else {
-      setSelectedNotification(notification);
-      setDetailsOpen(true);
+  
+  // Mock data for notifications
+  const notifications: Notification[] = [
+    {
+      id: '1',
+      title: 'تیکت شما پاسخ داده شد',
+      content: 'تیکت شما با موضوع "مشکل در اتصال به سرور" توسط کارشناسان پشتیبانی پاسخ داده شد. برای مشاهده پاسخ به بخش تیکت‌ها مراجعه کنید.',
+      type: 'success',
+      date: '1402/02/15',
+      read: false
+    },
+    {
+      id: '2',
+      title: 'فاکتور جدید صادر شد',
+      content: 'فاکتور جدیدی برای تمدید سرویس سرور مجازی شما صادر شده است. لطفاً نسبت به پرداخت آن اقدام فرمایید.',
+      type: 'info',
+      date: '1402/02/10',
+      read: true
+    },
+    {
+      id: '3',
+      title: 'هشدار استفاده از منابع',
+      content: 'میزان استفاده از پهنای باند سرور مجازی شما به 80% رسیده است. در صورت نیاز به پهنای باند بیشتر، نسبت به ارتقای سرویس خود اقدام نمایید.',
+      type: 'warning',
+      date: '1402/02/05',
+      read: false
+    },
+    {
+      id: '4',
+      title: 'قطعی سرویس',
+      content: 'به دلیل بروزرسانی زیرساخت‌ها، سرویس شما از ساعت 2 تا 4 بامداد فردا با قطعی موقت مواجه خواهد بود.',
+      type: 'error',
+      date: '1402/02/01',
+      read: true
+    }
+  ];
+  
+  const filterNotifications = (status: string) => {
+    switch (status) {
+      case 'unread':
+        return notifications.filter(notification => !notification.read);
+      case 'read':
+        return notifications.filter(notification => notification.read);
+      default:
+        return notifications;
     }
   };
-
-  // Get icon based on notification type
+  
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="text-green-500" />;
+        return <Check className="h-5 w-5 text-green-500" />;
       case 'warning':
-        return <AlertTriangle className="text-amber-500" />;
+        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
       case 'error':
-        return <AlertCircle className="text-red-500" />;
-      case 'info':
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return <Info className="text-blue-500" />;
+        return <Info className="h-5 w-5 text-blue-500" />;
     }
   };
-
-  // Get background color based on notification type
-  const getNotificationBg = (type: string, isRead: boolean) => {
-    if (isRead) return 'bg-gray-50';
-    
+  
+  const getNotificationBadge = (type: string) => {
     switch (type) {
       case 'success':
-        return 'bg-green-50';
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">موفقیت</Badge>;
       case 'warning':
-        return 'bg-amber-50';
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">هشدار</Badge>;
       case 'error':
-        return 'bg-red-50';
-      case 'info':
+        return <Badge className="bg-red-100 text-red-800 hover:bg-red-200">خطا</Badge>;
       default:
-        return 'bg-blue-50';
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">اطلاعیه</Badge>;
     }
   };
-
-  // Count unread notifications
-  const unreadCount = notifications.filter(notif => !notif.isRead).length;
-
+  
+  const handleViewNotification = (notification: Notification) => {
+    if (onViewNotification) {
+      onViewNotification(notification);
+    }
+  };
+  
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">اعلان‌های سیستم</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">اعلان‌ها</h1>
+          <p className="text-gray-500 mt-1">مدیریت و مشاهده اعلان‌های سیستم</p>
+        </div>
+        
         <div className="flex items-center gap-2">
-          {unreadCount > 0 && (
-            <Button variant="outline" onClick={handleMarkAllAsRead}>
-              <Check className="ml-1 h-4 w-4" />
-              علامت‌گذاری همه به‌عنوان خوانده‌شده
-            </Button>
-          )}
+          <Bell className="h-5 w-5 text-blue-600" />
+          <Badge className="bg-blue-100 text-blue-800">{notifications.filter(n => !n.read).length} اعلان جدید</Badge>
         </div>
       </div>
-
+      
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>اعلان‌ها</CardTitle>
+          <CardTitle>اعلان‌های سیستم</CardTitle>
+          <CardDescription>تمام اعلان‌ها و هشدارهای مربوط به سرویس‌های شما</CardDescription>
+          
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mt-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">همه</TabsTrigger>
+              <TabsTrigger value="unread">خوانده نشده</TabsTrigger>
+              <TabsTrigger value="read">خوانده شده</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="all">
-                همه
-                {unreadCount > 0 && (
-                  <Badge variant="destructive" className="mr-2">{unreadCount}</Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="unread">خوانده نشده</TabsTrigger>
-              <TabsTrigger value="success">موفقیت</TabsTrigger>
-              <TabsTrigger value="warning">هشدار</TabsTrigger>
-              <TabsTrigger value="info">اطلاعات</TabsTrigger>
-              <TabsTrigger value="error">خطا</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value={activeTab} className="mt-0">
-              {filteredNotifications.length === 0 ? (
-                <div className="text-center p-8">
-                  <Bell className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">اعلانی وجود ندارد</h3>
-                  <p className="mt-1 text-sm text-gray-500">در حال حاضر اعلانی در این بخش وجود ندارد.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredNotifications.map((notification) => (
-                    <div 
-                      key={notification.id} 
-                      className={`${getNotificationBg(notification.type, notification.isRead)} p-4 rounded-lg cursor-pointer transition hover:shadow-md`}
-                      onClick={() => handleViewDetails(notification)}
-                    >
-                      <div className="flex items-start">
-                        <div className="ml-3">
-                          {getNotificationIcon(notification.type)}
+          <div className="space-y-4">
+            {filterNotifications(activeTab).length === 0 ? (
+              <div className="text-center py-8">
+                <Bell className="h-12 w-12 mx-auto text-gray-300" />
+                <p className="mt-4 text-gray-500">اعلانی برای نمایش وجود ندارد</p>
+              </div>
+            ) : (
+              filterNotifications(activeTab).map((notification) => (
+                <div 
+                  key={notification.id} 
+                  className={`border rounded-lg p-4 ${!notification.read ? 'bg-blue-50 border-blue-200' : 'bg-white'}`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-start space-x-4 space-x-reverse">
+                      <div className="p-2 bg-white rounded-full border">
+                        {getNotificationIcon(notification.type)}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">{notification.title}</h4>
+                          {!notification.read && <span className="h-2 w-2 bg-blue-500 rounded-full"></span>}
+                          {getNotificationBadge(notification.type)}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex justify-between items-center">
-                            <h3 className="text-sm font-medium">{notification.title}</h3>
-                            <span className="text-xs text-gray-500">
-                              {format(notification.date, 'yyyy/MM/dd')}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                            {notification.message}
-                          </p>
+                        <p className="text-sm text-gray-500 line-clamp-2">{notification.content}</p>
+                        <div className="flex items-center text-xs text-gray-400">
+                          <Calendar className="h-3 w-3 ml-1" />
+                          {notification.date}
                         </div>
-                        {!notification.isRead && (
-                          <div className="mr-2">
-                            <span className="block h-2 w-2 rounded-full bg-blue-600"></span>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  ))}
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewNotification(notification)}
+                    >
+                      مشاهده
+                    </Button>
+                  </div>
                 </div>
-              )}
-            </TabsContent>
-          </Tabs>
+              ))
+            )}
+          </div>
         </CardContent>
       </Card>
-
-      {!onViewNotification && (
-        <NotificationDetails 
-          notification={selectedNotification}
-          isOpen={detailsOpen}
-          onClose={() => setDetailsOpen(false)}
-          onMarkAsRead={handleMarkAsRead}
-        />
-      )}
     </div>
   );
 };

@@ -1,206 +1,130 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Megaphone, X, AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from '@/components/ui/badge';
+import { Calendar, MegaphoneIcon } from 'lucide-react';
 
-// Mock data for announcements
-const mockAnnouncements = [
-  {
-    id: '1',
-    title: 'بروزرسانی سرورها',
-    message: 'به اطلاع می‌رسانیم که در تاریخ 15 فروردین 1403 از ساعت 2 الی 4 بامداد، سرورهای ما تحت عملیات بروزرسانی قرار خواهند گرفت. در این بازه زمانی ممکن است خدمات با اختلال مواجه شود. از صبر و شکیبایی شما سپاسگزاریم.',
-    date: new Date(2024, 3, 10, 10, 0),
-    importance: 'high',
-    isRead: false,
-    type: 'info'
-  },
-  {
-    id: '2',
-    title: 'تغییر در قیمت‌گذاری سرویس‌ها',
-    message: 'به اطلاع مشتریان گرامی می‌رسانیم که از تاریخ 1 اردیبهشت 1403، تغییراتی در قیمت‌گذاری سرویس‌های ما اعمال خواهد شد. برای اطلاعات بیشتر به صفحه قیمت‌گذاری مراجعه کنید. سرویس‌های فعلی تا پایان دوره سرویس با قیمت قبلی محاسبه خواهند شد.',
-    date: new Date(2024, 3, 15, 14, 30),
-    importance: 'medium',
-    isRead: true,
-    type: 'info'
-  },
-  {
-    id: '3',
-    title: 'معرفی سرویس جدید سرور ابری',
-    message: 'با افتخار، سرویس جدید سرور ابری با قابلیت‌های منحصر به فرد و قدرت پردازشی بالا را معرفی می‌کنیم. این سرویس با امکان مقیاس‌پذیری لحظه‌ای و پرداخت بر اساس مصرف، گزینه‌ای ایده‌آل برای کسب و کارهای در حال رشد است. برای آشنایی بیشتر با این سرویس، به صفحه سرور ابری مراجعه کنید.',
-    date: new Date(2024, 3, 20, 9, 0),
-    importance: 'medium',
-    isRead: false,
-    type: 'success'
-  },
-  {
-    id: '4',
-    title: 'هشدار امنیتی: بروزرسانی رمز عبور',
-    message: 'به دلیل افزایش حملات امنیتی در فضای مجازی، از تمامی کاربران درخواست می‌کنیم رمز عبور خود را تغییر دهند. برای حفظ امنیت بیشتر، از رمزهای عبور پیچیده (شامل حروف بزرگ و کوچک، اعداد و علائم) استفاده کنید و از تکرار رمز عبور در سایت‌های مختلف خودداری کنید.',
-    date: new Date(2024, 3, 25, 12, 0),
-    importance: 'critical',
-    isRead: false,
-    type: 'warning'
-  },
-  {
-    id: '5',
-    title: 'تعطیلات نوروزی',
-    message: 'ضمن تبریک سال نو، به اطلاع می‌رسانیم که دفتر مرکزی ما از 29 اسفند 1402 تا 15 فروردین 1403 تعطیل خواهد بود. در این مدت، پشتیبانی فنی به صورت آنلاین و 24 ساعته از طریق تیکت‌ها در دسترس است. برای موارد اضطراری می‌توانید با شماره پشتیبانی اضطراری تماس بگیرید.',
-    date: new Date(2024, 2, 18, 11, 0),
-    importance: 'medium',
-    isRead: true,
-    type: 'info'
-  }
-];
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  type: "error" | "info" | "warning" | "success";
+  date: string;
+  read: boolean;
+}
 
 interface ImportantAnnouncementsPageProps {
-  onViewAnnouncement?: (announcement: any) => void;
+  onViewAnnouncement: (announcement: Announcement) => void;
 }
 
 const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({ onViewAnnouncement }) => {
-  const [announcements, setAnnouncements] = useState(mockAnnouncements);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<typeof mockAnnouncements[0] | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Mark an announcement as read
-  const handleMarkAsRead = (id: string) => {
-    setAnnouncements(announcements.map(announcement => 
-      announcement.id === id ? { ...announcement, isRead: true } : announcement
-    ));
-  };
-
-  // View announcement details
-  const handleViewDetails = (announcement: typeof mockAnnouncements[0]) => {
+  // Mock data for announcements
+  const announcements: Announcement[] = [
+    {
+      id: 'ann-1',
+      title: 'بروزرسانی زیرساخت سرورهای هاستینگ',
+      content: '<p>به اطلاع مشترکین محترم می‌رساند، در تاریخ 5 اردیبهشت 1402 از ساعت 2 تا 4 بامداد، عملیات بروزرسانی زیرساخت سرورهای هاستینگ انجام خواهد شد. در این بازه زمانی ممکن است سرویس‌های هاستینگ با اختلال موقت مواجه شوند.</p><p>از شکیبایی شما سپاسگزاریم.</p>',
+      type: 'warning',
+      date: '1402/02/01',
+      read: false
+    },
+    {
+      id: 'ann-2',
+      title: 'افزایش ظرفیت دیتاسنتر اروپا',
+      content: '<p>با توجه به استقبال مشتریان گرامی، ظرفیت دیتاسنتر اروپا افزایش یافته و سرویس‌های جدید با سخت‌افزارهای پیشرفته‌تر و قیمت‌های رقابتی در دسترس قرار گرفته است. برای مشاهده سرویس‌های جدید به بخش سفارش سرور مجازی مراجعه فرمایید.</p>',
+      type: 'info',
+      date: '1402/01/25',
+      read: true
+    },
+  ];
+  
+  const handleViewAnnouncement = (announcement: Announcement) => {
     if (onViewAnnouncement) {
       onViewAnnouncement(announcement);
-    } else {
-      setSelectedAnnouncement(announcement);
-      setDetailsOpen(true);
-      handleMarkAsRead(announcement.id);
     }
   };
-
-  // Get background color based on importance
-  const getAnnouncementBg = (importance: string, isRead: boolean) => {
-    if (isRead) return 'bg-gray-50';
-    
-    switch (importance) {
-      case 'critical':
-        return 'bg-red-50';
-      case 'high':
-        return 'bg-amber-50';
-      case 'medium':
+  
+  const getAnnouncementBadge = (type: string) => {
+    switch (type) {
+      case 'success':
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-200">اطلاعیه</Badge>;
+      case 'warning':
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">هشدار</Badge>;
+      case 'error':
+        return <Badge className="bg-red-100 text-red-800 hover:bg-red-200">اضطراری</Badge>;
       default:
-        return 'bg-blue-50';
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">اطلاعیه</Badge>;
     }
   };
-
-  // Get badge based on importance
-  const getImportanceBadge = (importance: string) => {
-    switch (importance) {
-      case 'critical':
-        return <span className="bg-red-100 text-red-800 text-xs py-1 px-2 rounded">بحرانی</span>;
-      case 'high':
-        return <span className="bg-amber-100 text-amber-800 text-xs py-1 px-2 rounded">مهم</span>;
-      case 'medium':
-      default:
-        return <span className="bg-blue-100 text-blue-800 text-xs py-1 px-2 rounded">اطلاعیه</span>;
-    }
-  };
-
+  
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">اطلاعیه‌های مهم</h1>
-
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">اطلاعیه‌های مهم</h1>
+          <p className="text-gray-500 mt-1">اطلاعیه‌های مهم در مورد سرویس‌ها و خدمات</p>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <MegaphoneIcon className="h-5 w-5 text-red-600" />
+          <Badge className="bg-red-100 text-red-800">{announcements.filter(a => !a.read).length} اطلاعیه جدید</Badge>
+        </div>
+      </div>
+      
       <Card>
         <CardHeader className="pb-3">
           <CardTitle>اطلاعیه‌های سیستم</CardTitle>
+          <CardDescription>آخرین اطلاعیه‌های مهم در مورد سرویس‌ها و برنامه‌های نگهداری</CardDescription>
         </CardHeader>
         <CardContent>
-          {announcements.length === 0 ? (
-            <div className="text-center p-8">
-              <Megaphone className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">اطلاعیه‌ای وجود ندارد</h3>
-              <p className="mt-1 text-sm text-gray-500">در حال حاضر اطلاعیه مهمی وجود ندارد.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {announcements.map((announcement) => (
+          <div className="space-y-4">
+            {announcements.length === 0 ? (
+              <div className="text-center py-8">
+                <MegaphoneIcon className="h-12 w-12 mx-auto text-gray-300" />
+                <p className="mt-4 text-gray-500">اطلاعیه‌ای برای نمایش وجود ندارد</p>
+              </div>
+            ) : (
+              announcements.map((announcement) => (
                 <div 
                   key={announcement.id} 
-                  className={`${getAnnouncementBg(announcement.importance, announcement.isRead)} p-4 rounded-lg cursor-pointer transition hover:shadow-md`}
-                  onClick={() => handleViewDetails(announcement)}
+                  className={`border rounded-lg p-4 ${!announcement.read ? 'bg-amber-50 border-amber-200' : 'bg-white'}`}
                 >
-                  <div className="flex items-start">
-                    <div className="ml-3">
-                      <Megaphone className={announcement.importance === 'critical' ? 'text-red-500' : announcement.importance === 'high' ? 'text-amber-500' : 'text-blue-500'} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <h3 className="text-sm font-medium ml-2">{announcement.title}</h3>
-                          {getImportanceBadge(announcement.importance)}
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-start space-x-4 space-x-reverse">
+                      <div className="p-2 bg-white rounded-full border">
+                        <MegaphoneIcon className={`h-5 w-5 ${announcement.type === 'warning' ? 'text-yellow-500' : 'text-blue-500'}`} />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">{announcement.title}</h4>
+                          {!announcement.read && <span className="h-2 w-2 bg-amber-500 rounded-full"></span>}
+                          {getAnnouncementBadge(announcement.type)}
                         </div>
-                        <span className="text-xs text-gray-500">
-                          {format(announcement.date, 'yyyy/MM/dd')}
-                        </span>
+                        <p className="text-sm text-gray-500 line-clamp-2">
+                          {announcement.content.replace(/<[^>]*>/g, '').substring(0, 120)}...
+                        </p>
+                        <div className="flex items-center text-xs text-gray-400">
+                          <Calendar className="h-3 w-3 ml-1" />
+                          {announcement.date}
+                        </div>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                        {announcement.message}
-                      </p>
                     </div>
-                    {!announcement.isRead && (
-                      <div className="mr-2">
-                        <span className="block h-2 w-2 rounded-full bg-blue-600"></span>
-                      </div>
-                    )}
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewAnnouncement(announcement)}
+                    >
+                      مشاهده
+                    </Button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </CardContent>
       </Card>
-
-      {/* Announcement details dialog - only show when not using external handler */}
-      {!onViewAnnouncement && (
-        <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  {selectedAnnouncement?.importance === 'critical' ? (
-                    <AlertTriangle className="h-6 w-6 text-red-500 ml-2" />
-                  ) : (
-                    <Megaphone className="h-6 w-6 text-blue-500 ml-2" />
-                  )}
-                  <DialogTitle>{selectedAnnouncement?.title}</DialogTitle>
-                </div>
-                {selectedAnnouncement && getImportanceBadge(selectedAnnouncement?.importance || 'medium')}
-              </div>
-              <DialogDescription>
-                {selectedAnnouncement && format(selectedAnnouncement.date, 'yyyy/MM/dd - HH:mm')}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="my-2">
-              <p className="text-gray-800 whitespace-pre-line">{selectedAnnouncement?.message}</p>
-            </div>
-            
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setDetailsOpen(false)}
-              >
-                <X className="ml-2 h-4 w-4" />
-                بستن
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 };
