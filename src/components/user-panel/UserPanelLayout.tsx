@@ -50,9 +50,15 @@ const serviceCategories = [
     services: [
       { name: 'هاست لینوکس ECO', link: '/hosting?type=linux-eco' },
       { name: 'هاست لینوکس PRO', link: '/hosting?type=linux-pro' },
+      { name: 'هاست لینوکس PRO ایران', link: '/hosting?type=linux-pro-iran' },
+      { name: 'هاست لینوکس VIP', link: '/hosting?type=linux-vip' },
       { name: 'هاست لینوکس ایران', link: '/hosting?type=linux-iran' },
       { name: 'هاست وردپرس', link: '/hosting?type=wordpress' },
+      { name: 'هاست ووکامرس', link: '/hosting?type=woocommerce' },
       { name: 'هاست ویندوز', link: '/hosting?type=windows' },
+      { name: 'هاست ویندوز ایران', link: '/hosting?type=windows-iran' },
+      { name: 'هاست پایتون', link: '/hosting?type=python' },
+      { name: 'هاست دانلود', link: '/hosting?type=download' },
     ]
   },
   {
@@ -60,6 +66,7 @@ const serviceCategories = [
     services: [
       { name: 'سرور مجازی لینوکس', link: '/vps?type=linux' },
       { name: 'سرور مجازی ویندوز', link: '/vps?type=windows' },
+      { name: 'سرور مجازی اوبونتو دسکتاپ', link: '/vps?type=ubuntu-desktop' },
       { name: 'سرور مجازی لینوکس ایران', link: '/vps?type=linux-iran' },
       { name: 'سرور مجازی ویندوز ایران', link: '/vps?type=windows-iran' },
       { name: 'سرور مجازی روزانه', link: '/vps?type=daily' },
@@ -89,6 +96,27 @@ const serviceCategories = [
       { name: 'آنتی ویروس', link: '/security/antivirus' },
       { name: 'فایروال', link: '/security/firewall' },
       { name: 'بکاپ گیری', link: '/security/backup' },
+    ]
+  },
+  {
+    title: 'خدمات شبکه',
+    services: [
+      { name: 'ترافیک اضافه', link: '/network/traffic' },
+      { name: 'IP اضافه', link: '/network/ip' },
+      { name: 'CDN', link: '/network/cdn' },
+      { name: 'پشتیبانی آنلاین', link: '/support/online' },
+    ]
+  },
+  {
+    title: 'سایر خدمات',
+    services: [
+      { name: 'طراحی قالب سایت', link: '/services/web-design' },
+      { name: 'فروش قالب آماده', link: '/services/templates' },
+      { name: 'خدمات سئو', link: '/services/seo' },
+      { name: 'مدیریت سرور', link: '/services/server-management' },
+      { name: 'پنل مدیریت cPanel', link: '/services/cpanel' },
+      { name: 'پنل مدیریت DirectAdmin', link: '/services/directadmin' },
+      { name: 'افزودن هارد اضافه', link: '/services/additional-storage' },
     ]
   },
 ];
@@ -158,17 +186,14 @@ const UserPanelLayout = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Set page direction to RTL and language to Farsi
     document.documentElement.dir = 'rtl';
     document.documentElement.lang = 'fa';
     document.body.classList.add('rtl');
     
     // اتصال به WHMCS در زمان بارگذاری
-    // این بخش در حالت واقعی با استفاده از API به WHMCS متصل می‌شود
     setWhmcsStatus('connecting');
     const timer = setTimeout(() => {
       setWhmcsStatus('connected');
-      // فقط در صورت تغییر وضعیت اعلان نمایش داده شود
       setShowWhcmsNotification(true);
       setTimeout(() => {
         setShowWhcmsNotification(false);
@@ -185,7 +210,6 @@ const UserPanelLayout = () => {
             description: "نشست شما به پایان رسیده است. لطفاً مجدداً وارد شوید.",
             variant: "destructive"
           });
-          // در حالت واقعی، کاربر به صفحه ورود هدایت می‌شود
           return 0;
         }
         return prev - 1;
@@ -208,21 +232,18 @@ const UserPanelLayout = () => {
       clearTimeout(timer);
       clearInterval(sessionTimer);
       
-      // پاکسازی تنظیمات RTL هنگام خروج از کامپوننت
       document.body.classList.remove('rtl');
       document.documentElement.dir = 'ltr';
       document.documentElement.lang = 'en';
     };
   }, [toast]);
   
-  // تابع تبدیل ثانیه به فرمت زمان
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
   
-  // نمایش پیام برای سرویس‌های در دست توسعه
   const showDevelopmentToast = (feature: string) => {
     toast({
       title: "در دست توسعه",
@@ -231,9 +252,7 @@ const UserPanelLayout = () => {
     });
   };
   
-  // Handle redirection to service order page
   const navigateToServiceOrderPage = (serviceLink: string) => {
-    // Handle special navigation cases
     if (serviceLink === '/tickets/new') {
       setShowCreateTicket(true);
       setShowNotifications(false);
@@ -264,7 +283,6 @@ const UserPanelLayout = () => {
       return;
     }
     
-    // Handle domain management navigation
     if (serviceLink.startsWith('/manage/domain/')) {
       const domainId = serviceLink.split('/').pop() || '';
       setActiveTab('domains');
@@ -276,7 +294,6 @@ const UserPanelLayout = () => {
       return;
     }
     
-    // Handle service type navigation
     if (serviceLink.startsWith('/vps')) {
       setActiveTab('servers');
       setShowNotifications(false);
@@ -327,20 +344,16 @@ const UserPanelLayout = () => {
       return;
     }
     
-    // For other links, navigate to external page
     navigate(serviceLink);
   };
   
-  // بازگشت به صفحه اصلی
   const handleReturnToHome = () => {
     navigate('/');
   };
   
-  // Handle sidebar item click
   const handleSidebarItemClick = (itemId: string) => {
     setActiveTab(itemId);
     
-    // Reset all panel states when changing tabs
     setShowNotifications(itemId === 'notifications');
     setShowAnnouncements(itemId === 'announcements');
     setShowCreateTicket(false);
@@ -348,7 +361,6 @@ const UserPanelLayout = () => {
     setActiveDomainId(null);
   };
   
-  // Handle ticket creation
   const handleTicketSubmit = () => {
     setShowCreateTicket(false);
     setActiveTab('tickets');
@@ -360,7 +372,6 @@ const UserPanelLayout = () => {
     });
   };
   
-  // View all notifications
   const handleViewAllNotifications = () => {
     setShowNotifications(true);
     setShowAnnouncements(false);
@@ -370,7 +381,6 @@ const UserPanelLayout = () => {
     setActiveTab('notifications');
   };
   
-  // View important announcements
   const handleViewImportantAnnouncements = () => {
     setShowAnnouncements(true);
     setShowNotifications(false);
@@ -380,7 +390,6 @@ const UserPanelLayout = () => {
     setActiveTab('announcements');
   };
   
-  // Get ticket departments
   const getTicketDepartments = () => [
     { value: 'technical', label: 'پشتیبانی فنی' },
     { value: 'billing', label: 'امور مالی' },
@@ -388,12 +397,10 @@ const UserPanelLayout = () => {
     { value: 'general', label: 'عمومی' },
   ];
 
-  // Close ticket detail and go back to tickets page
   const handleCloseTicketDetail = () => {
     setActiveTicketId(null);
   };
 
-  // Handle close domain management
   const handleCloseDomainManagement = () => {
     setActiveDomainId(null);
   };
@@ -580,7 +587,6 @@ const UserPanelLayout = () => {
                           className="text-gray-300 hover:text-white transition-colors flex items-center gap-1"
                           onClick={(e) => {
                             e.preventDefault();
-                            // اینجا به صفحه سفارش مستقیم هدایت می‌شود به جای پنل سرویس‌های موجود
                             navigateToServiceOrderPage(service.link);
                           }}
                         >
@@ -616,4 +622,4 @@ const UserPanelLayout = () => {
                 <div className="flex justify-start rtl:justify-end items-center gap-3">
                   <a href="#" className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors flex items-center justify-center" aria-label="Instagram">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465.668.25 1.272.644 1.772 1.153.509.5.902 1.104 1.153 1.772.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.013 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.903 4.903 0 01-1.153 1.772c-.5.509-1.104.902-1.772 1.153-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.013-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.903 4.903 0 01-1.772-1.153 4.903 4.903 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.903 4.903 0 011.153-1.772A4.903 4.903 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.9
+                      <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465.668.25 1.272.644 1.772 1.153.509.5.902 1.104 1.153 1.772.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.013 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.903 4.903 0 01-1.153 1.772c-.5.509-1.104.902-1.772 1.153-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.013-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.903 4.903 0 01-1.772-1.153 4.903 4.903 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.903 4.903 0 011.153-1.772A4.903 4.903 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.85
