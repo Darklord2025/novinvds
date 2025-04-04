@@ -77,7 +77,11 @@ const mockNotifications = [
   }
 ];
 
-const NotificationsPage: React.FC = () => {
+interface NotificationsPageProps {
+  onViewNotification?: (notification: any) => void;
+}
+
+const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotification }) => {
   const [notifications, setNotifications] = useState(mockNotifications);
   const [activeTab, setActiveTab] = useState('all');
   const [selectedNotification, setSelectedNotification] = useState<typeof mockNotifications[0] | null>(null);
@@ -112,8 +116,12 @@ const NotificationsPage: React.FC = () => {
 
   // View notification details
   const handleViewDetails = (notification: typeof mockNotifications[0]) => {
-    setSelectedNotification(notification);
-    setDetailsOpen(true);
+    if (onViewNotification) {
+      onViewNotification(notification);
+    } else {
+      setSelectedNotification(notification);
+      setDetailsOpen(true);
+    }
   };
 
   // Get icon based on notification type
@@ -230,12 +238,14 @@ const NotificationsPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      <NotificationDetails 
-        notification={selectedNotification}
-        isOpen={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-        onMarkAsRead={handleMarkAsRead}
-      />
+      {!onViewNotification && (
+        <NotificationDetails 
+          notification={selectedNotification}
+          isOpen={detailsOpen}
+          onClose={() => setDetailsOpen(false)}
+          onMarkAsRead={handleMarkAsRead}
+        />
+      )}
     </div>
   );
 };

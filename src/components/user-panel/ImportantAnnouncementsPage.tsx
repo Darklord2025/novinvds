@@ -14,7 +14,8 @@ const mockAnnouncements = [
     message: 'به اطلاع می‌رسانیم که در تاریخ 15 فروردین 1403 از ساعت 2 الی 4 بامداد، سرورهای ما تحت عملیات بروزرسانی قرار خواهند گرفت. در این بازه زمانی ممکن است خدمات با اختلال مواجه شود. از صبر و شکیبایی شما سپاسگزاریم.',
     date: new Date(2024, 3, 10, 10, 0),
     importance: 'high',
-    isRead: false
+    isRead: false,
+    type: 'info'
   },
   {
     id: '2',
@@ -22,7 +23,8 @@ const mockAnnouncements = [
     message: 'به اطلاع مشتریان گرامی می‌رسانیم که از تاریخ 1 اردیبهشت 1403، تغییراتی در قیمت‌گذاری سرویس‌های ما اعمال خواهد شد. برای اطلاعات بیشتر به صفحه قیمت‌گذاری مراجعه کنید. سرویس‌های فعلی تا پایان دوره سرویس با قیمت قبلی محاسبه خواهند شد.',
     date: new Date(2024, 3, 15, 14, 30),
     importance: 'medium',
-    isRead: true
+    isRead: true,
+    type: 'info'
   },
   {
     id: '3',
@@ -30,7 +32,8 @@ const mockAnnouncements = [
     message: 'با افتخار، سرویس جدید سرور ابری با قابلیت‌های منحصر به فرد و قدرت پردازشی بالا را معرفی می‌کنیم. این سرویس با امکان مقیاس‌پذیری لحظه‌ای و پرداخت بر اساس مصرف، گزینه‌ای ایده‌آل برای کسب و کارهای در حال رشد است. برای آشنایی بیشتر با این سرویس، به صفحه سرور ابری مراجعه کنید.',
     date: new Date(2024, 3, 20, 9, 0),
     importance: 'medium',
-    isRead: false
+    isRead: false,
+    type: 'success'
   },
   {
     id: '4',
@@ -38,7 +41,8 @@ const mockAnnouncements = [
     message: 'به دلیل افزایش حملات امنیتی در فضای مجازی، از تمامی کاربران درخواست می‌کنیم رمز عبور خود را تغییر دهند. برای حفظ امنیت بیشتر، از رمزهای عبور پیچیده (شامل حروف بزرگ و کوچک، اعداد و علائم) استفاده کنید و از تکرار رمز عبور در سایت‌های مختلف خودداری کنید.',
     date: new Date(2024, 3, 25, 12, 0),
     importance: 'critical',
-    isRead: false
+    isRead: false,
+    type: 'warning'
   },
   {
     id: '5',
@@ -46,11 +50,16 @@ const mockAnnouncements = [
     message: 'ضمن تبریک سال نو، به اطلاع می‌رسانیم که دفتر مرکزی ما از 29 اسفند 1402 تا 15 فروردین 1403 تعطیل خواهد بود. در این مدت، پشتیبانی فنی به صورت آنلاین و 24 ساعته از طریق تیکت‌ها در دسترس است. برای موارد اضطراری می‌توانید با شماره پشتیبانی اضطراری تماس بگیرید.',
     date: new Date(2024, 2, 18, 11, 0),
     importance: 'medium',
-    isRead: true
+    isRead: true,
+    type: 'info'
   }
 ];
 
-const ImportantAnnouncementsPage: React.FC = () => {
+interface ImportantAnnouncementsPageProps {
+  onViewAnnouncement?: (announcement: any) => void;
+}
+
+const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({ onViewAnnouncement }) => {
   const [announcements, setAnnouncements] = useState(mockAnnouncements);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<typeof mockAnnouncements[0] | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -64,9 +73,13 @@ const ImportantAnnouncementsPage: React.FC = () => {
 
   // View announcement details
   const handleViewDetails = (announcement: typeof mockAnnouncements[0]) => {
-    setSelectedAnnouncement(announcement);
-    setDetailsOpen(true);
-    handleMarkAsRead(announcement.id);
+    if (onViewAnnouncement) {
+      onViewAnnouncement(announcement);
+    } else {
+      setSelectedAnnouncement(announcement);
+      setDetailsOpen(true);
+      handleMarkAsRead(announcement.id);
+    }
   };
 
   // Get background color based on importance
@@ -151,41 +164,43 @@ const ImportantAnnouncementsPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Announcement details dialog */}
-      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {selectedAnnouncement?.importance === 'critical' ? (
-                  <AlertTriangle className="h-6 w-6 text-red-500 ml-2" />
-                ) : (
-                  <Megaphone className="h-6 w-6 text-blue-500 ml-2" />
-                )}
-                <DialogTitle>{selectedAnnouncement?.title}</DialogTitle>
+      {/* Announcement details dialog - only show when not using external handler */}
+      {!onViewAnnouncement && (
+        <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  {selectedAnnouncement?.importance === 'critical' ? (
+                    <AlertTriangle className="h-6 w-6 text-red-500 ml-2" />
+                  ) : (
+                    <Megaphone className="h-6 w-6 text-blue-500 ml-2" />
+                  )}
+                  <DialogTitle>{selectedAnnouncement?.title}</DialogTitle>
+                </div>
+                {selectedAnnouncement && getImportanceBadge(selectedAnnouncement?.importance || 'medium')}
               </div>
-              {getImportanceBadge(selectedAnnouncement?.importance || 'medium')}
+              <DialogDescription>
+                {selectedAnnouncement && format(selectedAnnouncement.date, 'yyyy/MM/dd - HH:mm')}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="my-2">
+              <p className="text-gray-800 whitespace-pre-line">{selectedAnnouncement?.message}</p>
             </div>
-            <DialogDescription>
-              {selectedAnnouncement && format(selectedAnnouncement.date, 'yyyy/MM/dd - HH:mm')}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="my-2">
-            <p className="text-gray-800 whitespace-pre-line">{selectedAnnouncement?.message}</p>
-          </div>
-          
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDetailsOpen(false)}
-            >
-              <X className="ml-2 h-4 w-4" />
-              بستن
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDetailsOpen(false)}
+              >
+                <X className="ml-2 h-4 w-4" />
+                بستن
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
