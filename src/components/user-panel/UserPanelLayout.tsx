@@ -18,6 +18,7 @@ import TicketDetail from './TicketDetail';
 import DomainManagement from './DomainManagement';
 import CreateTicketForm from './CreateTicketForm';
 import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button"; // Add Button import
 
 const UserPanelLayout = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -114,7 +115,7 @@ const UserPanelLayout = () => {
     } else if (serviceLink.startsWith('/tickets/')) {
       const ticketId = serviceLink.split('/')[2];
       setSelectedTicket(ticketId);
-      setActiveTab('tickets');
+      setActiveTab('ticket-details');
     } else if (serviceLink === '/tickets') {
       setActiveTab('tickets');
     } else if (serviceLink === '/invoices') {
@@ -177,7 +178,7 @@ const UserPanelLayout = () => {
         return <DomainManagement domainId={selectedService || ''} onBack={() => setActiveTab('domains')} />;
       case 'tickets':
         return isNewTicket ? 
-          <CreateTicketForm onCancel={() => setIsNewTicket(false)} onSubmit={() => setIsNewTicket(false)} /> : 
+          <CreateTicketForm onSubmit={() => setIsNewTicket(false)} onCancel={() => setIsNewTicket(false)} /> : 
           <TicketsPage onViewTicket={handleViewTicket} onCreateNewTicket={handleCreateNewTicket} />;
       case 'ticket-details':
         return <TicketDetail ticketId={selectedTicket || ''} onBack={() => setActiveTab('tickets')} />;

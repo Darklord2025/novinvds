@@ -6,31 +6,41 @@ import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
   items?: Array<{ id: string; label: string; icon: string }>;
+  onItemClick?: (itemId: string) => void; // Added onItemClick prop
+  setActiveTab?: (tab: string) => void; // Keep for backward compatibility
   onHomeClick?: () => void;
   className?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], onHomeClick, className }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], onItemClick, onHomeClick, className }) => {
+  // Handle item clicks for both interfaces
+  const handleItemClick = (itemId: string) => {
+    if (onItemClick) {
+      onItemClick(itemId);
+    } else if (setActiveTab) {
+      setActiveTab(itemId);
+    }
+  };
+
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
     switch (iconName) {
-      case 'LayoutDashboard': return <LayoutDashboard className={className} />;
-      case 'Server': return <Server className={className} />;
-      case 'HardDrive': return <HardDrive className={className} />;
-      case 'Globe': return <Globe className={className} />;
-      case 'Database': return <Database className={className} />;
-      case 'Cloud': return <Cloud className={className} />;
-      case 'Calculator': return <Calculator className={className} />;
-      case 'TicketCheck': return <TicketCheck className={className} />;
-      case 'Receipt': return <Receipt className={className} />;
-      case 'History': return <History className={className} />;
-      case 'Wallet': return <Wallet className={className} />;
-      case 'Download': return <Download className={className} />;
-      case 'User': return <User className={className} />;
-      case 'Settings': return <Settings className={className} />;
-      case 'Bell': return <Bell className={className} />;
-      case 'MegaphoneIcon': return <Megaphone className={className} />;
+      case 'home': return <LayoutDashboard className={className} />;
+      case 'server': return <Server className={className} />;
+      case 'server-stack': return <HardDrive className={className} />;
+      case 'globe': return <Globe className={className} />;
+      case 'database': return <Database className={className} />;
+      case 'cloud': return <Cloud className={className} />;
+      case 'calculator': return <Calculator className={className} />;
+      case 'message-square': return <TicketCheck className={className} />;
+      case 'file-text': return <Receipt className={className} />;
+      case 'credit-card': return <History className={className} />;
+      case 'wallet': return <Wallet className={className} />;
+      case 'download': return <Download className={className} />;
+      case 'user': return <User className={className} />;
+      case 'settings': return <Settings className={className} />;
+      case 'bell': return <Bell className={className} />;
+      case 'megaphone': return <Megaphone className={className} />;
       default: return <div className={className} />;
     }
   };
@@ -65,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, items = [], 
                     ? "text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
                     : "text-gray-700 hover:bg-gray-100"
                 )}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => handleItemClick(item.id)}
               >
                 <span className="ml-2">{getIcon(item.icon)}</span>
                 <span>{item.label}</span>

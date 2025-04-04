@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,10 +11,20 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface DomainManagementProps {
   domainId: string;
-  onClose: () => void;
+  onBack: () => void; // Added onBack prop
+  onClose?: () => void; // Keep legacy prop for backward compatibility
 }
 
-const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onClose }) => {
+const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack, onClose }) => {
+  // Handle both onClose and onBack for backward compatibility
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else if (onClose) {
+      onClose();
+    }
+  };
+  
   // Mock domain data
   const domainData = {
     id: domainId,
@@ -124,7 +133,7 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onClose }
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
-          <Button variant="ghost" onClick={onClose} className="ml-2">
+          <Button variant="ghost" onClick={handleBack} className="ml-2">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-2xl font-bold flex items-center">

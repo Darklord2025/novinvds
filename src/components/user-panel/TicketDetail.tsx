@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,15 +9,25 @@ import { Label } from '@/components/ui/label';
 
 interface TicketDetailProps {
   ticketId: string;
-  onClose: () => void;
+  onClose?: () => void; // Keep for backward compatibility
+  onBack?: () => void;  // Add the onBack prop
 }
 
-const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
+const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose, onBack }) => {
   const [reply, setReply] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [activeTab, setActiveTab] = useState('messages');
   const { toast } = useToast();
+  
+  // Handle both onBack and onClose for backward compatibility
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else if (onClose) {
+      onClose();
+    }
+  };
   
   // Mock ticket data - this would come from an API in a real app
   const ticketData = {
@@ -141,7 +150,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onClose }) => {
         description: "تیکت شما با موفقیت بسته شد.",
       });
       setIsClosing(false);
-      onClose();
+      handleBack();
     }, 1000);
   };
   
