@@ -1,0 +1,136 @@
+
+import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+
+export interface NavigationHandlers {
+  navigateToServiceOrderPage: (serviceLink: string) => void;
+  handleViewAllNotifications: () => void;
+  handleViewImportantAnnouncements: () => void;
+  handleViewNotification: (notification: any) => void;
+  handleViewAnnouncement: (announcement: any) => void;
+  handleViewTicket: (ticketId: string) => void;
+  handleCreateNewTicket: () => void;
+  handleResetServer: (serviceType: string, serviceId: string) => void;
+  handleRenewService: (serviceType: string, serviceId: string) => void;
+}
+
+export const createNavigationHandlers = (
+  setActiveTab: (tab: string) => void,
+  setSelectedService: (service: string | null) => void,
+  setIsNewTicket: (isNew: boolean) => void,
+  setSelectedTicket: (ticketId: string | null) => void,
+  setSelectedNotification: (notification: any) => void,
+  setSelectedAnnouncement: (announcement: any) => void
+): NavigationHandlers => {
+  
+  const navigateToServiceOrderPage = (serviceLink: string) => {
+    // Handle navigation to service pages
+    if (serviceLink.startsWith('/manage/')) {
+      const [, , serviceType, serviceId] = serviceLink.split('/');
+      
+      toast({
+        title: `مدیریت سرویس ${serviceId}`,
+        description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
+      });
+      
+      // For domain management, show the DomainManagement component
+      if (serviceType === 'domain') {
+        setSelectedService(serviceId);
+        setActiveTab('domain-management');
+      } else {
+        // For other services, navigate to the service page
+        window.location.href = serviceLink;
+      }
+    } else if (serviceLink === '/tickets/new') {
+      setIsNewTicket(true);
+      setActiveTab('tickets');
+    } else if (serviceLink.startsWith('/tickets/')) {
+      const ticketId = serviceLink.split('/')[2];
+      setSelectedTicket(ticketId);
+      setActiveTab('ticket-details');
+    } else if (serviceLink === '/tickets') {
+      setActiveTab('tickets');
+    } else if (serviceLink === '/invoices') {
+      setActiveTab('invoices');
+    } else if (serviceLink.startsWith('/invoices/')) {
+      setActiveTab('invoices');
+    } else {
+      // For ordering new services, we'll navigate to the actual URL
+      window.location.href = serviceLink;
+    }
+  };
+  
+  const handleViewAllNotifications = () => {
+    setActiveTab('notifications');
+  };
+  
+  const handleViewImportantAnnouncements = () => {
+    setActiveTab('important-announcements');
+  };
+  
+  const handleViewNotification = (notification: any) => {
+    setSelectedNotification(notification);
+    setActiveTab('notification-details');
+  };
+  
+  const handleViewAnnouncement = (announcement: any) => {
+    setSelectedAnnouncement(announcement);
+    setActiveTab('announcement-details');
+  };
+  
+  const handleViewTicket = (ticketId: string) => {
+    setSelectedTicket(ticketId);
+    setIsNewTicket(false);
+    setActiveTab('ticket-details');
+  };
+  
+  const handleCreateNewTicket = () => {
+    setIsNewTicket(true);
+    setSelectedTicket(null);
+    setActiveTab('tickets');
+  };
+  
+  const handleResetServer = (serviceType: string, serviceId: string) => {
+    toast({
+      title: `ریست سرور`,
+      description: `در حال ریست سرور ${serviceType} با شناسه ${serviceId}. لطفاً صبر کنید...`,
+    });
+    
+    // Simulate reset process
+    setTimeout(() => {
+      toast({
+        title: "ریست سرور انجام شد",
+        description: `سرور ${serviceId} با موفقیت ریست شد.`,
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        ),
+      });
+    }, 3000);
+  };
+  
+  const handleRenewService = (serviceType: string, serviceId: string) => {
+    toast({
+      title: `تمدید سرویس`,
+      description: `درخواست تمدید سرویس ${serviceType} با شناسه ${serviceId} ثبت شد.`,
+    });
+    
+    // Simulate renewal process
+    setTimeout(() => {
+      window.location.href = `/renew/${serviceType}/${serviceId}`;
+    }, 1000);
+  };
+
+  return {
+    navigateToServiceOrderPage,
+    handleViewAllNotifications,
+    handleViewImportantAnnouncements,
+    handleViewNotification,
+    handleViewAnnouncement,
+    handleViewTicket,
+    handleCreateNewTicket,
+    handleResetServer,
+    handleRenewService
+  };
+};

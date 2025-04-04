@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 
 interface TicketDetailProps {
   ticketId: string;
-  onBack: () => void; // Added onBack prop
+  onBack: () => void;
 }
 
 const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onBack }) => {

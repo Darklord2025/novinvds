@@ -14,8 +14,8 @@ interface Department {
 
 interface CreateTicketFormProps {
   onSubmit: () => void;
-  onCancel: () => void; // Added onCancel prop
-  departments?: Department[]; // Made departments optional
+  onCancel: () => void;
+  departments?: Department[];
 }
 
 const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel, departments = [] }) => {
