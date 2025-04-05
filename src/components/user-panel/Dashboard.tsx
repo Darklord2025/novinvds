@@ -9,35 +9,10 @@ import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
 import ServiceOrderSection from "./ServiceOrderSection";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Download, Eye } from "lucide-react";
+import { Download, Eye, RefreshCw } from "lucide-react";
+import { DashboardProps } from './interfaces';
 
-// Define the types for dashboard props
-interface ServiceCategory {
-  title: string;
-  services: Array<{
-    name: string;
-    link: string;
-  }>;
-}
-
-interface OperatingSystem {
-  id: string;
-  name: string;
-}
-
-interface OperatingSystems {
-  linux: OperatingSystem[];
-  windows: OperatingSystem[];
-  specialized: OperatingSystem[];
-}
-
-interface DashboardProps {
-  serviceCategories?: ServiceCategory[];
-  navigateToServiceOrderPage: (serviceLink: string) => void;
-  operatingSystems?: OperatingSystems;
-}
-
-const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSystems }: DashboardProps) => {
+const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => {
   const [activeTab, setActiveTab] = useState('servers');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
@@ -180,7 +155,7 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
         </div>
         
         <div>
-          <Card>
+          <Card className="shadow-md border-0 rounded-xl">
             <CardHeader>
               <CardTitle>فعالیت‌های اخیر</CardTitle>
               <CardDescription>آخرین فعالیت‌های انجام شده در پنل کاربری</CardDescription>
@@ -199,8 +174,8 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
       
       {/* Cards for support tickets and invoices */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
+        <Card className="shadow-md border-0 rounded-xl">
+          <CardHeader className="pb-3">
             <CardTitle>تیکت‌های پشتیبانی</CardTitle>
             <CardDescription>
               وضعیت تیکت‌های پشتیبانی شما
@@ -237,8 +212,8 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
+        <Card className="shadow-md border-0 rounded-xl">
+          <CardHeader className="pb-3">
             <CardTitle>فاکتورهای اخیر</CardTitle>
             <CardDescription>
               آخرین فاکتورهای صادر شده
@@ -303,6 +278,34 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
             </div>
           </CardContent>
         </Card>
+
+        <Card className="shadow-md border-0 rounded-xl">
+          <CardHeader className="pb-3">
+            <CardTitle>اطلاعیه‌های مهم</CardTitle>
+            <CardDescription>
+              آخرین اطلاعیه‌های مهم سیستم
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/1')}>
+                <h4 className="text-sm font-medium mb-1">به‌روزرسانی سرورها</h4>
+                <p className="text-xs text-gray-600">سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد.</p>
+                <div className="text-xs text-gray-500 mt-1">1402/06/01</div>
+              </div>
+              
+              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/2')}>
+                <h4 className="text-sm font-medium mb-1">افزایش ظرفیت دیتاسنتر</h4>
+                <p className="text-xs text-gray-600">ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شد.</p>
+                <div className="text-xs text-gray-500 mt-1">1402/05/20</div>
+              </div>
+              
+              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/announcements')}>
+                مشاهده همه اطلاعیه‌ها
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Reset Server Dialog */}
@@ -316,7 +319,10 @@ const Dashboard = ({ serviceCategories, navigateToServiceOrderPage, operatingSys
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>انصراف</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmReset}>تأیید ریست</AlertDialogAction>
+            <AlertDialogAction onClick={confirmReset} className="bg-red-600 hover:bg-red-700">
+              <RefreshCw className="ml-2 h-4 w-4" />
+              تأیید ریست
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

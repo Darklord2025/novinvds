@@ -45,3 +45,51 @@ export interface PanelContentProps {
   isNewTicket: boolean;
   navigationHandlers: any;
 }
+
+export interface ServiceOrderProps {
+  serviceType: string;
+  onManage?: (id: string) => void;
+  onReset?: (id: string) => void;
+  onRenew?: (id: string) => void;
+}
+
+export interface ServerListProps {
+  serviceType: 'vps' | 'dedicated' | 'cloud' | 'domain' | 'hosting';
+  onManage?: (id: string) => void;
+  onReset?: (id: string) => void;
+  onRenew?: (id: string) => void;
+  filter?: string;
+}
+
+export interface DashboardProps {
+  serviceCategories?: ServiceCategory[];
+  navigateToServiceOrderPage: (serviceLink: string) => void;
+  operatingSystems?: OperatingSystems;
+}
+
+export interface ServiceCategory {
+  title: string;
+  services: Array<{
+    name: string;
+    link: string;
+  }>;
+}
+
+export interface OperatingSystem {
+  id: string;
+  name: string;
+}
+
+export interface OperatingSystems {
+  linux: OperatingSystem[];
+  windows: OperatingSystem[];
+  specialized: OperatingSystem[];
+}
+
+export interface ServicesPageProps {
+  serviceType: string;
+  operatingSystems?: OperatingSystems;
+  onManage?: (serviceType: string, id: string) => void;
+  onReset?: (serviceType: string, id: string) => void;
+  onRenew?: (serviceType: string, id: string) => void;
+}

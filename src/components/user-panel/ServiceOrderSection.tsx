@@ -5,15 +5,18 @@ import { Button } from "@/components/ui/button";
 import { 
   Server, Globe, Database, Cloud, Code, Shield, Network, HardDrive, 
   Cpu, Download, Laptop, Monitor, PanelLeft, Settings, Users, CreditCard,
-  ChevronDown, ChevronRight, Wifi, FileText
+  ChevronDown, ChevronRight, Wifi, FileText, Layers, BookOpen,
+  BarChart3, User, Key, Lock
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { toast } from "@/components/ui/use-toast";
 
 interface ServiceItem {
   id: string;
@@ -133,6 +136,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "ddos", name: "محافظت DDoS", link: "/security/ddos" },
         { id: "waf", name: "فایروال اپلیکیشن وب", link: "/security/waf" },
         { id: "backup", name: "پشتیبان‌گیری خودکار", link: "/security/backup" },
+        { id: "firewall", name: "فایروال پیشرفته", link: "/security/firewall" },
+        { id: "antivirus", name: "آنتی‌ویروس سرور", link: "/security/antivirus" },
+        { id: "vpn", name: "سرویس VPN اختصاصی", link: "/security/vpn" },
       ]
     },
     {
@@ -146,7 +152,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "traffic", name: "ترافیک اضافه", link: "/network/traffic" },
         { id: "cdn", name: "شبکه تحویل محتوا (CDN)", link: "/network/cdn" },
         { id: "ip", name: "IP استاتیک", link: "/network/ip" },
-        { id: "vpn", name: "خدمات VPN", link: "/network/vpn" },
+        { id: "load-balancer", name: "لود بالانسر", link: "/network/load-balancer" },
+        { id: "dns", name: "سرویس DNS اختصاصی", link: "/network/dns" },
+        { id: "proxy", name: "سرویس پروکسی", link: "/network/proxy" },
       ]
     },
     {
@@ -161,6 +169,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "directadmin", name: "لایسنس DirectAdmin", link: "/panels/directadmin" },
         { id: "plesk", name: "لایسنس Plesk", link: "/panels/plesk" },
         { id: "whm", name: "لایسنس WHM", link: "/panels/whm" },
+        { id: "vestacp", name: "لایسنس VestaCP", link: "/panels/vestacp" },
+        { id: "webmin", name: "لایسنس Webmin", link: "/panels/webmin" },
       ]
     },
     {
@@ -176,6 +186,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "extra-traffic", name: "ترافیک اضافه", link: "/modules/extra-traffic" },
         { id: "extra-ip", name: "آی‌پی اضافه", link: "/modules/extra-ip" },
         { id: "extra-cpu", name: "پردازنده اضافه", link: "/modules/extra-cpu" },
+        { id: "extra-backup", name: "فضای بکاپ اضافه", link: "/modules/extra-backup" },
+        { id: "extra-bandwidth", name: "پهنای باند اضافه", link: "/modules/extra-bandwidth" },
       ]
     },
     {
@@ -190,6 +202,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "custom-design", name: "طراحی اختصاصی", link: "/design/custom" },
         { id: "wordpress", name: "راه‌اندازی وردپرس", link: "/design/wordpress" },
         { id: "woocommerce", name: "راه‌اندازی فروشگاه", link: "/design/woocommerce" },
+        { id: "seo", name: "بهینه‌سازی سئو", link: "/design/seo" },
+        { id: "responsive", name: "طراحی ریسپانسیو", link: "/design/responsive" },
+        { id: "mobile-app", name: "طراحی اپلیکیشن موبایل", link: "/design/mobile-app" },
       ]
     },
     {
@@ -204,6 +219,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "support-advanced", name: "پشتیبانی پیشرفته", link: "/support/advanced" },
         { id: "support-premium", name: "پشتیبانی ویژه", link: "/support/premium" },
         { id: "support-online", name: "پشتیبانی آنلاین", link: "/support/online" },
+        { id: "support-managed", name: "مدیریت سرور", link: "/support/managed" },
+        { id: "support-emergency", name: "پشتیبانی اضطراری", link: "/support/emergency" },
+        { id: "support-consultation", name: "مشاوره تخصصی", link: "/support/consultation" },
       ]
     },
     {
@@ -219,11 +237,18 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "backup", name: "سرویس بک‌آپ", link: "/services/backup" },
         { id: "monitoring", name: "مانیتورینگ", link: "/services/monitoring" },
         { id: "seo", name: "خدمات SEO", link: "/services/seo" },
+        { id: "content", name: "تولید محتوا", link: "/services/content" },
+        { id: "email", name: "ایمیل حرفه‌ای", link: "/services/email" },
+        { id: "analytics", name: "آنالیز وب‌سایت", link: "/services/analytics" },
       ]
     },
   ];
 
   const handleServiceClick = (link: string) => {
+    toast({
+      title: "انتقال به صفحه سفارش",
+      description: "در حال انتقال به صفحه سفارش سرویس جدید...",
+    });
     navigateToServiceOrderPage(link);
   };
 
@@ -233,47 +258,77 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
 
   return (
     <section className="my-8">
-      <Card className="overflow-hidden shadow-lg border-0">
-        <CardHeader className="pb-3 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
-          <CardTitle className="text-2xl">سفارش سرویس جدید</CardTitle>
+      <Card className="overflow-hidden shadow-2xl border-0 rounded-2xl">
+        <CardHeader className="pb-4 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+          <CardTitle className="text-2xl font-bold">سفارش سرویس جدید</CardTitle>
           <CardDescription className="text-blue-100">
             از میان خدمات متنوع نوین وی‌دی‌اس، سرویس مورد نظر خود را انتخاب کنید
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {serviceCategories.map((category) => (
-              <div key={category.id} className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div 
+                key={category.id} 
+                className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              >
                 <DropdownMenu open={openDropdown === category.id} onOpenChange={() => toggleDropdown(category.id)}>
                   <DropdownMenuTrigger asChild>
                     <button 
                       className={cn(
-                        "w-full h-32 rounded-xl px-4 py-4 text-white shadow-md transition-all duration-300",
+                        "w-full h-36 rounded-xl px-4 py-5 text-white shadow-lg transition-all duration-300",
                         category.color,
-                        "hover:shadow-lg hover:scale-105 hover:bg-gradient-to-br",
-                        "hover:" + category.hoverColor
+                        "hover:shadow-xl hover:scale-[1.03] hover:bg-gradient-to-br",
+                        "hover:" + category.hoverColor,
+                        "relative overflow-hidden group"
                       )}
+                      onClick={() => setActiveCategory(category.id)}
                     >
-                      <div className="flex flex-col h-full items-center justify-center gap-3 text-center">
-                        <div className="bg-white/20 p-2 rounded-full">
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10"></div>
+                      <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-black/5"></div>
+                      
+                      <div className="flex flex-col h-full items-center justify-center gap-4 text-center relative z-10">
+                        <div className="bg-white/20 p-3 rounded-full shadow-inner">
                           {category.icon}
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg">{category.title}</h3>
-                          <p className="text-xs text-white/80 mt-1 line-clamp-1">{category.description}</p>
+                          <h3 className="font-bold text-xl">{category.title}</h3>
+                          <p className="text-sm text-white/90 mt-1 line-clamp-1">{category.description}</p>
                         </div>
-                        <ChevronDown className="h-4 w-4 absolute bottom-2 right-2 opacity-70" />
+                        <div className="absolute bottom-2 right-2 bg-white/30 rounded-full p-1">
+                          <ChevronDown className="h-4 w-4" />
+                        </div>
                       </div>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
-                    className="p-2 rounded-xl shadow-xl bg-white w-56 max-h-72 overflow-y-auto" 
+                    className="p-2 rounded-xl shadow-2xl bg-white border-0 w-64 max-h-80 overflow-y-auto" 
                     align="center"
                   >
+                    <div className="pb-2 mb-2 border-b text-center">
+                      <h3 className={cn(
+                        "text-sm font-semibold px-2 py-1 rounded-md inline-block",
+                        category.id === "hosting" && "bg-purple-100 text-purple-700",
+                        category.id === "vps" && "bg-blue-100 text-blue-700",
+                        category.id === "dedicated" && "bg-red-100 text-red-700",
+                        category.id === "cloud" && "bg-emerald-100 text-emerald-700",
+                        category.id === "domain" && "bg-amber-100 text-amber-700",
+                        category.id === "security" && "bg-indigo-100 text-indigo-700",
+                        category.id === "network" && "bg-cyan-100 text-cyan-700",
+                        category.id === "panels" && "bg-orange-100 text-orange-700",
+                        category.id === "modules" && "bg-fuchsia-100 text-fuchsia-700",
+                        category.id === "design" && "bg-pink-100 text-pink-700",
+                        category.id === "support" && "bg-teal-100 text-teal-700",
+                        category.id === "other" && "bg-gray-100 text-gray-700",
+                      )}>
+                        {category.title}
+                      </h3>
+                    </div>
                     {category.services.map((service) => (
                       <DropdownMenuItem
                         key={service.id}
-                        className="cursor-pointer rounded-lg py-2 px-3 hover:bg-gray-100"
+                        className="cursor-pointer rounded-lg py-2 px-3 hover:bg-gray-50 focus:bg-gray-50 transition-colors"
                         onClick={() => handleServiceClick(service.link)}
                       >
                         <div className="flex items-center justify-between w-full gap-2">
@@ -282,28 +337,84 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
                         </div>
                       </DropdownMenuItem>
                     ))}
+                    <DropdownMenuSeparator className="my-2" />
+                    <DropdownMenuItem
+                      className="cursor-pointer rounded-lg py-2 px-3 hover:bg-blue-50 focus:bg-blue-50 transition-colors text-center font-medium text-blue-600"
+                      onClick={() => handleServiceClick(`/${category.id}`)}
+                    >
+                      مشاهده همه خدمات {category.title}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-6">
             <Button 
-              className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-6 px-5 rounded-lg font-medium text-lg items-center gap-2 shadow-md"
-              onClick={() => navigateToServiceOrderPage('/special-offers')}
+              className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-6 px-6 rounded-xl font-semibold text-lg items-center gap-2 shadow-lg group hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+              onClick={() => handleServiceClick('/special-offers')}
             >
-              <CreditCard className="h-5 w-5" />
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <CreditCard className="h-5 w-5 mr-2 inline-block" />
               مشاهده تخفیف‌های ویژه 
             </Button>
             
             <Button 
-              className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white py-6 px-5 rounded-lg font-medium text-lg items-center gap-2 shadow-md"
-              onClick={() => navigateToServiceOrderPage('/compare-plans')}
+              className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white py-6 px-6 rounded-xl font-semibold text-lg items-center gap-2 shadow-lg group hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+              onClick={() => handleServiceClick('/compare-plans')}
             >
-              <FileText className="h-5 w-5" />
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <FileText className="h-5 w-5 mr-2 inline-block" />
               مقایسه سرویس‌ها
             </Button>
+            
+            <Button 
+              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white py-6 px-6 rounded-xl font-semibold text-lg items-center gap-2 shadow-lg group hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+              onClick={() => handleServiceClick('/quick-order')}
+            >
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <Layers className="h-5 w-5 mr-2 inline-block" />
+              سفارش سریع
+            </Button>
+          </div>
+          
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="bg-indigo-100 p-3 rounded-full">
+                  <BookOpen className="h-5 w-5 text-indigo-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-indigo-800">راهنمای انتخاب سرویس</h4>
+                  <p className="text-xs text-indigo-600">مشاوره رایگان برای انتخاب بهترین سرویس</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-teal-50 to-green-50 border-0 shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="bg-green-100 p-3 rounded-full">
+                  <User className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-green-800">مشاوره تخصصی</h4>
+                  <p className="text-xs text-green-600">ارتباط با کارشناسان فنی برای راهنمایی</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-amber-50 to-yellow-50 border-0 shadow-md hover:shadow-lg transition-shadow">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="bg-yellow-100 p-3 rounded-full">
+                  <BarChart3 className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-yellow-800">محاسبه منابع مورد نیاز</h4>
+                  <p className="text-xs text-yellow-600">تخمین دقیق سرویس مناسب برای پروژه شما</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>
