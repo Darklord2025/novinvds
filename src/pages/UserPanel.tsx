@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import UserPanelLayout from '../components/user-panel/UserPanelLayout';
 import { Helmet } from "react-helmet-async";
 
-const UserPanel = () => {
+const UserPanel: React.FC = () => {
   useEffect(() => {
     // تنظیم جهت و زبان صفحه
     document.documentElement.dir = 'rtl';

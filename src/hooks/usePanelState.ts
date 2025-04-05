@@ -12,7 +12,7 @@ export interface PanelState {
   sessionTimeLeft: string;
 }
 
-export function usePanelState() {
+export const usePanelState = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');

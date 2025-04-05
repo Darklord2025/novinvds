@@ -8,7 +8,7 @@ import { usePanelState } from '@/hooks/usePanelState';
 import { createNavigationHandlers } from '@/services/panelNavigationService';
 import { sidebarItems } from '@/data/sidebarItems';
 
-const UserPanelLayout = () => {
+const UserPanelLayout: React.FC = () => {
   const {
     activeTab,
     setActiveTab,
