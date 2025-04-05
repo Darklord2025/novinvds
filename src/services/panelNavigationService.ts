@@ -114,8 +114,6 @@ export const createNavigationHandlers = (
     
     // Simulate reset process
     setTimeout(() => {
-      // We need to avoid JSX in this file since it's a .ts file, not .tsx
-      // Instead of using JSX, we'll create a simpler toast
       toast({
         title: "ریست سرور انجام شد",
         description: `سرور ${serviceId} با موفقیت ریست شد.`,
