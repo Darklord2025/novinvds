@@ -12,6 +12,7 @@ export interface NavigationHandlers {
   handleCreateNewTicket: () => void;
   handleResetServer: (serviceType: string, serviceId: string) => void;
   handleRenewService: (serviceType: string, serviceId: string) => void;
+  handleManageService: (serviceType: string, serviceId: string) => void;
 }
 
 export const createNavigationHandlers = (
@@ -90,6 +91,22 @@ export const createNavigationHandlers = (
     setActiveTab('tickets');
   };
   
+  const handleManageService = (serviceType: string, serviceId: string) => {
+    toast({
+      title: `مدیریت سرویس`,
+      description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
+    });
+    
+    // Handle different service types
+    if (serviceType === 'domain') {
+      setSelectedService(serviceId);
+      setActiveTab('domain-management');
+    } else {
+      // For other services, navigate to a management page
+      window.location.href = `/manage/${serviceType}/${serviceId}`;
+    }
+  };
+  
   const handleResetServer = (serviceType: string, serviceId: string) => {
     toast({
       title: `ریست سرور`,
@@ -131,6 +148,7 @@ export const createNavigationHandlers = (
     handleViewTicket,
     handleCreateNewTicket,
     handleResetServer,
-    handleRenewService
+    handleRenewService,
+    handleManageService
   };
 };
