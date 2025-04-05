@@ -14,10 +14,19 @@ interface Department {
 
 interface CreateTicketFormProps {
   onSubmit: () => void;
-  departments: Department[];
+  onCancel: () => void;
+  departments?: Department[];
 }
 
-const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, departments }) => {
+const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel, departments = [] }) => {
+  // Add default departments if none provided
+  const ticketDepartments = departments.length > 0 ? departments : [
+    { value: 'technical', label: 'پشتیبانی فنی' },
+    { value: 'billing', label: 'امور مالی' },
+    { value: 'sales', label: 'فروش' },
+    { value: 'general', label: 'عمومی' }
+  ];
+
   const [subject, setSubject] = useState('');
   const [department, setDepartment] = useState('');
   const [message, setMessage] = useState('');
@@ -74,7 +83,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, departmen
               <SelectValue placeholder="انتخاب دپارتمان" />
             </SelectTrigger>
             <SelectContent>
-              {departments.map(dept => (
+              {ticketDepartments.map(dept => (
                 <SelectItem key={dept.value} value={dept.value}>
                   {dept.label}
                 </SelectItem>
@@ -155,7 +164,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, departmen
       
       <div className="flex justify-end space-x-2 space-x-reverse pt-4">
         <Button type="submit">ثبت تیکت</Button>
-        <Button type="button" variant="outline" onClick={onSubmit}>انصراف</Button>
+        <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
       </div>
     </form>
   );
