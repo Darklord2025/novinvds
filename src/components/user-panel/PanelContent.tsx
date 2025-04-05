@@ -16,16 +16,8 @@ import TicketDetail from './TicketDetail';
 import DomainManagement from './DomainManagement';
 import CreateTicketForm from './CreateTicketForm';
 import { NavigationHandlers } from '@/services/panelNavigationService';
-
-interface PanelContentProps {
-  activeTab: string;
-  selectedService: string | null;
-  selectedNotification: any;
-  selectedAnnouncement: any;
-  selectedTicket: string | null;
-  isNewTicket: boolean;
-  navigationHandlers: NavigationHandlers;
-}
+import { PanelContentProps } from './interfaces';
+import { Button } from '@/components/ui/button';
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,
@@ -50,15 +42,15 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'profile':
       return <ProfilePage />;
     case 'servers':
-      return <ServicesPage serviceType="servers" onManage={navigateToServiceOrderPage} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
+      return <ServicesPage serviceType="servers" onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
     case 'dedicated':
-      return <ServicesPage serviceType="dedicated" onManage={navigateToServiceOrderPage} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
+      return <ServicesPage serviceType="dedicated" onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
     case 'cloud':
-      return <ServicesPage serviceType="cloud" onManage={navigateToServiceOrderPage} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
+      return <ServicesPage serviceType="cloud" onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} onReset={(type, id) => handleResetServer(type, id)} onRenew={(type, id) => handleRenewService(type, id)} />;
     case 'hosting':
-      return <ServicesPage serviceType="hosting" onManage={navigateToServiceOrderPage} onRenew={(type, id) => handleRenewService(type, id)} />;
+      return <ServicesPage serviceType="hosting" onManage={(id) => navigateToServiceOrderPage(`/manage/hosting/${id}`)} onRenew={(type, id) => handleRenewService(type, id)} />;
     case 'domains':
-      return <ServicesPage serviceType="domains" onManage={navigateToServiceOrderPage} onRenew={(type, id) => handleRenewService(type, id)} />;
+      return <ServicesPage serviceType="domains" onManage={(id) => navigateToServiceOrderPage(`/manage/domain/${id}`)} onRenew={(type, id) => handleRenewService(type, id)} />;
     case 'domain-management':
       return <DomainManagement domainId={selectedService || ''} onBack={() => navigateToServiceOrderPage('/domains')} />;
     case 'tickets':
