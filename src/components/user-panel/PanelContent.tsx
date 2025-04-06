@@ -147,11 +147,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'notifications':
       return <NotificationsPage onViewNotification={navigationHandlers.handleViewNotification} />;
     case 'notification-details':
-      return selectedNotification ? <NotificationDetails notification={selectedNotification} onBack={() => navigationHandlers.handleViewAllNotifications()} /> : null;
+      return <NotificationDetails notification={selectedNotification} onBack={() => navigationHandlers.handleViewAllNotifications()} />;
     case 'important-announcements':
       return <ImportantAnnouncementsPage onViewAnnouncement={navigationHandlers.handleViewAnnouncement} />;
     case 'announcement-details':
-      return selectedAnnouncement ? <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} /> : null;
+      return <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} />;
     case 'transactions':
       return <TransactionsPage />;
     case 'downloads':
