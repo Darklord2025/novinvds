@@ -24,9 +24,15 @@ export const createNavigationHandlers = (
 ): NavigationHandlers => {
   
   const navigateToServiceOrderPage = (serviceLink: string) => {
+    if (!serviceLink) return;
+    
     // Handle navigation to service pages
     if (serviceLink.startsWith('/manage/')) {
-      const [, , serviceType, serviceId] = serviceLink.split('/');
+      const parts = serviceLink.split('/');
+      if (parts.length < 4) return; // Ensure we have enough parts
+      
+      const serviceType = parts[2];
+      const serviceId = parts[3];
       
       toast({
         title: `مدیریت سرویس ${serviceId}`,
@@ -45,7 +51,10 @@ export const createNavigationHandlers = (
       setIsNewTicket(true);
       setActiveTab('tickets');
     } else if (serviceLink.startsWith('/tickets/')) {
-      const ticketId = serviceLink.split('/')[2];
+      const parts = serviceLink.split('/');
+      if (parts.length < 3) return; // Ensure we have enough parts
+      
+      const ticketId = parts[2];
       setSelectedTicket(ticketId);
       setActiveTab('ticket-details');
     } else if (serviceLink === '/tickets') {
@@ -69,16 +78,22 @@ export const createNavigationHandlers = (
   };
   
   const handleViewNotification = (notification: any) => {
+    if (!notification) return;
+    
     setSelectedNotification(notification);
     setActiveTab('notification-details');
   };
   
   const handleViewAnnouncement = (announcement: any) => {
+    if (!announcement) return;
+    
     setSelectedAnnouncement(announcement);
     setActiveTab('announcement-details');
   };
   
   const handleViewTicket = (ticketId: string) => {
+    if (!ticketId) return;
+    
     setSelectedTicket(ticketId);
     setIsNewTicket(false);
     setActiveTab('ticket-details');
@@ -91,6 +106,8 @@ export const createNavigationHandlers = (
   };
   
   const handleManageService = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `مدیریت سرویس`,
       description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
@@ -107,6 +124,8 @@ export const createNavigationHandlers = (
   };
   
   const handleResetServer = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `ریست سرور`,
       description: `در حال ریست سرور ${serviceType} با شناسه ${serviceId}. لطفاً صبر کنید...`,
@@ -122,6 +141,8 @@ export const createNavigationHandlers = (
   };
   
   const handleRenewService = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `تمدید سرویس`,
       description: `درخواست تمدید سرویس ${serviceType} با شناسه ${serviceId} ثبت شد.`,

@@ -18,6 +18,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
   
   const handleReset = (serverId: string, serviceType: string = 'vps') => {
+    if (!serverId) return; // Prevent attempting to reset with an empty ID
+    
     setServerToReset({ type: serviceType, id: serverId });
     setResetDialogOpen(true);
   };
@@ -44,6 +46,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
   };
   
   const handleRenew = (serviceType: string, serviceId: string) => {
+    if (!serviceId) return; // Prevent attempting to renew with an empty ID
+    
     toast({
       title: "تمدید سرویس",
       description: `درخواست تمدید سرویس ${serviceId} ثبت شد و به صفحه پرداخت هدایت می‌شوید.`,
@@ -56,17 +60,23 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
   };
 
   const handleViewInvoice = (invoiceId: string, isPaid: boolean = false) => {
+    if (!invoiceId) return; // Prevent attempting to view with an empty ID
+    
     toast({
       title: isPaid ? "مشاهده فاکتور پرداخت شده" : "مشاهده فاکتور پرداخت نشده",
       description: `در حال بارگیری فاکتور شماره ${invoiceId}...`,
     });
     
     setTimeout(() => {
-      navigateToServiceOrderPage(`/invoices/${invoiceId}`);
+      if (navigateToServiceOrderPage) {
+        navigateToServiceOrderPage(`/invoices/${invoiceId}`);
+      }
     }, 500);
   };
   
   const handleDownloadInvoice = (invoiceId: string) => {
+    if (!invoiceId) return; // Prevent attempting to download with an empty ID
+    
     toast({
       title: "دانلود فاکتور",
       description: "فاکتور در حال دانلود است...",
@@ -87,14 +97,25 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
   };
 
   const handlePayInvoice = (invoiceId: string) => {
+    if (!invoiceId) return; // Prevent attempting to pay with an empty ID
+    
     toast({
       title: "پرداخت فاکتور",
       description: "در حال انتقال به درگاه پرداخت...",
     });
     
     setTimeout(() => {
-      navigateToServiceOrderPage(`/invoices/pay/${invoiceId}`);
+      if (navigateToServiceOrderPage) {
+        navigateToServiceOrderPage(`/invoices/pay/${invoiceId}`);
+      }
     }, 1000);
+  };
+  
+  // Safely handle navigation
+  const safeNavigate = (path: string) => {
+    if (navigateToServiceOrderPage && path) {
+      navigateToServiceOrderPage(path);
+    }
   };
   
   return (
@@ -116,7 +137,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="servers" className="mt-6">
               <ServerList 
                 serviceType="vps" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/vps/${id}`)}
                 onReset={(id) => handleReset(id, 'vps')} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
@@ -124,7 +145,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="dedicated" className="mt-6">
               <ServerList 
                 serviceType="dedicated" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/dedicated/${id}`)} 
                 onReset={(id) => handleReset(id, 'dedicated')} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
@@ -132,7 +153,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="cloud" className="mt-6">
               <ServerList 
                 serviceType="cloud" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/cloud/${id}`)}
                 onReset={(id) => handleReset(id, 'cloud')} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
@@ -140,14 +161,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="domains" className="mt-6">
               <ServerList 
                 serviceType="domain" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/domain/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/domain/${id}`)} 
                 onRenew={(id) => handleRenew('domain', id)} 
               />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
               <ServerList 
                 serviceType="hosting" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/hosting/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/hosting/${id}`)} 
                 onRenew={(id) => handleRenew('hosting', id)} 
               />
             </TabsContent>
@@ -201,10 +222,10 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
               </div>
               
               <div className="pt-2">
-                <Button className="w-full" variant="outline" onClick={() => navigateToServiceOrderPage('/tickets')}>
+                <Button className="w-full" variant="outline" onClick={() => safeNavigate('/tickets')}>
                   مشاهده همه تیکت‌ها
                 </Button>
-                <Button className="w-full mt-2" onClick={() => navigateToServiceOrderPage('/tickets/new')}>
+                <Button className="w-full mt-2" onClick={() => safeNavigate('/tickets/new')}>
                   ارسال تیکت جدید
                 </Button>
               </div>
@@ -272,7 +293,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
                 </div>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/invoices')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/invoices')}>
                 مشاهده همه فاکتورها
               </Button>
             </div>
@@ -288,19 +309,19 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/1')}>
+              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/1')}>
                 <h4 className="text-sm font-medium mb-1">به‌روزرسانی سرورها</h4>
                 <p className="text-xs text-gray-600">سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/06/01</div>
               </div>
               
-              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/2')}>
+              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/2')}>
                 <h4 className="text-sm font-medium mb-1">افزایش ظرفیت دیتاسنتر</h4>
                 <p className="text-xs text-gray-600">ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/05/20</div>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/announcements')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/announcements')}>
                 مشاهده همه اطلاعیه‌ها
               </Button>
             </div>
