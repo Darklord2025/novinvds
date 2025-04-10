@@ -25,26 +25,42 @@ export const createNavigationHandlers = (
   
   const navigateToServiceOrderPage = (serviceLink: string) => {
     // Handle navigation to service pages
-    if (serviceLink.startsWith('/manage/')) {
-      const [, , serviceType, serviceId] = serviceLink.split('/');
-      
-      toast({
-        title: `مدیریت سرویس ${serviceId}`,
-        description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
-      });
-      
-      // For domain management, show the DomainManagement component
-      if (serviceType === 'domain') {
-        setSelectedService(serviceId);
-        setActiveTab('domain-management');
-      } else {
-        // For other services, navigate to the service page
-        window.location.href = serviceLink;
+    if (serviceLink && serviceLink.startsWith('/manage/')) {
+      const parts = serviceLink.split('/');
+      if (parts && parts.length >= 3) {
+        const serviceType = parts[2];
+        const serviceId = parts[3];
+        
+        toast({
+          title: `مدیریت سرویس ${serviceId}`,
+          description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
+        });
+        
+        // For domain management, show the DomainManagement component
+        if (serviceType === 'domain') {
+          setSelectedService(serviceId);
+          setActiveTab('domain-management');
+        } else if (serviceType === 'vps') {
+          setSelectedService(serviceId);
+          setActiveTab('vps-management');
+        } else if (serviceType === 'dedicated') {
+          setSelectedService(serviceId);
+          setActiveTab('dedicated-management');
+        } else if (serviceType === 'cloud') {
+          setSelectedService(serviceId);
+          setActiveTab('cloud-management');
+        } else if (serviceType === 'hosting') {
+          setSelectedService(serviceId);
+          setActiveTab('hosting-management');
+        } else {
+          // For other services, navigate to the service page
+          window.location.href = serviceLink;
+        }
       }
     } else if (serviceLink === '/tickets/new') {
       setIsNewTicket(true);
       setActiveTab('tickets');
-    } else if (serviceLink.startsWith('/tickets/')) {
+    } else if (serviceLink && serviceLink.startsWith('/tickets/')) {
       const ticketId = serviceLink.split('/')[2];
       setSelectedTicket(ticketId);
       setActiveTab('ticket-details');
@@ -52,11 +68,52 @@ export const createNavigationHandlers = (
       setActiveTab('tickets');
     } else if (serviceLink === '/invoices') {
       setActiveTab('invoices');
-    } else if (serviceLink.startsWith('/invoices/')) {
+    } else if (serviceLink && serviceLink.startsWith('/invoices/')) {
+      const invoiceId = serviceLink.split('/')[2];
+      // Handle invoice details page if needed
       setActiveTab('invoices');
+      // If you want to implement invoice details page later:
+      // setSelectedInvoice(invoiceId);
+      // setActiveTab('invoice-details');
+    } else if (serviceLink && serviceLink.startsWith('/announcements/')) {
+      const announcementId = serviceLink.split('/')[2];
+      // Create a dummy announcement object with the ID
+      const announcement = { id: announcementId, title: `اطلاعیه ${announcementId}`, content: "محتوای اطلاعیه" };
+      setSelectedAnnouncement(announcement);
+      setActiveTab('announcement-details');
+    } else if (serviceLink === '/announcements') {
+      setActiveTab('important-announcements');
+    } else if (serviceLink && serviceLink.startsWith('/order/') || 
+               serviceLink && serviceLink.startsWith('/hosting/') || 
+               serviceLink && serviceLink.startsWith('/vps/') || 
+               serviceLink && serviceLink.startsWith('/dedicated/') || 
+               serviceLink && serviceLink.startsWith('/cloud/') || 
+               serviceLink && serviceLink.startsWith('/domain/') || 
+               serviceLink && serviceLink.startsWith('/security/') || 
+               serviceLink && serviceLink.startsWith('/network/') || 
+               serviceLink && serviceLink.startsWith('/modules/') || 
+               serviceLink && serviceLink.startsWith('/design/') || 
+               serviceLink && serviceLink.startsWith('/panels/') || 
+               serviceLink && serviceLink.startsWith('/support/')) {
+      // For ordering new services - simulate redirection for now
+      toast({
+        title: "انتقال به صفحه سفارش",
+        description: `در حال انتقال به صفحه سفارش ${serviceLink}...`,
+      });
+      
+      // Simulate external navigation
+      setTimeout(() => {
+        toast({
+          title: "انتقال به صفحه سفارش",
+          description: "صفحه سفارش در حال بارگذاری است...",
+        });
+      }, 1000);
     } else {
-      // For ordering new services, we'll navigate to the actual URL
-      window.location.href = serviceLink;
+      // For any other links
+      toast({
+        title: "انتقال به صفحه",
+        description: `در حال انتقال به ${serviceLink}...`,
+      });
     }
   };
   
@@ -69,19 +126,25 @@ export const createNavigationHandlers = (
   };
   
   const handleViewNotification = (notification: any) => {
-    setSelectedNotification(notification);
-    setActiveTab('notification-details');
+    if (notification) {
+      setSelectedNotification(notification);
+      setActiveTab('notification-details');
+    }
   };
   
   const handleViewAnnouncement = (announcement: any) => {
-    setSelectedAnnouncement(announcement);
-    setActiveTab('announcement-details');
+    if (announcement) {
+      setSelectedAnnouncement(announcement);
+      setActiveTab('announcement-details');
+    }
   };
   
   const handleViewTicket = (ticketId: string) => {
-    setSelectedTicket(ticketId);
-    setIsNewTicket(false);
-    setActiveTab('ticket-details');
+    if (ticketId) {
+      setSelectedTicket(ticketId);
+      setIsNewTicket(false);
+      setActiveTab('ticket-details');
+    }
   };
   
   const handleCreateNewTicket = () => {
@@ -91,6 +154,8 @@ export const createNavigationHandlers = (
   };
   
   const handleManageService = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `مدیریت سرویس`,
       description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
@@ -100,13 +165,30 @@ export const createNavigationHandlers = (
     if (serviceType === 'domain') {
       setSelectedService(serviceId);
       setActiveTab('domain-management');
+    } else if (serviceType === 'vps') {
+      setSelectedService(serviceId);
+      setActiveTab('vps-management');
+    } else if (serviceType === 'dedicated') {
+      setSelectedService(serviceId);
+      setActiveTab('dedicated-management');
+    } else if (serviceType === 'cloud') {
+      setSelectedService(serviceId);
+      setActiveTab('cloud-management');
+    } else if (serviceType === 'hosting') {
+      setSelectedService(serviceId);
+      setActiveTab('hosting-management');
     } else {
       // For other services, navigate to a management page
-      window.location.href = `/manage/${serviceType}/${serviceId}`;
+      toast({
+        title: "مدیریت سرویس",
+        description: `در حال انتقال به صفحه مدیریت ${serviceType} با شناسه ${serviceId}...`,
+      });
     }
   };
   
   const handleResetServer = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `ریست سرور`,
       description: `در حال ریست سرور ${serviceType} با شناسه ${serviceId}. لطفاً صبر کنید...`,
@@ -122,6 +204,8 @@ export const createNavigationHandlers = (
   };
   
   const handleRenewService = (serviceType: string, serviceId: string) => {
+    if (!serviceType || !serviceId) return;
+    
     toast({
       title: `تمدید سرویس`,
       description: `درخواست تمدید سرویس ${serviceType} با شناسه ${serviceId} ثبت شد.`,
@@ -129,7 +213,10 @@ export const createNavigationHandlers = (
     
     // Simulate renewal process
     setTimeout(() => {
-      window.location.href = `/renew/${serviceType}/${serviceId}`;
+      toast({
+        title: "انتقال به صفحه پرداخت",
+        description: "در حال انتقال به صفحه پرداخت برای تمدید سرویس...",
+      });
     }, 1000);
   };
 

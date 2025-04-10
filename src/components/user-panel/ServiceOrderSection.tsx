@@ -258,15 +258,18 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
 
   return (
     <section className="my-8">
-      <Card className="overflow-hidden shadow-2xl border-0 rounded-2xl">
+      <Card className="overflow-hidden shadow-2xl border-0 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <CardHeader className="pb-4 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
-          <CardTitle className="text-2xl font-bold">سفارش سرویس جدید</CardTitle>
+          <CardTitle className="text-2xl font-bold flex items-center">
+            <CreditCard className="h-6 w-6 mr-2 animate-pulse" />
+            سفارش سرویس جدید
+          </CardTitle>
           <CardDescription className="text-blue-100">
             از میان خدمات متنوع نوین وی‌دی‌اس، سرویس مورد نظر خود را انتخاب کنید
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {serviceCategories.map((category) => (
               <div 
                 key={category.id} 
@@ -276,7 +279,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
                   <DropdownMenuTrigger asChild>
                     <button 
                       className={cn(
-                        "w-full h-36 rounded-xl px-4 py-5 text-white shadow-lg transition-all duration-300",
+                        "w-full h-32 rounded-xl px-4 py-5 text-white shadow-lg transition-all duration-300",
                         category.color,
                         "hover:shadow-xl hover:scale-[1.03] hover:bg-gradient-to-br",
                         "hover:" + category.hoverColor,
@@ -288,13 +291,13 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
                       <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10"></div>
                       <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-black/5"></div>
                       
-                      <div className="flex flex-col h-full items-center justify-center gap-4 text-center relative z-10">
+                      <div className="flex flex-col h-full items-center justify-center gap-3 text-center relative z-10">
                         <div className="bg-white/20 p-3 rounded-full shadow-inner">
                           {category.icon}
                         </div>
                         <div>
-                          <h3 className="font-bold text-xl">{category.title}</h3>
-                          <p className="text-sm text-white/90 mt-1 line-clamp-1">{category.description}</p>
+                          <h3 className="font-bold text-lg">{category.title}</h3>
+                          <p className="text-xs text-white/90 mt-1 line-clamp-1">{category.description}</p>
                         </div>
                         <div className="absolute bottom-2 right-2 bg-white/30 rounded-full p-1">
                           <ChevronDown className="h-4 w-4" />
@@ -303,7 +306,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
-                    className="p-2 rounded-xl shadow-2xl bg-white border-0 w-64 max-h-80 overflow-y-auto" 
+                    className="p-2 rounded-xl shadow-2xl bg-white/95 backdrop-blur-sm border-0 w-64 max-h-80 overflow-y-auto z-50" 
                     align="center"
                   >
                     <div className="pb-2 mb-2 border-b text-center">
@@ -350,7 +353,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
             ))}
           </div>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-6">
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Button 
               className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-6 px-6 rounded-xl font-semibold text-lg items-center gap-2 shadow-lg group hover:shadow-xl transition-all duration-300 relative overflow-hidden"
               onClick={() => handleServiceClick('/special-offers')}
@@ -379,7 +382,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
             </Button>
           </div>
           
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="bg-indigo-100 p-3 rounded-full">

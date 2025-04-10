@@ -10,37 +10,40 @@ import ActivityFeed from "./ActivityFeed";
 import ServiceOrderSection from "./ServiceOrderSection";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Download, Eye, RefreshCw } from "lucide-react";
-import { DashboardProps } from './interfaces';
 
-const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => {
+interface DashboardProps {
+  navigateToServiceOrderPage: (serviceLink: string) => void;
+  onResetRequest?: (serviceType: string, serviceId: string) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ 
+  navigateToServiceOrderPage,
+  onResetRequest 
+}) => {
   const [activeTab, setActiveTab] = useState('servers');
-  const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
   
   const handleReset = (serverId: string, serviceType: string = 'vps') => {
-    setServerToReset({ type: serviceType, id: serverId });
-    setResetDialogOpen(true);
-  };
-
-  const confirmReset = () => {
-    setResetDialogOpen(false);
-    toast({
-      title: "در حال ریست سرور",
-      description: `لطفاً صبر کنید... سرور ${serverToReset.id} در حال ریست است.`
-    });
-    
-    // Simulate reset process
-    setTimeout(() => {
+    if (onResetRequest) {
+      onResetRequest(serviceType, serverId);
+    } else {
       toast({
-        title: "ریست سرور انجام شد",
-        description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
+        title: "در حال ریست سرور",
+        description: `لطفاً صبر کنید... سرور ${serverId} در حال ریست است.`
       });
-    }, 3000);
+      
+      // Simulate reset process if no external handler
+      setTimeout(() => {
+        toast({
+          title: "ریست سرور انجام شد",
+          description: `ریست سرور ${serverId} با موفقیت انجام شد.`,
+          action: (
+            <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+              تأیید
+            </Button>
+          )
+        });
+      }, 3000);
+    }
   };
   
   const handleRenew = (serviceType: string, serviceId: string) => {
@@ -96,6 +99,15 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
       navigateToServiceOrderPage(`/invoices/pay/${invoiceId}`);
     }, 1000);
   };
+
+  // Safe navigate function
+  const safeNavigate = (link: string) => {
+    if (navigateToServiceOrderPage) {
+      navigateToServiceOrderPage(link);
+    } else {
+      console.error("Navigation function not available");
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -116,7 +128,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="servers" className="mt-6">
               <ServerList 
                 serviceType="vps" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/vps/${id}`)} 
                 onReset={(id) => handleReset(id, 'vps')} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
@@ -124,7 +136,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="dedicated" className="mt-6">
               <ServerList 
                 serviceType="dedicated" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/dedicated/${id}`)} 
                 onReset={(id) => handleReset(id, 'dedicated')} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
@@ -132,7 +144,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="cloud" className="mt-6">
               <ServerList 
                 serviceType="cloud" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/cloud/${id}`)} 
                 onReset={(id) => handleReset(id, 'cloud')} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
@@ -140,14 +152,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
             <TabsContent value="domains" className="mt-6">
               <ServerList 
                 serviceType="domain" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/domain/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/domain/${id}`)} 
                 onRenew={(id) => handleRenew('domain', id)} 
               />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
               <ServerList 
                 serviceType="hosting" 
-                onManage={(id) => navigateToServiceOrderPage(`/manage/hosting/${id}`)} 
+                onManage={(id) => safeNavigate(`/manage/hosting/${id}`)} 
                 onRenew={(id) => handleRenew('hosting', id)} 
               />
             </TabsContent>
@@ -201,10 +213,10 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
               </div>
               
               <div className="pt-2">
-                <Button className="w-full" variant="outline" onClick={() => navigateToServiceOrderPage('/tickets')}>
+                <Button className="w-full" variant="outline" onClick={() => safeNavigate('/tickets')}>
                   مشاهده همه تیکت‌ها
                 </Button>
-                <Button className="w-full mt-2" onClick={() => navigateToServiceOrderPage('/tickets/new')}>
+                <Button className="w-full mt-2" onClick={() => safeNavigate('/tickets/new')}>
                   ارسال تیکت جدید
                 </Button>
               </div>
@@ -272,7 +284,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
                 </div>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/invoices')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/invoices')}>
                 مشاهده همه فاکتورها
               </Button>
             </div>
@@ -288,44 +300,25 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage }) => 
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/1')}>
+              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/1')}>
                 <h4 className="text-sm font-medium mb-1">به‌روزرسانی سرورها</h4>
                 <p className="text-xs text-gray-600">سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/06/01</div>
               </div>
               
-              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => navigateToServiceOrderPage('/announcements/2')}>
+              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/2')}>
                 <h4 className="text-sm font-medium mb-1">افزایش ظرفیت دیتاسنتر</h4>
                 <p className="text-xs text-gray-600">ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/05/20</div>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => navigateToServiceOrderPage('/announcements')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/announcements')}>
                 مشاهده همه اطلاعیه‌ها
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Reset Server Dialog */}
-      <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأیید ریست سرور</AlertDialogTitle>
-            <AlertDialogDescription>
-              آیا از ریست سرور {serverToReset.id} اطمینان دارید؟ تمام اطلاعات و تنظیمات به حالت اولیه بازخواهند گشت.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>انصراف</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmReset} className="bg-red-600 hover:bg-red-700">
-              <RefreshCw className="ml-2 h-4 w-4" />
-              تأیید ریست
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };

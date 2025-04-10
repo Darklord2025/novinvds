@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Dashboard from './Dashboard';
 import ProfilePage from './ProfilePage';
 import ServicesPage from './ServicesPage';
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
+import DevelopmentMessage from './DevelopmentMessage';
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,
@@ -36,7 +37,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
     handleViewTicket,
     handleCreateNewTicket,
     handleResetServer,
-    handleRenewService
+    handleRenewService,
+    handleManageService
   } = navigationHandlers;
   
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
@@ -77,7 +79,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'dashboard':
       return (
         <>
-          <Dashboard navigateToServiceOrderPage={navigateToServiceOrderPage} />
+          <Dashboard 
+            navigateToServiceOrderPage={navigateToServiceOrderPage} 
+            onResetRequest={handleResetRequest}
+          />
           
           <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
             <AlertDialogContent>
@@ -102,38 +107,46 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'servers':
       return <ServicesPage 
         serviceType="servers" 
-        onManage={(id) => navigateToServiceOrderPage(`/manage/vps/${id}`)} 
+        onManage={(id) => handleManageService('vps', id)} 
         onReset={(type, id) => handleResetRequest(type, id)} 
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'dedicated':
       return <ServicesPage 
         serviceType="dedicated" 
-        onManage={(id) => navigateToServiceOrderPage(`/manage/dedicated/${id}`)} 
+        onManage={(id) => handleManageService('dedicated', id)} 
         onReset={(type, id) => handleResetRequest(type, id)} 
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'cloud':
       return <ServicesPage 
         serviceType="cloud" 
-        onManage={(id) => navigateToServiceOrderPage(`/manage/cloud/${id}`)} 
+        onManage={(id) => handleManageService('cloud', id)} 
         onReset={(type, id) => handleResetRequest(type, id)} 
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'hosting':
       return <ServicesPage 
         serviceType="hosting" 
-        onManage={(id) => navigateToServiceOrderPage(`/manage/hosting/${id}`)} 
+        onManage={(id) => handleManageService('hosting', id)} 
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'domains':
       return <ServicesPage 
         serviceType="domains" 
-        onManage={(id) => navigateToServiceOrderPage(`/manage/domain/${id}`)} 
+        onManage={(id) => handleManageService('domain', id)} 
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'domain-management':
       return <DomainManagement domainId={selectedService || ''} onBack={() => navigateToServiceOrderPage('/domains')} />;
+    case 'vps-management':
+      return <DevelopmentMessage title={`مدیریت سرور مجازی ${selectedService}`} message="پنل مدیریت سرور مجازی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/servers')} />;
+    case 'dedicated-management':
+      return <DevelopmentMessage title={`مدیریت سرور اختصاصی ${selectedService}`} message="پنل مدیریت سرور اختصاصی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/dedicated')} />;
+    case 'cloud-management':
+      return <DevelopmentMessage title={`مدیریت سرور ابری ${selectedService}`} message="پنل مدیریت سرور ابری در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/cloud')} />;
+    case 'hosting-management':
+      return <DevelopmentMessage title={`مدیریت هاستینگ ${selectedService}`} message="پنل مدیریت هاستینگ در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/hosting')} />;
     case 'tickets':
       return isNewTicket ? 
         <CreateTicketForm onSubmit={() => navigateToServiceOrderPage('/tickets')} onCancel={() => navigateToServiceOrderPage('/tickets')} /> : 
@@ -159,7 +172,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'settings':
       return <SettingsPage />;
     default:
-      return <Dashboard navigateToServiceOrderPage={navigateToServiceOrderPage} />;
+      return <Dashboard 
+        navigateToServiceOrderPage={navigateToServiceOrderPage}
+        onResetRequest={handleResetRequest}
+      />;
   }
 };
 
