@@ -1,5 +1,6 @@
 
 import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
 export interface NavigationHandlers {
   navigateToServiceOrderPage: (serviceLink: string) => void;
