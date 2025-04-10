@@ -79,6 +79,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "vps-daily", name: "سرور مجازی روزانه", link: "/vps/daily" },
         { id: "vps-linux-iran", name: "سرور مجازی لینوکس ایران", link: "/vps/linux-iran" },
         { id: "vps-windows-iran", name: "سرور مجازی ویندوز ایران", link: "/vps/windows-iran" },
+        { id: "cpanel", name: "کنترل پنل Cpanel", link: "/panels/cpanel-vps" },
+        { id: "directadmin", name: "کنترل پنل DirectAdmin", link: "/panels/directadmin-vps" },
+        { id: "plesk", name: "کنترل پنل Plesk", link: "/panels/plesk-vps" },
       ]
     },
     {
@@ -93,6 +96,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "dedicated-europe", name: "سرور اختصاصی اروپا", link: "/dedicated/europe" },
         { id: "dedicated-usa", name: "سرور اختصاصی آمریکا", link: "/dedicated/usa" },
         { id: "dedicated-asia", name: "سرور اختصاصی آسیا", link: "/dedicated/asia" },
+        { id: "extra-traffic", name: "ترافیک اضافه", link: "/modules/extra-traffic-dedicated" },
+        { id: "extra-hdd", name: "هارد اضافه", link: "/modules/extra-hdd-dedicated" },
+        { id: "extra-ram", name: "رم اضافه", link: "/modules/extra-ram-dedicated" },
       ]
     },
     {
@@ -107,6 +113,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "cloud-windows", name: "سرور ابری ویندوز", link: "/cloud/windows" },
         { id: "cloud-kubernetes", name: "سرور ابری کوبرنتیز", link: "/cloud/kubernetes" },
         { id: "cloud-container", name: "سرور ابری کانتینر", link: "/cloud/container" },
+        { id: "extra-traffic", name: "ترافیک اضافه", link: "/modules/extra-traffic-cloud" },
+        { id: "extra-storage", name: "فضای ذخیره‌سازی اضافه", link: "/modules/extra-storage-cloud" },
       ]
     },
     {

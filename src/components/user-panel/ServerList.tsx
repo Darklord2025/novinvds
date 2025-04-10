@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Gauge, Award, MessageSquare, RotateCw, FileEdit, Lock, AlertTriangle, AlertCircle, FastForward, AlertOctagon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { HostingCard, VpsCard, DedicatedCard, DomainCard } from "../services/ServiceCards";
+import { HostingCard, VpsCard, DedicatedCard, DomainCard, CloudCard } from "../services/ServiceCards";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Update the interface to include all possible props
@@ -69,7 +69,7 @@ const ServerList: React.FC<ServerListProps> = ({
       case 'dedicated':
         return <DedicatedCard service={service} />;
       case 'cloud':
-        return <VpsCard service={service} />; // Assuming Cloud is similar to VPS
+        return <CloudCard service={service} />;
       case 'domain':
         return <DomainCard service={service} />;
       case 'hosting':
@@ -256,6 +256,10 @@ const ServerList: React.FC<ServerListProps> = ({
               )}
               {serviceType === 'domain' && (
                 <div className="flex justify-end space-x-2 mt-4">
+                  <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                    <MessageSquare className="h-4 w-4 ml-2" />
+                    مدیریت
+                  </Button>
                   <Button size="sm" onClick={() => handleRenew(service.id)}>
                     <Lock className="h-4 w-4 ml-2" />
                     تمدید

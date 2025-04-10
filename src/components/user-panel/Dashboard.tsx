@@ -124,6 +124,20 @@ const Dashboard: React.FC<DashboardProps> = ({
     }, 1000);
   };
 
+  const handleManageService = (id: string) => {
+    const serviceType = activeTab === 'servers' ? 'vps' : 
+                        activeTab === 'dedicated' ? 'dedicated' : 
+                        activeTab === 'cloud' ? 'cloud' : 
+                        activeTab === 'domains' ? 'domain' : 'hosting';
+    
+    toast({
+      title: "مدیریت سرویس",
+      description: `در حال بارگیری پنل مدیریت سرویس ${id}...`,
+    });
+    
+    navigateToServiceOrderPage(`/${serviceType}-management/${id}`);
+  };
+
   // Safe navigate function
   const safeNavigate = (link: string) => {
     if (navigateToServiceOrderPage) {
@@ -152,7 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="servers" className="mt-6">
               <ServerList 
                 serviceType="vps" 
-                onManage={(id) => safeNavigate(`/vps-management/${id}`)} 
+                onManage={(id) => handleManageService(id)} 
                 onReset={(id) => handleReset(id, 'vps')} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
@@ -160,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="dedicated" className="mt-6">
               <ServerList 
                 serviceType="dedicated" 
-                onManage={(id) => safeNavigate(`/dedicated-management/${id}`)} 
+                onManage={(id) => handleManageService(id)} 
                 onReset={(id) => handleReset(id, 'dedicated')} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
@@ -168,7 +182,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="cloud" className="mt-6">
               <ServerList 
                 serviceType="cloud" 
-                onManage={(id) => safeNavigate(`/cloud-management/${id}`)} 
+                onManage={(id) => handleManageService(id)} 
                 onReset={(id) => handleReset(id, 'cloud')} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
@@ -176,14 +190,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="domains" className="mt-6">
               <ServerList 
                 serviceType="domain" 
-                onManage={(id) => safeNavigate(`/domain-management/${id}`)} 
+                onManage={(id) => handleManageService(id)} 
                 onRenew={(id) => handleRenew('domain', id)} 
               />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
               <ServerList 
                 serviceType="hosting" 
-                onManage={(id) => safeNavigate(`/hosting-management/${id}`)} 
+                onManage={(id) => handleManageService(id)} 
                 onRenew={(id) => handleRenew('hosting', id)} 
               />
             </TabsContent>
