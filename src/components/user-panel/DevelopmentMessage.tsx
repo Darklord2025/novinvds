@@ -4,11 +4,21 @@ import { AlertCircle, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-const DevelopmentMessage = () => {
+interface DevelopmentMessageProps {
+  title?: string;
+  message?: string;
+  onBack?: () => void;
+}
+
+const DevelopmentMessage: React.FC<DevelopmentMessageProps> = ({ 
+  title = "این بخش در حال توسعه است", 
+  message = "این قسمت از پنل کاربری در حال حاضر در دست ساخت است و به زودی در دسترس قرار خواهد گرفت.",
+  onBack
+}) => {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-xl">این بخش در حال توسعه است</CardTitle>
+        <CardTitle className="text-xl">{title}</CardTitle>
         <CardDescription>
           این قسمت از پنل کاربری در حال حاضر در دست ساخت است و به زودی در دسترس قرار خواهد گرفت.
         </CardDescription>
@@ -17,7 +27,7 @@ const DevelopmentMessage = () => {
         <div className="flex flex-col items-center justify-center py-8">
           <AlertCircle className="h-20 w-20 text-blue-500 mb-4" />
           <p className="text-center text-gray-600 max-w-lg">
-            تیم توسعه NovinVDS در حال تکمیل این بخش هستند. لطفاً در روزهای آینده دوباره به پنل کاربری مراجعه کنید یا برای دریافت اطلاعات بیشتر، با پشتیبانی تماس بگیرید.
+            {message}
           </p>
         </div>
       </CardContent>
@@ -28,12 +38,19 @@ const DevelopmentMessage = () => {
               تماس با پشتیبانی
             </a>
           </Button>
-          <Button className="flex items-center gap-2" asChild>
-            <a href="/" className="flex items-center gap-2">
-              بازگشت به صفحه اصلی
+          {onBack ? (
+            <Button className="flex items-center gap-2" onClick={onBack}>
+              بازگشت
               <ArrowRight className="h-4 w-4" />
-            </a>
-          </Button>
+            </Button>
+          ) : (
+            <Button className="flex items-center gap-2" asChild>
+              <a href="/" className="flex items-center gap-2">
+                بازگشت به صفحه اصلی
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </Button>
+          )}
         </div>
       </CardFooter>
     </Card>

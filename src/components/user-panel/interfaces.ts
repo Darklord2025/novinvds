@@ -37,3 +37,9 @@ export interface ServicePlanProps {
   ctaText?: string;
   onOrder?: () => void;
 }
+
+export interface DevelopmentMessageProps {
+  title?: string;
+  message?: string;
+  onBack?: () => void;
+}
