@@ -1,4 +1,3 @@
-
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 
@@ -241,7 +240,7 @@ export const createNavigationHandlers = (
     
     // Simulate reset process
     setTimeout(() => {
-      toast({
+      const resetToast = {
         title: "ریست سرور انجام شد",
         description: `سرور ${serviceId} با موفقیت ریست شد.`,
         action: (
@@ -249,7 +248,8 @@ export const createNavigationHandlers = (
             تأیید
           </Button>
         )
-      });
+      };
+      toast(resetToast);
     }, 3000);
   };
   
@@ -263,7 +263,7 @@ export const createNavigationHandlers = (
     
     // Simulate renewal process
     setTimeout(() => {
-      toast({
+      const renewalToast = {
         title: "انتقال به صفحه پرداخت",
         description: "در حال انتقال به صفحه پرداخت برای تمدید سرویس...",
         action: (
@@ -271,7 +271,8 @@ export const createNavigationHandlers = (
             ادامه
           </Button>
         )
-      });
+      };
+      toast(renewalToast);
     }, 1000);
   };
 
