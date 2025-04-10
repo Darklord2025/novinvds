@@ -21,29 +21,53 @@ const Dashboard: React.FC<DashboardProps> = ({
   onResetRequest 
 }) => {
   const [activeTab, setActiveTab] = useState('servers');
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
+  const [resetInProgress, setResetInProgress] = useState(false);
+  const [resetComplete, setResetComplete] = useState(false);
   
   const handleReset = (serverId: string, serviceType: string = 'vps') => {
-    if (onResetRequest) {
-      onResetRequest(serviceType, serverId);
-    } else {
+    setServerToReset({ type: serviceType, id: serverId });
+    setResetDialogOpen(true);
+  };
+
+  const confirmReset = () => {
+    setResetDialogOpen(false);
+    setResetInProgress(true);
+    
+    toast({
+      title: "در حال ریست سرور",
+      description: `لطفاً صبر کنید... سرور ${serverToReset.id} در حال ریست است.`,
+      action: (
+        <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+          تأیید
+        </Button>
+      )
+    });
+    
+    // Simulate reset process
+    setTimeout(() => {
+      setResetInProgress(false);
+      setResetComplete(true);
+      
       toast({
-        title: "در حال ریست سرور",
-        description: `لطفاً صبر کنید... سرور ${serverId} در حال ریست است.`
+        title: "ریست سرور انجام شد",
+        description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
+        action: (
+          <Button variant="outline" onClick={() => {
+            toast({ title: "دریافت شد" });
+            setResetComplete(false);
+          }}>
+            تأیید
+          </Button>
+        )
       });
       
-      // Simulate reset process if no external handler
-      setTimeout(() => {
-        toast({
-          title: "ریست سرور انجام شد",
-          description: `ریست سرور ${serverId} با موفقیت انجام شد.`,
-          action: (
-            <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-              تأیید
-            </Button>
-          )
-        });
-      }, 3000);
-    }
+      // If there's an external handler, call it as well
+      if (onResetRequest) {
+        onResetRequest(serverToReset.type, serverToReset.id);
+      }
+    }, 3000);
   };
   
   const handleRenew = (serviceType: string, serviceId: string) => {
@@ -128,7 +152,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="servers" className="mt-6">
               <ServerList 
                 serviceType="vps" 
-                onManage={(id) => safeNavigate(`/manage/vps/${id}`)} 
+                onManage={(id) => safeNavigate(`/vps-management/${id}`)} 
                 onReset={(id) => handleReset(id, 'vps')} 
                 onRenew={(id) => handleRenew('vps', id)} 
               />
@@ -136,7 +160,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="dedicated" className="mt-6">
               <ServerList 
                 serviceType="dedicated" 
-                onManage={(id) => safeNavigate(`/manage/dedicated/${id}`)} 
+                onManage={(id) => safeNavigate(`/dedicated-management/${id}`)} 
                 onReset={(id) => handleReset(id, 'dedicated')} 
                 onRenew={(id) => handleRenew('dedicated', id)} 
               />
@@ -144,7 +168,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="cloud" className="mt-6">
               <ServerList 
                 serviceType="cloud" 
-                onManage={(id) => safeNavigate(`/manage/cloud/${id}`)} 
+                onManage={(id) => safeNavigate(`/cloud-management/${id}`)} 
                 onReset={(id) => handleReset(id, 'cloud')} 
                 onRenew={(id) => handleRenew('cloud', id)} 
               />
@@ -152,14 +176,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <TabsContent value="domains" className="mt-6">
               <ServerList 
                 serviceType="domain" 
-                onManage={(id) => safeNavigate(`/manage/domain/${id}`)} 
+                onManage={(id) => safeNavigate(`/domain-management/${id}`)} 
                 onRenew={(id) => handleRenew('domain', id)} 
               />
             </TabsContent>
             <TabsContent value="hosting" className="mt-6">
               <ServerList 
                 serviceType="hosting" 
-                onManage={(id) => safeNavigate(`/manage/hosting/${id}`)} 
+                onManage={(id) => safeNavigate(`/hosting-management/${id}`)} 
                 onRenew={(id) => handleRenew('hosting', id)} 
               />
             </TabsContent>
@@ -179,7 +203,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
       
-      {/* Pass the navigateToServiceOrderPage prop to ServiceOrderSection */}
       <ServiceOrderSection 
         navigateToServiceOrderPage={navigateToServiceOrderPage}
       />
@@ -300,25 +323,76 @@ const Dashboard: React.FC<DashboardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/1')}>
+              <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcement-details/1')}>
                 <h4 className="text-sm font-medium mb-1">به‌روزرسانی سرورها</h4>
                 <p className="text-xs text-gray-600">سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/06/01</div>
               </div>
               
-              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcements/2')}>
+              <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcement-details/2')}>
                 <h4 className="text-sm font-medium mb-1">افزایش ظرفیت دیتاسنتر</h4>
                 <p className="text-xs text-gray-600">ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شد.</p>
                 <div className="text-xs text-gray-500 mt-1">1402/05/20</div>
               </div>
               
-              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/announcements')}>
+              <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/important-announcements')}>
                 مشاهده همه اطلاعیه‌ها
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Reset Server Dialog */}
+      <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأیید ریست سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا از ریست سرور {serverToReset.id} اطمینان دارید؟ تمام اطلاعات و تنظیمات به حالت اولیه بازخواهند گشت.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset} className="bg-red-600 hover:bg-red-700">
+              <RefreshCw className="ml-2 h-4 w-4" />
+              تأیید ریست
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset In Progress Dialog */}
+      <AlertDialog open={resetInProgress} onOpenChange={setResetInProgress}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-blue-600">در حال ریست سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              لطفاً صبر کنید... ریست سرور {serverToReset.id} در حال انجام است.
+              <div className="mt-4 flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset Complete Dialog */}
+      <AlertDialog open={resetComplete} onOpenChange={setResetComplete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-green-600">ریست سرور انجام شد</AlertDialogTitle>
+            <AlertDialogDescription>
+              ریست سرور {serverToReset.id} با موفقیت انجام شد.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setResetComplete(false)}>
+              تأیید
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

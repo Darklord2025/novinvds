@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import ServerList from "./ServerList";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileDown, RefreshCw, Settings } from 'lucide-react';
+import { ExternalLink, FileDown, RefreshCw, Settings, Download, Eye } from 'lucide-react';
 
 interface OperatingSystem {
   id: string;
@@ -38,6 +38,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
   const [selectedTab, setSelectedTab] = useState('active');
+  const [resetInProgress, setResetInProgress] = useState(false);
+  const [resetComplete, setResetComplete] = useState(false);
 
   const getPageTitle = () => {
     switch(serviceType) {
@@ -74,9 +76,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
 
   const confirmReset = () => {
     setResetDialogOpen(false);
-    if (onReset) {
-      onReset(serverToReset.type, serverToReset.id);
-    }
+    setResetInProgress(true);
     
     // Show progress toast
     toast({
@@ -86,6 +86,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
     
     // Simulate reset process
     setTimeout(() => {
+      setResetInProgress(false);
+      setResetComplete(true);
+      
       toast({
         title: "ریست سرور انجام شد",
         description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
@@ -95,12 +98,22 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
           </Button>
         )
       });
+      
+      // Call external handler if available
+      if (onReset) {
+        onReset(serverToReset.type, serverToReset.id);
+      }
     }, 3000);
   };
 
   const handleManage = (id: string) => {
     if (onManage) {
       onManage(getMappedServiceType(), id);
+      
+      toast({
+        title: "مدیریت سرویس",
+        description: `در حال انتقال به پنل مدیریت سرویس ${id}...`,
+      });
     }
   };
 
@@ -138,6 +151,20 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
         )
       });
     }, 1500);
+  };
+
+  const handleViewInvoice = (id: string, isPaid: boolean = false) => {
+    toast({
+      title: isPaid ? "مشاهده فاکتور پرداخت شده" : "مشاهده فاکتور پرداخت نشده", 
+      description: `در حال بارگیری فاکتور مربوط به سرویس ${id}...`,
+    });
+    
+    // Simulate view process
+    setTimeout(() => {
+      if (onManage) {
+        onManage('invoice', id);
+      }
+    }, 500);
   };
 
   const renderServiceActions = () => {
@@ -248,6 +275,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
             onManage={handleManage}
             onReset={['vps', 'dedicated', 'cloud'].includes(getMappedServiceType()) ? handleResetRequest : undefined}
             onRenew={handleRenew}
+            onViewInvoice={handleViewInvoice}
+            onDownloadInvoice={handleDownloadInvoice}
           />
         </CardContent>
       </Card>
@@ -266,6 +295,38 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
             <AlertDialogAction onClick={confirmReset} className="bg-red-600 hover:bg-red-700">
               <RefreshCw className="ml-2 h-4 w-4" />
               تأیید ریست
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Reset In Progress Dialog */}
+      <AlertDialog open={resetInProgress} onOpenChange={setResetInProgress}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-blue-600">در حال ریست سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              لطفاً صبر کنید... ریست سرور {serverToReset.id} در حال انجام است.
+              <div className="mt-4 flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset Complete Dialog */}
+      <AlertDialog open={resetComplete} onOpenChange={setResetComplete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-green-600">ریست سرور انجام شد</AlertDialogTitle>
+            <AlertDialogDescription>
+              ریست سرور {serverToReset.id} با موفقیت انجام شد.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setResetComplete(false)}>
+              تأیید
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -36,65 +36,93 @@ export const createNavigationHandlers = (
           description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
         });
         
-        // For domain management, show the DomainManagement component
-        if (serviceType === 'domain') {
-          setSelectedService(serviceId);
-          setActiveTab('domain-management');
-        } else if (serviceType === 'vps') {
-          setSelectedService(serviceId);
-          setActiveTab('vps-management');
-        } else if (serviceType === 'dedicated') {
-          setSelectedService(serviceId);
-          setActiveTab('dedicated-management');
-        } else if (serviceType === 'cloud') {
-          setSelectedService(serviceId);
-          setActiveTab('cloud-management');
-        } else if (serviceType === 'hosting') {
-          setSelectedService(serviceId);
-          setActiveTab('hosting-management');
-        } else {
-          // For other services, navigate to the service page
-          window.location.href = serviceLink;
-        }
+        // For different management pages
+        handleManageService(serviceType, serviceId);
       }
     } else if (serviceLink === '/tickets/new') {
       setIsNewTicket(true);
       setActiveTab('tickets');
     } else if (serviceLink && serviceLink.startsWith('/tickets/')) {
       const ticketId = serviceLink.split('/')[2];
-      setSelectedTicket(ticketId);
-      setActiveTab('ticket-details');
+      handleViewTicket(ticketId);
     } else if (serviceLink === '/tickets') {
       setActiveTab('tickets');
     } else if (serviceLink === '/invoices') {
       setActiveTab('invoices');
     } else if (serviceLink && serviceLink.startsWith('/invoices/')) {
       const invoiceId = serviceLink.split('/')[2];
-      // Handle invoice details page if needed
+      // Handle invoice details page
+      if (serviceLink.includes('/pay/')) {
+        // Handle payment page
+        toast({
+          title: "پرداخت فاکتور",
+          description: `در حال انتقال به صفحه پرداخت فاکتور ${invoiceId}...`,
+        });
+      } else {
+        // Handle invoice details
+        toast({
+          title: "مشاهده فاکتور",
+          description: `در حال بارگیری فاکتور ${invoiceId}...`,
+        });
+      }
       setActiveTab('invoices');
-      // If you want to implement invoice details page later:
-      // setSelectedInvoice(invoiceId);
-      // setActiveTab('invoice-details');
-    } else if (serviceLink && serviceLink.startsWith('/announcements/')) {
+    } else if (serviceLink && serviceLink.startsWith('/announcement-details/')) {
       const announcementId = serviceLink.split('/')[2];
       // Create a dummy announcement object with the ID
-      const announcement = { id: announcementId, title: `اطلاعیه ${announcementId}`, content: "محتوای اطلاعیه" };
+      const announcement = { 
+        id: announcementId, 
+        title: `اطلاعیه ${announcementId}`, 
+        content: "محتوای اطلاعیه",
+        date: "1402/06/01",
+        type: "info"
+      };
       setSelectedAnnouncement(announcement);
       setActiveTab('announcement-details');
-    } else if (serviceLink === '/announcements') {
+    } else if (serviceLink === '/important-announcements' || serviceLink === '/announcements') {
       setActiveTab('important-announcements');
-    } else if (serviceLink && serviceLink.startsWith('/order/') || 
-               serviceLink && serviceLink.startsWith('/hosting/') || 
-               serviceLink && serviceLink.startsWith('/vps/') || 
-               serviceLink && serviceLink.startsWith('/dedicated/') || 
-               serviceLink && serviceLink.startsWith('/cloud/') || 
-               serviceLink && serviceLink.startsWith('/domain/') || 
-               serviceLink && serviceLink.startsWith('/security/') || 
-               serviceLink && serviceLink.startsWith('/network/') || 
-               serviceLink && serviceLink.startsWith('/modules/') || 
-               serviceLink && serviceLink.startsWith('/design/') || 
-               serviceLink && serviceLink.startsWith('/panels/') || 
-               serviceLink && serviceLink.startsWith('/support/')) {
+    } else if (serviceLink === '/transactions') {
+      setActiveTab('transactions');
+    } else if (serviceLink === '/wallet') {
+      setActiveTab('wallet');
+    } else if (serviceLink === '/settings') {
+      setActiveTab('settings');
+    } else if (serviceLink === '/downloads') {
+      setActiveTab('downloads');
+    } else if (serviceLink === '/profile') {
+      setActiveTab('profile');
+    } else if (serviceLink && (serviceLink.startsWith('/vps-management/') || 
+                               serviceLink.startsWith('/dedicated-management/') || 
+                               serviceLink.startsWith('/cloud-management/') || 
+                               serviceLink.startsWith('/hosting-management/') || 
+                               serviceLink.startsWith('/domain-management/'))) {
+      const parts = serviceLink.split('/');
+      const serviceType = parts[1].split('-')[0]; // Extract 'vps', 'dedicated', etc.
+      const serviceId = parts[2];
+      
+      handleManageService(serviceType, serviceId);
+    } else if (serviceLink && serviceLink.startsWith('/renew/')) {
+      const parts = serviceLink.split('/');
+      if (parts && parts.length >= 4) {
+        const serviceType = parts[2];
+        const serviceId = parts[3];
+        
+        handleRenewService(serviceType, serviceId);
+      }
+    } else if (serviceLink && (serviceLink.startsWith('/order/') || 
+               serviceLink.startsWith('/hosting/') || 
+               serviceLink.startsWith('/vps/') || 
+               serviceLink.startsWith('/dedicated/') || 
+               serviceLink.startsWith('/cloud/') || 
+               serviceLink.startsWith('/domain/') || 
+               serviceLink.startsWith('/security/') || 
+               serviceLink.startsWith('/network/') || 
+               serviceLink.startsWith('/modules/') || 
+               serviceLink.startsWith('/design/') || 
+               serviceLink.startsWith('/panels/') || 
+               serviceLink.startsWith('/support/') || 
+               serviceLink.startsWith('/special-offers') ||
+               serviceLink.startsWith('/compare-plans') ||
+               serviceLink.startsWith('/quick-order'))) {
       // For ordering new services - simulate redirection for now
       toast({
         title: "انتقال به صفحه سفارش",
@@ -108,6 +136,17 @@ export const createNavigationHandlers = (
           description: "صفحه سفارش در حال بارگذاری است...",
         });
       }, 1000);
+      
+      // If it's a simple category page without specific service
+      if (serviceLink === '/hosting' || serviceLink === '/vps' || 
+          serviceLink === '/dedicated' || serviceLink === '/cloud' || 
+          serviceLink === '/domain' || serviceLink === '/security' ||
+          serviceLink === '/network' || serviceLink === '/modules' ||
+          serviceLink === '/design' || serviceLink === '/panels' || 
+          serviceLink === '/support') {
+        
+        window.location.href = serviceLink;
+      }
     } else {
       // For any other links
       toast({
@@ -151,6 +190,11 @@ export const createNavigationHandlers = (
     setIsNewTicket(true);
     setSelectedTicket(null);
     setActiveTab('tickets');
+    
+    toast({
+      title: "ایجاد تیکت جدید",
+      description: "در حال انتقال به صفحه ایجاد تیکت جدید...",
+    });
   };
   
   const handleManageService = (serviceType: string, serviceId: string) => {
@@ -199,6 +243,11 @@ export const createNavigationHandlers = (
       toast({
         title: "ریست سرور انجام شد",
         description: `سرور ${serviceId} با موفقیت ریست شد.`,
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
+            تأیید
+          </Button>
+        )
       });
     }, 3000);
   };
@@ -216,6 +265,11 @@ export const createNavigationHandlers = (
       toast({
         title: "انتقال به صفحه پرداخت",
         description: "در حال انتقال به صفحه پرداخت برای تمدید سرویس...",
+        action: (
+          <Button variant="outline" onClick={() => toast({ title: "پرداخت موفق" })}>
+            ادامه
+          </Button>
+        )
       });
     }, 1000);
   };

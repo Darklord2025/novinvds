@@ -42,6 +42,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+  // Updated service categories with more detailed subcategories
   const serviceCategories: ServiceCategory[] = [
     {
       id: "hosting",

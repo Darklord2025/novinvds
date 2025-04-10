@@ -1,76 +1,143 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, ArrowLeft, Bell, Calendar, Check, Info, Trash2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 interface NotificationDetailsProps {
   notification: {
     id: string;
     title: string;
-    content?: string;
-    message?: string; // For backward compatibility
-    type: "error" | "info" | "warning" | "success";
-    date: Date | string;
+    content: string;
+    date: string;
+    type?: 'alert' | 'info' | 'success';
     read?: boolean;
-    isRead?: boolean; // For backward compatibility
+    important?: boolean;
   };
   onBack: () => void;
 }
 
 const NotificationDetails: React.FC<NotificationDetailsProps> = ({ notification, onBack }) => {
-  // Handle different notification formats by normalizing the data
-  const normalizedNotification = {
-    id: notification.id,
-    title: notification.title,
-    content: notification.content || notification.message || '',
-    type: notification.type,
-    date: typeof notification.date === 'string' 
-      ? notification.date 
-      : notification.date instanceof Date 
-        ? notification.date.toLocaleDateString('fa-IR') 
-        : '',
-    read: notification.read !== undefined ? notification.read : (notification.isRead !== undefined ? notification.isRead : false)
+  const { id, title, content, date, type = 'info', read = false, important = false } = notification;
+
+  const handleDelete = () => {
+    toast({
+      title: "اعلان حذف شد",
+      description: "اعلان با موفقیت حذف شد.",
+    });
+    
+    onBack();
   };
   
-  // Map notification types to UI classes
-  const typeClasses = {
-    error: "bg-red-50 text-red-800 border-red-200",
-    warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
-    success: "bg-green-50 text-green-800 border-green-200",
-    info: "bg-blue-50 text-blue-800 border-blue-200"
+  const getTypeText = (type: string) => {
+    switch (type) {
+      case 'alert':
+        return 'هشدار';
+      case 'success':
+        return 'موفقیت';
+      case 'info':
+      default:
+        return 'اطلاعیه';
+    }
   };
-
+  
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'alert':
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
+      case 'success':
+        return <Check className="h-5 w-5 text-green-500" />;
+      case 'info':
+      default:
+        return <Info className="h-5 w-5 text-blue-500" />;
+    }
+  };
+  
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'alert':
+        return 'bg-red-100 text-red-800 border-red-300';
+      case 'success':
+        return 'bg-green-100 text-green-800 border-green-300';
+      case 'info':
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-300';
+    }
+  };
+  
   return (
-    <div className="max-w-3xl mx-auto">
-      <Button 
-        variant="outline" 
-        onClick={onBack} 
-        className="mb-4 flex items-center"
-      >
-        <ArrowRight className="ml-2 h-4 w-4" />
-        بازگشت به لیست
-      </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onBack}
+          className="flex items-center"
+        >
+          <ArrowLeft className="ml-2 h-4 w-4" />
+          بازگشت به اعلان‌ها
+        </Button>
+        
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500 flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            {date}
+          </span>
+          
+          {important && (
+            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
+              مهم
+            </span>
+          )}
+        </div>
+      </div>
       
-      <Card className={`border ${typeClasses[normalizedNotification.type]}`}>
+      <Card className="border-t-4 shadow-lg" style={{ borderTopColor: type === 'alert' ? '#ef4444' : type === 'success' ? '#22c55e' : '#3b82f6' }}>
         <CardHeader>
-          <CardTitle>{normalizedNotification.title}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            تاریخ: {normalizedNotification.date}
-          </p>
+          <div className="flex items-start justify-between">
+            <div className="flex gap-3 items-center">
+              {getTypeIcon(type)}
+              <div>
+                <span className={`text-xs inline-block px-2 py-1 rounded ${getTypeColor(type)}`}>
+                  {getTypeText(type)}
+                </span>
+                <CardTitle className="mt-2">{title}</CardTitle>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div 
-              className="prose prose-sm max-w-none" 
-              dangerouslySetInnerHTML={{ __html: normalizedNotification.content }}
-            />
+          <p className="whitespace-pre-line text-gray-700 leading-relaxed">{content}</p>
+          
+          <div className="mt-6">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+              <span className="text-sm text-gray-500">شناسه اعلان: {id}</span>
+              <span className="text-sm text-gray-500">وضعیت: {read ? 'خوانده شده' : 'خوانده نشده'}</span>
+            </div>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button onClick={onBack}>بستن</Button>
+        <CardFooter className="flex justify-between">
+          <Button variant="outline" onClick={onBack}>
+            بستن
+          </Button>
+          <Button 
+            variant="destructive" 
+            onClick={handleDelete}
+          >
+            <Trash2 className="ml-1 h-4 w-4" />
+            حذف اعلان
+          </Button>
         </CardFooter>
       </Card>
+      
+      <div className="flex justify-center mt-8">
+        <span className="text-sm text-gray-500 flex items-center gap-1">
+          <Bell className="h-4 w-4" />
+          مرکز اعلان‌های نوین وی‌دی‌اس
+        </span>
+      </div>
     </div>
   );
 };
