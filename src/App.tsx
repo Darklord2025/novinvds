@@ -2,7 +2,6 @@
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
@@ -39,45 +38,43 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <HelmetProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/vps" element={<Vps />} />
-            <Route path="/dedicated" element={<Dedicated />} />
-            <Route path="/hosting" element={<Hosting />} />
-            <Route path="/domain" element={<Domain />} />
-            <Route path="/network" element={<Network />} />
-            <Route path="/license" element={<License />} />
-            <Route path="/ssl" element={<SSL />} />
-            <Route path="/datacenter" element={<Datacenter />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/user-panel" element={<UserPanel />} />
-            <Route path="/hosting-plans" element={<HostingPlans />} />
-            <Route path="/vps-plans" element={<VpsPlans />} />
-            <Route path="/dedicated-plans" element={<DedicatedPlans />} />
-            
-            {/* New service pages routes */}
-            <Route path="/services/hosting" element={<HostingServices />} />
-            <Route path="/services/vps" element={<VPSServices />} />
-            <Route path="/services/dedicated" element={<DedicatedServices />} />
-            <Route path="/services/domain" element={<DomainServices />} />
-            <Route path="/services/network" element={<NetworkServices />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Chatbot />
-        </BrowserRouter>
-      </HelmetProvider>
-    </TooltipProvider>
+    <HelmetProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/vps" element={<Vps />} />
+          <Route path="/dedicated" element={<Dedicated />} />
+          <Route path="/hosting" element={<Hosting />} />
+          <Route path="/domain" element={<Domain />} />
+          <Route path="/network" element={<Network />} />
+          <Route path="/license" element={<License />} />
+          <Route path="/ssl" element={<SSL />} />
+          <Route path="/datacenter" element={<Datacenter />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/user-panel" element={<UserPanel />} />
+          <Route path="/hosting-plans" element={<HostingPlans />} />
+          <Route path="/vps-plans" element={<VpsPlans />} />
+          <Route path="/dedicated-plans" element={<DedicatedPlans />} />
+          
+          {/* New service pages routes */}
+          <Route path="/services/hosting" element={<HostingServices />} />
+          <Route path="/services/vps" element={<VPSServices />} />
+          <Route path="/services/dedicated" element={<DedicatedServices />} />
+          <Route path="/services/domain" element={<DomainServices />} />
+          <Route path="/services/network" element={<NetworkServices />} />
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Chatbot />
+      </BrowserRouter>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

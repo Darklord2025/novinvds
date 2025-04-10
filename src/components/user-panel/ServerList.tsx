@@ -13,6 +13,8 @@ interface ServerListProps {
   onManage?: (id: string) => void;
   onReset?: (id: string) => void;
   onRenew?: (id: string) => void;
+  onViewInvoice?: (id: string, isPaid?: boolean) => void;
+  onDownloadInvoice?: (id: string) => void;
 }
 
 const ServerList: React.FC<ServerListProps> = ({ serviceType, onManage, onReset, onRenew }) => {
