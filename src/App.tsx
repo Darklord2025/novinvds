@@ -28,6 +28,13 @@ import HostingPlans from "./pages/HostingPlans";
 import VpsPlans from "./pages/VpsPlans";
 import DedicatedPlans from "./pages/DedicatedPlans";
 
+// Importing new service pages
+import HostingServices from "./pages/HostingServices";
+import VPSServices from "./pages/VPSServices";
+import DedicatedServices from "./pages/DedicatedServices";
+import DomainServices from "./pages/DomainServices";
+import NetworkServices from "./pages/NetworkServices";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -57,6 +64,14 @@ const App = () => (
             <Route path="/hosting-plans" element={<HostingPlans />} />
             <Route path="/vps-plans" element={<VpsPlans />} />
             <Route path="/dedicated-plans" element={<DedicatedPlans />} />
+            
+            {/* New service pages routes */}
+            <Route path="/services/hosting" element={<HostingServices />} />
+            <Route path="/services/vps" element={<VPSServices />} />
+            <Route path="/services/dedicated" element={<DedicatedServices />} />
+            <Route path="/services/domain" element={<DomainServices />} />
+            <Route path="/services/network" element={<NetworkServices />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Chatbot />
