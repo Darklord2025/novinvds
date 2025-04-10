@@ -24,6 +24,9 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import UserPanel from "./pages/UserPanel";
 import NotFound from "./pages/NotFound";
+import HostingPlans from "./pages/HostingPlans";
+import VpsPlans from "./pages/VpsPlans";
+import DedicatedPlans from "./pages/DedicatedPlans";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +54,9 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/user-panel" element={<UserPanel />} />
+            <Route path="/hosting-plans" element={<HostingPlans />} />
+            <Route path="/vps-plans" element={<VpsPlans />} />
+            <Route path="/dedicated-plans" element={<DedicatedPlans />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Chatbot />

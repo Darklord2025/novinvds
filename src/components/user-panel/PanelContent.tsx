@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Dashboard from './Dashboard';
 import ProfilePage from './ProfilePage';
 import ServicesPage from './ServicesPage';
@@ -138,21 +138,46 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onRenew={(type, id) => handleRenewService(type, id)} 
       />;
     case 'domain-management':
-      return <DomainManagement domainId={selectedService || ''} onBack={() => navigateToServiceOrderPage('/domains')} />;
+      return selectedService ? 
+        <DomainManagement 
+          domainId={selectedService} 
+          onBack={() => navigateToServiceOrderPage('/domains')} 
+        /> : null;
     case 'vps-management':
-      return <DevelopmentMessage title={`مدیریت سرور مجازی ${selectedService}`} message="پنل مدیریت سرور مجازی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/servers')} />;
+      return selectedService ? 
+        <DevelopmentMessage 
+          title={`مدیریت سرور مجازی ${selectedService}`} 
+          message="پنل مدیریت سرور مجازی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." 
+          onBack={() => navigateToServiceOrderPage('/servers')} 
+        /> : null;
     case 'dedicated-management':
-      return <DevelopmentMessage title={`مدیریت سرور اختصاصی ${selectedService}`} message="پنل مدیریت سرور اختصاصی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/dedicated')} />;
+      return selectedService ? 
+        <DevelopmentMessage 
+          title={`مدیریت سرور اختصاصی ${selectedService}`} 
+          message="پنل مدیریت سرور اختصاصی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
+          onBack={() => navigateToServiceOrderPage('/dedicated')} 
+        /> : null;
     case 'cloud-management':
-      return <DevelopmentMessage title={`مدیریت سرور ابری ${selectedService}`} message="پنل مدیریت سرور ابری در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/cloud')} />;
+      return selectedService ? 
+        <DevelopmentMessage 
+          title={`مدیریت سرور ابری ${selectedService}`} 
+          message="پنل مدیریت سرور ابری در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
+          onBack={() => navigateToServiceOrderPage('/cloud')} 
+        /> : null;
     case 'hosting-management':
-      return <DevelopmentMessage title={`مدیریت هاستینگ ${selectedService}`} message="پنل مدیریت هاستینگ در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." onBack={() => navigateToServiceOrderPage('/hosting')} />;
+      return selectedService ? 
+        <DevelopmentMessage 
+          title={`مدیریت هاستینگ ${selectedService}`} 
+          message="پنل مدیریت هاستینگ در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
+          onBack={() => navigateToServiceOrderPage('/hosting')} 
+        /> : null;
     case 'tickets':
       return isNewTicket ? 
         <CreateTicketForm onSubmit={() => navigateToServiceOrderPage('/tickets')} onCancel={() => navigateToServiceOrderPage('/tickets')} /> : 
         <TicketsPage onViewTicket={handleViewTicket} onCreateNewTicket={handleCreateNewTicket} />;
     case 'ticket-details':
-      return <TicketDetail ticketId={selectedTicket || ''} onBack={() => navigateToServiceOrderPage('/tickets')} />;
+      return selectedTicket ? 
+        <TicketDetail ticketId={selectedTicket} onBack={() => navigateToServiceOrderPage('/tickets')} /> : null;
     case 'invoices':
       return <InvoicesPage />;
     case 'wallet':
@@ -160,11 +185,13 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'notifications':
       return <NotificationsPage onViewNotification={navigationHandlers.handleViewNotification} />;
     case 'notification-details':
-      return <NotificationDetails notification={selectedNotification} onBack={() => navigationHandlers.handleViewAllNotifications()} />;
+      return selectedNotification ? 
+        <NotificationDetails notification={selectedNotification} onBack={() => navigationHandlers.handleViewAllNotifications()} /> : null;
     case 'important-announcements':
       return <ImportantAnnouncementsPage onViewAnnouncement={navigationHandlers.handleViewAnnouncement} />;
     case 'announcement-details':
-      return <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} />;
+      return selectedAnnouncement ? 
+        <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} /> : null;
     case 'transactions':
       return <TransactionsPage />;
     case 'downloads':
