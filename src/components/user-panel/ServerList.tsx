@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,11 +52,11 @@ const ServerList: React.FC<ServerListProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="success">فعال</Badge>;
+        return <Badge className="bg-green-500 text-white">فعال</Badge>;
       case 'inactive':
         return <Badge variant="secondary">غیرفعال</Badge>;
       case 'pending':
-        return <Badge variant="warning">در انتظار</Badge>;
+        return <Badge className="bg-yellow-500 text-white">در انتظار</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
