@@ -9,6 +9,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
+  TooltipTrigger
 } from "@/components/ui/tooltip";
 import { HostingCard, VpsCard, DedicatedCard, DomainCard, CloudCard } from "../services/ServiceCards";
 
