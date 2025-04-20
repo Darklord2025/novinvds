@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Gauge, Award, MessageSquare, ArrowLeft, Lock, AlertTriangle, AlertCircle, FastForward } from "lucide-react";
+import { Gauge, Award, MessageSquare, ArrowLeft, Lock, AlertTriangle, AlertCircle, FastForward, FileEdit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
