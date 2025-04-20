@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Gauge, Award, MessageSquare, RotateCw, FileEdit, Lock, AlertTriangle, AlertCircle, FastForward } from "lucide-react";
+import { Gauge, Award, MessageSquare, ArrowLeft, Lock, AlertTriangle, AlertCircle, FastForward } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -195,12 +195,12 @@ const ServerList: React.FC<ServerListProps> = ({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                            <RotateCw className="h-4 w-4 ml-2" />
-                            ریست
+                            <ArrowLeft className="h-4 w-4 ml-2" />
+                            راه‌اندازی مجدد
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>ریست سرور</p>
+                          <p>راه‌اندازی مجدد سرور</p>
                         </TooltipContent>
                       </Tooltip>
                       <Tooltip>
@@ -235,8 +235,8 @@ const ServerList: React.FC<ServerListProps> = ({
                         مدیریت
                       </Button>
                       <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                        <RotateCw className="h-4 w-4 ml-2" />
-                        ریست
+                        <ArrowLeft className="h-4 w-4 ml-2" />
+                        راه‌اندازی مجدد
                       </Button>
                       <Button size="sm" onClick={() => handleRenew(service.id)}>
                         <Lock className="h-4 w-4 ml-2" />
@@ -263,8 +263,8 @@ const ServerList: React.FC<ServerListProps> = ({
                         مدیریت
                       </Button>
                       <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                        <RotateCw className="h-4 w-4 ml-2" />
-                        ریست
+                        <ArrowLeft className="h-4 w-4 ml-2" />
+                        راه‌اندازی مجدد
                       </Button>
                       <Button size="sm" onClick={() => handleRenew(service.id)}>
                         <Lock className="h-4 w-4 ml-2" />
