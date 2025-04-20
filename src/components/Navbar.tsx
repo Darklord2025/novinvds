@@ -1,12 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ChevronDown, Phone, ShoppingCart } from 'lucide-react';
+import { Menu, X, Phone, ShoppingCart } from 'lucide-react';
+
+const serviceLinks = [
+  { to: "/vps", label: "سرور مجازی" },
+  { to: "/dedicated", label: "سرور اختصاصی" },
+  { to: "/hosting", label: "هاستینگ" },
+  { to: "/domain", label: "ثبت دامنه" },
+  { to: "/network", label: "خدمات شبکه" },
+  { to: "/license", label: "فروش لایسنس" },
+  { to: "/ssl", label: "گواهی SSL" },
+];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,38 +51,16 @@ const Navbar = () => {
             صفحه اصلی
           </Link>
           
-          <div className="relative group">
-            <button 
-              className="flex items-center text-foreground hover:text-primary transition-colors"
-              onClick={() => setServicesOpen(!servicesOpen)}
+          {/* خدمات به صورت منفرد */}
+          {serviceLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="text-foreground hover:text-primary transition-colors"
             >
-              خدمات <ChevronDown size={16} className="mr-1" />
-            </button>
-            
-            <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-md shadow-lg overflow-hidden z-10 transform opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 origin-top-right">
-              <Link to="/vps" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                سرور مجازی
-              </Link>
-              <Link to="/dedicated" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                سرور اختصاصی
-              </Link>
-              <Link to="/hosting" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                هاستینگ
-              </Link>
-              <Link to="/domain" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                ثبت دامنه
-              </Link>
-              <Link to="/network" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                خدمات شبکه
-              </Link>
-              <Link to="/license" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                فروش لایسنس
-              </Link>
-              <Link to="/ssl" className="block px-4 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-primary transition-colors">
-                گواهی SSL
-              </Link>
-            </div>
-          </div>
+              {link.label}
+            </Link>
+          ))}
           
           <Link to="/datacenter" className="text-foreground hover:text-primary transition-colors">
             دیتاسنترها
@@ -128,71 +115,17 @@ const Navbar = () => {
             >
               صفحه اصلی
             </Link>
-            
-            <div>
-              <button 
-                className="flex items-center justify-between w-full text-foreground hover:text-primary transition-colors py-2"
-                onClick={() => setServicesOpen(!servicesOpen)}
+            {/* خدمات به صورت منفرد */}
+            {serviceLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
               >
-                <span>خدمات</span>
-                <ChevronDown size={16} className={`transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {servicesOpen && (
-                <div className="pr-4 mt-2 border-r-2 border-gray-200 space-y-2 animate-fade-in">
-                  <Link 
-                    to="/vps" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    سرور مجازی
-                  </Link>
-                  <Link 
-                    to="/dedicated" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    سرور اختصاصی
-                  </Link>
-                  <Link 
-                    to="/hosting" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    هاستینگ
-                  </Link>
-                  <Link 
-                    to="/domain" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    ثبت دامنه
-                  </Link>
-                  <Link 
-                    to="/network" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    خدمات شبکه
-                  </Link>
-                  <Link 
-                    to="/license" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    فروش لایسنس
-                  </Link>
-                  <Link 
-                    to="/ssl" 
-                    className="block py-1 text-gray-600 hover:text-primary transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    گواهی SSL
-                  </Link>
-                </div>
-              )}
-            </div>
-            
+                {link.label}
+              </Link>
+            ))}
             <Link 
               to="/datacenter" 
               className="text-foreground hover:text-primary transition-colors py-2"
