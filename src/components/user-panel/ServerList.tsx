@@ -1,12 +1,16 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Gauge, Award, MessageSquare, RotateCw, FileEdit, Lock, AlertTriangle, AlertCircle, FastForward, AlertOctagon } from "lucide-react";
+import { Gauge, Award, MessageSquare, RotateCw, FileEdit, Lock, AlertTriangle, AlertCircle, FastForward } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { HostingCard, VpsCard, DedicatedCard, DomainCard, CloudCard } from "../services/ServiceCards";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import { HostingCard, VpsCard, DedicatedCard, DomainCard, CloudCard } from "../services/ServiceCards";
 
 // Update the interface to include all possible props
 interface ServerListProps {
@@ -62,21 +66,13 @@ const ServerList: React.FC<ServerListProps> = ({
     }
   };
 
+  // For now, we'll just render simple cards instead of using the imported components
   const renderServiceCard = (service: any) => {
-    switch (serviceType) {
-      case 'vps':
-        return <VpsCard service={service} />;
-      case 'dedicated':
-        return <DedicatedCard service={service} />;
-      case 'cloud':
-        return <CloudCard service={service} />;
-      case 'domain':
-        return <DomainCard service={service} />;
-      case 'hosting':
-        return <HostingCard service={service} />;
-      default:
-        return null;
-    }
+    return (
+      <div className="flex items-center">
+        <div className="mr-2 font-medium">{service.id}</div>
+      </div>
+    );
   };
 
   const handleManage = (id: string) => {
@@ -129,172 +125,195 @@ const ServerList: React.FC<ServerListProps> = ({
   }
 
   return (
-    <div className="grid gap-4">
-      {services.length === 0 ? (
-        <Card className="w-full shadow-md border-0 rounded-xl">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              هیچ {serviceType} یافت نشد.
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                شما هیچ {serviceType} فعالی ندارید. برای سفارش
-                <Button variant="link">
-                  <a href="/services">
-                    اینجا
-                  </a>
-                </Button>
-                کلیک کنید.
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-      ) : (
-        services.map((service: any) => (
-          <Card key={service.id} className="w-full shadow-md border-0 rounded-xl">
+    <TooltipProvider>
+      <div className="grid gap-4">
+        {services.length === 0 ? (
+          <Card className="w-full shadow-md border-0 rounded-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {renderServiceCard(service)}
+                هیچ {serviceType} یافت نشد.
               </CardTitle>
-              {getStatusBadge(service.status)}
             </CardHeader>
             <CardContent>
-              {serviceType === 'vps' && (
-                <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center space-x-2">
-                      <Gauge className="h-4 w-4 text-gray-500" />
-                      <span>CPU: {service.cpuUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Award className="h-4 w-4 text-gray-500" />
-                      <span>RAM: {service.ramUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FileEdit className="h-4 w-4 text-gray-500" />
-                      <span>Disk: {service.diskUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FastForward className="h-4 w-4 text-gray-500" />
-                      <span>Bandwidth: {service.bandwidthUsage}%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
-                      <MessageSquare className="h-4 w-4 ml-2" />
-                      مدیریت
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                      <RotateCw className="h-4 w-4 ml-2" />
-                      ریست
-                    </Button>
-                    <Button size="sm" onClick={() => handleRenew(service.id)}>
-                      <Lock className="h-4 w-4 ml-2" />
-                      تمدید
-                    </Button>
-                  </div>
-                </>
-              )}
-              {serviceType === 'dedicated' && (
-                <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center space-x-2">
-                      <Gauge className="h-4 w-4 text-gray-500" />
-                      <span>CPU: {service.cpuUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Award className="h-4 w-4 text-gray-500" />
-                      <span>RAM: {service.ramUsage}%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
-                      <MessageSquare className="h-4 w-4 ml-2" />
-                      مدیریت
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                      <RotateCw className="h-4 w-4 ml-2" />
-                      ریست
-                    </Button>
-                    <Button size="sm" onClick={() => handleRenew(service.id)}>
-                      <Lock className="h-4 w-4 ml-2" />
-                      تمدید
-                    </Button>
-                  </div>
-                </>
-              )}
-              {serviceType === 'cloud' && (
-                <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center space-x-2">
-                      <Gauge className="h-4 w-4 text-gray-500" />
-                      <span>CPU: {service.cpuUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Award className="h-4 w-4 text-gray-500" />
-                      <span>RAM: {service.ramUsage}%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
-                      <MessageSquare className="h-4 w-4 ml-2" />
-                      مدیریت
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
-                      <RotateCw className="h-4 w-4 ml-2" />
-                      ریست
-                    </Button>
-                    <Button size="sm" onClick={() => handleRenew(service.id)}>
-                      <Lock className="h-4 w-4 ml-2" />
-                      تمدید
-                    </Button>
-                  </div>
-                </>
-              )}
-              {serviceType === 'domain' && (
-                <div className="flex justify-end space-x-2 mt-4">
-                  <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
-                    <MessageSquare className="h-4 w-4 ml-2" />
-                    مدیریت
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  شما هیچ {serviceType} فعالی ندارید. برای سفارش
+                  <Button variant="link">
+                    <a href="/services">
+                      اینجا
+                    </a>
                   </Button>
-                  <Button size="sm" onClick={() => handleRenew(service.id)}>
-                    <Lock className="h-4 w-4 ml-2" />
-                    تمدید
-                  </Button>
-                </div>
-              )}
-              {serviceType === 'hosting' && (
-                <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center space-x-2">
-                      <FileEdit className="h-4 w-4 text-gray-500" />
-                      <span>Disk: {service.diskUsage}%</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FastForward className="h-4 w-4 text-gray-500" />
-                      <span>Bandwidth: {service.bandwidthUsage}%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
-                      <MessageSquare className="h-4 w-4 ml-2" />
-                      مدیریت
-                    </Button>
-                    <Button size="sm" onClick={() => handleRenew(service.id)}>
-                      <Lock className="h-4 w-4 ml-2" />
-                      تمدید
-                    </Button>
-                  </div>
-                </>
-              )}
+                  کلیک کنید.
+                </AlertDescription>
+              </Alert>
             </CardContent>
           </Card>
-        ))
-      )}
-    </div>
+        ) : (
+          services.map((service: any) => (
+            <Card key={service.id} className="w-full shadow-md border-0 rounded-xl">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {renderServiceCard(service)}
+                </CardTitle>
+                {getStatusBadge(service.status)}
+              </CardHeader>
+              <CardContent>
+                {serviceType === 'vps' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Gauge className="h-4 w-4 text-gray-500" />
+                        <span>CPU: {service.cpuUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Award className="h-4 w-4 text-gray-500" />
+                        <span>RAM: {service.ramUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FileEdit className="h-4 w-4 text-gray-500" />
+                        <span>Disk: {service.diskUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FastForward className="h-4 w-4 text-gray-500" />
+                        <span>Bandwidth: {service.bandwidthUsage}%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                            <MessageSquare className="h-4 w-4 ml-2" />
+                            مدیریت
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>مدیریت سرویس</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
+                            <RotateCw className="h-4 w-4 ml-2" />
+                            ریست
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>ریست سرور</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" onClick={() => handleRenew(service.id)}>
+                            <Lock className="h-4 w-4 ml-2" />
+                            تمدید
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>تمدید سرویس</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </>
+                )}
+                {serviceType === 'dedicated' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Gauge className="h-4 w-4 text-gray-500" />
+                        <span>CPU: {service.cpuUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Award className="h-4 w-4 text-gray-500" />
+                        <span>RAM: {service.ramUsage}%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                        <MessageSquare className="h-4 w-4 ml-2" />
+                        مدیریت
+                      </Button>
+                      <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
+                        <RotateCw className="h-4 w-4 ml-2" />
+                        ریست
+                      </Button>
+                      <Button size="sm" onClick={() => handleRenew(service.id)}>
+                        <Lock className="h-4 w-4 ml-2" />
+                        تمدید
+                      </Button>
+                    </div>
+                  </>
+                )}
+                {serviceType === 'cloud' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Gauge className="h-4 w-4 text-gray-500" />
+                        <span>CPU: {service.cpuUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Award className="h-4 w-4 text-gray-500" />
+                        <span>RAM: {service.ramUsage}%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                        <MessageSquare className="h-4 w-4 ml-2" />
+                        مدیریت
+                      </Button>
+                      <Button variant="destructive" size="sm" onClick={() => handleReset(service.id)}>
+                        <RotateCw className="h-4 w-4 ml-2" />
+                        ریست
+                      </Button>
+                      <Button size="sm" onClick={() => handleRenew(service.id)}>
+                        <Lock className="h-4 w-4 ml-2" />
+                        تمدید
+                      </Button>
+                    </div>
+                  </>
+                )}
+                {serviceType === 'domain' && (
+                  <div className="flex justify-end space-x-2 mt-4">
+                    <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                      <MessageSquare className="h-4 w-4 ml-2" />
+                      مدیریت
+                    </Button>
+                    <Button size="sm" onClick={() => handleRenew(service.id)}>
+                      <Lock className="h-4 w-4 ml-2" />
+                      تمدید
+                    </Button>
+                  </div>
+                )}
+                {serviceType === 'hosting' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-2">
+                        <FileEdit className="h-4 w-4 text-gray-500" />
+                        <span>Disk: {service.diskUsage}%</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FastForward className="h-4 w-4 text-gray-500" />
+                        <span>Bandwidth: {service.bandwidthUsage}%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
+                        <MessageSquare className="h-4 w-4 ml-2" />
+                        مدیریت
+                      </Button>
+                      <Button size="sm" onClick={() => handleRenew(service.id)}>
+                        <Lock className="h-4 w-4 ml-2" />
+                        تمدید
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    </TooltipProvider>
   );
 };
 

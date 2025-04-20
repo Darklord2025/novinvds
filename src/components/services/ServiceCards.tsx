@@ -1,24 +1,16 @@
 
 import React from 'react';
-import { Server, Database, Cloud, Globe, Inbox } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface ServiceCardProps {
-  service: {
-    id: string;
-    status: string;
-    cpuUsage?: number;
-    ramUsage?: number;
-    diskUsage?: number;
-    bandwidthUsage?: number;
-    expiryDate?: string;
-  };
+  service: any;
 }
 
 export const VpsCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
     <div className="flex items-center">
-      <Server className="h-4 w-4 mr-2 text-blue-500" />
-      <span>سرور مجازی: {service.id}</span>
+      <div className="mr-2 font-medium">{service.id}</div>
     </div>
   );
 };
@@ -26,8 +18,7 @@ export const VpsCard: React.FC<ServiceCardProps> = ({ service }) => {
 export const DedicatedCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
     <div className="flex items-center">
-      <Database className="h-4 w-4 mr-2 text-purple-500" />
-      <span>سرور اختصاصی: {service.id}</span>
+      <div className="mr-2 font-medium">{service.id}</div>
     </div>
   );
 };
@@ -35,8 +26,7 @@ export const DedicatedCard: React.FC<ServiceCardProps> = ({ service }) => {
 export const CloudCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
     <div className="flex items-center">
-      <Cloud className="h-4 w-4 mr-2 text-sky-500" />
-      <span>سرور ابری: {service.id}</span>
+      <div className="mr-2 font-medium">{service.id}</div>
     </div>
   );
 };
@@ -44,8 +34,12 @@ export const CloudCard: React.FC<ServiceCardProps> = ({ service }) => {
 export const DomainCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
     <div className="flex items-center">
-      <Globe className="h-4 w-4 mr-2 text-green-500" />
-      <span>دامنه: {service.id}</span>
+      <div className="mr-2 font-medium">{service.id}</div>
+      {service.expiryDate && (
+        <Badge className="ml-2 bg-blue-100 text-blue-700">
+          تا {service.expiryDate}
+        </Badge>
+      )}
     </div>
   );
 };
@@ -53,8 +47,7 @@ export const DomainCard: React.FC<ServiceCardProps> = ({ service }) => {
 export const HostingCard: React.FC<ServiceCardProps> = ({ service }) => {
   return (
     <div className="flex items-center">
-      <Inbox className="h-4 w-4 mr-2 text-amber-500" />
-      <span>هاستینگ: {service.id}</span>
+      <div className="mr-2 font-medium">{service.id}</div>
     </div>
   );
 };
