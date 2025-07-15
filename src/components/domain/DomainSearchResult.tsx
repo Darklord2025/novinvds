@@ -29,7 +29,20 @@ const DomainSearchResult: React.FC<DomainSearchResultProps> = ({ searchResult })
         {searchResult.available && (
           <div>
             <p className="text-lg font-bold text-blue-600">{searchResult.price} تومان</p>
-            <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+            <button 
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              onClick={() => {
+                // Check if user is logged in (simple check)
+                const isLoggedIn = localStorage.getItem('user');
+                if (isLoggedIn) {
+                  // Redirect to user panel for checkout
+                  window.location.href = '/user-panel';
+                } else {
+                  // Redirect to register page
+                  window.location.href = '/register';
+                }
+              }}
+            >
               افزودن به سبد خرید
             </button>
           </div>

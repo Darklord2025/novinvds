@@ -80,6 +80,51 @@ const VpsPlans = () => {
       ],
       isPopular: false,
     },
+    {
+      id: "linux-vps-4",
+      title: "سرور مجازی لینوکس - سنگین",
+      price: "2,490,000",
+      period: "ماهانه",
+      cpu: "8",
+      ram: "16GB",
+      disk: "320GB SSD",
+      bandwidth: "8TB",
+      location: "آلمان",
+      features: [
+        "نصب انواع توزیع‌های لینوکس",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+        "ترافیک نامحدود داخلی",
+        "پشتیبانی اولویت‌دار",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "linux-vps-5",
+      title: "سرور مجازی لینوکس - انتربرایز",
+      price: "3,990,000",
+      period: "ماهانه",
+      cpu: "12",
+      ram: "32GB",
+      disk: "500GB SSD",
+      bandwidth: "10TB",
+      location: "آلمان",
+      features: [
+        "نصب انواع توزیع‌های لینوکس",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ روزانه",
+        "تحویل آنی",
+        "IP اختصاصی",
+        "ترافیک نامحدود داخلی",
+        "پشتیبانی اختصاصی",
+        "پنل cPanel رایگان",
+      ],
+      isPopular: false,
+    },
   ];
 
   const windowsVpsPlans = [
@@ -143,6 +188,51 @@ const VpsPlans = () => {
       ],
       isPopular: false,
     },
+    {
+      id: "windows-vps-4",
+      title: "سرور مجازی ویندوز - سنگین",
+      price: "2,690,000",
+      period: "ماهانه",
+      cpu: "8",
+      ram: "24GB",
+      disk: "400GB SSD",
+      bandwidth: "6TB",
+      location: "آلمان",
+      features: [
+        "نصب انواع نسخه‌های ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+        "ترافیک نامحدود داخلی",
+        "پشتیبانی اولویت‌دار",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "windows-vps-5",
+      title: "سرور مجازی ویندوز - انتربرایز",
+      price: "4,290,000",
+      period: "ماهانه",
+      cpu: "12",
+      ram: "48GB",
+      disk: "600GB SSD",
+      bandwidth: "10TB",
+      location: "آلمان",
+      features: [
+        "نصب انواع نسخه‌های ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ روزانه",
+        "تحویل آنی",
+        "IP اختصاصی",
+        "ترافیک نامحدود داخلی",
+        "پشتیبانی اختصاصی",
+        "لایسنس SQL Server",
+      ],
+      isPopular: false,
+    },
   ];
 
   const iranVpsPlans = [
@@ -155,7 +245,7 @@ const VpsPlans = () => {
       ram: "2GB",
       disk: "40GB SSD",
       bandwidth: "500GB",
-      location: "ایران",
+      location: "ایران - تهران",
       features: [
         "نصب لینوکس یا ویندوز",
         "پشتیبانی 24/7",
@@ -174,7 +264,7 @@ const VpsPlans = () => {
       ram: "4GB",
       disk: "80GB SSD",
       bandwidth: "1TB",
-      location: "ایران",
+      location: "ایران - تهران",
       features: [
         "نصب لینوکس یا ویندوز",
         "پشتیبانی 24/7",
@@ -194,7 +284,7 @@ const VpsPlans = () => {
       ram: "8GB",
       disk: "160GB SSD",
       bandwidth: "2TB",
-      location: "ایران",
+      location: "ایران - تهران",
       features: [
         "نصب لینوکس یا ویندوز",
         "پشتیبانی 24/7",
@@ -203,6 +293,131 @@ const VpsPlans = () => {
         "تحویل آنی",
         "IP اختصاصی",
         "پشتیبانی اختصاصی",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "iran-vps-4",
+      title: "سرور مجازی ایران - سنگین",
+      price: "2,890,000",
+      period: "ماهانه",
+      cpu: "8",
+      ram: "16GB",
+      disk: "320GB SSD",
+      bandwidth: "3TB",
+      location: "ایران - تهران",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ روزانه",
+        "تحویل آنی",
+        "IP اختصاصی",
+        "پشتیبانی اختصاصی",
+        "CDN رایگان",
+      ],
+      isPopular: false,
+    },
+  ];
+
+  const locationVpsPlans = [
+    {
+      id: "us-vps-1",
+      title: "سرور مجازی آمریکا - استاندارد",
+      price: "1,190,000",
+      period: "ماهانه",
+      cpu: "4",
+      ram: "4GB",
+      disk: "80GB SSD",
+      bandwidth: "2TB",
+      location: "آمریکا - نیویورک",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "uk-vps-1",
+      title: "سرور مجازی انگلستان - استاندارد",
+      price: "1,290,000",
+      period: "ماهانه",
+      cpu: "4",
+      ram: "4GB",
+      disk: "80GB SSD",
+      bandwidth: "2TB",
+      location: "انگلستان - لندن",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "fr-vps-1",
+      title: "سرور مجازی فرانسه - استاندارد",
+      price: "1,090,000",
+      period: "ماهانه",
+      cpu: "4",
+      ram: "4GB",
+      disk: "80GB SSD",
+      bandwidth: "2TB",
+      location: "فرانسه - پاریس",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+      ],
+      isPopular: true,
+    },
+    {
+      id: "nl-vps-1",
+      title: "سرور مجازی هلند - استاندارد",
+      price: "1,190,000",
+      period: "ماهانه",
+      cpu: "4",
+      ram: "4GB",
+      disk: "80GB SSD",
+      bandwidth: "2TB",
+      location: "هلند - آمستردام",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
+      ],
+      isPopular: false,
+    },
+    {
+      id: "sg-vps-1",
+      title: "سرور مجازی سنگاپور - استاندارد",
+      price: "1,390,000",
+      period: "ماهانه",
+      cpu: "4",
+      ram: "4GB",
+      disk: "80GB SSD",
+      bandwidth: "1.5TB",
+      location: "سنگاپور",
+      features: [
+        "نصب لینوکس یا ویندوز",
+        "پشتیبانی 24/7",
+        "پنل مدیریتی",
+        "بکاپ هفتگی",
+        "تحویل آنی",
+        "IP اختصاصی",
       ],
       isPopular: false,
     },
@@ -324,8 +539,21 @@ const VpsPlans = () => {
         </ul>
       </CardContent>
       <CardFooter>
-        <Button className={`w-full ${plan.isPopular ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : ''}`}>
-          سفارش سرور
+        <Button 
+          className={`w-full ${plan.isPopular ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : ''}`}
+          onClick={() => {
+            // Check if user is logged in (simple check)
+            const isLoggedIn = localStorage.getItem('user'); 
+            if (isLoggedIn) {
+              // Redirect to user panel for checkout
+              window.location.href = '/user-panel';
+            } else {
+              // Redirect to login page
+              window.location.href = '/login';
+            }
+          }}
+        >
+          افزودن به سبد خرید
         </Button>
       </CardFooter>
     </Card>
@@ -359,28 +587,35 @@ const VpsPlans = () => {
           </div>
           
           <Tabs defaultValue="linux-vps" className="max-w-5xl mx-auto">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8">
+            <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-8">
               <TabsTrigger value="linux-vps">سرور مجازی لینوکس</TabsTrigger>
               <TabsTrigger value="windows-vps">سرور مجازی ویندوز</TabsTrigger>
               <TabsTrigger value="iran-vps">سرور مجازی ایران</TabsTrigger>
+              <TabsTrigger value="location-vps">لوکیشن‌های مختلف</TabsTrigger>
               <TabsTrigger value="daily-vps">سرور مجازی روزانه</TabsTrigger>
             </TabsList>
             
             <TabsContent value="linux-vps" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6">
                 {linuxVpsPlans.map(renderPricingCard)}
               </div>
             </TabsContent>
             
             <TabsContent value="windows-vps" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6">
                 {windowsVpsPlans.map(renderPricingCard)}
               </div>
             </TabsContent>
             
             <TabsContent value="iran-vps" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {iranVpsPlans.map(renderPricingCard)}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="location-vps" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6">
+                {locationVpsPlans.map(renderPricingCard)}
               </div>
             </TabsContent>
             

@@ -50,6 +50,18 @@ const DomainPricing = () => {
     { extension: '.info', register: '350,000', renew: '380,000', transfer: '350,000', features: { whois: true, dns: true, email: false } },
     { extension: '.io', register: '1,250,000', renew: '1,300,000', transfer: '1,250,000', features: { whois: true, dns: true, email: true } },
     { extension: '.dev', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.app', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.blog', register: '780,000', renew: '810,000', transfer: '780,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.shop', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.store', register: '1,490,000', renew: '1,520,000', transfer: '1,490,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.tech', register: '1,190,000', renew: '1,220,000', transfer: '1,190,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.online', register: '990,000', renew: '1,020,000', transfer: '990,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.site', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.website', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.biz', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.co', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: true } },
+    { extension: '.me', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.tv', register: '990,000', renew: '1,020,000', transfer: '990,000', features: { whois: true, dns: true, email: false } },
   ];
 
   return (
