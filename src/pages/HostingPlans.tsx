@@ -308,8 +308,21 @@ const HostingPlans = () => {
         </ul>
       </CardContent>
       <CardFooter>
-        <Button className={`w-full ${plan.isPopular ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : ''}`}>
-          سفارش پلن
+        <Button 
+          className={`w-full ${plan.isPopular ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : ''}`}
+          onClick={() => {
+            // Check if user is logged in (simple check)
+            const isLoggedIn = localStorage.getItem('user'); 
+            if (isLoggedIn) {
+              // Redirect to user panel for checkout
+              window.location.href = '/user-panel';
+            } else {
+              // Redirect to login page
+              window.location.href = '/login';
+            }
+          }}
+        >
+          افزودن به سبد خرید
         </Button>
       </CardFooter>
     </Card>

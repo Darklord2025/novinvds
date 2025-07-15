@@ -11,62 +11,85 @@ const Hosting = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Hosting Plans
+  // Hosting Plans - Updated with more plans like those in HostingPlans.tsx
   const hostingPlans = [
     {
-      title: "پایه",
-      price: "119,000",
-      period: "ماهانه",
-      description: "مناسب برای وبسایت‌های شخصی و وبلاگ‌ها",
+      id: "linux-eco-basic",
+      title: "هاست لینوکس ECO - پایه",
+      price: "490,000",
+      period: "سالانه",
+      description: "مناسب برای وبسایت‌های شخصی و وبلاگ‌های کوچک",
       features: [
         { text: "5 گیگابایت فضا SSD", available: true },
         { text: "نامحدود پهنای باند", available: true },
         { text: "5 دامنه پارک", available: true },
-        { text: "10 زیردامنه", available: true },
-        { text: "10 حساب ایمیل", available: true },
-        { text: "2 پایگاه داده MySQL", available: true },
-        { text: "نصب رایگان SSL", available: true },
-        { text: "پشتیبانی از PHP 8", available: true },
-        { text: "بکاپ هفتگی", available: false },
+        { text: "پشتیبانی از PHP 8.2", available: true },
+        { text: "پنل cPanel", available: true },
+        { text: "SSL رایگان", available: true },
+        { text: "بکاپ روزانه", available: true },
+        { text: "LiteSpeed", available: false },
+        { text: "Redis Cache", available: false },
         { text: "پشتیبانی اولویت‌دار", available: false },
       ],
       popular: false,
     },
     {
-      title: "استاندارد",
-      price: "299,000",
-      period: "ماهانه",
+      id: "linux-pro-standard",
+      title: "هاست لینوکس PRO - استاندارد",
+      price: "1,190,000",
+      period: "سالانه",
       description: "مناسب برای کسب و کارهای کوچک و فروشگاه‌های آنلاین",
       features: [
-        { text: "20 گیگابایت فضا SSD", available: true },
+        { text: "25 گیگابایت فضا SSD", available: true },
         { text: "نامحدود پهنای باند", available: true },
         { text: "نامحدود دامنه پارک", available: true },
-        { text: "نامحدود زیردامنه", available: true },
-        { text: "نامحدود حساب ایمیل", available: true },
-        { text: "10 پایگاه داده MySQL", available: true },
-        { text: "نصب رایگان SSL", available: true },
-        { text: "پشتیبانی از PHP 8", available: true },
-        { text: "بکاپ هفتگی", available: true },
-        { text: "پشتیبانی اولویت‌دار", available: false },
+        { text: "پشتیبانی از PHP 8.2", available: true },
+        { text: "پنل cPanel", available: true },
+        { text: "SSL رایگان", available: true },
+        { text: "بکاپ روزانه", available: true },
+        { text: "LiteSpeed", available: true },
+        { text: "Redis Cache", available: true },
+        { text: "دامنه com. رایگان", available: true },
       ],
       popular: true,
     },
     {
-      title: "حرفه‌ای",
-      price: "499,000",
-      period: "ماهانه",
-      description: "مناسب برای شرکت‌ها و کسب و کارهای متوسط",
+      id: "wordpress-pro",
+      title: "هاست وردپرس - حرفه‌ای",
+      price: "2,490,000",
+      period: "سالانه",
+      description: "مناسب برای سایت‌های وردپرس پربازدید و حرفه‌ای",
       features: [
         { text: "50 گیگابایت فضا SSD", available: true },
         { text: "نامحدود پهنای باند", available: true },
-        { text: "نامحدود دامنه پارک", available: true },
-        { text: "نامحدود زیردامنه", available: true },
-        { text: "نامحدود حساب ایمیل", available: true },
-        { text: "نامحدود پایگاه داده MySQL", available: true },
-        { text: "نصب رایگان SSL", available: true },
-        { text: "پشتیبانی از PHP 8", available: true },
+        { text: "5 دامنه پارک", available: true },
+        { text: "بهینه سازی وردپرس", available: true },
+        { text: "LiteSpeed", available: true },
+        { text: "Redis Cache", available: true },
+        { text: "SSL رایگان", available: true },
         { text: "بکاپ روزانه", available: true },
-        { text: "پشتیبانی اولویت‌دار", available: true },
+        { text: "دامنه com. رایگان", available: true },
+        { text: "نصب رایگان قالب و افزونه", available: true },
+      ],
+      popular: false,
+    },
+    {
+      id: "woocommerce-standard",
+      title: "هاست ووکامرس - استاندارد",
+      price: "1,990,000",
+      period: "سالانه",
+      description: "مناسب برای فروشگاه‌های آنلاین متوسط",
+      features: [
+        { text: "30 گیگابایت فضا SSD", available: true },
+        { text: "نامحدود پهنای باند", available: true },
+        { text: "3 دامنه پارک", available: true },
+        { text: "بهینه سازی ووکامرس", available: true },
+        { text: "LiteSpeed", available: true },
+        { text: "Redis Cache", available: true },
+        { text: "SSL رایگان", available: true },
+        { text: "بکاپ روزانه", available: true },
+        { text: "دامنه com. رایگان", available: true },
+        { text: "نصب خودکار ووکامرس", available: true },
       ],
       popular: false,
     }
@@ -127,7 +150,7 @@ const Hosting = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {hostingPlans.map((plan, index) => (
               <PricingCard 
                 key={index}
@@ -137,11 +160,29 @@ const Hosting = () => {
                 description={plan.description}
                 features={plan.features}
                 popular={plan.popular}
+                buttonText="افزودن به سبد خرید"
+                onClick={() => {
+                  // Check if user is logged in (simple check)
+                  const isLoggedIn = localStorage.getItem('user'); 
+                  if (isLoggedIn) {
+                    // Redirect to user panel for checkout
+                    window.location.href = '/user-panel';
+                  } else {
+                    // Redirect to login page
+                    window.location.href = '/login';
+                  }
+                }}
               />
             ))}
           </div>
           
           <div className="text-center mt-12">
+            <Link to="/hosting-plans" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+              مشاهده تمام پلن‌های هاستینگ <ArrowRight size={16} className="mr-2" />
+            </Link>
+          </div>
+          
+          <div className="text-center mt-6">
             <Link to="/contact" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
               نیاز به پلن اختصاصی دارید؟ با ما تماس بگیرید <ArrowRight size={16} className="mr-2" />
             </Link>
@@ -336,12 +377,25 @@ const Hosting = () => {
             با NovinVDS، شما می‌توانید در کمتر از 5 دقیقه صاحب یک هاست قدرتمند با بهترین کیفیت شوید
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            <button 
+              className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+              onClick={() => {
+                // Check if user is logged in (simple check)
+                const isLoggedIn = localStorage.getItem('user'); 
+                if (isLoggedIn) {
+                  // Redirect to user panel for checkout
+                  window.location.href = '/user-panel';
+                } else {
+                  // Redirect to login page
+                  window.location.href = '/login';
+                }
+              }}
+            >
               سفارش هاستینگ
             </button>
-            <button className="px-8 py-3 bg-transparent border border-white rounded-lg font-medium hover:bg-white/10 transition-colors">
+            <Link to="/contact" className="px-8 py-3 bg-transparent border border-white rounded-lg font-medium hover:bg-white/10 transition-colors text-center">
               مشاوره رایگان
-            </button>
+            </Link>
           </div>
         </div>
       </section>
