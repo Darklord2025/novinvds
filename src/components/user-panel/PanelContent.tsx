@@ -1,10 +1,9 @@
-
 import React from 'react';
 import Dashboard from './Dashboard';
 import ProfilePage from './ProfilePage';
-import ServicesPage from './ServicesPage';
+import WHMCSServicesPage from './WHMCSServicesPage';
+import WHMCSInvoicesPage from './WHMCSInvoicesPage';
 import TicketsPage from './TicketsPage';
-import InvoicesPage from './InvoicesPage';
 import WalletPage from './WalletPage';
 import NotificationsPage from './NotificationsPage';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
@@ -38,7 +37,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
     handleCreateNewTicket,
     handleResetServer,
     handleRenewService,
-    handleManageService
+    handleManageService,
+    handleViewInvoice,
+    handleDownloadInvoice,
+    handlePayInvoice
   } = navigationHandlers;
   
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
@@ -75,6 +77,28 @@ const PanelContent: React.FC<PanelContentProps> = ({
     }, 3000);
   };
 
+  // WHMCS-specific handlers
+  const handleSuspendService = (serviceId: string) => {
+    toast({
+      title: "تعلیق خدمت",
+      description: `خدمت ${serviceId} با موفقیت تعلیق شد.`,
+    });
+  };
+
+  const handleUnsuspendService = (serviceId: string) => {
+    toast({
+      title: "فعال‌سازی خدمت",
+      description: `خدمت ${serviceId} با موفقیت فعال شد.`,
+    });
+  };
+
+  const handleTerminateService = (serviceId: string) => {
+    toast({
+      title: "خاتمه خدمت",
+      description: `درخواست خاتمه خدمت ${serviceId} ثبت شد.`,
+    });
+  };
+
   switch (activeTab) {
     case 'dashboard':
       return (
@@ -105,37 +129,17 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'profile':
       return <ProfilePage />;
     case 'servers':
-      return <ServicesPage 
-        serviceType="servers" 
-        onManage={(id) => handleManageService('vps', id)} 
-        onReset={(type, id) => handleResetRequest(type, id)} 
-        onRenew={(type, id) => handleRenewService(type, id)} 
-      />;
     case 'dedicated':
-      return <ServicesPage 
-        serviceType="dedicated" 
-        onManage={(id) => handleManageService('dedicated', id)} 
-        onReset={(type, id) => handleResetRequest(type, id)} 
-        onRenew={(type, id) => handleRenewService(type, id)} 
-      />;
     case 'cloud':
-      return <ServicesPage 
-        serviceType="cloud" 
-        onManage={(id) => handleManageService('cloud', id)} 
-        onReset={(type, id) => handleResetRequest(type, id)} 
-        onRenew={(type, id) => handleRenewService(type, id)} 
-      />;
     case 'hosting':
-      return <ServicesPage 
-        serviceType="hosting" 
-        onManage={(id) => handleManageService('hosting', id)} 
-        onRenew={(type, id) => handleRenewService(type, id)} 
-      />;
     case 'domains':
-      return <ServicesPage 
-        serviceType="domains" 
-        onManage={(id) => handleManageService('domain', id)} 
-        onRenew={(type, id) => handleRenewService(type, id)} 
+      return <WHMCSServicesPage 
+        onManageService={handleManageService}
+        onRenewService={handleRenewService}
+        onSuspendService={handleSuspendService}
+        onUnsuspendService={handleUnsuspendService}
+        onTerminateService={handleTerminateService}
+        onViewInvoice={handleViewInvoice}
       />;
     case 'domain-management':
       return selectedService ? 
@@ -179,7 +183,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedTicket ? 
         <TicketDetail ticketId={selectedTicket} onBack={() => navigateToServiceOrderPage('/tickets')} /> : null;
     case 'invoices':
-      return <InvoicesPage />;
+      return <WHMCSInvoicesPage 
+        onViewInvoice={handleViewInvoice}
+        onPayInvoice={handlePayInvoice}
+        onDownloadInvoice={handleDownloadInvoice}
+      />;
     case 'wallet':
       return <WalletPage />;
     case 'notifications':
