@@ -14,6 +14,10 @@ import NotificationDetails from './NotificationDetails';
 import TicketDetail from './TicketDetail';
 import DomainManagement from './DomainManagement';
 import CreateTicketForm from './CreateTicketForm';
+import DomainServicesPage from './DomainServicesPage';
+import AffiliateCenter from './AffiliateCenter';
+import KnowledgeBase from './KnowledgeBase';
+// Components will be imported when available
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
 import { Button } from '@/components/ui/button';
@@ -132,7 +136,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'dedicated':
     case 'cloud':
     case 'hosting':
-    case 'domains':
       return <WHMCSServicesPage 
         onManageService={handleManageService}
         onRenewService={handleRenewService}
@@ -140,6 +143,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onUnsuspendService={handleUnsuspendService}
         onTerminateService={handleTerminateService}
         onViewInvoice={handleViewInvoice}
+      />;
+    case 'domains':
+      return <DomainServicesPage 
+        onManageDomain={handleManageService}
+        onRenewDomain={handleRenewService}
       />;
     case 'domain-management':
       return selectedService ? 
@@ -190,6 +198,20 @@ const PanelContent: React.FC<PanelContentProps> = ({
       />;
     case 'wallet':
       return <WalletPage />;
+    case 'transactions':
+      return <TransactionsPage />;
+    case 'affiliate':
+      return <AffiliateCenter />;
+    case 'knowledge-base':
+      return <KnowledgeBase />;
+    case 'security-center':
+      return <DevelopmentMessage title="مرکز امنیت" message="این بخش در حال توسعه است." />;
+    case 'billing-overview':
+      return <DevelopmentMessage title="نمای کلی صورتحساب" message="این بخش در حال توسعه است." />;
+    case 'server-management':
+      return <DevelopmentMessage title="مدیریت سرور" message="این بخش در حال توسعه است." />;
+    case 'downloads':
+      return <DownloadsPage />;
     case 'notifications':
       return <NotificationsPage onViewNotification={navigationHandlers.handleViewNotification} />;
     case 'notification-details':
@@ -200,10 +222,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'announcement-details':
       return selectedAnnouncement ? 
         <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} /> : null;
-    case 'transactions':
-      return <TransactionsPage />;
-    case 'downloads':
-      return <DownloadsPage />;
     case 'settings':
       return <SettingsPage />;
     default:
