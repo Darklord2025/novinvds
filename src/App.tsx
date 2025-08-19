@@ -34,6 +34,7 @@ import VPSServices from "./pages/VPSServices";
 import DedicatedServices from "./pages/DedicatedServices";
 import DomainServices from "./pages/DomainServices";
 import NetworkServices from "./pages/NetworkServices";
+import NetworkStore from "./pages/NetworkStore";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/hosting" element={<Hosting />} />
             <Route path="/domain" element={<Domain />} />
             <Route path="/network" element={<Network />} />
+            <Route path="/network-store" element={<NetworkStore />} />
             <Route path="/license" element={<License />} />
             <Route path="/ssl" element={<SSL />} />
             <Route path="/datacenter" element={<Datacenter />} />

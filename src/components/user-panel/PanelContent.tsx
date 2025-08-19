@@ -17,6 +17,8 @@ import CreateTicketForm from './CreateTicketForm';
 import DomainServicesPage from './DomainServicesPage';
 import AffiliateCenter from './AffiliateCenter';
 import KnowledgeBase from './KnowledgeBase';
+import NetworkStoreSection from './NetworkStoreSection';
+import RecommendationSection from './RecommendationSection';
 // Components will be imported when available
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
@@ -130,6 +132,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
           </AlertDialog>
         </>
       );
+    case 'recommendations':
+      return <RecommendationSection />;
+    case 'network-store':
+      return <NetworkStoreSection />;
     case 'profile':
       return <ProfilePage />;
     case 'servers':

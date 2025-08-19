@@ -46,50 +46,64 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-          <Link to="/" className="text-foreground hover:text-primary transition-colors">
+        <div className="hidden md:flex items-center gap-8" dir="rtl">
+          <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
             صفحه اصلی
           </Link>
           
-          {/* خدمات به صورت منفرد */}
-          {serviceLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {/* خدمات */}
+          <div className="relative group">
+            <button className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1">
+              خدمات
+              <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div className="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg shadow-lg rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+              {serviceLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="block px-4 py-3 text-foreground hover:text-primary hover:bg-gray-50 transition-colors text-right"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
           
-          <Link to="/datacenter" className="text-foreground hover:text-primary transition-colors">
+          <Link to="/network-store" className="text-foreground hover:text-primary transition-colors font-medium">
+             فروشگاه تجهیزات
+          </Link>
+          
+          <Link to="/datacenter" className="text-foreground hover:text-primary transition-colors font-medium">
             دیتاسنترها
           </Link>
           
-          <Link to="/blog" className="text-foreground hover:text-primary transition-colors">
+          <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-medium">
             وبلاگ
           </Link>
           
-          <Link to="/about" className="text-foreground hover:text-primary transition-colors">
+          <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">
             درباره ما
           </Link>
           
-          <Link to="/contact" className="text-foreground hover:text-primary transition-colors">
+          <Link to="/contact" className="text-foreground hover:text-primary transition-colors font-medium">
             تماس با ما
           </Link>
           
-          <div className="flex items-center gap-3">
-            <a href="tel:02112345678" className="flex items-center text-primary">
-              <Phone size={18} className="ml-1" />
+          <div className="flex items-center gap-4 mr-4">
+            <a href="tel:02112345678" className="flex items-center text-primary hover:text-primary/80 transition-colors">
+              <Phone size={18} className="ml-2" />
               <span className="font-medium">021-12345678</span>
             </a>
             
             <Link to="/cart" className="relative p-2 text-foreground hover:text-primary transition-colors">
               <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
             </Link>
             
-            <Link to="/login" className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            <Link to="/login" className="px-6 py-2 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 shadow-md hover:shadow-lg">
               ورود / ثبت نام
             </Link>
           </div>
@@ -106,29 +120,41 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-lg py-4 px-4 animate-fade-in">
+        <div className="md:hidden bg-white/95 backdrop-blur-lg py-4 px-4 animate-fade-in border-t shadow-lg" dir="rtl">
           <div className="flex flex-col space-y-3">
             <Link 
               to="/" 
-              className="text-foreground hover:text-primary transition-colors py-2"
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
               onClick={() => setIsMenuOpen(false)}
             >
               صفحه اصلی
             </Link>
-            {/* خدمات به صورت منفرد */}
-            {serviceLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="text-foreground hover:text-primary transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-gray-600 px-2">خدمات</p>
+              {serviceLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-foreground hover:text-primary transition-colors py-2 px-4 block rounded-lg hover:bg-gray-50 text-right border-r-2 border-transparent hover:border-primary"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            
+            <Link 
+              to="/network-store" 
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              فروشگاه تجهیزات
+            </Link>
+            
             <Link 
               to="/datacenter" 
-              className="text-foreground hover:text-primary transition-colors py-2"
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
               onClick={() => setIsMenuOpen(false)}
             >
               دیتاسنترها
@@ -136,7 +162,7 @@ const Navbar = () => {
             
             <Link 
               to="/blog" 
-              className="text-foreground hover:text-primary transition-colors py-2"
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
               onClick={() => setIsMenuOpen(false)}
             >
               وبلاگ
@@ -144,7 +170,7 @@ const Navbar = () => {
             
             <Link 
               to="/about" 
-              className="text-foreground hover:text-primary transition-colors py-2"
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
               onClick={() => setIsMenuOpen(false)}
             >
               درباره ما
@@ -152,15 +178,15 @@ const Navbar = () => {
             
             <Link 
               to="/contact" 
-              className="text-foreground hover:text-primary transition-colors py-2"
+              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
               onClick={() => setIsMenuOpen(false)}
             >
               تماس با ما
             </Link>
             
-            <div className="flex justify-between items-center py-2">
+            <div className="flex justify-between items-center py-3 px-2 border-t mt-4 pt-4">
               <a href="tel:02112345678" className="flex items-center text-primary">
-                <Phone size={18} className="ml-1" />
+                <Phone size={18} className="ml-2" />
                 <span className="font-medium">021-12345678</span>
               </a>
               
@@ -170,13 +196,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <ShoppingCart size={20} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
               </Link>
             </div>
             
             <Link 
               to="/login" 
-              className="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-center mt-2"
+              className="px-6 py-3 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 text-center mt-4 shadow-md"
               onClick={() => setIsMenuOpen(false)}
             >
               ورود / ثبت نام

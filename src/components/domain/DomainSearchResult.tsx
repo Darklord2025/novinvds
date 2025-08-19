@@ -30,17 +30,26 @@ const DomainSearchResult: React.FC<DomainSearchResultProps> = ({ searchResult })
           <div>
             <p className="text-lg font-bold text-blue-600">{searchResult.price} تومان</p>
             <button 
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="mt-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium shadow-md hover:shadow-lg"
               onClick={() => {
-                // Check if user is logged in (simple check)
-                const isLoggedIn = localStorage.getItem('user');
-                if (isLoggedIn) {
-                  // Redirect to user panel for checkout
-                  window.location.href = '/user-panel';
-                } else {
-                  // Redirect to register page
-                  window.location.href = '/register';
-                }
+                // Add to cart functionality
+                const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                const newItem = {
+                  id: Date.now(),
+                  type: 'domain',
+                  name: searchResult.domain,
+                  price: searchResult.price,
+                  period: '1 سال'
+                };
+                cartItems.push(newItem);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                
+                // Update cart count
+                const cartEvent = new Event('cartUpdated');
+                window.dispatchEvent(cartEvent);
+                
+                // Show success message
+                alert(`دامنه ${searchResult.domain} به سبد خرید اضافه شد`);
               }}
             >
               افزودن به سبد خرید

@@ -7,6 +7,8 @@ export interface SidebarItem {
 
 export const sidebarItems: SidebarItem[] = [
   { id: 'dashboard', label: 'داشبورد', icon: 'home' },
+  { id: 'recommendations', label: 'پیشنهادات ویژه', icon: 'star' },
+  { id: 'network-store', label: 'فروشگاه تجهیزات', icon: 'shopping-cart' },
   { id: 'servers', label: 'خدمات من', icon: 'server' },
   { id: 'domains', label: 'دامنه‌ها', icon: 'globe' },
   { id: 'invoices', label: 'فاکتورها', icon: 'file-text' },

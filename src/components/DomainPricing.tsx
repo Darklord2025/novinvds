@@ -34,7 +34,9 @@ const DomainPrice: React.FC<DomainPriceProps> = ({
         {features.dns ? <Check className="inline text-green-500" size={18} /> : <X className="inline text-red-500" size={18} />}
       </td>
       <td className="py-4 px-4 text-center">
-        {features.email ? <Check className="inline text-green-500" size={18} /> : <X className="inline text-red-500" size={18} />}
+        <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm">
+          افزودن به سبد
+        </button>
       </td>
     </tr>
   );
@@ -42,13 +44,13 @@ const DomainPrice: React.FC<DomainPriceProps> = ({
 
 const DomainPricing = () => {
   const domains = [
-    { extension: '.com', register: '390,000', renew: '420,000', transfer: '390,000', features: { whois: true, dns: true, email: true } },
-    { extension: '.net', register: '450,000', renew: '480,000', transfer: '450,000', features: { whois: true, dns: true, email: true } },
-    { extension: '.org', register: '490,000', renew: '520,000', transfer: '490,000', features: { whois: true, dns: true, email: true } },
+    { extension: '.com', register: '390,000', renew: '420,000', transfer: '390,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.net', register: '450,000', renew: '480,000', transfer: '450,000', features: { whois: true, dns: true, email: false } },
+    { extension: '.org', register: '490,000', renew: '520,000', transfer: '490,000', features: { whois: true, dns: true, email: false } },
     { extension: '.ir', register: '120,000', renew: '120,000', transfer: '120,000', features: { whois: true, dns: true, email: false } },
     { extension: '.co.ir', register: '80,000', renew: '80,000', transfer: '80,000', features: { whois: true, dns: true, email: false } },
     { extension: '.info', register: '350,000', renew: '380,000', transfer: '350,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.io', register: '1,250,000', renew: '1,300,000', transfer: '1,250,000', features: { whois: true, dns: true, email: true } },
+    { extension: '.io', register: '1,250,000', renew: '1,300,000', transfer: '1,250,000', features: { whois: true, dns: true, email: false } },
     { extension: '.dev', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
     { extension: '.app', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
     { extension: '.blog', register: '780,000', renew: '810,000', transfer: '780,000', features: { whois: true, dns: true, email: false } },
@@ -59,7 +61,7 @@ const DomainPricing = () => {
     { extension: '.site', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
     { extension: '.website', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
     { extension: '.biz', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.co', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: true } },
+    { extension: '.co', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: false } },
     { extension: '.me', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
     { extension: '.tv', register: '990,000', renew: '1,020,000', transfer: '990,000', features: { whois: true, dns: true, email: false } },
   ];
@@ -75,7 +77,7 @@ const DomainPricing = () => {
             <th className="py-3 px-4 text-right">انتقال</th>
             <th className="py-3 px-4 text-center">Whois محافظت</th>
             <th className="py-3 px-4 text-center">مدیریت DNS</th>
-            <th className="py-3 px-4 text-center">ایمیل رایگان</th>
+            <th className="py-3 px-4 text-center">عملیات</th>
           </tr>
         </thead>
         <tbody>
