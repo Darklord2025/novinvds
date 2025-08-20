@@ -8,9 +8,7 @@ const serviceLinks = [
   { to: "/dedicated", label: "سرور اختصاصی" },
   { to: "/hosting", label: "هاستینگ" },
   { to: "/domain", label: "ثبت دامنه" },
-  { to: "/network", label: "خدمات شبکه" },
-  { to: "/license", label: "فروش لایسنس" },
-  { to: "/ssl", label: "گواهی SSL" },
+  { to: "/network", label: "نرم‌افزارهای مدیریت شبکه" },
 ];
 
 const Navbar = () => {
@@ -41,7 +39,10 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">N</span>
+          </div>
           <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">NovinVDS</span>
         </Link>
 
@@ -76,9 +77,6 @@ const Navbar = () => {
              فروشگاه تجهیزات
           </Link>
           
-          <Link to="/datacenter" className="text-foreground hover:text-primary transition-colors font-medium">
-            دیتاسنترها
-          </Link>
           
           <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-medium">
             وبلاگ
@@ -152,13 +150,6 @@ const Navbar = () => {
               فروشگاه تجهیزات
             </Link>
             
-            <Link 
-              to="/datacenter" 
-              className="text-foreground hover:text-primary transition-colors py-3 px-2 rounded-lg hover:bg-gray-50 text-right"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              دیتاسنترها
-            </Link>
             
             <Link 
               to="/blog" 

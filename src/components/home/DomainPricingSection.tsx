@@ -6,7 +6,7 @@ import DomainPricing from '../DomainPricing';
 
 const DomainPricingSection: React.FC = () => {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-16 md:py-24 bg-white" dir="rtl">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">قیمت دامنه‌ها</h2>
@@ -15,7 +15,9 @@ const DomainPricingSection: React.FC = () => {
           </p>
         </div>
         
-        <DomainPricing />
+        <div dir="rtl">
+          <DomainPricing />
+        </div>
         
         <div className="text-center mt-12">
           <Link to="/domain" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">

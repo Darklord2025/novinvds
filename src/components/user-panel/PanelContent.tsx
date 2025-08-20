@@ -27,6 +27,10 @@ import { toast } from '@/components/ui/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
 import DevelopmentMessage from './DevelopmentMessage';
+import ServerManagementPage from './ServerManagementPage';
+import BillingOverviewPage from './BillingOverviewPage';
+import SecurityCenterPage from './SecurityCenterPage';
+import ServiceCalculatorPage from './ServiceCalculatorPage';
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,
@@ -211,11 +215,13 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'knowledge-base':
       return <KnowledgeBase />;
     case 'security-center':
-      return <DevelopmentMessage title="مرکز امنیت" message="این بخش در حال توسعه است." />;
-    case 'billing-overview':
-      return <DevelopmentMessage title="نمای کلی صورتحساب" message="این بخش در حال توسعه است." />;
+      return <SecurityCenterPage />;
+    case 'financial':
+      return <BillingOverviewPage />;
     case 'server-management':
-      return <DevelopmentMessage title="مدیریت سرور" message="این بخش در حال توسعه است." />;
+      return <ServerManagementPage />;
+    case 'service-calculator':
+      return <ServiceCalculatorPage />;
     case 'downloads':
       return <DownloadsPage />;
     case 'notifications':
