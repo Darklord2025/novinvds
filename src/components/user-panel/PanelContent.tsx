@@ -7,7 +7,6 @@ import TicketsPage from './TicketsPage';
 import WalletPage from './WalletPage';
 import NotificationsPage from './NotificationsPage';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
-import TransactionsPage from './TransactionsPage';
 import DownloadsPage from './DownloadsPage';
 import SettingsPage from './SettingsPage';
 import NotificationDetails from './NotificationDetails';
@@ -29,6 +28,9 @@ import { useState } from 'react';
 import DevelopmentMessage from './DevelopmentMessage';
 import ServerManagementPage from './ServerManagementPage';
 import BillingOverviewPage from './BillingOverviewPage';
+import TransactionsPageFinancial from './TransactionsPage';
+import InvoicesPageFinancial from './InvoicesPage';
+import WalletTopUpPage from './WalletTopUpPage';
 import SecurityCenterPage from './SecurityCenterPage';
 import ServiceCalculatorPage from './ServiceCalculatorPage';
 
@@ -209,7 +211,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'wallet':
       return <WalletPage />;
     case 'transactions':
-      return <TransactionsPage />;
+      return <TransactionsPageFinancial />;
     case 'affiliate':
       return <AffiliateCenter />;
     case 'knowledge-base':
@@ -217,7 +219,14 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'security-center':
       return <SecurityCenterPage />;
     case 'financial':
+    case 'financial-overview':
       return <BillingOverviewPage />;
+    case 'transactions':
+      return <TransactionsPageFinancial />;
+    case 'invoices':
+      return <InvoicesPageFinancial />;
+    case 'wallet-topup':
+      return <WalletTopUpPage />;
     case 'server-management':
       return <ServerManagementPage />;
     case 'service-calculator':

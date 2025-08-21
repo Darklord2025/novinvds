@@ -1,429 +1,182 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FileText, Download, Eye, CreditCard, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  FileText, 
+  Search,
+  Eye,
+  Download
+} from 'lucide-react';
 
 const InvoicesPage = () => {
-  const [activeTab, setActiveTab] = useState('unpaid');
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountApplied, setDiscountApplied] = useState(false);
-  const { toast } = useToast();
+  const [invoiceFilter, setInvoiceFilter] = useState('all');
   
-  // Mock invoice data
-  const invoices = [
+  const allInvoices = [
     {
-      id: 'INV-1234',
-      date: '1402/04/15',
-      dueDate: '1402/04/25',
-      amount: 2450000,
-      status: 'unpaid',
-      service: 'سرور مجازی لینوکس - پلن حرفه‌ای',
-      vat: 245000 // 10% VAT
+      id: 'INV-1402-001',
+      dueDate: '1402/08/15',
+      amount: '1,250,000',
+      status: 'Paid',
+      service: 'هاستینگ وردپرس'
     },
     {
-      id: 'INV-1235',
-      date: '1402/04/10',
-      dueDate: '1402/04/20',
-      amount: 1800000,
-      status: 'unpaid',
-      service: 'هاست لینوکس - پلن تجاری',
-      vat: 180000 // 10% VAT
+      id: 'INV-1402-002',
+      dueDate: '1402/08/20',
+      amount: '850,000',
+      status: 'Paid',
+      service: 'سرور مجازی'
     },
     {
-      id: 'INV-1220',
-      date: '1402/03/25',
-      dueDate: '1402/04/05',
-      amount: 3650000,
-      status: 'paid',
-      service: 'سرور اختصاصی - پلن پایه',
-      vat: 365000 // 10% VAT
+      id: 'INV-1402-003',
+      dueDate: '1402/09/01',
+      amount: '2,100,000',
+      status: 'Unpaid',
+      service: 'سرور اختصاصی'
     },
     {
-      id: 'INV-1219',
-      date: '1402/03/20',
-      dueDate: '1402/03/30',
-      amount: 850000,
-      status: 'paid',
-      service: 'تمدید ثبت دامنه .com',
-      vat: 85000 // 10% VAT
+      id: 'INV-1402-004',
+      dueDate: '1402/09/05',
+      amount: '450,000',
+      status: 'Pay',
+      service: 'دامنه .com'
     },
     {
-      id: 'INV-1218',
-      date: '1402/03/15',
-      dueDate: '1402/03/25',
-      amount: 1150000,
-      status: 'paid',
-      service: 'گواهی SSL - یکساله',
-      vat: 115000 // 10% VAT
+      id: 'INV-1402-005',
+      dueDate: '1402/08/25',
+      amount: '0',
+      status: 'Cancelled',
+      service: 'هاستینگ ویژه'
     },
     {
-      id: 'INV-1210',
-      date: '1402/03/01',
-      dueDate: '1402/03/10',
-      amount: 750000,
-      status: 'cancelled',
-      service: 'سرور مجازی ویندوز - پلن استاندارد',
-      vat: 75000 // 10% VAT
+      id: 'INV-1402-006',
+      dueDate: '1402/09/10',
+      amount: '320,000',
+      status: 'Pay',
+      service: 'سرور ابری'
+    },
+    {
+      id: 'INV-1402-007',
+      dueDate: '1402/09/12',
+      amount: '1,750,000',
+      status: 'Unpaid',
+      service: 'VPS پیشرفته'
     }
   ];
-  
-  const filterInvoices = (status) => {
-    return invoices.filter(invoice => invoice.status === status);
-  };
-  
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat('fa-IR').format(number);
-  };
-  
-  const handleApplyDiscount = () => {
-    if (!discountCode.trim()) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً کد تخفیف را وارد کنید.",
-      });
-      return;
-    }
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      'Paid': { color: 'bg-green-500', text: 'پرداخت شده' },
+      'Unpaid': { color: 'bg-red-500', text: 'پرداخت نشده' },
+      'Pay': { color: 'bg-yellow-500', text: 'در انتظار پرداخت' },
+      'Cancelled': { color: 'bg-gray-500', text: 'لغو شده' }
+    };
     
-    if (discountCode.toLowerCase() === 'novinvds10') {
-      setDiscountApplied(true);
-      toast({
-        title: "تخفیف اعمال شد",
-        description: "کد تخفیف 10% با موفقیت اعمال شد.",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "کد تخفیف نامعتبر است.",
-      });
-    }
+    const config = statusConfig[status as keyof typeof statusConfig] || { color: 'bg-gray-500', text: status };
+    return <Badge className={`${config.color} text-white`}>{config.text}</Badge>;
   };
-  
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'paid':
-        return (
-          <div className="flex items-center space-x-1 space-x-reverse">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span className="text-green-600">پرداخت شده</span>
-          </div>
-        );
-      case 'unpaid':
-        return (
-          <div className="flex items-center space-x-1 space-x-reverse">
-            <Clock className="h-4 w-4 text-amber-500" />
-            <span className="text-amber-600">در انتظار پرداخت</span>
-          </div>
-        );
-      case 'cancelled':
-        return (
-          <div className="flex items-center space-x-1 space-x-reverse">
-            <AlertCircle className="h-4 w-4 text-red-500" />
-            <span className="text-red-600">لغو شده</span>
-          </div>
-        );
-      default:
-        return status;
-    }
-  };
-  
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">فاکتورها</h1>
-        <Button variant="outline">بروزرسانی</Button>
+    <div className="p-6" dir="rtl">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold mb-2">فاکتورها</h1>
+        <p className="text-gray-600">مشاهده و مدیریت تمامی فاکتورهای صادر شده</p>
       </div>
-      
+
       <Card>
         <CardHeader>
-          <CardTitle>فاکتورهای پرداخت نشده</CardTitle>
-          <CardDescription>
-            فاکتورهای پرداخت نشده خود را مشاهده و پرداخت کنید
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              تمامی فاکتورها
+            </CardTitle>
+            <div className="flex gap-2">
+              <Select value={invoiceFilter} onValueChange={setInvoiceFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="فیلتر بر اساس وضعیت" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">همه فاکتورها</SelectItem>
+                  <SelectItem value="paid">پرداخت شده</SelectItem>
+                  <SelectItem value="unpaid">پرداخت نشده</SelectItem>
+                  <SelectItem value="pending">در انتظار پرداخت</SelectItem>
+                  <SelectItem value="cancelled">لغو شده</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="مرتب سازی" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">تاریخ سررسید</SelectItem>
+                  <SelectItem value="amount">مبلغ</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          {filterInvoices('unpaid').length > 0 ? (
-            <div className="space-y-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>شماره فاکتور</TableHead>
-                    <TableHead>تاریخ صدور</TableHead>
-                    <TableHead>سررسید</TableHead>
-                    <TableHead>شرح خدمات</TableHead>
-                    <TableHead>مبلغ (تومان)</TableHead>
-                    <TableHead>مالیات (10%)</TableHead>
-                    <TableHead>قابل پرداخت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterInvoices('unpaid').map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.dueDate}</TableCell>
-                      <TableCell>{invoice.service}</TableCell>
-                      <TableCell>{formatNumber(invoice.amount)} تومان</TableCell>
-                      <TableCell>{formatNumber(invoice.vat)} تومان</TableCell>
-                      <TableCell className="font-bold">
-                        {formatNumber(invoice.amount + invoice.vat)} تومان
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2 space-x-reverse">
-                          <Button size="sm" className="bg-blue-600">
-                            <CreditCard className="h-4 w-4 ml-1" />
-                            پرداخت
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 ml-1" />
-                            مشاهده
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <div className="flex flex-col md:flex-row md:items-end gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="discount">کد تخفیف</Label>
-                    <div className="flex space-x-2 space-x-reverse mt-1">
-                      <Input 
-                        id="discount" 
-                        value={discountCode}
-                        onChange={(e) => setDiscountCode(e.target.value)}
-                        placeholder="کد تخفیف خود را وارد کنید" 
-                        disabled={discountApplied}
-                      />
-                      <Button 
-                        onClick={handleApplyDiscount}
-                        disabled={discountApplied}
-                      >
-                        اعمال تخفیف
-                      </Button>
-                    </div>
-                    {discountApplied && (
-                      <p className="text-green-600 text-sm mt-1">کد تخفیف 10% با موفقیت اعمال شد.</p>
-                    )}
-                  </div>
-                  
-                  <div className="md:w-64 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>جمع کل:</span>
-                      <span>{formatNumber(4250000)} تومان</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>مالیات بر ارزش افزوده (10%):</span>
-                      <span>{formatNumber(425000)} تومان</span>
-                    </div>
-                    {discountApplied && (
-                      <div className="flex justify-between text-sm text-green-600">
-                        <span>تخفیف (10%):</span>
-                        <span>- {formatNumber(425000)} تومان</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between font-bold border-t pt-2 mt-2">
-                      <span>مبلغ قابل پرداخت:</span>
-                      <span>
-                        {formatNumber(
-                          discountApplied 
-                            ? 4250000 + 425000 - 425000 
-                            : 4250000 + 425000
-                        )} تومان
-                      </span>
-                    </div>
-                    <Button className="w-full bg-blue-600 mt-2">
-                      <CreditCard className="h-4 w-4 ml-2" />
-                      پرداخت همه فاکتورها
-                    </Button>
-                  </div>
-                </div>
-              </div>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input 
+                placeholder="جستجوی فاکتورها..." 
+                className="pr-10"
+              />
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">فاکتور پرداخت نشده‌ای ندارید</h3>
-              <p className="text-gray-500">در حال حاضر هیچ فاکتور پرداخت نشده‌ای برای شما صادر نشده است.</p>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-right p-3">شماره فاکتور</th>
+                    <th className="text-right p-3">سرویس</th>
+                    <th className="text-right p-3">تاریخ سررسید</th>
+                    <th className="text-right p-3">مبلغ</th>
+                    <th className="text-right p-3">وضعیت</th>
+                    <th className="text-right p-3">عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allInvoices.map((invoice, index) => (
+                    <tr key={index} className="border-b hover:bg-gray-50">
+                      <td className="p-3 font-medium">{invoice.id}</td>
+                      <td className="p-3">{invoice.service}</td>
+                      <td className="p-3">{invoice.dueDate}</td>
+                      <td className="p-3 font-medium">{invoice.amount} تومان</td>
+                      <td className="p-3">{getStatusBadge(invoice.status)}</td>
+                      <td className="p-3">
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" title="مشاهده">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" title="دانلود">
+                            <Download className="w-4 h-4" />
+                          </Button>
+                          {(invoice.status === 'Unpaid' || invoice.status === 'Pay') && (
+                            <Button variant="outline" size="sm">
+                              پرداخت
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>تاریخچه فاکتورها</CardTitle>
-          <CardDescription>
-            تاریخچه کامل فاکتورهای خود را مشاهده کنید
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid grid-cols-4 mb-6">
-              <TabsTrigger value="all">همه</TabsTrigger>
-              <TabsTrigger value="paid">پرداخت شده</TabsTrigger>
-              <TabsTrigger value="unpaid">پرداخت نشده</TabsTrigger>
-              <TabsTrigger value="cancelled">لغو شده</TabsTrigger>
-            </TabsList>
             
-            <TabsContent value="all">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>شماره فاکتور</TableHead>
-                    <TableHead>تاریخ صدور</TableHead>
-                    <TableHead>شرح خدمات</TableHead>
-                    <TableHead>مبلغ (تومان)</TableHead>
-                    <TableHead>وضعیت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoices.map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.service}</TableCell>
-                      <TableCell>{formatNumber(invoice.amount + invoice.vat)} تومان</TableCell>
-                      <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2 space-x-reverse">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 ml-1" />
-                            مشاهده
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 ml-1" />
-                            دانلود
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-            
-            <TabsContent value="paid">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>شماره فاکتور</TableHead>
-                    <TableHead>تاریخ صدور</TableHead>
-                    <TableHead>شرح خدمات</TableHead>
-                    <TableHead>مبلغ (تومان)</TableHead>
-                    <TableHead>وضعیت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterInvoices('paid').map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.service}</TableCell>
-                      <TableCell>{formatNumber(invoice.amount + invoice.vat)} تومان</TableCell>
-                      <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2 space-x-reverse">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 ml-1" />
-                            مشاهده
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 ml-1" />
-                            دانلود
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-            
-            <TabsContent value="unpaid">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>شماره فاکتور</TableHead>
-                    <TableHead>تاریخ صدور</TableHead>
-                    <TableHead>شرح خدمات</TableHead>
-                    <TableHead>مبلغ (تومان)</TableHead>
-                    <TableHead>وضعیت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterInvoices('unpaid').map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.service}</TableCell>
-                      <TableCell>{formatNumber(invoice.amount + invoice.vat)} تومان</TableCell>
-                      <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2 space-x-reverse">
-                          <Button size="sm" className="bg-blue-600">
-                            <CreditCard className="h-4 w-4 ml-1" />
-                            پرداخت
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 ml-1" />
-                            مشاهده
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-            
-            <TabsContent value="cancelled">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>شماره فاکتور</TableHead>
-                    <TableHead>تاریخ صدور</TableHead>
-                    <TableHead>شرح خدمات</TableHead>
-                    <TableHead>مبلغ (تومان)</TableHead>
-                    <TableHead>وضعیت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterInvoices('cancelled').map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell>{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.service}</TableCell>
-                      <TableCell>{formatNumber(invoice.amount + invoice.vat)} تومان</TableCell>
-                      <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2 space-x-reverse">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 ml-1" />
-                            مشاهده
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          </Tabs>
+            <div className="flex justify-center items-center gap-2 pt-4">
+              <Button variant="outline" size="sm">قبلی</Button>
+              <Button variant="outline" size="sm">1</Button>
+              <Button variant="outline" size="sm">2</Button>
+              <Button variant="outline" size="sm">3</Button>
+              <Button variant="outline" size="sm">4</Button>
+              <Button variant="default" size="sm">بعدی</Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

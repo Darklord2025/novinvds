@@ -3,6 +3,7 @@ export interface SidebarItem {
   id: string;
   label: string;
   icon: string;
+  submenu?: SidebarItem[];
 }
 
 export const sidebarItems: SidebarItem[] = [
@@ -11,7 +12,17 @@ export const sidebarItems: SidebarItem[] = [
   { id: 'network-store', label: 'فروشگاه تجهیزات', icon: 'shopping-cart' },
   { id: 'servers', label: 'سرویس‌های من', icon: 'server' },
   { id: 'domains', label: 'دامنه‌ها', icon: 'globe' },
-  { id: 'financial', label: 'امور مالی', icon: 'credit-card' },
+  { 
+    id: 'financial', 
+    label: 'امور مالی', 
+    icon: 'credit-card',
+    submenu: [
+      { id: 'financial-overview', label: 'نمای کلی', icon: 'layout-dashboard' },
+      { id: 'transactions', label: 'تراکنش‌ها', icon: 'repeat' },
+      { id: 'invoices', label: 'فاکتورها', icon: 'file-text' },
+      { id: 'wallet-topup', label: 'افزایش موجودی', icon: 'plus-circle' }
+    ]
+  },
   { id: 'tickets', label: 'پشتیبانی', icon: 'message-square' },
   { id: 'affiliate', label: 'همکاری در فروش', icon: 'users' },
   { id: 'knowledge-base', label: 'مرکز دانش', icon: 'book-open' },
