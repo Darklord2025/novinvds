@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   CreditCard, 
   Wallet, 
@@ -11,296 +12,436 @@ import {
   DollarSign, 
   FileText, 
   Calendar,
-  PieChart,
-  BarChart3,
-  Download
+  Search,
+  Filter,
+  Plus,
+  Eye,
+  X,
+  MoreHorizontal
 } from 'lucide-react';
 
 const BillingOverviewPage = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [currentView, setCurrentView] = useState('overview'); // overview, transactions, invoices, wallet-topup
+  const [transactionFilter, setTransactionFilter] = useState('all');
+  const [invoiceFilter, setInvoiceFilter] = useState('all');
 
-  const walletBalance = "2,450,000";
+  const walletBalance = "11,200";
+  const totalSpent = "25,200";
+  const totalEarned = "88458";
+  const totalPending = "7500";
   
-  const billingStats = [
-    {
-      title: 'مجموع هزینه‌ها (ماه جاری)',
-      amount: '1,850,000',
-      change: '+12%',
-      trend: 'up',
-      icon: TrendingUp
-    },
-    {
-      title: 'کل فاکتورهای پرداخت شده',
-      amount: '15,230,000',
-      change: '-5%',
-      trend: 'down',
-      icon: TrendingDown
-    },
-    {
-      title: 'فاکتورهای معوق',
-      amount: '450,000',
-      change: '0%',
-      trend: 'neutral',
-      icon: FileText
-    },
-    {
-      title: 'پیش‌پرداخت موجود',
-      amount: walletBalance,
-      change: '+8%',
-      trend: 'up',
-      icon: Wallet
-    }
-  ];
-
   const recentTransactions = [
     {
-      id: 'TXN001',
-      type: 'پرداخت فاکتور',
-      amount: '890,000',
-      date: '1403/08/15',
-      status: 'موفق',
-      description: 'فاکتور #12345 - سرور مجازی'
+      date: '2023-10-26',
+      description: 'Online Store Purchase',
+      paymentMethod: 'ریال',
+      amount: '-50.00',
+      status: 'Success'
     },
     {
-      id: 'TXN002',
-      type: 'شارژ کیف پول',
-      amount: '2,000,000',
-      date: '1403/08/10',
-      status: 'موفق',
-      description: 'واریز آنلاین'
+      date: '2023-10-25',
+      description: 'Utility Bill',
+      paymentMethod: 'Crypto',
+      amount: '+1000.00',
+      status: 'Fail'
     },
     {
-      id: 'TXN003',
-      type: 'پرداخت خودکار',
-      amount: '450,000',
-      date: '1403/08/05',
-      status: 'موفق',
-      description: 'تمدید دامنه example.com'
+      date: '2023-10-25',
+      description: 'Fragment',
+      paymentMethod: 'Fragment',
+      amount: '+1000.00',
+      status: 'Fail'
+    },
+    {
+      date: '2023-10-25',
+      description: 'Salary Transfer',
+      paymentMethod: 'N/A',
+      amount: '-0.005',
+      status: 'Success'
+    },
+    {
+      date: '2023-10-24',
+      description: 'FA',
+      paymentMethod: 'USATC',
+      amount: '',
+      status: 'Pending'
+    },
+    {
+      date: '2023-10-26',
+      description: '',
+      paymentMethod: 'RFTC',
+      amount: '',
+      status: 'Pending'
     }
   ];
 
-  const upcomingInvoices = [
+  const allInvoices = [
     {
-      id: 'INV001',
-      service: 'سرور مجازی VPS-001',
-      amount: '890,000',
-      dueDate: '1403/09/01',
-      status: 'در انتظار'
+      id: 'INV-2023-001',
+      dueDate: 'MM/DD/YYYY',
+      amount: '$1,250.00',
+      status: 'Paid'
     },
     {
-      id: 'INV002',
-      service: 'هاستینگ Pro Plan',
-      amount: '230,000',
-      dueDate: '1403/09/05',
-      status: 'در انتظار'
+      id: 'INV-2023-001',
+      dueDate: 'MM/DD/YYYY',
+      amount: '$1,250.00',
+      status: 'Paid'
+    },
+    {
+      id: 'INV-2023-001',
+      dueDate: 'MM/DD/YYYY',
+      amount: '$1,250.00',
+      status: 'Unpaid'
+    },
+    {
+      id: 'INV-2023-001',
+      dueDate: 'MM/DD/YYYY',
+      amount: '$1,450.00',
+      status: 'Pay'
+    },
+    {
+      id: 'INV-2023-001',
+      dueDate: 'Unpaid',
+      amount: '$ Pending',
+      status: 'Cancelled'
+    },
+    {
+      id: 'INV-2023-001',
+      dueDate: 'Servolon',
+      amount: '$250.00',
+      status: 'Pay'
+    },
+    {
+      id: 'INV-2023-001',
+      dueDate: 'MM/DD/YYYY',
+      amount: '$1,250.00',
+      status: 'Pay'
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'موفق': return 'bg-green-500';
-      case 'در انتظار': return 'bg-yellow-500';
-      case 'ناموفق': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      'Success': { color: 'bg-green-500', text: 'موفق' },
+      'Fail': { color: 'bg-red-500', text: 'ناموفق' },
+      'Pending': { color: 'bg-yellow-500', text: 'در انتظار' },
+      'Paid': { color: 'bg-green-500', text: 'پرداخت شده' },
+      'Unpaid': { color: 'bg-red-500', text: 'پرداخت نشده' },
+      'Pay': { color: 'bg-yellow-500', text: 'پرداخت' },
+      'Cancelled': { color: 'bg-gray-500', text: 'لغو شده' }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || { color: 'bg-gray-500', text: status };
+    return <Badge className={`${config.color} text-white`}>{config.text}</Badge>;
   };
+
+  if (currentView === 'wallet-topup') {
+    return (
+      <div className="p-6 max-w-md mx-auto" dir="rtl">
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => setCurrentView('overview')}
+            className="mb-4"
+          >
+            ← بازگشت
+          </Button>
+          <h1 className="text-2xl font-bold mb-2">افزایش موجودی</h1>
+          <p className="text-gray-600">افزایش موجودی کیف پول</p>
+        </div>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">مبلغ (تومان)</label>
+                <Input 
+                  type="number" 
+                  placeholder="مبلغ مورد نظر را وارد کنید"
+                  className="text-right"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">روش پرداخت</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="انتخاب روش پرداخت" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="card">کارت بانکی</SelectItem>
+                    <SelectItem value="crypto">ارز دیجیتال</SelectItem>
+                    <SelectItem value="perfect">پرفکت مانی</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button className="w-full">
+                پرداخت و افزایش موجودی
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6" dir="rtl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">نمای کلی مالی</h1>
-        <p className="text-gray-600">مدیریت کامل امور مالی و صورتحساب‌های شما</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Financial Overview</h1>
+        </div>
+        <Button variant="outline" size="sm">
+          Movies 📊
+        </Button>
       </div>
-
-      {/* Wallet Balance Card */}
-      <Card className="mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Wallet className="w-6 h-6" />
-                <span className="text-lg font-medium">موجودی کیف پول</span>
-              </div>
-              <div className="text-3xl font-bold">{walletBalance} تومان</div>
-              <div className="text-blue-100 mt-2">آخرین بروزرسانی: امروز</div>
-            </div>
-            <Button variant="secondary" className="text-blue-600">
-              شارژ کیف پول
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {billingStats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-2 rounded-lg ${
-                  stat.trend === 'up' ? 'bg-green-100' : 
-                  stat.trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
-                }`}>
-                  <stat.icon className={`w-5 h-5 ${
-                    stat.trend === 'up' ? 'text-green-600' : 
-                    stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                  }`} />
-                </div>
-                <Badge variant={stat.trend === 'up' ? 'default' : stat.trend === 'down' ? 'destructive' : 'secondary'}>
-                  {stat.change}
-                </Badge>
-              </div>
-              <h3 className="text-sm text-gray-600 mb-2">{stat.title}</h3>
-              <div className="text-2xl font-bold">{stat.amount} تومان</div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <Card className="bg-white">
+          <CardContent className="p-4">
+            <div className="text-sm text-gray-600 mb-1">Total Chart</div>
+            <div className="text-2xl font-bold">${walletBalance}</div>
+            <div className="text-xs text-gray-500">This Month</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-blue-600 text-white">
+          <CardContent className="p-4">
+            <div className="text-sm text-blue-100 mb-1">Total from Revenue</div>
+            <div className="text-2xl font-bold">${totalSpent}</div>
+            <div className="text-xs text-blue-200">This Month</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="p-4">
+            <div className="text-sm text-gray-600 mb-1">Total Customers</div>
+            <div className="text-2xl font-bold">${totalEarned}</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="p-4">
+            <div className="text-sm text-gray-600 mb-1">Total</div>
+            <div className="text-2xl font-bold">${totalPending}</div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid grid-cols-4 w-full">
-          <TabsTrigger value="overview">خلاصه</TabsTrigger>
-          <TabsTrigger value="transactions">تراکنش‌ها</TabsTrigger>
-          <TabsTrigger value="invoices">فاکتورها</TabsTrigger>
-          <TabsTrigger value="reports">گزارشات</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Transactions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  آخرین تراکنش‌ها
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentTransactions.slice(0, 3).map(transaction => (
-                    <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{transaction.type}</div>
-                        <div className="text-xs text-gray-600">{transaction.description}</div>
-                        <div className="text-xs text-gray-500">{transaction.date}</div>
-                      </div>
-                      <div className="text-left">
-                        <div className="font-bold text-sm">{transaction.amount} تومان</div>
-                        <div className={`w-2 h-2 rounded-full ${getStatusColor(transaction.status)} mt-1 mr-auto`}></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  مشاهده همه تراکنش‌ها
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Upcoming Invoices */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  فاکتورهای آینده
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {upcomingInvoices.map(invoice => (
-                    <div key={invoice.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{invoice.service}</div>
-                        <div className="text-xs text-gray-600">سررسید: {invoice.dueDate}</div>
-                      </div>
-                      <div className="text-left">
-                        <div className="font-bold text-sm">{invoice.amount} تومان</div>
-                        <Badge variant="secondary" className="text-xs">
-                          {invoice.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4">
-                  مشاهده همه فاکتورها
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="transactions" className="space-y-6">
+      {/* Content based on current view */}
+      {currentView === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Transactions */}
           <Card>
             <CardHeader>
-              <CardTitle>تمام تراکنش‌ها</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Recent Transactions
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentTransactions.map(transaction => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full ${getStatusColor(transaction.status)} flex items-center justify-center`}>
-                        <CreditCard className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium">{transaction.type}</div>
-                        <div className="text-sm text-gray-600">{transaction.description}</div>
-                        <div className="text-xs text-gray-500">{transaction.date}</div>
-                      </div>
+              <div className="space-y-3">
+                {recentTransactions.slice(0, 3).map((transaction, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{transaction.description}</div>
+                      <div className="text-xs text-gray-600">{transaction.paymentMethod}</div>
+                      <div className="text-xs text-gray-500">{transaction.date}</div>
                     </div>
                     <div className="text-left">
-                      <div className="font-bold">{transaction.amount} تومان</div>
-                      <Badge variant={transaction.status === 'موفق' ? 'default' : 'destructive'}>
-                        {transaction.status}
-                      </Badge>
+                      <div className="font-bold text-sm">{transaction.amount} ریال</div>
+                      {getStatusBadge(transaction.status)}
                     </div>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="invoices" className="space-y-6">
+
+          {/* Recent Invoices */}
           <Card>
             <CardHeader>
-              <CardTitle>مدیریت فاکتورها</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Recent Invoices
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">مدیریت فاکتورها</h3>
-                <p className="text-gray-600">مشاهده، دانلود و پرداخت فاکتورها</p>
+              <div className="space-y-3">
+                {allInvoices.slice(0, 3).map((invoice, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{invoice.id}</div>
+                      <div className="text-xs text-gray-600">سررسید: {invoice.dueDate}</div>
+                    </div>
+                    <div className="text-left">
+                      <div className="font-bold text-sm">{invoice.amount}</div>
+                      {getStatusBadge(invoice.status)}
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="reports" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5" />
-                  گزارشات مالی
-                </CardTitle>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 ml-2" />
-                  دانلود گزارش
+        </div>
+      )}
+
+      {currentView === 'transactions' && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>All Transactions</CardTitle>
+              <div className="flex gap-2">
+                <Select value={transactionFilter} onValueChange={setTransactionFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Transactions</SelectItem>
+                    <SelectItem value="success">Payment Method</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="icon">
+                  <Filter className="w-4 h-4" />
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <PieChart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">گزارشات تفصیلی</h3>
-                <p className="text-gray-600">نمودارها و آمارهای مصرف و هزینه‌ها</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input 
+                    placeholder="Search transactions..." 
+                    className="pr-10"
+                  />
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-right p-3">Date</th>
+                      <th className="text-right p-3">Description</th>
+                      <th className="text-right p-3">Payment Method</th>
+                      <th className="text-right p-3">Amount</th>
+                      <th className="text-right p-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentTransactions.map((transaction, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="p-3">{transaction.date}</td>
+                        <td className="p-3">{transaction.description}</td>
+                        <td className="p-3">{transaction.paymentMethod}</td>
+                        <td className="p-3 font-medium">{transaction.amount} ریال</td>
+                        <td className="p-3">{getStatusBadge(transaction.status)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {currentView === 'invoices' && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>All Invoices</CardTitle>
+              <div className="flex gap-2">
+                <Select value={invoiceFilter} onValueChange={setInvoiceFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Filter by Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Paid</SelectItem>
+                    <SelectItem value="paid">Unpaid</SelectItem>
+                    <SelectItem value="unpaid">Pending</SelectItem>
+                    <SelectItem value="pending">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date">Due Date</SelectItem>
+                    <SelectItem value="amount">Amount</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="relative">
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input 
+                  placeholder="Search invoices..." 
+                  className="pr-10"
+                />
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-right p-3">Invoice ID</th>
+                      <th className="text-right p-3">Due Date</th>
+                      <th className="text-right p-3">Amount</th>
+                      <th className="text-right p-3">Status</th>
+                      <th className="text-right p-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allInvoices.map((invoice, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="p-3">{invoice.id}</td>
+                        <td className="p-3">{invoice.dueDate}</td>
+                        <td className="p-3 font-medium">{invoice.amount}</td>
+                        <td className="p-3">{getStatusBadge(invoice.status)}</td>
+                        <td className="p-3">
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            {invoice.status === 'Unpaid' && (
+                              <Button variant="outline" size="sm">
+                                Pay
+                              </Button>
+                            )}
+                            {invoice.status === 'Cancelled' && (
+                              <Button variant="ghost" size="sm">
+                                <X className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex justify-center items-center gap-2 pt-4">
+                <Button variant="outline" size="sm">Previous</Button>
+                <Button variant="outline" size="sm">1</Button>
+                <Button variant="outline" size="sm">2</Button>
+                <Button variant="outline" size="sm">3</Button>
+                <Button variant="outline" size="sm">4</Button>
+                <Button variant="default" size="sm">Next</Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
