@@ -28,8 +28,8 @@ import { useState } from 'react';
 import DevelopmentMessage from './DevelopmentMessage';
 import ServerManagementPage from './ServerManagementPage';
 import BillingOverviewPage from './BillingOverviewPage';
-import TransactionsPageFinancial from './TransactionsPage';
-import InvoicesPageFinancial from './InvoicesPage';
+import TransactionsPage from './TransactionsPage';
+import InvoicesPage from './InvoicesPage';
 import WalletTopUpPage from './WalletTopUpPage';
 import SecurityCenterPage from './SecurityCenterPage';
 import ServiceCalculatorPage from './ServiceCalculatorPage';
@@ -211,7 +211,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'wallet':
       return <WalletPage />;
     case 'transactions':
-      return <TransactionsPageFinancial />;
+      return <TransactionsPage />;
     case 'affiliate':
       return <AffiliateCenter />;
     case 'knowledge-base':
@@ -222,9 +222,9 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'financial-overview':
       return <BillingOverviewPage />;
     case 'transactions':
-      return <TransactionsPageFinancial />;
+      return <TransactionsPage />;
     case 'invoices':
-      return <InvoicesPageFinancial />;
+      return <InvoicesPage />;
     case 'wallet-topup':
       return <WalletTopUpPage />;
     case 'server-management':
