@@ -210,8 +210,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
       />;
     case 'wallet':
       return <WalletPage />;
-    case 'transactions':
-      return <TransactionsPage />;
     case 'affiliate':
       return <AffiliateCenter />;
     case 'knowledge-base':
