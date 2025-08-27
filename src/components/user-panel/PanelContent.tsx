@@ -202,7 +202,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'ticket-details':
       return selectedTicket ? 
         <TicketDetail ticketId={selectedTicket} onBack={() => navigateToServiceOrderPage('/tickets')} /> : null;
-    case 'invoices':
+    case 'whmcs-invoices':
       return <WHMCSInvoicesPage 
         onViewInvoice={handleViewInvoice}
         onPayInvoice={handlePayInvoice}
