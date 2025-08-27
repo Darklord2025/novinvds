@@ -10,7 +10,11 @@ import {
   Plus
 } from 'lucide-react';
 
-const BillingOverviewPage = () => {
+interface BillingOverviewPageProps {
+  navigateToServiceOrderPage?: (serviceLink: string) => void;
+}
+
+const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage }) => {
 
   const walletBalance = "11,200,000";
   const totalSpent = "25,200,000";
@@ -89,6 +93,7 @@ const BillingOverviewPage = () => {
           variant="outline" 
           size="sm"
           className="flex items-center gap-2"
+          onClick={() => navigateToServiceOrderPage?.('/wallet-topup')}
         >
           <Plus className="w-4 h-4" />
           افزایش موجودی

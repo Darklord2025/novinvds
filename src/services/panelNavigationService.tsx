@@ -123,6 +123,13 @@ export const createNavigationHandlers = (
         title: "کیف پول",
         description: "در حال بارگذاری اطلاعات کیف پول شما...",
       });
+    } else if (serviceLink === '/wallet-topup') {
+      setActiveTab('wallet-topup');
+      
+      toast({
+        title: "افزایش موجودی",
+        description: "در حال بارگذاری صفحه افزایش موجودی...",
+      });
     } else if (serviceLink === '/settings') {
       setActiveTab('settings');
       

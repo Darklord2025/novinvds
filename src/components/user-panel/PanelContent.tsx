@@ -218,7 +218,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return <SecurityCenterPage />;
     case 'financial':
     case 'financial-overview':
-      return <BillingOverviewPage />;
+      return <BillingOverviewPage navigateToServiceOrderPage={navigateToServiceOrderPage} />;
     case 'transactions':
       return <TransactionsPage />;
     case 'invoices':
