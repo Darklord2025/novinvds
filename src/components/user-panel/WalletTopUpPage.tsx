@@ -1,170 +1,320 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
-  Wallet,
-  CreditCard,
-  Bitcoin,
-  DollarSign,
-  Info
+  Wallet, 
+  CreditCard, 
+  Coins, 
+  Shield, 
+  Clock,
+  CheckCircle,
+  Info,
+  Plus
 } from 'lucide-react';
 
-const WalletTopUpPage = () => {
+const WalletTopUpPage: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const currentBalance = '11,200,000';
+  const presetAmounts = ['100,000', '500,000', '1,000,000', '2,000,000', '5,000,000'];
 
   const paymentMethods = [
-    { value: 'card', label: 'کارت بانکی', icon: CreditCard },
-    { value: 'crypto', label: 'ارز دیجیتال', icon: Bitcoin },
-    { value: 'perfect', label: 'پرفکت مانی', icon: DollarSign }
+    {
+      id: 'card',
+      name: 'کارت بانکی',
+      icon: CreditCard,
+      fee: 0,
+      description: 'پرداخت امن از طریق درگاه بانک',
+      processingTime: 'فوری'
+    },
+    {
+      id: 'crypto',
+      name: 'ارز دیجیتال',
+      icon: Coins,
+      fee: 0,
+      description: 'پرداخت با بیت‌کوین، اتریوم و سایر ارزها',
+      processingTime: '5-30 دقیقه'
+    },
+    {
+      id: 'perfectmoney',
+      name: 'Perfect Money',
+      icon: Wallet,
+      fee: 0,
+      description: 'پرداخت از طریق کیف پول Perfect Money',
+      processingTime: 'فوری'
+    }
   ];
 
-  const currentBalance = "11,200,000";
+  const recentTopUps = [
+    {
+      date: '1402/08/15',
+      amount: '+2,000,000',
+      method: 'کارت بانکی',
+      status: 'Success',
+      referenceId: 'REF789123'
+    },
+    {
+      date: '1402/08/10',
+      amount: '+1,000,000',
+      method: 'کریپتو',
+      status: 'Success',
+      referenceId: 'REF789124'
+    },
+    {
+      date: '1402/08/05',
+      amount: '+500,000',
+      method: 'Perfect Money',
+      status: 'Success',
+      referenceId: 'REF789125'
+    },
+    {
+      date: '1402/08/01',
+      amount: '+3,000,000',
+      method: 'کارت بانکی',
+      status: 'Success',
+      referenceId: 'REF789126'
+    }
+  ];
+
+  const selectedPaymentMethod = paymentMethods.find(method => method.id === paymentMethod);
+  const numericAmount = amount.replace(/,/g, '');
+  const fee = selectedPaymentMethod ? (parseFloat(numericAmount) * selectedPaymentMethod.fee / 100) : 0;
+  const totalAmount = parseFloat(numericAmount) + fee;
+
+  const handleAmountChange = (value: string) => {
+    // Remove non-numeric characters and format with commas
+    const numericValue = value.replace(/[^0-9]/g, '');
+    const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    setAmount(formattedValue);
+  };
+
+  const handlePresetAmount = (presetAmount: string) => {
+    setAmount(presetAmount);
+  };
+
+  const handleTopUp = async () => {
+    if (!amount || !paymentMethod) return;
+    
+    setIsProcessing(true);
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      // Reset form or show success message
+    }, 2000);
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      'Success': { className: 'bg-green-500 hover:bg-green-600', text: 'موفق' },
+      'Pending': { className: 'bg-yellow-500 hover:bg-yellow-600', text: 'در انتظار' },
+      'Failed': { className: 'bg-red-500 hover:bg-red-600', text: 'ناموفق' }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || { className: 'bg-gray-500', text: status };
+    return (
+      <Badge className={`${config.className} text-white`}>
+        {config.text}
+      </Badge>
+    );
+  };
 
   return (
     <div className="p-6" dir="rtl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">افزایش موجودی کیف پول</h1>
-        <p className="text-gray-600">موجودی کیف پول خود را افزایش دهید</p>
+        <p className="text-muted-foreground">موجودی کیف پول خود را افزایش دهید</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Current Balance */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wallet className="w-5 h-5" />
-              موجودی فعلی
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">
-                {currentBalance} تومان
+        {/* Wallet Top-up Form */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                افزایش موجودی
+              </CardTitle>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>موجودی فعلی:</span>
+                <span className="font-bold text-lg text-green-600">{currentBalance} تومان</span>
               </div>
-              <p className="text-sm text-gray-600">موجودی کیف پول شما</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Top Up Form */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>افزایش موجودی</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">مبلغ مورد نظر (تومان)</label>
-                <Input 
-                  type="number" 
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="amount">مبلغ مورد نظر (تومان)</Label>
+                <Input
+                  id="amount"
                   placeholder="مبلغ را وارد کنید"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="text-right"
+                  onChange={(e) => handleAmountChange(e.target.value)}
+                  className="text-lg font-bold"
                 />
-                <div className="flex gap-2 mt-2">
-                  {['100000', '500000', '1000000', '2000000'].map((preset) => (
-                    <Button 
-                      key={preset}
-                      variant="outline" 
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {presetAmounts.map((presetAmount) => (
+                    <Button
+                      key={presetAmount}
+                      variant="outline"
                       size="sm"
-                      onClick={() => setAmount(preset)}
+                      onClick={() => handlePresetAmount(presetAmount)}
+                      className="text-xs"
                     >
-                      {parseInt(preset).toLocaleString()} تومان
+                      {presetAmount} تومان
                     </Button>
                   ))}
                 </div>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2">روش پرداخت</label>
-                <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="انتخاب روش پرداخت" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {paymentMethods.map((method) => (
-                      <SelectItem key={method.value} value={method.value}>
-                        <div className="flex items-center gap-2">
-                          <method.icon className="w-4 h-4" />
-                          {method.label}
+
+              {/* Payment Method Selection */}
+              <div className="space-y-3">
+                <Label>روش پرداخت</Label>
+                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                  {paymentMethods.map((method) => (
+                    <div key={method.id} className="flex items-center space-x-2 space-x-reverse">
+                      <RadioGroupItem value={method.id} id={method.id} />
+                      <Label 
+                        htmlFor={method.id} 
+                        className="flex-1 flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-muted/50"
+                      >
+                        <method.icon className="w-5 h-5" />
+                        <div className="flex-1">
+                          <div className="font-medium">{method.name}</div>
+                          <div className="text-sm text-muted-foreground">{method.description}</div>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            <Clock className="w-3 h-3" />
+                            <span>زمان پردازش: {method.processingTime}</span>
+                          </div>
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        {method.fee === 0 && (
+                          <Badge variant="secondary" className="text-xs">
+                            بدون کارمزد
+                          </Badge>
+                        )}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
               </div>
 
               {/* Payment Method Info */}
-              {paymentMethod && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm text-blue-800">
-                      {paymentMethod === 'card' && 'پرداخت از طریق درگاه امن بانکی انجام می‌شود.'}
-                      {paymentMethod === 'crypto' && 'پرداخت با ارزهای دیجیتال بیت کوین، اتریوم و تتر پذیرفته می‌شود.'}
-                      {paymentMethod === 'perfect' && 'پرداخت از طریق کیف پول پرفکت مانی انجام می‌شود.'}
-                    </div>
+              {selectedPaymentMethod && (
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    {selectedPaymentMethod.name === 'کارت بانکی' && (
+                      <>
+                        پس از کلیک روی دکمه پرداخت، به درگاه امن بانک منتقل می‌شوید. پرداخت شما توسط پروتکل‌های امنیتی بانک محافظت می‌شود.
+                      </>
+                    )}
+                    {selectedPaymentMethod.name === 'ارز دیجیتال' && (
+                      <>
+                        آدرس کیف پول برای پرداخت در مرحله بعد نمایش داده خواهد شد. پس از تأیید تراکنش، موجودی شما افزایش می‌یابد.
+                      </>
+                    )}
+                    {selectedPaymentMethod.name === 'Perfect Money' && (
+                      <>
+                        به سایت Perfect Money منتقل می‌شوید تا پرداخت را از کیف پول خود انجام دهید.
+                      </>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Payment Summary */}
+              {amount && paymentMethod && (
+                <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                  <div className="flex justify-between">
+                    <span>مبلغ درخواستی:</span>
+                    <span className="font-bold">{amount} تومان</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>کارمزد:</span>
+                    <span className="font-bold">{fee.toLocaleString()} تومان</span>
+                  </div>
+                  <div className="border-t pt-2 flex justify-between text-lg font-bold">
+                    <span>مبلغ قابل پرداخت:</span>
+                    <span className="text-green-600">{totalAmount.toLocaleString()} تومان</span>
                   </div>
                 </div>
               )}
 
-              <div className="border-t pt-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span>مبلغ:</span>
-                  <span>{amount ? parseInt(amount).toLocaleString() : '0'} تومان</span>
-                </div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>کارمزد:</span>
-                  <span>0 تومان</span>
-                </div>
-                <div className="flex justify-between font-bold">
-                  <span>مجموع:</span>
-                  <span>{amount ? parseInt(amount).toLocaleString() : '0'} تومان</span>
-                </div>
-              </div>
-
-              <Button 
-                className="w-full" 
-                disabled={!amount || !paymentMethod}
+              {/* Submit Button */}
+              <Button
+                onClick={handleTopUp}
+                disabled={!amount || !paymentMethod || isProcessing}
+                className="w-full"
+                size="lg"
               >
-                پرداخت و افزایش موجودی
+                {isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white ml-2"></div>
+                    در حال پردازش...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4 ml-2" />
+                    پرداخت و افزایش موجودی
+                  </>
+                )}
               </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Recent Top-ups */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>آخرین افزایش موجودی‌ها</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[
-              { date: '1402/08/04', amount: '+500,000', method: 'کارت بانکی', status: 'موفق' },
-              { date: '1402/07/28', amount: '+1,000,000', method: 'ارز دیجیتال', status: 'موفق' },
-              { date: '1402/07/20', amount: '+250,000', method: 'پرفکت مانی', status: 'در انتظار' }
-            ].map((topup, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex-1">
-                  <div className="font-medium text-sm">افزایش موجودی</div>
-                  <div className="text-xs text-gray-600">{topup.method}</div>
-                  <div className="text-xs text-gray-500">{topup.date}</div>
-                </div>
-                <div className="text-left">
-                  <div className="font-bold text-sm text-green-600">{topup.amount} تومان</div>
-                  <div className="text-xs text-gray-600">{topup.status}</div>
+        {/* Recent Top-ups */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                آخرین افزایش موجودی‌ها
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {recentTopUps.map((topup, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="font-bold text-sm text-green-600">{topup.amount} تومان</div>
+                      <div className="text-xs text-muted-foreground">{topup.method}</div>
+                      <div className="text-xs text-muted-foreground">{topup.date}</div>
+                    </div>
+                    <div className="text-left">
+                      {getStatusBadge(topup.status)}
+                      <div className="text-xs text-muted-foreground mt-1 font-mono">
+                        {topup.referenceId}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Security Notice */}
+          <Card className="mt-4">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-green-600 mt-0.5" />
+                <div>
+                  <div className="font-medium text-sm mb-1">امنیت پرداخت</div>
+                  <div className="text-xs text-muted-foreground">
+                    تمامی پرداخت‌ها با استفاده از پروتکل‌های امنیتی معتبر و رمزگذاری SSL انجام می‌شود.
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

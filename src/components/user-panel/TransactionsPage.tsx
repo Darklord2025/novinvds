@@ -4,140 +4,175 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  FileText, 
-  Search,
-  Filter
-} from 'lucide-react';
+import { Search, Download, Filter } from 'lucide-react';
 
-const TransactionsPage = () => {
-  const [transactionFilter, setTransactionFilter] = useState('all');
-  
+const TransactionsPage: React.FC = () => {
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
   const recentTransactions = [
     {
-      date: '1402/08/04',
-      description: 'خرید از فروشگاه آنلاین',
-      paymentMethod: 'ریال',
-      amount: '-50,000',
-      status: 'Success'
+      id: 'TXN-1402-001',
+      date: '1402/08/15',
+      description: 'خرید سرویس VPS',
+      paymentMethod: 'کیف پول',
+      amount: '-1,500,000',
+      status: 'Success',
+      referenceId: 'REF123456'
     },
     {
-      date: '1402/08/03',
-      description: 'قبض برق',
+      id: 'TXN-1402-002',
+      date: '1402/08/14',
+      description: 'افزایش موجودی کیف پول',
+      paymentMethod: 'کارت بانکی',
+      amount: '+5,000,000',
+      status: 'Success',
+      referenceId: 'REF123457'
+    },
+    {
+      id: 'TXN-1402-003',
+      date: '1402/08/13',
+      description: 'پرداخت فاکتور هاستینگ',
+      paymentMethod: 'درگاه پرداخت',
+      amount: '-850,000',
+      status: 'Success',
+      referenceId: 'REF123458'
+    },
+    {
+      id: 'TXN-1402-004',
+      date: '1402/08/12',
+      description: 'خرید دامنه',
       paymentMethod: 'کریپتو',
-      amount: '+1,000,000',
-      status: 'Fail'
+      amount: '-120,000',
+      status: 'Pending',
+      referenceId: 'REF123459'
     },
     {
-      date: '1402/08/03',
-      description: 'تراکنش کیف پول',
+      id: 'TXN-1402-005',
+      date: '1402/08/11',
+      description: 'بازگشت وجه سرویس لغو شده',
       paymentMethod: 'کیف پول',
-      amount: '+1,000,000',
-      status: 'Fail'
+      amount: '+300,000',
+      status: 'Success',
+      referenceId: 'REF123460'
     },
     {
-      date: '1402/08/03',
-      description: 'انتقال حقوق',
-      paymentMethod: 'حساب بانکی',
-      amount: '-5,000',
-      status: 'Success'
-    },
-    {
-      date: '1402/08/02',
-      description: 'پرداخت فاکتور',
-      paymentMethod: 'کارت اعتباری',
-      amount: '0',
-      status: 'Pending'
-    },
-    {
-      date: '1402/08/04',
-      description: 'خرید سرویس',
-      paymentMethod: 'کیف پول',
-      amount: '-150,000',
-      status: 'Pending'
+      id: 'TXN-1402-006',
+      date: '1402/08/10',
+      description: 'خرید SSL',
+      paymentMethod: 'کارت بانکی',
+      amount: '-450,000',
+      status: 'Failed',
+      referenceId: 'REF123461'
     }
   ];
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      'Success': { color: 'bg-green-500', text: 'موفق' },
-      'Fail': { color: 'bg-red-500', text: 'ناموفق' },
-      'Pending': { color: 'bg-yellow-500', text: 'در انتظار' }
+      'Success': { variant: 'default', text: 'موفق', className: 'bg-green-500 hover:bg-green-600' },
+      'Failed': { variant: 'destructive', text: 'ناموفق', className: 'bg-red-500 hover:bg-red-600' },
+      'Pending': { variant: 'secondary', text: 'در انتظار', className: 'bg-yellow-500 hover:bg-yellow-600' },
+      'Cancelled': { variant: 'outline', text: 'لغو شده', className: 'bg-gray-500 hover:bg-gray-600' }
     };
     
-    const config = statusConfig[status as keyof typeof statusConfig] || { color: 'bg-gray-500', text: status };
-    return <Badge className={`${config.color} text-white`}>{config.text}</Badge>;
+    const config = statusConfig[status as keyof typeof statusConfig] || { variant: 'outline', text: status, className: 'bg-gray-500' };
+    return (
+      <Badge className={`${config.className} text-white`}>
+        {config.text}
+      </Badge>
+    );
   };
+
+  const filteredTransactions = recentTransactions.filter(transaction => {
+    const matchesStatus = filterStatus === 'all' || transaction.status.toLowerCase() === filterStatus.toLowerCase();
+    const matchesSearch = transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         transaction.id.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
 
   return (
     <div className="p-6" dir="rtl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">تراکنش‌ها</h1>
-        <p className="text-gray-600">مشاهده تمامی تراکنش‌های مالی</p>
+        <p className="text-muted-foreground">تاریخچه کامل تراکنش‌های مالی شما</p>
       </div>
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
+              <Filter className="w-5 h-5" />
               تمامی تراکنش‌ها
             </CardTitle>
-            <div className="flex gap-2">
-              <Select value={transactionFilter} onValueChange={setTransactionFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="فیلتر بر اساس" />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="فیلتر وضعیت" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">همه تراکنش‌ها</SelectItem>
+                  <SelectItem value="all">همه وضعیت‌ها</SelectItem>
                   <SelectItem value="success">موفق</SelectItem>
                   <SelectItem value="pending">در انتظار</SelectItem>
                   <SelectItem value="failed">ناموفق</SelectItem>
+                  <SelectItem value="cancelled">لغو شده</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="icon">
-                <Filter className="w-4 h-4" />
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                دانلود گزارش
               </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input 
-                  placeholder="جستجوی تراکنش‌ها..." 
-                  className="pr-10"
-                />
-              </div>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-right p-3">تاریخ</th>
-                    <th className="text-right p-3">شرح</th>
-                    <th className="text-right p-3">روش پرداخت</th>
-                    <th className="text-right p-3">مبلغ</th>
-                    <th className="text-right p-3">وضعیت</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentTransactions.map((transaction, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="p-3">{transaction.date}</td>
-                      <td className="p-3">{transaction.description}</td>
-                      <td className="p-3">{transaction.paymentMethod}</td>
-                      <td className="p-3 font-medium">{transaction.amount} تومان</td>
-                      <td className="p-3">{getStatusBadge(transaction.status)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="جستجو در تراکنش‌ها..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pr-10"
+              />
             </div>
           </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-right p-3 font-medium">شناسه تراکنش</th>
+                  <th className="text-right p-3 font-medium">تاریخ</th>
+                  <th className="text-right p-3 font-medium">شرح</th>
+                  <th className="text-right p-3 font-medium">روش پرداخت</th>
+                  <th className="text-right p-3 font-medium">مبلغ</th>
+                  <th className="text-right p-3 font-medium">وضعیت</th>
+                  <th className="text-right p-3 font-medium">کد پیگیری</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTransactions.map((transaction) => (
+                  <tr key={transaction.id} className="border-b hover:bg-muted/50">
+                    <td className="p-3 font-mono text-sm">{transaction.id}</td>
+                    <td className="p-3 text-sm">{transaction.date}</td>
+                    <td className="p-3">{transaction.description}</td>
+                    <td className="p-3 text-sm">{transaction.paymentMethod}</td>
+                    <td className={`p-3 font-bold ${transaction.amount.startsWith('-') ? 'text-red-600' : 'text-green-600'}`}>
+                      {transaction.amount} تومان
+                    </td>
+                    <td className="p-3">{getStatusBadge(transaction.status)}</td>
+                    <td className="p-3 font-mono text-sm text-muted-foreground">{transaction.referenceId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredTransactions.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              تراکنشی با این فیلترها یافت نشد
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
