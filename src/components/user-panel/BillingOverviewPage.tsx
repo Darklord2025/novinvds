@@ -12,9 +12,11 @@ import {
 
 interface BillingOverviewPageProps {
   navigateToServiceOrderPage?: (serviceLink: string) => void;
+  onNavigateToTransactions?: () => void;
+  onNavigateToInvoices?: () => void;
 }
 
-const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage }) => {
+const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage, onNavigateToTransactions, onNavigateToInvoices }) => {
 
   const walletBalance = "11,200,000";
   const totalSpent = "25,200,000";
@@ -164,7 +166,7 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => window.open('/transactions', '_blank')}
+                onClick={onNavigateToTransactions}
                 className="flex items-center gap-2"
               >
                 مشاهده همه
@@ -201,7 +203,7 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => window.open('/invoices', '_blank')}
+                onClick={onNavigateToInvoices}
                 className="flex items-center gap-2"
               >
                 مشاهده همه
