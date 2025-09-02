@@ -156,10 +156,20 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
         {/* Recent Transactions */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              آخرین تراکنش‌ها
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                آخرین تراکنش‌ها
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => window.open('/transactions', '_blank')}
+                className="flex items-center gap-2"
+              >
+                مشاهده همه
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -183,10 +193,20 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
         {/* Recent Invoices */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              آخرین فاکتورها
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                آخرین فاکتورها
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => window.open('/invoices', '_blank')}
+                className="flex items-center gap-2"
+              >
+                مشاهده همه
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
