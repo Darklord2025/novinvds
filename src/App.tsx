@@ -35,6 +35,8 @@ import DedicatedServices from "./pages/DedicatedServices";
 import DomainServices from "./pages/DomainServices";
 import NetworkServices from "./pages/NetworkServices";
 import NetworkStore from "./pages/NetworkStore";
+import Transactions from "./pages/Transactions";
+import Invoices from "./pages/Invoices";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +75,10 @@ const App = () => (
             <Route path="/services/dedicated" element={<DedicatedServices />} />
             <Route path="/services/domain" element={<DomainServices />} />
             <Route path="/services/network" element={<NetworkServices />} />
+            
+            {/* Financial pages routes */}
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/invoices" element={<Invoices />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
