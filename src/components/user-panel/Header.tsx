@@ -181,12 +181,12 @@ const Header: React.FC<HeaderProps> = ({
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>حساب کاربری</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSidebarItemClick('profile')}>
               <User className="ml-2 h-4 w-4" />
               <span>پروفایل</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>تنظیمات</DropdownMenuItem>
-            <DropdownMenuItem>پشتیبانی</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSidebarItemClick('settings')}>تنظیمات</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSidebarItemClick('tickets')}>پشتیبانی</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600">خروج از حساب</DropdownMenuItem>
           </DropdownMenuContent>

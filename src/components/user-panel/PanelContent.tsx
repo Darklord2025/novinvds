@@ -140,8 +140,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
       );
     case 'recommendations':
       return <RecommendationSection />;
-    case 'network-store':
-      return <NetworkStoreSection />;
     case 'profile':
       return <ProfilePage />;
     case 'servers':
@@ -214,8 +212,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return <AffiliateCenter />;
     case 'knowledge-base':
       return <KnowledgeBase />;
-    case 'security-center':
-      return <SecurityCenterPage />;
     case 'financial':
     case 'financial-overview':
       return <BillingOverviewPage 
@@ -224,11 +220,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onNavigateToInvoices={() => navigateToServiceOrderPage('/invoices')}
       />;
     case 'transactions':
-      return <TransactionsPage />;
+      return <TransactionsPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
     case 'invoices':
-      return <InvoicesPage />;
+      return <InvoicesPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
     case 'wallet-topup':
-      return <WalletTopUpPage />;
+      return <WalletTopUpPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
     case 'server-management':
       return <ServerManagementPage />;
     case 'service-calculator':
@@ -246,7 +242,9 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedAnnouncement ? 
         <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} /> : null;
     case 'settings':
-      return <SettingsPage />;
+    case 'profile':
+    case 'security-settings':
+      return <SettingsPage activeTab={activeTab} />;
     default:
       return <Dashboard 
         navigateToServiceOrderPage={navigateToServiceOrderPage}

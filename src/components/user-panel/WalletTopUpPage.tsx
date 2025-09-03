@@ -15,10 +15,15 @@ import {
   Clock,
   CheckCircle,
   Info,
-  Plus
+  Plus,
+  ArrowRight
 } from 'lucide-react';
 
-const WalletTopUpPage: React.FC = () => {
+interface WalletTopUpPageProps {
+  onBack?: () => void;
+}
+
+const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -129,6 +134,12 @@ const WalletTopUpPage: React.FC = () => {
   return (
     <div className="p-6" dir="rtl">
       <div className="mb-6">
+        {onBack && (
+          <Button variant="ghost" onClick={onBack} className="mb-4 flex items-center gap-2">
+            <ArrowRight className="w-4 h-4" />
+            بازگشت به نمای کلی
+          </Button>
+        )}
         <h1 className="text-2xl font-bold mb-2">افزایش موجودی کیف پول</h1>
         <p className="text-muted-foreground">موجودی کیف پول خود را افزایش دهید</p>
       </div>

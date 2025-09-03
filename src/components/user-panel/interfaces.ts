@@ -1,3 +1,5 @@
+import { NavigationHandlers } from '@/services/panelNavigationService';
+import { SidebarItem } from '@/data/sidebarItems';
 
 // Add any missing exports here if needed
 export interface DashboardProps {
@@ -16,9 +18,9 @@ export interface PanelContentProps {
 }
 
 export interface SidebarProps {
-  activeTab?: string;
+  activeTab: string;
   setActiveTab?: (tab: string) => void;
-  items?: Array<{id: string; label: string; icon: string}>;
+  items: SidebarItem[];
   onItemClick?: (itemId: string) => void;
   onHomeClick?: () => void;
   className?: string;
