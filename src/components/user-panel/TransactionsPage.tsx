@@ -4,13 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Download, Filter, ArrowRight } from 'lucide-react';
+import { Search, Download, Filter } from 'lucide-react';
 
-interface TransactionsPageProps {
-  onBack?: () => void;
-}
-
-const TransactionsPage: React.FC<TransactionsPageProps> = ({ onBack }) => {
+const TransactionsPage: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -97,12 +93,6 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ onBack }) => {
   return (
     <div className="p-6" dir="rtl">
       <div className="mb-6">
-        {onBack && (
-          <Button variant="ghost" onClick={onBack} className="mb-4 flex items-center gap-2">
-            <ArrowRight className="w-4 h-4" />
-            بازگشت به نمای کلی
-          </Button>
-        )}
         <h1 className="text-2xl font-bold mb-2">تراکنش‌ها</h1>
         <p className="text-muted-foreground">تاریخچه کامل تراکنش‌های مالی شما</p>
       </div>

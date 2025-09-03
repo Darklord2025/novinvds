@@ -4,7 +4,6 @@ import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator,
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarProps } from './interfaces';
-import { SidebarItem } from '@/data/sidebarItems';
 
 const Sidebar: React.FC<SidebarProps> = ({ 
   activeTab, 

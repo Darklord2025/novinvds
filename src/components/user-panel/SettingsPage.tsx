@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,16 +9,12 @@ import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Lock, Save, ShieldAlert, User } from "lucide-react";
+import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-interface SettingsPageProps {
-  activeTab?: string;
-}
-
-const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab }) => {
-  const [activeTab, setActiveTab] = useState(propActiveTab || 'profile');
+const SettingsPage = () => {
+  const [activeTab, setActiveTab] = useState('profile');
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -43,6 +40,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
     activityAlerts: false,
     serviceAlerts: true,
   });
+  
+  const [apiKeys, setApiKeys] = useState([
+    { id: '1', name: 'کلید API اصلی', key: 'api_key_1234567890', created: '1402/06/15', lastUsed: '1402/06/20' },
+    { id: '2', name: 'کلید مربوط به وب سرویس', key: 'api_key_0987654321', created: '1402/05/10', lastUsed: '1402/06/18' },
+  ]);
   
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -146,6 +148,32 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
     }, 1000);
   };
   
+  const handleCreateApiKey = () => {
+    const newKey = {
+      id: (apiKeys.length + 1).toString(),
+      name: 'کلید API جدید',
+      key: `api_key_${Math.random().toString(36).substring(2, 15)}`,
+      created: '1402/06/21',
+      lastUsed: '-'
+    };
+    
+    setApiKeys((prev) => [...prev, newKey]);
+    
+    toast({
+      title: "ایجاد کلید API جدید",
+      description: "کلید API جدید با موفقیت ایجاد شد.",
+    });
+  };
+  
+  const handleDeleteApiKey = (id: string) => {
+    setApiKeys((prev) => prev.filter(key => key.id !== id));
+    
+    toast({
+      title: "حذف کلید API",
+      description: "کلید API با موفقیت حذف شد.",
+    });
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
@@ -161,8 +189,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
         </AlertDescription>
       </Alert>
 
-      <Tabs value={propActiveTab === 'security-settings' ? 'security' : activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             <span>اطلاعات شخصی</span>
@@ -174,6 +202,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
           <TabsTrigger value="notification" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             <span>اعلان‌ها</span>
+          </TabsTrigger>
+          <TabsTrigger value="api" className="flex items-center gap-2">
+            <Key className="h-4 w-4" />
+            <span>کلیدهای API</span>
           </TabsTrigger>
         </TabsList>
         
@@ -427,15 +459,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
             <CardHeader>
               <CardTitle>تنظیمات اعلان‌ها</CardTitle>
               <CardDescription>
-                نوع اعلان‌هایی که مایل به دریافت آن‌ها هستید را انتخاب کنید.
+                مدیریت نحوه دریافت اعلان‌های مربوط به حساب کاربری و سرویس‌های خود.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">اعلان‌های ایمیل</h4>
-                    <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق ایمیل</p>
+                    <h4 className="font-medium">اعلان‌های ایمیلی</h4>
+                    <p className="text-sm text-gray-500">دریافت اطلاعیه‌ها و به‌روزرسانی‌های مهم از طریق ایمیل.</p>
                   </div>
                   <Switch
                     checked={securityForm.emailNotifications}
@@ -443,12 +475,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
                   />
                 </div>
                 
-                <Separator />
-                
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">هشدار ورود</h4>
-                    <p className="text-sm text-gray-500">اطلاع‌رسانی در صورت ورود جدید به حساب کاربری</p>
+                    <h4 className="font-medium">اعلان ورود به سیستم</h4>
+                    <p className="text-sm text-gray-500">دریافت اعلان هنگام ورود به حساب کاربری از دستگاه‌های جدید.</p>
                   </div>
                   <Switch
                     checked={securityForm.loginAlerts}
@@ -456,12 +486,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
                   />
                 </div>
                 
-                <Separator />
-                
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">هشدار فعالیت</h4>
-                    <p className="text-sm text-gray-500">اطلاع‌رسانی درباره فعالیت‌های مهم حساب کاربری</p>
+                    <h4 className="font-medium">اعلان فعالیت‌های حساب</h4>
+                    <p className="text-sm text-gray-500">دریافت اعلان برای تغییرات مهم در حساب کاربری.</p>
                   </div>
                   <Switch
                     checked={securityForm.activityAlerts}
@@ -469,12 +497,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
                   />
                 </div>
                 
-                <Separator />
-                
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">اطلاعیه‌های سرویس</h4>
-                    <p className="text-sm text-gray-500">اطلاع‌رسانی درباره وضعیت سرویس‌ها و نگهداری‌های برنامه‌ریزی شده</p>
+                    <h4 className="font-medium">اعلان‌های سرویس</h4>
+                    <p className="text-sm text-gray-500">دریافت اعلان برای وضعیت سرویس‌ها، انقضا، و موارد مرتبط.</p>
                   </div>
                   <Switch
                     checked={securityForm.serviceAlerts}
@@ -493,11 +519,86 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ activeTab: propActiveTab })
                 ) : (
                   <>
                     <Save className="ml-2 h-4 w-4" />
-                    ذخیره تغییرات
+                    ذخیره تنظیمات
                   </>
                 )}
               </Button>
             </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="api" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>کلیدهای API</CardTitle>
+              <CardDescription>
+                ایجاد و مدیریت کلیدهای API برای دسترسی به API های نوین وی‌دی‌اس.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <div className="flex justify-end mb-4">
+                  <Button onClick={handleCreateApiKey}>
+                    <Key className="ml-2 h-4 w-4" />
+                    ایجاد کلید API جدید
+                  </Button>
+                </div>
+                
+                <div className="border rounded-md overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          نام
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          کلید
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          تاریخ ایجاد
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          آخرین استفاده
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          عملیات
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {apiKeys.map((apiKey) => (
+                        <tr key={apiKey.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {apiKey.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {apiKey.key.slice(0, 10)}•••••••
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {apiKey.created}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {apiKey.lastUsed}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => handleDeleteApiKey(apiKey.id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              حذف
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                <p className="text-sm text-gray-500 mt-4">
+                  توجه: کلیدهای API امکان دسترسی کامل به حساب کاربری شما را فراهم می‌کنند. آن‌ها را ایمن و محرمانه نگه دارید.
+                </p>
+              </div>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
