@@ -140,6 +140,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
       );
     case 'recommendations':
       return <RecommendationSection />;
+    case 'network-store':
+      return <NetworkStoreSection />;
     case 'profile':
       return <ProfilePage />;
     case 'servers':
@@ -148,6 +150,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'hosting':
       return <WHMCSServicesPage 
         onManageService={handleManageService}
+        onRenewService={handleRenewService}
+        onSuspendService={handleSuspendService}
+        onUnsuspendService={handleUnsuspendService}
+        onTerminateService={handleTerminateService}
         onViewInvoice={handleViewInvoice}
       />;
     case 'domains':
@@ -208,8 +214,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return <AffiliateCenter />;
     case 'knowledge-base':
       return <KnowledgeBase />;
-    case 'profile':
-      return <ProfilePage />;
     case 'security-center':
       return <SecurityCenterPage />;
     case 'financial':
@@ -220,11 +224,15 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onNavigateToInvoices={() => navigateToServiceOrderPage('/invoices')}
       />;
     case 'transactions':
-      return <TransactionsPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
+      return <TransactionsPage />;
     case 'invoices':
-      return <InvoicesPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
+      return <InvoicesPage />;
     case 'wallet-topup':
-      return <WalletTopUpPage onBack={() => navigateToServiceOrderPage('/financial-overview')} />;
+      return <WalletTopUpPage />;
+    case 'server-management':
+      return <ServerManagementPage />;
+    case 'service-calculator':
+      return <ServiceCalculatorPage />;
     case 'downloads':
       return <DownloadsPage />;
     case 'notifications':

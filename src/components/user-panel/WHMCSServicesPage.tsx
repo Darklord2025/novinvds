@@ -14,11 +14,19 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface WHMCSServicesPageProps {
   onManageService: (serviceId: string) => void;
+  onRenewService: (serviceId: string) => void;
+  onSuspendService: (serviceId: string) => void;
+  onUnsuspendService: (serviceId: string) => void;
+  onTerminateService: (serviceId: string) => void;
   onViewInvoice: (invoiceId: string) => void;
 }
 
 const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
   onManageService,
+  onRenewService,
+  onSuspendService,
+  onUnsuspendService,
+  onTerminateService,
   onViewInvoice
 }) => {
   const [services] = useState<WHMCSService[]>(mockWHMCSServices);
@@ -167,6 +175,26 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                               <Settings className="ml-2 h-4 w-4" />
                               مدیریت
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onRenewService(service.id)}>
+                              <CreditCard className="ml-2 h-4 w-4" />
+                              تمدید
+                            </DropdownMenuItem>
+                            {service.status === 'Active' && (
+                              <DropdownMenuItem onClick={() => onSuspendService(service.id)}>
+                                <Pause className="ml-2 h-4 w-4" />
+                                تعلیق
+                              </DropdownMenuItem>
+                            )}
+                            {service.status === 'Suspended' && (
+                              <DropdownMenuItem onClick={() => onUnsuspendService(service.id)}>
+                                <Play className="ml-2 h-4 w-4" />
+                                فعال‌سازی
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem onClick={() => onTerminateService(service.id)}>
+                              <RotateCcw className="ml-2 h-4 w-4" />
+                              خاتمه
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -244,6 +272,13 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                       className="flex-1"
                     >
                       مدیریت
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onRenewService(service.id)}
+                    >
+                      تمدید
                     </Button>
                   </div>
                 </CardContent>
