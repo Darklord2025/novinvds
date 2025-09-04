@@ -15,10 +15,17 @@ export interface PanelContentProps {
   navigationHandlers: any;
 }
 
+export interface SidebarItem {
+  id: string;
+  label: string;
+  icon: string;
+  submenu?: SidebarItem[];
+}
+
 export interface SidebarProps {
   activeTab?: string;
   setActiveTab?: (tab: string) => void;
-  items?: Array<{id: string; label: string; icon: string}>;
+  items?: SidebarItem[];
   onItemClick?: (itemId: string) => void;
   onHomeClick?: () => void;
   className?: string;

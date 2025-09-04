@@ -5,9 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Download, Eye, CreditCard, Filter } from 'lucide-react';
+import { Search, Download, Eye, CreditCard, Filter, ArrowRight } from 'lucide-react';
 
-const InvoicesPage: React.FC = () => {
+interface InvoicesPageProps {
+  onBack?: () => void;
+}
+
+const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,8 +105,18 @@ const InvoicesPage: React.FC = () => {
   return (
     <div className="p-6" dir="rtl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">فاکتورها</h1>
-        <p className="text-muted-foreground">مدیریت و پرداخت فاکتورهای شما</p>
+        <div className="flex items-center gap-3 mb-4">
+          {onBack && (
+            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
+              <ArrowRight className="w-4 h-4" />
+              بازگشت
+            </Button>
+          )}
+          <div>
+            <h1 className="text-2xl font-bold mb-2">فاکتورها</h1>
+            <p className="text-muted-foreground">مدیریت و پرداخت فاکتورهای شما</p>
+          </div>
+        </div>
       </div>
 
       <Card>

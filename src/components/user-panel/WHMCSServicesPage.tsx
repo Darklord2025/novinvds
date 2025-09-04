@@ -171,29 +171,9 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
+                           <DropdownMenuItem onClick={() => onManageService(service.id)}>
                               <Settings className="ml-2 h-4 w-4" />
-                              مدیریت
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onRenewService(service.id)}>
-                              <CreditCard className="ml-2 h-4 w-4" />
-                              تمدید
-                            </DropdownMenuItem>
-                            {service.status === 'Active' && (
-                              <DropdownMenuItem onClick={() => onSuspendService(service.id)}>
-                                <Pause className="ml-2 h-4 w-4" />
-                                تعلیق
-                              </DropdownMenuItem>
-                            )}
-                            {service.status === 'Suspended' && (
-                              <DropdownMenuItem onClick={() => onUnsuspendService(service.id)}>
-                                <Play className="ml-2 h-4 w-4" />
-                                فعال‌سازی
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem onClick={() => onTerminateService(service.id)}>
-                              <RotateCcw className="ml-2 h-4 w-4" />
-                              خاتمه
+                              مدیریت سرور
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -271,14 +251,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                       onClick={() => onManageService(service.id)}
                       className="flex-1"
                     >
-                      مدیریت
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => onRenewService(service.id)}
-                    >
-                      تمدید
+                      مدیریت سرور
                     </Button>
                   </div>
                 </CardContent>

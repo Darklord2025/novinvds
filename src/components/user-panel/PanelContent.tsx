@@ -140,8 +140,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
       );
     case 'recommendations':
       return <RecommendationSection />;
-    case 'network-store':
-      return <NetworkStoreSection />;
     case 'profile':
       return <ProfilePage />;
     case 'servers':
@@ -214,7 +212,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return <AffiliateCenter />;
     case 'knowledge-base':
       return <KnowledgeBase />;
-    case 'security-center':
+    case 'security':
       return <SecurityCenterPage />;
     case 'financial':
     case 'financial-overview':
@@ -224,11 +222,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onNavigateToInvoices={() => navigateToServiceOrderPage('/invoices')}
       />;
     case 'transactions':
-      return <TransactionsPage />;
+      return <TransactionsPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
     case 'invoices':
-      return <InvoicesPage />;
+      return <InvoicesPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
     case 'wallet-topup':
-      return <WalletTopUpPage />;
+      return <WalletTopUpPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
     case 'server-management':
       return <ServerManagementPage />;
     case 'service-calculator':

@@ -1,9 +1,37 @@
 
-import React from 'react';
-import { LayoutDashboard, Server, HardDrive, Globe, Database, Cloud, Calculator, TicketCheck, Receipt, History, Wallet, Download, User, Settings, LogOut, Home, Bell, Megaphone } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  LayoutDashboard, 
+  Server, 
+  HardDrive, 
+  Globe, 
+  Database, 
+  Cloud, 
+  Calculator, 
+  TicketCheck, 
+  Receipt, 
+  History, 
+  Wallet, 
+  Download, 
+  User, 
+  Settings, 
+  LogOut, 
+  Home, 
+  Bell, 
+  Megaphone,
+  Star,
+  Users,
+  BookOpen,
+  Shield,
+  Repeat,
+  FileText,
+  PlusCircle,
+  ChevronDown,
+  ChevronRight
+} from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { SidebarProps } from './interfaces';
+import { SidebarProps, SidebarItem } from './interfaces';
 
 const Sidebar: React.FC<SidebarProps> = ({ 
   activeTab, 
@@ -22,17 +50,28 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
     switch (iconName) {
       case 'home': return <LayoutDashboard className={className} />;
       case 'server': return <Server className={className} />;
       case 'server-stack': return <HardDrive className={className} />;
+      case 'hard-drive': return <HardDrive className={className} />;
       case 'globe': return <Globe className={className} />;
       case 'database': return <Database className={className} />;
       case 'cloud': return <Cloud className={className} />;
       case 'calculator': return <Calculator className={className} />;
       case 'message-square': return <TicketCheck className={className} />;
-      case 'file-text': return <Receipt className={className} />;
+      case 'file-text': return <FileText className={className} />;
       case 'credit-card': return <History className={className} />;
       case 'wallet': return <Wallet className={className} />;
       case 'download': return <Download className={className} />;
@@ -40,6 +79,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       case 'settings': return <Settings className={className} />;
       case 'bell': return <Bell className={className} />;
       case 'megaphone': return <Megaphone className={className} />;
+      case 'star': return <Star className={className} />;
+      case 'users': return <Users className={className} />;
+      case 'book-open': return <BookOpen className={className} />;
+      case 'shield': return <Shield className={className} />;
+      case 'repeat': return <Repeat className={className} />;
+      case 'layout-dashboard': return <LayoutDashboard className={className} />;
+      case 'plus-circle': return <PlusCircle className={className} />;
       default: return <div className={className} />;
     }
   };
@@ -67,18 +113,60 @@ const Sidebar: React.FC<SidebarProps> = ({
         <ul className="space-y-1 px-2">
           {items.map((item) => (
             <li key={item.id}>
-              <button
-                className={cn(
-                  "w-full flex items-center px-4 py-2 text-sm text-right rounded-lg transition-colors",
-                  activeTab === item.id
-                    ? "text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
-                    : "text-gray-700 hover:bg-gray-100"
-                )}
-                onClick={() => handleItemClick(item.id)}
-              >
-                <span className="ml-2">{getIcon(item.icon)}</span>
-                <span>{item.label}</span>
-              </button>
+              {item.submenu ? (
+                <div>
+                  <button
+                    className={cn(
+                      "w-full flex items-center justify-between px-4 py-2 text-sm text-right rounded-lg transition-colors",
+                      "text-gray-700 hover:bg-gray-100"
+                    )}
+                    onClick={() => toggleExpanded(item.id)}
+                  >
+                    <div className="flex items-center">
+                      <span className="ml-2">{getIcon(item.icon)}</span>
+                      <span>{item.label}</span>
+                    </div>
+                    {expandedItems.includes(item.id) ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </button>
+                  {expandedItems.includes(item.id) && (
+                    <ul className="mt-1 space-y-1">
+                      {item.submenu.map((subItem) => (
+                        <li key={subItem.id}>
+                          <button
+                            className={cn(
+                              "w-full flex items-center px-8 py-2 text-sm text-right rounded-lg transition-colors",
+                              activeTab === subItem.id
+                                ? "text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
+                                : "text-gray-600 hover:bg-gray-100"
+                            )}
+                            onClick={() => handleItemClick(subItem.id)}
+                          >
+                            <span className="ml-2">{getIcon(subItem.icon, "h-4 w-4")}</span>
+                            <span>{subItem.label}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <button
+                  className={cn(
+                    "w-full flex items-center px-4 py-2 text-sm text-right rounded-lg transition-colors",
+                    activeTab === item.id
+                      ? "text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  <span className="ml-2">{getIcon(item.icon)}</span>
+                  <span>{item.label}</span>
+                </button>
+              )}
             </li>
           ))}
         </ul>
