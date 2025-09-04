@@ -33,6 +33,7 @@ import InvoicesPage from './InvoicesPage';
 import WalletTopUpPage from './WalletTopUpPage';
 import SecurityCenterPage from './SecurityCenterPage';
 import ServiceCalculatorPage from './ServiceCalculatorPage';
+import ServerManagementDetail from './ServerManagementDetail';
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,
@@ -167,31 +168,27 @@ const PanelContent: React.FC<PanelContentProps> = ({
         /> : null;
     case 'vps-management':
       return selectedService ? 
-        <DevelopmentMessage 
-          title={`مدیریت سرور مجازی ${selectedService}`} 
-          message="پنل مدیریت سرور مجازی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود." 
+        <ServerManagementDetail 
+          serverId={selectedService} 
           onBack={() => navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'dedicated-management':
       return selectedService ? 
-        <DevelopmentMessage 
-          title={`مدیریت سرور اختصاصی ${selectedService}`} 
-          message="پنل مدیریت سرور اختصاصی در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
-          onBack={() => navigateToServiceOrderPage('/dedicated')} 
+        <ServerManagementDetail 
+          serverId={selectedService} 
+          onBack={() => navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'cloud-management':
       return selectedService ? 
-        <DevelopmentMessage 
-          title={`مدیریت سرور ابری ${selectedService}`} 
-          message="پنل مدیریت سرور ابری در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
-          onBack={() => navigateToServiceOrderPage('/cloud')} 
+        <ServerManagementDetail 
+          serverId={selectedService} 
+          onBack={() => navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'hosting-management':
       return selectedService ? 
-        <DevelopmentMessage 
-          title={`مدیریت هاستینگ ${selectedService}`} 
-          message="پنل مدیریت هاستینگ در حال آماده‌سازی است. به زودی قابل دسترس خواهد بود."
-          onBack={() => navigateToServiceOrderPage('/hosting')} 
+        <ServerManagementDetail 
+          serverId={selectedService} 
+          onBack={() => navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'tickets':
       return isNewTicket ? 
