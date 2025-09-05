@@ -61,31 +61,33 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
+    const coloredClass = className.includes('text-') ? className : `${className} text-blue-500`;
+    
     switch (iconName) {
-      case 'home': return <LayoutDashboard className={className} />;
-      case 'server': return <Server className={className} />;
-      case 'server-stack': return <HardDrive className={className} />;
-      case 'hard-drive': return <HardDrive className={className} />;
-      case 'globe': return <Globe className={className} />;
-      case 'database': return <Database className={className} />;
-      case 'cloud': return <Cloud className={className} />;
-      case 'calculator': return <Calculator className={className} />;
-      case 'message-square': return <TicketCheck className={className} />;
-      case 'file-text': return <FileText className={className} />;
-      case 'credit-card': return <History className={className} />;
-      case 'wallet': return <Wallet className={className} />;
-      case 'download': return <Download className={className} />;
-      case 'user': return <User className={className} />;
-      case 'settings': return <Settings className={className} />;
-      case 'bell': return <Bell className={className} />;
-      case 'megaphone': return <Megaphone className={className} />;
-      case 'star': return <Star className={className} />;
-      case 'users': return <Users className={className} />;
-      case 'book-open': return <BookOpen className={className} />;
-      case 'shield': return <Shield className={className} />;
-      case 'repeat': return <Repeat className={className} />;
-      case 'layout-dashboard': return <LayoutDashboard className={className} />;
-      case 'plus-circle': return <PlusCircle className={className} />;
+      case 'home': return <LayoutDashboard className={`${className} text-blue-500`} />;
+      case 'server': return <Server className={`${className} text-green-500`} />;
+      case 'server-stack': return <HardDrive className={`${className} text-purple-500`} />;
+      case 'hard-drive': return <HardDrive className={`${className} text-purple-500`} />;
+      case 'globe': return <Globe className={`${className} text-cyan-500`} />;
+      case 'database': return <Database className={`${className} text-orange-500`} />;
+      case 'cloud': return <Cloud className={`${className} text-indigo-500`} />;
+      case 'calculator': return <Calculator className={`${className} text-yellow-500`} />;
+      case 'message-square': return <TicketCheck className={`${className} text-red-500`} />;
+      case 'file-text': return <FileText className={`${className} text-gray-500`} />;
+      case 'credit-card': return <History className={`${className} text-teal-500`} />;
+      case 'wallet': return <Wallet className={`${className} text-emerald-500`} />;
+      case 'download': return <Download className={`${className} text-blue-600`} />;
+      case 'user': return <User className={`${className} text-pink-500`} />;
+      case 'settings': return <Settings className={`${className} text-gray-600`} />;
+      case 'bell': return <Bell className={`${className} text-yellow-600`} />;
+      case 'megaphone': return <Megaphone className={`${className} text-orange-600`} />;
+      case 'star': return <Star className={`${className} text-amber-500`} />;
+      case 'users': return <Users className={`${className} text-violet-500`} />;
+      case 'book-open': return <BookOpen className={`${className} text-green-600`} />;
+      case 'shield': return <Shield className={`${className} text-red-600`} />;
+      case 'repeat': return <Repeat className={`${className} text-blue-400`} />;
+      case 'layout-dashboard': return <LayoutDashboard className={`${className} text-cyan-600`} />;
+      case 'plus-circle': return <PlusCircle className={`${className} text-green-400`} />;
       default: return <div className={className} />;
     }
   };

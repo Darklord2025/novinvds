@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe } from "lucide-react";
+import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -198,25 +198,144 @@ const ProfileSettingsPage = () => {
       </Alert>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="personal" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <User className="h-4 w-4 text-blue-500" />
             <span>اطلاعات شخصی</span>
           </TabsTrigger>
+          <TabsTrigger value="financial" className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4 text-green-500" />
+            <span>اطلاعات مالی</span>
+          </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4" />
+            <ShieldAlert className="h-4 w-4 text-red-500" />
             <span>امنیت</span>
           </TabsTrigger>
           <TabsTrigger value="notification" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
+            <Bell className="h-4 w-4 text-yellow-500" />
             <span>اعلان‌ها</span>
           </TabsTrigger>
           <TabsTrigger value="api" className="flex items-center gap-2">
-            <Key className="h-4 w-4" />
+            <Key className="h-4 w-4 text-purple-500" />
             <span>کلیدهای API</span>
           </TabsTrigger>
         </TabsList>
         
+        <TabsContent value="financial" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-green-500" />
+                اطلاعات مالی
+              </CardTitle>
+              <CardDescription>
+                اطلاعات مالی و بانکی خود را مدیریت کنید.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="cardNumber" className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-blue-500" />
+                    شماره کارت
+                  </Label>
+                  <Input
+                    id="cardNumber"
+                    name="cardNumber"
+                    placeholder="1234-5678-9012-3456"
+                    className="text-left"
+                    dir="ltr"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber" className="flex items-center gap-2">
+                    <Receipt className="h-4 w-4 text-green-500" />
+                    شماره حساب
+                  </Label>
+                  <Input
+                    id="accountNumber"
+                    name="accountNumber"
+                    placeholder="123-456-789012-3"
+                    className="text-left"
+                    dir="ltr"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="bankName" className="flex items-center gap-2">
+                    <Building className="h-4 w-4 text-purple-500" />
+                    نام بانک
+                  </Label>
+                  <Input
+                    id="bankName"
+                    name="bankName"
+                    placeholder="بانک ملی ایران"
+                    className="text-right"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="shebaNumber" className="flex items-center gap-2">
+                    <Hash className="h-4 w-4 text-orange-500" />
+                    شماره شبا
+                  </Label>
+                  <Input
+                    id="shebaNumber"
+                    name="shebaNumber"
+                    placeholder="IR123456789012345678901234"
+                    className="text-left"
+                    dir="ltr"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="nationalCode" className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-cyan-500" />
+                    کد ملی
+                  </Label>
+                  <Input
+                    id="nationalCode"
+                    name="nationalCode"
+                    placeholder="1234567890"
+                    className="text-left"
+                    dir="ltr"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="taxCode" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-red-500" />
+                    کد اقتصادی (اختیاری)
+                  </Label>
+                  <Input
+                    id="taxCode"
+                    name="taxCode"
+                    placeholder="123456789012"
+                    className="text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button onClick={handleSaveProfile} disabled={saving}>
+                {saving ? (
+                  <>
+                    <span className="animate-spin mr-2">●</span>
+                    در حال ذخیره...
+                  </>
+                ) : (
+                  <>
+                    <Save className="ml-2 h-4 w-4" />
+                    ذخیره اطلاعات مالی
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="personal" className="mt-6">
           <Card>
             <CardHeader>
@@ -230,11 +349,11 @@ const ProfileSettingsPage = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    نام
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="firstName" className="flex items-center gap-2">
+                     <User className="h-4 w-4 text-blue-500" />
+                     نام
+                   </Label>
                   <Input
                     id="firstName"
                     name="firstName"
@@ -244,11 +363,11 @@ const ProfileSettingsPage = () => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    نام خانوادگی
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="lastName" className="flex items-center gap-2">
+                     <User className="h-4 w-4 text-blue-500" />
+                     نام خانوادگی
+                   </Label>
                   <Input
                     id="lastName"
                     name="lastName"
@@ -258,41 +377,43 @@ const ProfileSettingsPage = () => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    ایمیل
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={profileForm.email}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
+                 <div className="space-y-2">
+                   <Label htmlFor="email" className="flex items-center gap-2">
+                     <Mail className="h-4 w-4 text-green-500" />
+                     ایمیل
+                   </Label>
+                   <Input
+                     id="email"
+                     name="email"
+                     type="email"
+                     value={profileForm.email}
+                     onChange={handleProfileChange}
+                     className="text-left"
+                     dir="ltr"
+                   />
                   <p className="text-xs text-gray-500">این ایمیل برای ورود به سیستم استفاده می‌شود.</p>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" />
-                    شماره تماس
-                  </Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    value={profileForm.phone}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
+                 <div className="space-y-2">
+                   <Label htmlFor="phone" className="flex items-center gap-2">
+                     <Phone className="h-4 w-4 text-orange-500" />
+                     شماره تماس
+                   </Label>
+                   <Input
+                     id="phone"
+                     name="phone"
+                     value={profileForm.phone}
+                     onChange={handleProfileChange}
+                     className="text-left"
+                     dir="ltr"
+                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="companyName" className="flex items-center gap-2">
-                    <Building className="h-4 w-4" />
-                    نام شرکت (اختیاری)
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="companyName" className="flex items-center gap-2">
+                     <Building className="h-4 w-4 text-purple-500" />
+                     نام شرکت (اختیاری)
+                   </Label>
                   <Input
                     id="companyName"
                     name="companyName"
@@ -302,11 +423,11 @@ const ProfileSettingsPage = () => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    آدرس
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="address" className="flex items-center gap-2">
+                     <MapPin className="h-4 w-4 text-red-500" />
+                     آدرس
+                   </Label>
                   <Input
                     id="address"
                     name="address"
@@ -316,11 +437,11 @@ const ProfileSettingsPage = () => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="city" className="flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    شهر
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="city" className="flex items-center gap-2">
+                     <Globe className="h-4 w-4 text-cyan-500" />
+                     شهر
+                   </Label>
                   <Input
                     id="city"
                     name="city"
@@ -330,11 +451,11 @@ const ProfileSettingsPage = () => {
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="province" className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    استان
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="province" className="flex items-center gap-2">
+                     <MapPin className="h-4 w-4 text-teal-500" />
+                     استان
+                   </Label>
                   <Select value={profileForm.province} onValueChange={handleProvinceChange}>
                     <SelectTrigger className="text-right">
                       <SelectValue placeholder="انتخاب استان" />
@@ -347,11 +468,11 @@ const ProfileSettingsPage = () => {
                   </Select>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="postalCode" className="flex items-center gap-2">
-                    <Hash className="h-4 w-4" />
-                    کد پستی
-                  </Label>
+                 <div className="space-y-2">
+                   <Label htmlFor="postalCode" className="flex items-center gap-2">
+                     <Hash className="h-4 w-4 text-indigo-500" />
+                     کد پستی
+                   </Label>
                   <Input
                     id="postalCode"
                     name="postalCode"
