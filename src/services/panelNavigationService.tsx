@@ -12,7 +12,7 @@ export interface NavigationHandlers {
   handleCreateNewTicket: () => void;
   handleResetServer: (serviceType: string, serviceId: string) => void;
   handleRenewService: (serviceType: string, serviceId: string) => void;
-  handleManageService: (serviceType: string, serviceId: string) => void;
+  handleManageService: (serviceId: string) => void;
   handleViewInvoice: (invoiceId: string, isPaid?: boolean) => void;
   handleDownloadInvoice: (invoiceId: string) => void;
   handlePayInvoice: (invoiceId: string) => void;
@@ -41,7 +41,7 @@ export const createNavigationHandlers = (
         });
         
         // For different management pages
-        handleManageService(serviceType, serviceId);
+        handleManageService(serviceId);
       }
     } else if (serviceLink === '/tickets/new') {
       setIsNewTicket(true);
@@ -109,12 +109,19 @@ export const createNavigationHandlers = (
         title: "اعلان‌های سیستم",
         description: "در حال بارگذاری لیست اعلان‌ها...",
       });
-    } else if (serviceLink === '/transactions') {
+    } else if (serviceLink === '/transactions' || serviceLink === 'transactions') {
       setActiveTab('transactions');
       
       toast({
         title: "تراکنش‌های مالی",
         description: "در حال بارگذاری لیست تراکنش‌ها...",
+      });
+    } else if (serviceLink === '/financial-overview' || serviceLink === 'financial-overview') {
+      setActiveTab('financial-overview');
+      
+      toast({
+        title: "نمای کلی امور مالی",
+        description: "در حال بارگذاری اطلاعات مالی...",
       });
     } else if (serviceLink === '/wallet') {
       setActiveTab('wallet');
@@ -160,7 +167,7 @@ export const createNavigationHandlers = (
       const serviceType = parts[1].split('-')[0]; // Extract 'vps', 'dedicated', etc.
       const serviceId = parts[2];
       
-      handleManageService(serviceType, serviceId);
+      handleManageService(serviceId);
     } else if (serviceLink && serviceLink.startsWith('/renew/')) {
       const parts = serviceLink.split('/');
       if (parts && parts.length >= 4) {
@@ -288,37 +295,17 @@ export const createNavigationHandlers = (
     });
   };
   
-  const handleManageService = (serviceType: string, serviceId: string) => {
-    if (!serviceType || !serviceId) return;
+  const handleManageService = (serviceId: string) => {
+    if (!serviceId) return;
     
     toast({
       title: `مدیریت سرویس`,
-      description: `در حال بارگیری پنل مدیریت ${serviceType} با شناسه ${serviceId}`,
+      description: `در حال بارگیری پنل مدیریت سرویس ${serviceId}...`,
     });
     
-    // Handle different service types
-    if (serviceType === 'domain') {
-      setSelectedService(serviceId);
-      setActiveTab('domain-management');
-    } else if (serviceType === 'vps') {
-      setSelectedService(serviceId);
-      setActiveTab('vps-management');
-    } else if (serviceType === 'dedicated') {
-      setSelectedService(serviceId);
-      setActiveTab('dedicated-management');
-    } else if (serviceType === 'cloud') {
-      setSelectedService(serviceId);
-      setActiveTab('cloud-management');
-    } else if (serviceType === 'hosting') {
-      setSelectedService(serviceId);
-      setActiveTab('hosting-management');
-    } else {
-      // For other services, navigate to a management page
-      toast({
-        title: "مدیریت سرویس",
-        description: `در حال انتقال به صفحه مدیریت ${serviceType} با شناسه ${serviceId}...`,
-      });
-    }
+    // Navigate to VPS management by default (most common case)
+    setSelectedService(serviceId);
+    setActiveTab('vps-management');
   };
   
   const handleResetServer = (serviceType: string, serviceId: string) => {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,20 @@ import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog } from "lucide-react";
+import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const SettingsPage = () => {
-  const [activeTab, setActiveTab] = useState('profile');
+const iranianProvinces = [
+  'آذربایجان شرقی', 'آذربایجان غربی', 'اردبیل', 'اصفهان', 'ایلام', 'بوشهر', 'تهران',
+  'چهارمحال و بختیاری', 'خراسان جنوبی', 'خراسان رضوی', 'خراسان شمالی', 'خوزستان',
+  'زنجان', 'سمنان', 'سیستان و بلوچستان', 'فارس', 'قزوین', 'قم', 'کردستان', 'کرمان',
+  'کرمانشاه', 'کهگیلویه و بویراحمد', 'گلستان', 'گیلان', 'لرستان', 'مازندران', 'مرکزی',
+  'هرمزگان', 'همدان', 'یزد'
+];
+
+const ProfileSettingsPage = () => {
+  const [activeTab, setActiveTab] = useState('personal');
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -51,6 +58,10 @@ const SettingsPage = () => {
     setProfileForm((prev) => ({ ...prev, [name]: value }));
   };
   
+  const handleProvinceChange = (value: string) => {
+    setProfileForm((prev) => ({ ...prev, province: value }));
+  };
+  
   const handleSecurityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSecurityForm((prev) => ({ ...prev, [name]: value }));
@@ -63,7 +74,6 @@ const SettingsPage = () => {
   const handleSaveProfile = () => {
     setSaving(true);
     
-    // Simulate API call
     setTimeout(() => {
       setSaving(false);
       toast({
@@ -99,7 +109,6 @@ const SettingsPage = () => {
     
     setSaving(true);
     
-    // Simulate API call
     setTimeout(() => {
       setSaving(false);
       setSecurityForm((prev) => ({
@@ -133,7 +142,6 @@ const SettingsPage = () => {
   const handleSaveNotificationSettings = () => {
     setSaving(true);
     
-    // Simulate API call
     setTimeout(() => {
       setSaving(false);
       toast({
@@ -175,7 +183,7 @@ const SettingsPage = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">تنظیمات حساب کاربری</h1>
         <Badge>حساب کاربری استاندارد</Badge>
@@ -191,7 +199,7 @@ const SettingsPage = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile" className="flex items-center gap-2">
+          <TabsTrigger value="personal" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             <span>اطلاعات شخصی</span>
           </TabsTrigger>
@@ -209,10 +217,13 @@ const SettingsPage = () => {
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="profile" className="mt-6">
+        <TabsContent value="personal" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>اطلاعات شخصی</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                اطلاعات شخصی
+              </CardTitle>
               <CardDescription>
                 اطلاعات شخصی خود را ویرایش کنید. این اطلاعات برای ارتباط با شما و صدور فاکتور استفاده می‌شود.
               </CardDescription>
@@ -220,100 +231,133 @@ const SettingsPage = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">نام</Label>
+                  <Label htmlFor="firstName" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    نام
+                  </Label>
                   <Input
                     id="firstName"
                     name="firstName"
                     value={profileForm.firstName}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">نام خانوادگی</Label>
+                  <Label htmlFor="lastName" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    نام خانوادگی
+                  </Label>
                   <Input
                     id="lastName"
                     name="lastName"
                     value={profileForm.lastName}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email">ایمیل</Label>
+                  <Label htmlFor="email" className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    ایمیل
+                  </Label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     value={profileForm.email}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                   <p className="text-xs text-gray-500">این ایمیل برای ورود به سیستم استفاده می‌شود.</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">شماره تماس</Label>
+                  <Label htmlFor="phone" className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    شماره تماس
+                  </Label>
                   <Input
                     id="phone"
                     name="phone"
                     value={profileForm.phone}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">نام شرکت (اختیاری)</Label>
+                  <Label htmlFor="companyName" className="flex items-center gap-2">
+                    <Building className="h-4 w-4" />
+                    نام شرکت (اختیاری)
+                  </Label>
                   <Input
                     id="companyName"
                     name="companyName"
                     value={profileForm.companyName}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="address">آدرس</Label>
+                  <Label htmlFor="address" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    آدرس
+                  </Label>
                   <Input
                     id="address"
                     name="address"
                     value={profileForm.address}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="city">شهر</Label>
+                  <Label htmlFor="city" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    شهر
+                  </Label>
                   <Input
                     id="city"
                     name="city"
                     value={profileForm.city}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="province">استان</Label>
-                  <Select defaultValue={profileForm.province}>
-                    <SelectTrigger>
+                  <Label htmlFor="province" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    استان
+                  </Label>
+                  <Select value={profileForm.province} onValueChange={handleProvinceChange}>
+                    <SelectTrigger className="text-right">
                       <SelectValue placeholder="انتخاب استان" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="تهران">تهران</SelectItem>
-                      <SelectItem value="اصفهان">اصفهان</SelectItem>
-                      <SelectItem value="مشهد">مشهد</SelectItem>
-                      <SelectItem value="شیراز">شیراز</SelectItem>
-                      <SelectItem value="تبریز">تبریز</SelectItem>
+                      {iranianProvinces.map(province => (
+                        <SelectItem key={province} value={province}>{province}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="postalCode">کد پستی</Label>
+                  <Label htmlFor="postalCode" className="flex items-center gap-2">
+                    <Hash className="h-4 w-4" />
+                    کد پستی
+                  </Label>
                   <Input
                     id="postalCode"
                     name="postalCode"
                     value={profileForm.postalCode}
                     onChange={handleProfileChange}
+                    className="text-right"
                   />
                 </div>
               </div>
@@ -339,14 +383,20 @@ const SettingsPage = () => {
         <TabsContent value="security" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>امنیت حساب کاربری</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5" />
+                امنیت حساب کاربری
+              </CardTitle>
               <CardDescription>
                 تنظیمات امنیتی حساب کاربری خود را مدیریت کنید.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium mb-4">تغییر رمز عبور</h3>
+                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                  <Lock className="h-5 w-5" />
+                  تغییر رمز عبور
+                </h3>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="currentPassword">رمز عبور فعلی</Label>
@@ -357,7 +407,7 @@ const SettingsPage = () => {
                         type={showPassword ? "text" : "password"}
                         value={securityForm.currentPassword}
                         onChange={handleSecurityChange}
-                        className="pl-10"
+                        className="pl-10 text-right"
                       />
                       <button
                         type="button"
@@ -381,6 +431,7 @@ const SettingsPage = () => {
                       type="password"
                       value={securityForm.newPassword}
                       onChange={handleSecurityChange}
+                      className="text-right"
                     />
                     <p className="text-xs text-gray-500">رمز عبور باید حداقل ۸ کاراکتر باشد و شامل حروف و اعداد باشد.</p>
                   </div>
@@ -393,6 +444,7 @@ const SettingsPage = () => {
                       type="password"
                       value={securityForm.confirmPassword}
                       onChange={handleSecurityChange}
+                      className="text-right"
                     />
                   </div>
                   
@@ -417,7 +469,10 @@ const SettingsPage = () => {
               <Separator />
               
               <div>
-                <h3 className="text-lg font-medium mb-4">احراز هویت دو مرحله‌ای</h3>
+                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                  <ShieldAlert className="h-5 w-5" />
+                  احراز هویت دو مرحله‌ای
+                </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -457,17 +512,23 @@ const SettingsPage = () => {
         <TabsContent value="notification" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>تنظیمات اعلان‌ها</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                تنظیمات اعلان‌ها
+              </CardTitle>
               <CardDescription>
-                مدیریت نحوه دریافت اعلان‌های مربوط به حساب کاربری و سرویس‌های خود.
+                تنظیمات اعلان‌های خود را مدیریت کنید.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">اعلان‌های ایمیلی</h4>
-                    <p className="text-sm text-gray-500">دریافت اطلاعیه‌ها و به‌روزرسانی‌های مهم از طریق ایمیل.</p>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Bell className="h-5 w-5 text-blue-500" />
+                    <div>
+                      <h4 className="font-medium">اعلان‌های ایمیل</h4>
+                      <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق ایمیل</p>
+                    </div>
                   </div>
                   <Switch
                     checked={securityForm.emailNotifications}
@@ -475,10 +536,13 @@ const SettingsPage = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">اعلان ورود به سیستم</h4>
-                    <p className="text-sm text-gray-500">دریافت اعلان هنگام ورود به حساب کاربری از دستگاه‌های جدید.</p>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <ShieldAlert className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <h4 className="font-medium">هشدارهای ورود</h4>
+                      <p className="text-sm text-gray-500">اطلاع از ورودهای جدید به حساب کاربری</p>
+                    </div>
                   </div>
                   <Switch
                     checked={securityForm.loginAlerts}
@@ -486,10 +550,13 @@ const SettingsPage = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">اعلان فعالیت‌های حساب</h4>
-                    <p className="text-sm text-gray-500">دریافت اعلان برای تغییرات مهم در حساب کاربری.</p>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <UserCog className="h-5 w-5 text-green-500" />
+                    <div>
+                      <h4 className="font-medium">اعلان‌های فعالیت</h4>
+                      <p className="text-sm text-gray-500">اطلاع از تغییرات مهم در حساب کاربری</p>
+                    </div>
                   </div>
                   <Switch
                     checked={securityForm.activityAlerts}
@@ -497,10 +564,13 @@ const SettingsPage = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">اعلان‌های سرویس</h4>
-                    <p className="text-sm text-gray-500">دریافت اعلان برای وضعیت سرویس‌ها، انقضا، و موارد مرتبط.</p>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Globe className="h-5 w-5 text-purple-500" />
+                    <div>
+                      <h4 className="font-medium">اعلان‌های سرویس</h4>
+                      <p className="text-sm text-gray-500">اطلاع از وضعیت سرورها و خدمات</p>
+                    </div>
                   </div>
                   <Switch
                     checked={securityForm.serviceAlerts}
@@ -530,73 +600,41 @@ const SettingsPage = () => {
         <TabsContent value="api" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>کلیدهای API</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Key className="h-5 w-5" />
+                مدیریت کلیدهای API
+              </CardTitle>
               <CardDescription>
-                ایجاد و مدیریت کلیدهای API برای دسترسی به API های نوین وی‌دی‌اس.
+                کلیدهای API خود را برای اتصال به سرویس‌های خارجی مدیریت کنید.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <div className="flex justify-end mb-4">
-                  <Button onClick={handleCreateApiKey}>
-                    <Key className="ml-2 h-4 w-4" />
-                    ایجاد کلید API جدید
-                  </Button>
-                </div>
-                
-                <div className="border rounded-md overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          نام
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          کلید
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          تاریخ ایجاد
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          آخرین استفاده
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          عملیات
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {apiKeys.map((apiKey) => (
-                        <tr key={apiKey.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {apiKey.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {apiKey.key.slice(0, 10)}•••••••
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {apiKey.created}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {apiKey.lastUsed}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => handleDeleteApiKey(apiKey.id)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              حذف
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                <p className="text-sm text-gray-500 mt-4">
-                  توجه: کلیدهای API امکان دسترسی کامل به حساب کاربری شما را فراهم می‌کنند. آن‌ها را ایمن و محرمانه نگه دارید.
-                </p>
+            <CardContent className="space-y-4">
+              <div className="flex justify-end">
+                <Button onClick={handleCreateApiKey}>
+                  <Key className="ml-2 h-4 w-4" />
+                  ایجاد کلید جدید
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {apiKeys.map((apiKey) => (
+                  <div key={apiKey.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium">{apiKey.name}</h4>
+                      <p className="text-sm text-gray-500">
+                        ایجاد شده: {apiKey.created} | آخرین استفاده: {apiKey.lastUsed}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                        {apiKey.key}
+                      </code>
+                      <Button variant="destructive" size="sm" onClick={() => handleDeleteApiKey(apiKey.id)}>
+                        حذف
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -606,4 +644,4 @@ const SettingsPage = () => {
   );
 };
 
-export default SettingsPage;
+export default ProfileSettingsPage;

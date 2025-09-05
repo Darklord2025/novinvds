@@ -7,16 +7,18 @@ import {
   Wallet, 
   TrendingUp, 
   FileText, 
-  Plus
+  Plus,
+  ArrowLeft
 } from 'lucide-react';
 
 interface BillingOverviewPageProps {
   navigateToServiceOrderPage?: (serviceLink: string) => void;
   onNavigateToTransactions?: () => void;
   onNavigateToInvoices?: () => void;
+  onBack?: () => void;
 }
 
-const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage, onNavigateToTransactions, onNavigateToInvoices }) => {
+const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage, onNavigateToTransactions, onNavigateToInvoices, onBack }) => {
 
   const walletBalance = "11,200,000";
   const totalSpent = "25,200,000";
@@ -91,15 +93,23 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
           <h1 className="text-2xl font-bold mb-2">نمای کلی امور مالی</h1>
           <p className="text-gray-600">وضعیت مالی و تراکنش‌های اخیر</p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={() => navigateToServiceOrderPage?.('/wallet-topup')}
-        >
-          <Plus className="w-4 h-4" />
-          افزایش موجودی
-        </Button>
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              بازگشت
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => navigateToServiceOrderPage?.('/wallet-topup')}
+          >
+            <Plus className="w-4 h-4" />
+            افزایش موجودی
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

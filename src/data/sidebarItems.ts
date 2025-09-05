@@ -29,13 +29,5 @@ export const sidebarItems: SidebarItem[] = [
   { id: 'downloads', label: 'دانلودها', icon: 'download' },
   { id: 'notifications', label: 'اعلان‌ها', icon: 'bell' },
   { id: 'important-announcements', label: 'اطلاعیه‌های مهم', icon: 'megaphone' },
-  { 
-    id: 'settings', 
-    label: 'تنظیمات حساب', 
-    icon: 'settings',
-    submenu: [
-      { id: 'profile', label: 'پروفایل', icon: 'user' },
-      { id: 'security', label: 'امنیت حساب', icon: 'shield' }
-    ]
-  },
+  { id: 'profile', label: 'تنظیمات حساب کاربری', icon: 'settings' },
 ];

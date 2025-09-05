@@ -183,9 +183,8 @@ const Header: React.FC<HeaderProps> = ({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => handleSidebarItemClick('profile')}>
               <User className="ml-2 h-4 w-4" />
-              <span>پروفایل</span>
+              <span>پروفایل کاربری</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSidebarItemClick('settings')}>تنظیمات</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSidebarItemClick('tickets')}>پشتیبانی</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600">خروج از حساب</DropdownMenuItem>

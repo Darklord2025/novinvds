@@ -1,6 +1,5 @@
 import React from 'react';
 import Dashboard from './Dashboard';
-import ProfilePage from './ProfilePage';
 import WHMCSServicesPage from './WHMCSServicesPage';
 import WHMCSInvoicesPage from './WHMCSInvoicesPage';
 import TicketsPage from './TicketsPage';
@@ -8,7 +7,7 @@ import WalletPage from './WalletPage';
 import NotificationsPage from './NotificationsPage';
 import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
 import DownloadsPage from './DownloadsPage';
-import SettingsPage from './SettingsPage';
+import ProfileSettingsPage from './ProfileSettingsPage';
 import NotificationDetails from './NotificationDetails';
 import TicketDetail from './TicketDetail';
 import DomainManagement from './DomainManagement';
@@ -142,7 +141,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'recommendations':
       return <RecommendationSection />;
     case 'profile':
-      return <ProfilePage />;
+      return <ProfileSettingsPage />;
     case 'servers':
     case 'dedicated':
     case 'cloud':
@@ -219,11 +218,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onNavigateToInvoices={() => navigateToServiceOrderPage('/invoices')}
       />;
     case 'transactions':
-      return <TransactionsPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
+      return <TransactionsPage onBack={() => navigationHandlers.navigateToServiceOrderPage('/financial-overview')} />;
     case 'invoices':
-      return <InvoicesPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
+      return <InvoicesPage onBack={() => navigationHandlers.navigateToServiceOrderPage('/financial-overview')} />;
     case 'wallet-topup':
-      return <WalletTopUpPage onBack={() => navigationHandlers.navigateToServiceOrderPage('financial-overview')} />;
+      return <WalletTopUpPage onBack={() => navigationHandlers.navigateToServiceOrderPage('/financial-overview')} />;
     case 'server-management':
       return <ServerManagementPage />;
     case 'service-calculator':
@@ -240,8 +239,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'announcement-details':
       return selectedAnnouncement ? 
         <NotificationDetails notification={selectedAnnouncement} onBack={() => navigationHandlers.handleViewImportantAnnouncements()} /> : null;
-    case 'settings':
-      return <SettingsPage />;
     default:
       return <Dashboard 
         navigateToServiceOrderPage={navigateToServiceOrderPage}
