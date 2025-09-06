@@ -16,9 +16,7 @@ const KnowledgeBase: React.FC = () => {
     { id: 'hosting', name: 'هاستینگ', count: 15 },
     { id: 'vps', name: 'سرور مجازی', count: 23 },
     { id: 'domain', name: 'دامنه', count: 12 },
-    { id: 'email', name: 'ایمیل', count: 8 },
-    { id: 'security', name: 'امنیت', count: 10 },
-    { id: 'billing', name: 'صورتحساب', count: 6 }
+    { id: 'email', name: 'ایمیل', count: 8 }
   ]);
 
   const [articles] = useState([

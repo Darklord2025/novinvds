@@ -19,13 +19,13 @@ export const sidebarItems: SidebarItem[] = [
       { id: 'financial-overview', label: 'نمای کلی', icon: 'layout-dashboard' },
       { id: 'transactions', label: 'تراکنش‌ها', icon: 'repeat' },
       { id: 'invoices', label: 'فاکتورها', icon: 'file-text' },
-      { id: 'wallet-topup', label: 'افزایش موجودی', icon: 'plus-circle' }
+      { id: 'wallet-topup', label: 'افزایش موجودی', icon: 'plus-circle' },
+      { id: 'service-calculator', label: 'ماشین‌حساب سرویس', icon: 'calculator' }
     ]
   },
   { id: 'tickets', label: 'پشتیبانی', icon: 'message-square' },
   { id: 'affiliate', label: 'همکاری در فروش', icon: 'users' },
   { id: 'knowledge-base', label: 'مرکز دانش', icon: 'book-open' },
-  { id: 'service-calculator', label: 'ماشین‌حساب سرویس', icon: 'calculator' },
   { id: 'downloads', label: 'دانلودها', icon: 'download' },
   { id: 'notifications', label: 'اعلان‌ها', icon: 'bell' },
   { id: 'important-announcements', label: 'اطلاعیه‌های مهم', icon: 'megaphone' },

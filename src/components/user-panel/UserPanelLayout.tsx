@@ -40,14 +40,15 @@ const UserPanelLayout: React.FC = () => {
   
   return (
     <TooltipProvider>
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100 w-full">
         <Sidebar 
           items={sidebarItems} 
           activeTab={activeTab}
           onItemClick={handleSidebarItemClick}
+          className="hidden md:flex"
         />
         
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-col flex-1 overflow-hidden min-w-0">
           <Header 
             activeTab={activeTab}
             sidebarItems={sidebarItems}
@@ -59,8 +60,8 @@ const UserPanelLayout: React.FC = () => {
             onViewImportantAnnouncements={navigationHandlers.handleViewImportantAnnouncements}
           />
           
-          <main className="flex-1 overflow-auto bg-gray-100 p-4 md:p-6">
-            <div className="container mx-auto">
+          <main className="flex-1 overflow-auto bg-gray-100 p-2 md:p-4 lg:p-6">
+            <div className="container mx-auto max-w-full">
               <PanelContent
                 activeTab={activeTab}
                 selectedService={selectedService}

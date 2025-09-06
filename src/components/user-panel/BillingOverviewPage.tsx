@@ -8,7 +8,8 @@ import {
   TrendingUp, 
   FileText, 
   Plus,
-  ArrowLeft
+  ArrowLeft,
+  Calculator
 } from 'lucide-react';
 
 interface BillingOverviewPageProps {
@@ -94,6 +95,13 @@ const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToSer
           <p className="text-gray-600">وضعیت مالی و تراکنش‌های اخیر</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+          >
+            <Calculator className="w-4 h-4" />
+            ماشین‌حساب سرویس
+          </Button>
           {onBack && (
             <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />

@@ -17,6 +17,15 @@ import AffiliateCenter from './AffiliateCenter';
 import KnowledgeBase from './KnowledgeBase';
 import NetworkStoreSection from './NetworkStoreSection';
 import RecommendationSection from './RecommendationSection';
+import ServerManagementDetail from './ServerManagementDetail';
+import HostingManagementDetail from './HostingManagementDetail';
+import BillingOverviewPage from './BillingOverviewPage';
+import TransactionsPage from './TransactionsPage';
+import InvoicesPage from './InvoicesPage';
+import WalletTopUpPage from './WalletTopUpPage';
+import ServerManagementPage from './ServerManagementPage';
+import ServiceCalculatorPage from './ServiceCalculatorPage';
+import SecurityCenterPage from './SecurityCenterPage';
 // Components will be imported when available
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
@@ -25,14 +34,6 @@ import { toast } from '@/components/ui/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
 import DevelopmentMessage from './DevelopmentMessage';
-import ServerManagementPage from './ServerManagementPage';
-import BillingOverviewPage from './BillingOverviewPage';
-import TransactionsPage from './TransactionsPage';
-import InvoicesPage from './InvoicesPage';
-import WalletTopUpPage from './WalletTopUpPage';
-import SecurityCenterPage from './SecurityCenterPage';
-import ServiceCalculatorPage from './ServiceCalculatorPage';
-import ServerManagementDetail from './ServerManagementDetail';
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,

@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp } from "lucide-react";
+import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp, MessageSquare, Shield, ShieldCheck, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -198,7 +198,7 @@ const ProfileSettingsPage = () => {
       </Alert>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="personal" className="flex items-center gap-2">
             <User className="h-4 w-4 text-blue-500" />
             <span>اطلاعات شخصی</span>
@@ -214,10 +214,6 @@ const ProfileSettingsPage = () => {
           <TabsTrigger value="notification" className="flex items-center gap-2">
             <Bell className="h-4 w-4 text-yellow-500" />
             <span>اعلان‌ها</span>
-          </TabsTrigger>
-          <TabsTrigger value="api" className="flex items-center gap-2">
-            <Key className="h-4 w-4 text-purple-500" />
-            <span>کلیدهای API</span>
           </TabsTrigger>
         </TabsList>
         
@@ -645,7 +641,7 @@ const ProfileSettingsPage = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Bell className="h-5 w-5 text-blue-500" />
+                    <Mail className="h-5 w-5 text-blue-500" />
                     <div>
                       <h4 className="font-medium">اعلان‌های ایمیل</h4>
                       <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق ایمیل</p>
@@ -654,6 +650,20 @@ const ProfileSettingsPage = () => {
                   <Switch
                     checked={securityForm.emailNotifications}
                     onCheckedChange={(checked) => handleToggleChange('emailNotifications', checked)}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <MessageSquare className="h-5 w-5 text-green-500" />
+                    <div>
+                      <h4 className="font-medium">اعلان‌های SMS</h4>
+                      <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق پیامک</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={false}
+                    onCheckedChange={(checked) => {/* Handle SMS toggle */}}
                   />
                 </div>
                 
