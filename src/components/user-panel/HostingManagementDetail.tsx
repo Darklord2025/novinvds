@@ -187,13 +187,13 @@ const HostingManagementDetail: React.FC<HostingManagementDetailProps> = ({ servi
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">نمای کلی</TabsTrigger>
-          <TabsTrigger value="files">مدیریت فایل</TabsTrigger>
-          <TabsTrigger value="database">پایگاه داده</TabsTrigger>
-          <TabsTrigger value="email">ایمیل</TabsTrigger>
-          <TabsTrigger value="security">امنیت</TabsTrigger>
-          <TabsTrigger value="backup">پشتیبان</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+          <TabsTrigger value="overview" className="text-xs md:text-sm">نمای کلی</TabsTrigger>
+          <TabsTrigger value="files" className="text-xs md:text-sm">مدیریت فایل</TabsTrigger>
+          <TabsTrigger value="database" className="text-xs md:text-sm">پایگاه داده</TabsTrigger>
+          <TabsTrigger value="email" className="text-xs md:text-sm">ایمیل</TabsTrigger>
+          <TabsTrigger value="security" className="text-xs md:text-sm hidden md:block">امنیت</TabsTrigger>
+          <TabsTrigger value="backup" className="text-xs md:text-sm hidden md:block">پشتیبان</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">

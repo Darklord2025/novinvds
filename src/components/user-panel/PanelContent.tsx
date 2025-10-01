@@ -186,9 +186,9 @@ const PanelContent: React.FC<PanelContentProps> = ({
         /> : null;
     case 'hosting-management':
       return selectedService ? 
-        <ServerManagementDetail 
-          serverId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/servers')} 
+        <HostingManagementDetail 
+          serviceId={selectedService} 
+          onBack={() => navigateToServiceOrderPage('/hosting')} 
         /> : null;
     case 'tickets':
       return isNewTicket ? 

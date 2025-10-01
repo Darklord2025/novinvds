@@ -60,8 +60,8 @@ const UserPanelLayout: React.FC = () => {
             onViewImportantAnnouncements={navigationHandlers.handleViewImportantAnnouncements}
           />
           
-          <main className="flex-1 overflow-auto bg-gray-100 p-2 md:p-4 lg:p-6">
-            <div className="container mx-auto max-w-full">
+          <main className="flex-1 overflow-auto bg-gray-100 p-3 md:p-4 lg:p-6">
+            <div className="container mx-auto max-w-full px-2 md:px-0">
               <PanelContent
                 activeTab={activeTab}
                 selectedService={selectedService}

@@ -48,6 +48,23 @@ const SSL = () => {
       popular: true,
     },
     {
+      title: "Wildcard SSL",
+      price: "3,990,000",
+      period: "سالانه",
+      description: "حفاظت از دامنه اصلی و تمام زیردامنه‌ها",
+      features: [
+        { text: "تأیید مالکیت دامنه", available: true },
+        { text: "رمزنگاری 256 بیتی", available: true },
+        { text: "نماد قفل سبز در مرورگر", available: true },
+        { text: "صدور در 5 دقیقه", available: true },
+        { text: "پشتیبانی از تمام زیردامنه‌ها", available: true },
+        { text: "بیمه مسئولیت تا 2 میلیارد تومان", available: true },
+        { text: "مناسب برای چند سایت", available: true },
+        { text: "نصب نامحدود", available: true },
+      ],
+      popular: false,
+    },
+    {
       title: "EV پیشرفته",
       price: "5,990,000",
       period: "سالانه",
@@ -121,7 +138,7 @@ const SSL = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {sslPlans.map((plan, index) => (
               <PricingCard 
                 key={index}

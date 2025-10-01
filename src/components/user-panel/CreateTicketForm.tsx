@@ -99,27 +99,30 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel 
   
   return (
     <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 p-4 md:p-0" dir="rtl">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">ارسال تیکت جدید</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Ticket className="w-6 h-6 text-primary" />
+              ارسال تیکت جدید
+            </h1>
             <p className="text-gray-500 mt-1">از طریق فرم زیر می‌توانید درخواست پشتیبانی جدید ارسال کنید</p>
           </div>
           
           <Button 
-            variant="ghost" 
+            variant="outline" 
             onClick={onCancel}
-            className="flex items-center"
+            className="flex items-center w-full md:w-auto"
           >
             <ArrowLeft className="ml-2 h-4 w-4" />
             بازگشت
           </Button>
         </div>
         
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            پیش از ارسال تیکت، لطفاً بخش پرسش‌های متداول را بررسی کنید. ممکن است پاسخ سؤال شما در آنجا موجود باشد.
+        <Alert className="bg-blue-50 border-blue-200">
+          <AlertCircle className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            💡 نکته: پیش از ارسال تیکت، لطفاً بخش پرسش‌های متداول و مرکز دانش را بررسی کنید. ممکن است پاسخ سؤال شما در آنجا موجود باشد.
           </AlertDescription>
         </Alert>
         
@@ -132,7 +135,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel 
           </CardHeader>
           <CardContent>
             <form id="ticketForm" onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="subject">موضوع <span className="text-red-500">*</span></Label>
                   <Input
@@ -251,10 +254,11 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel 
               </div>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-between">
+          <CardFooter className="flex flex-col md:flex-row justify-between gap-3">
             <Button
               variant="outline"
               onClick={onCancel}
+              className="w-full md:w-auto"
             >
               انصراف
             </Button>
@@ -263,6 +267,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel 
               type="submit"
               form="ticketForm"
               disabled={submitting}
+              className="w-full md:w-auto"
             >
               {submitting ? (
                 <>

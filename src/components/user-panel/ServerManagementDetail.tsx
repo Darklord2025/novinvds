@@ -6,6 +6,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
   Server, 
   Power, 
   RotateCcw, 
@@ -34,7 +44,8 @@ import {
   Zap,
   RefreshCw,
   BarChart3,
-  Calendar
+  Calendar,
+  HardDriveDownload
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -47,6 +58,41 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'restarting'>('online');
+  const [rebuildDialogOpen, setRebuildDialogOpen] = useState(false);
+  const [selectedOS, setSelectedOS] = useState('');
+  const [selectedVersion, setSelectedVersion] = useState('');
+
+  // Operating Systems and their versions
+  const operatingSystems = [
+    {
+      name: 'Ubuntu',
+      versions: ['22.04 LTS', '20.04 LTS', '18.04 LTS']
+    },
+    {
+      name: 'CentOS',
+      versions: ['Stream 9', 'Stream 8', '7']
+    },
+    {
+      name: 'Debian',
+      versions: ['12 (Bookworm)', '11 (Bullseye)', '10 (Buster)']
+    },
+    {
+      name: 'Windows Server',
+      versions: ['2022', '2019', '2016']
+    },
+    {
+      name: 'AlmaLinux',
+      versions: ['9', '8']
+    },
+    {
+      name: 'Rocky Linux',
+      versions: ['9', '8']
+    }
+  ];
+
+  const getVersionsForOS = (osName: string) => {
+    return operatingSystems.find(os => os.name === osName)?.versions || [];
+  };
 
   // Mock server data - در پروژه واقعی از API دریافت می‌شود
   const serverData = {
@@ -94,10 +140,50 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
       } else {
         setServerStatus('online');
         toast({
-          title: action === 'restart' ? "سرور ریست شد" : "سرور روشن شد",
-          description: `سرور ${serverData.name} با موفقیت ${action === 'restart' ? 'ریست' : 'روشن'} شد.`,
+          title: action === 'restart' ? "سرور راه‌اندازی مجدد شد" : "سرور روشن شد",
+          description: `سرور ${serverData.name} با موفقیت ${action === 'restart' ? 'راه‌اندازی مجدد' : 'روشن'} شد.`,
         });
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRebuildServer = async () => {
+    if (!selectedOS || !selectedVersion) {
+      toast({
+        title: "خطا",
+        description: "لطفاً سیستم عامل و نسخه را انتخاب کنید.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setRebuildDialogOpen(false);
+    setIsLoading(true);
+    setServerStatus('restarting');
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      toast({
+        title: "Rebuild سرور آغاز شد",
+        description: `نصب مجدد ${selectedOS} ${selectedVersion} شروع شد. این فرآیند ممکن است چند دقیقه طول بکشد.`,
+      });
+      
+      // Simulate completion
+      setTimeout(() => {
+        setServerStatus('online');
+        toast({
+          title: "Rebuild کامل شد",
+          description: `سرور با ${selectedOS} ${selectedVersion} با موفقیت نصب شد.`,
+        });
+      }, 5000);
+    } catch (error) {
+      toast({
+        title: "خطا در Rebuild",
+        description: "مشکلی در نصب مجدد سیستم عامل رخ داد.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +216,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
   };
 
   return (
-    <div className="p-6" dir="rtl">
+    <div className="space-y-6 p-4 md:p-6" dir="rtl">
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
           {onBack && (
@@ -140,13 +226,13 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
             </Button>
           )}
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold">مدیریت {serverData.name}</h1>
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
+              <h1 className="text-xl md:text-2xl font-bold">مدیریت {serverData.name}</h1>
               <Badge variant={serverStatus === 'online' ? 'default' : 'destructive'}>
                 {getStatusText(serverStatus)}
               </Badge>
             </div>
-            <p className="text-muted-foreground">پنل مدیریت کامل سرور شما</p>
+            <p className="text-muted-foreground text-sm md:text-base">پنل مدیریت کامل سرور شما</p>
           </div>
         </div>
       </div>
@@ -170,7 +256,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <Button
               variant={serverStatus === 'online' ? 'destructive' : 'default'}
               onClick={() => handlePowerAction(serverStatus === 'online' ? 'stop' : 'start')}
@@ -194,7 +280,17 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
               ) : (
                 <RotateCcw className="w-6 h-6" />
               )}
-              <span className="text-sm">ریست</span>
+              <span className="text-sm">راه‌اندازی مجدد</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setRebuildDialogOpen(true)}
+              disabled={isLoading}
+              className="h-20 flex-col gap-2"
+            >
+              <HardDriveDownload className="w-6 h-6" />
+              <span className="text-sm">Rebuild سرور</span>
             </Button>
             
             <Button
@@ -217,17 +313,94 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
         </CardContent>
       </Card>
 
+      {/* Rebuild Dialog */}
+      <Dialog open={rebuildDialogOpen} onOpenChange={setRebuildDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <HardDriveDownload className="w-5 h-5" />
+              Rebuild سرور - نصب مجدد سیستم عامل
+            </DialogTitle>
+            <DialogDescription>
+              توجه: این عملیات تمام داده‌های سرور را پاک کرده و سیستم عامل جدید را نصب می‌کند.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <Alert className="bg-red-50 border-red-200">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                هشدار: این عملیات غیرقابل بازگشت است و تمام اطلاعات سرور حذف خواهد شد.
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-2">
+              <Label htmlFor="os-select">سیستم عامل</Label>
+              <Select value={selectedOS} onValueChange={(value) => {
+                setSelectedOS(value);
+                setSelectedVersion('');
+              }}>
+                <SelectTrigger id="os-select">
+                  <SelectValue placeholder="انتخاب سیستم عامل" />
+                </SelectTrigger>
+                <SelectContent>
+                  {operatingSystems.map((os) => (
+                    <SelectItem key={os.name} value={os.name}>
+                      {os.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedOS && (
+              <div className="space-y-2">
+                <Label htmlFor="version-select">نسخه</Label>
+                <Select value={selectedVersion} onValueChange={setSelectedVersion}>
+                  <SelectTrigger id="version-select">
+                    <SelectValue placeholder="انتخاب نسخه" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getVersionsForOS(selectedOS).map((version) => (
+                      <SelectItem key={version} value={version}>
+                        {version}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setRebuildDialogOpen(false)}
+            >
+              انصراف
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={handleRebuildServer}
+              disabled={!selectedOS || !selectedVersion}
+            >
+              تأیید و شروع Rebuild
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Main Content Tabs */}
       <Card>
         <CardContent className="p-0">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid grid-cols-6 w-full">
-              <TabsTrigger value="overview">اطلاعات کلی</TabsTrigger>
-              <TabsTrigger value="monitoring">مانیتورینگ</TabsTrigger>
-              <TabsTrigger value="network">شبکه</TabsTrigger>
-              <TabsTrigger value="security">امنیت</TabsTrigger>
-              <TabsTrigger value="backup">پشتیبان</TabsTrigger>
-              <TabsTrigger value="logs">لاگ‌ها</TabsTrigger>
+            <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full gap-1">
+              <TabsTrigger value="overview" className="text-xs md:text-sm">اطلاعات کلی</TabsTrigger>
+              <TabsTrigger value="monitoring" className="text-xs md:text-sm">مانیتورینگ</TabsTrigger>
+              <TabsTrigger value="network" className="text-xs md:text-sm">شبکه</TabsTrigger>
+              <TabsTrigger value="security" className="text-xs md:text-sm">امنیت</TabsTrigger>
+              <TabsTrigger value="backup" className="text-xs md:text-sm">پشتیبان</TabsTrigger>
+              <TabsTrigger value="logs" className="text-xs md:text-sm">لاگ‌ها</TabsTrigger>
             </TabsList>
             
             {/* Overview Tab */}
