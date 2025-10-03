@@ -12,7 +12,7 @@ export interface NavigationHandlers {
   handleCreateNewTicket: () => void;
   handleResetServer: (serviceType: string, serviceId: string) => void;
   handleRenewService: (serviceType: string, serviceId: string) => void;
-  handleManageService: (serviceId: string) => void;
+  handleManageService: (serviceId: string, serviceType?: string) => void;
   handleViewInvoice: (invoiceId: string, isPaid?: boolean) => void;
   handleDownloadInvoice: (invoiceId: string) => void;
   handlePayInvoice: (invoiceId: string) => void;
@@ -295,7 +295,7 @@ export const createNavigationHandlers = (
     });
   };
   
-  const handleManageService = (serviceId: string) => {
+  const handleManageService = (serviceId: string, serviceType?: string) => {
     if (!serviceId) return;
     
     toast({
@@ -303,9 +303,37 @@ export const createNavigationHandlers = (
       description: `در حال بارگیری پنل مدیریت سرویس ${serviceId}...`,
     });
     
-    // Navigate to VPS management by default (most common case)
+    // Determine management page based on service type
     setSelectedService(serviceId);
-    setActiveTab('vps-management');
+    
+    // Default to VPS management if type not specified
+    if (!serviceType) {
+      setActiveTab('vps-management');
+      return;
+    }
+    
+    // Route to appropriate management page
+    switch (serviceType.toLowerCase()) {
+      case 'domain':
+        setActiveTab('domain-management');
+        break;
+      case 'hosting':
+      case 'host':
+        setActiveTab('hosting-management');
+        break;
+      case 'vps':
+      case 'server':
+        setActiveTab('vps-management');
+        break;
+      case 'dedicated':
+        setActiveTab('dedicated-management');
+        break;
+      case 'cloud':
+        setActiveTab('cloud-management');
+        break;
+      default:
+        setActiveTab('vps-management');
+    }
   };
   
   const handleResetServer = (serviceType: string, serviceId: string) => {

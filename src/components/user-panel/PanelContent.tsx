@@ -164,31 +164,31 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedService ? 
         <DomainManagement 
           domainId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/domains')} 
+          onBack={() => navigationHandlers.navigateToServiceOrderPage('/domains')} 
         /> : null;
     case 'vps-management':
       return selectedService ? 
         <ServerManagementDetail 
           serverId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/servers')} 
+          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'dedicated-management':
       return selectedService ? 
         <ServerManagementDetail 
           serverId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/servers')} 
+          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'cloud-management':
       return selectedService ? 
         <ServerManagementDetail 
           serverId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/servers')} 
+          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
         /> : null;
     case 'hosting-management':
       return selectedService ? 
         <HostingManagementDetail 
           serviceId={selectedService} 
-          onBack={() => navigateToServiceOrderPage('/hosting')} 
+          onBack={() => navigationHandlers.navigateToServiceOrderPage('/hosting')} 
         /> : null;
     case 'tickets':
       return isNewTicket ? 

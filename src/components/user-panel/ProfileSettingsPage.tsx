@@ -53,6 +53,27 @@ const ProfileSettingsPage = () => {
     { id: '2', name: 'کلید مربوط به وب سرویس', key: 'api_key_0987654321', created: '1402/05/10', lastUsed: '1402/06/18' },
   ]);
   
+  const [bankCards, setBankCards] = useState([
+    { 
+      id: '1', 
+      cardNumber: '6037-9974-1234-5678', 
+      bankName: 'بانک ملی', 
+      ownerName: 'محمد رضایی',
+      isDefault: true 
+    },
+  ]);
+  
+  const [bankAccounts, setBankAccounts] = useState([
+    { 
+      id: '1', 
+      accountNumber: '1234567890', 
+      iban: 'IR123456789012345678901234',
+      bankName: 'بانک ملی', 
+      ownerName: 'محمد رضایی',
+      isDefault: true 
+    },
+  ]);
+  
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfileForm((prev) => ({ ...prev, [name]: value }));
