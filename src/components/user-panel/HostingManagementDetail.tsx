@@ -37,9 +37,7 @@ import {
   Lock,
   Key,
   Archive,
-  Activity,
-  RefreshCw,
-  ArrowRight
+  Activity
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -128,27 +126,24 @@ const HostingManagementDetail: React.FC<HostingManagementDetailProps> = ({ servi
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6" dir="rtl">
+    <div className="space-y-6" dir="rtl">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4 rtl:space-x-reverse">
           {onBack && (
-            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
-              <ArrowRight className="w-4 h-4" />
-              بازگشت
+            <Button variant="outline" size="icon" onClick={onBack}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           )}
-          <div className="flex-1">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
-              <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-                <Globe className="w-6 h-6 text-blue-500" />
-                {hostingData.name}
-              </h1>
-              {getStatusBadge()}
-            </div>
-            <p className="text-muted-foreground text-sm md:text-base">{hostingData.domain}</p>
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Globe className="w-6 h-6 text-blue-500" />
+              {hostingData.name}
+            </h1>
+            <p className="text-gray-600">{hostingData.domain}</p>
           </div>
         </div>
+        {getStatusBadge()}
       </div>
 
       {/* Status Alert */}
@@ -162,62 +157,34 @@ const HostingManagementDetail: React.FC<HostingManagementDetailProps> = ({ servi
       )}
 
       {/* Quick Actions */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>عملیات سریع</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => window.open(hostingData.cpanelUrl, '_blank')}
-              className="h-20 flex-col gap-2"
-            >
-              <Monitor className="w-6 h-6" />
-              <span className="text-sm">cPanel</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                if (window.confirm('آیا از پشتیبان‌گیری اطمینان دارید؟')) {
-                  handlePowerAction('backup');
-                }
-              }}
-              disabled={isLoading}
-              className="h-20 flex-col gap-2"
-            >
-              <Archive className="w-6 h-6" />
-              <span className="text-sm">پشتیبان‌گیری</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                if (window.confirm('آیا از تمدید SSL اطمینان دارید؟')) {
-                  handlePowerAction('ssl-renew');
-                }
-              }}
-              disabled={isLoading}
-              className="h-20 flex-col gap-2"
-            >
-              <Shield className="w-6 h-6" />
-              <span className="text-sm">تمدید SSL</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                if (window.confirm('آیا از راه‌اندازی مجدد هاستینگ اطمینان دارید؟')) {
-                  handlePowerAction('restart');
-                }
-              }}
-              disabled={isLoading}
-              className="h-20 flex-col gap-2"
-            >
-              <RefreshCw className="w-6 h-6" />
-              <span className="text-sm">ریستارت</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-wrap gap-2">
+        <Button 
+          variant="outline" 
+          onClick={() => window.open(hostingData.cpanelUrl, '_blank')}
+          className="flex items-center gap-2"
+        >
+          <Monitor className="w-4 h-4" />
+          cPanel
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => handlePowerAction('backup')}
+          disabled={isLoading}
+          className="flex items-center gap-2"
+        >
+          <Archive className="w-4 h-4" />
+          پشتیبان‌گیری
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => handlePowerAction('ssl-renew')}
+          disabled={isLoading}
+          className="flex items-center gap-2"
+        >
+          <Shield className="w-4 h-4" />
+          تمدید SSL
+        </Button>
+      </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">

@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Phone, ShoppingCart, Globe } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { Menu, X, Phone, ShoppingCart } from 'lucide-react';
 
 const serviceLinks = [
   { to: "/vps", label: "سرور مجازی" },
@@ -15,7 +14,6 @@ const serviceLinks = [
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,14 +91,6 @@ const Navbar = () => {
           </Link>
           
           <div className="flex items-center gap-4 mr-4">
-            <button
-              onClick={() => setLanguage(language === 'fa' ? 'en' : 'fa')}
-              className="p-2 text-foreground hover:text-primary transition-colors"
-              title={language === 'fa' ? 'Switch to English' : 'تغییر به فارسی'}
-            >
-              <Globe size={20} />
-            </button>
-            
             <a href="tel:02112345678" className="flex items-center text-primary hover:text-primary/80 transition-colors">
               <Phone size={18} className="ml-2" />
               <span className="font-medium">021-12345678</span>
