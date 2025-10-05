@@ -166,7 +166,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
       toast({
-        title: "Rebuild سرور آغاز شد",
+        title: "نصب مجدد سرور آغاز شد",
         description: `نصب مجدد ${selectedOS} ${selectedVersion} شروع شد. این فرآیند ممکن است چند دقیقه طول بکشد.`,
       });
       
@@ -174,13 +174,13 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
       setTimeout(() => {
         setServerStatus('online');
         toast({
-          title: "Rebuild کامل شد",
+          title: "نصب مجدد کامل شد",
           description: `سرور با ${selectedOS} ${selectedVersion} با موفقیت نصب شد.`,
         });
       }, 5000);
     } catch (error) {
       toast({
-        title: "خطا در Rebuild",
+        title: "خطا در نصب مجدد",
         description: "مشکلی در نصب مجدد سیستم عامل رخ داد.",
         variant: "destructive"
       });
@@ -271,7 +271,11 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
             
             <Button
               variant="outline"
-              onClick={() => handlePowerAction('restart')}
+              onClick={() => {
+                if (window.confirm('آیا از راه‌اندازی مجدد سرور اطمینان دارید؟')) {
+                  handlePowerAction('restart');
+                }
+              }}
               disabled={isLoading || serverStatus !== 'online'}
               className="h-20 flex-col gap-2"
             >
@@ -280,7 +284,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
               ) : (
                 <RotateCcw className="w-6 h-6" />
               )}
-              <span className="text-sm">راه‌اندازی مجدد</span>
+              <span className="text-sm">ریستارت</span>
             </Button>
 
             <Button
@@ -290,7 +294,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
               className="h-20 flex-col gap-2"
             >
               <HardDriveDownload className="w-6 h-6" />
-              <span className="text-sm">Rebuild سرور</span>
+              <span className="text-sm">نصب مجدد</span>
             </Button>
             
             <Button
@@ -319,7 +323,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <HardDriveDownload className="w-5 h-5" />
-              Rebuild سرور - نصب مجدد سیستم عامل
+              نصب مجدد سیستم عامل
             </DialogTitle>
             <DialogDescription>
               توجه: این عملیات تمام داده‌های سرور را پاک کرده و سیستم عامل جدید را نصب می‌کند.
@@ -384,7 +388,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
               onClick={handleRebuildServer}
               disabled={!selectedOS || !selectedVersion}
             >
-              تأیید و شروع Rebuild
+              تأیید و شروع نصب مجدد
             </Button>
           </DialogFooter>
         </DialogContent>

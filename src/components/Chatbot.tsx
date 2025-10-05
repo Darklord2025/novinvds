@@ -302,20 +302,20 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50">
       {/* Chat button */}
       <button
         onClick={toggleChat}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+        className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
           isOpen ? 'bg-red-500 rotate-90' : 'bg-blue-600 hover:bg-blue-700'
         }`}
       >
-        {isOpen ? <X size={24} color="white" /> : <MessageCircle size={24} color="white" />}
+        {isOpen ? <X size={20} className="md:w-6 md:h-6" color="white" /> : <MessageCircle size={20} className="md:w-6 md:h-6" color="white" />}
       </button>
       
       {/* Chat window */}
       {isOpen && (
-        <div className="absolute bottom-16 left-0 w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 animate-scale-up origin-bottom-left">
+        <div className="fixed md:absolute bottom-0 left-0 right-0 md:bottom-16 md:left-0 md:right-auto w-full md:w-96 bg-white md:rounded-lg shadow-xl border border-gray-200 animate-scale-up origin-bottom md:origin-bottom-left max-h-[90vh] md:max-h-none">
           {/* Chat header */}
           <div className="bg-blue-600 text-white py-3 px-4 rounded-t-lg">
             <div className="flex justify-between items-center mb-2">
