@@ -10,8 +10,8 @@ import { mockWHMCSDomains, WHMCSDomain } from '@/data/whmcsServices';
 import { Search, Globe, Settings, RefreshCw, Shield, Mail, Eye, Edit, Calendar, Server } from 'lucide-react';
 
 interface DomainServicesPageProps {
-  onManageDomain: (domainId: string, serviceType?: string) => void;
-  onRenewDomain: (domainId: string, serviceType?: string) => void;
+  onManageDomain: (domainId: string) => void;
+  onRenewDomain: (domainId: string) => void;
 }
 
 const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
@@ -201,7 +201,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                           <Button 
                             size="sm" 
                             variant="outline"
-                            onClick={() => onManageDomain(domain.id, 'domain')}
+                            onClick={() => onManageDomain(domain.id)}
                           >
                             <Settings className="h-4 w-4" />
                           </Button>
@@ -261,7 +261,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                           size="sm" 
                           variant="outline" 
                           className="flex-1"
-                          onClick={() => onManageDomain(domain.id, 'domain')}
+                          onClick={() => onManageDomain(domain.id)}
                         >
                           <Settings className="h-4 w-4 ml-1" />
                           مدیریت

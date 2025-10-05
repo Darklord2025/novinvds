@@ -171,11 +171,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                           <DropdownMenuItem onClick={() => {
-                              if (window.confirm('آیا از مدیریت این سرویس اطمینان دارید؟')) {
-                                onManageService(service.id);
-                              }
-                            }}>
+                           <DropdownMenuItem onClick={() => onManageService(service.id)}>
                               <Settings className="ml-2 h-4 w-4" />
                               مدیریت سرور
                             </DropdownMenuItem>
@@ -252,11 +248,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                   <div className="flex space-x-2 rtl:space-x-reverse">
                     <Button 
                       size="sm" 
-                      onClick={() => {
-                        if (window.confirm('آیا از مدیریت این سرویس اطمینان دارید؟')) {
-                          onManageService(service.id);
-                        }
-                      }}
+                      onClick={() => onManageService(service.id)}
                       className="flex-1"
                     >
                       مدیریت سرور
