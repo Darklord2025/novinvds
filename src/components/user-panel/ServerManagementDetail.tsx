@@ -271,7 +271,11 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
             
             <Button
               variant="outline"
-              onClick={() => handlePowerAction('restart')}
+              onClick={() => {
+                if (window.confirm('آیا از راه‌اندازی مجدد سرور اطمینان دارید؟')) {
+                  handlePowerAction('restart');
+                }
+              }}
               disabled={isLoading || serverStatus !== 'online'}
               className="h-20 flex-col gap-2"
             >
@@ -280,7 +284,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
               ) : (
                 <RotateCcw className="w-6 h-6" />
               )}
-              <span className="text-sm">راه‌اندازی مجدد</span>
+              <span className="text-sm">ریستارت</span>
             </Button>
 
             <Button
