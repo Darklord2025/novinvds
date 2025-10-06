@@ -56,6 +56,18 @@ const translations: Record<Language, Record<string, string>> = {
     dnsRecords: 'رکوردهای DNS',
     transfer: 'انتقال',
     renew: 'تمدید',
+    
+    // Financial
+    wallet: 'کیف پول',
+    transactions: 'تراکنش‌ها',
+    invoices: 'فاکتورها',
+    balance: 'موجودی',
+    
+    // Notifications
+    notifications: 'اعلانات',
+    announcements: 'اطلاعیه‌ها',
+    support: 'پشتیبانی',
+    knowledgeBase: 'مرکز دانش',
   },
   en: {
     // Navigation
@@ -102,6 +114,18 @@ const translations: Record<Language, Record<string, string>> = {
     dnsRecords: 'DNS Records',
     transfer: 'Transfer',
     renew: 'Renew',
+    
+    // Financial
+    wallet: 'Wallet',
+    transactions: 'Transactions',
+    invoices: 'Invoices',
+    balance: 'Balance',
+    
+    // Notifications
+    notifications: 'Notifications',
+    announcements: 'Announcements',
+    support: 'Support',
+    knowledgeBase: 'Knowledge Base',
   }
 };
 

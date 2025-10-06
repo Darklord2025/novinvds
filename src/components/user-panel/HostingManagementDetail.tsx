@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { 
-  ArrowLeft, 
+  ArrowRight, 
   Globe, 
   Database, 
   Mail, 
@@ -37,8 +37,20 @@ import {
   Lock,
   Key,
   Archive,
-  Activity
+  Activity,
+  RotateCcw
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
 
 interface HostingManagementDetailProps {
@@ -132,7 +144,7 @@ const HostingManagementDetail: React.FC<HostingManagementDetailProps> = ({ servi
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
           {onBack && (
             <Button variant="outline" size="icon" onClick={onBack}>
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
           )}
           <div>
@@ -166,24 +178,75 @@ const HostingManagementDetail: React.FC<HostingManagementDetailProps> = ({ servi
           <Monitor className="w-4 h-4" />
           cPanel
         </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => handlePowerAction('backup')}
-          disabled={isLoading}
-          className="flex items-center gap-2"
-        >
-          <Archive className="w-4 h-4" />
-          پشتیبان‌گیری
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => handlePowerAction('ssl-renew')}
-          disabled={isLoading}
-          className="flex items-center gap-2"
-        >
-          <Shield className="w-4 h-4" />
-          تمدید SSL
-        </Button>
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Archive className="w-4 h-4" />
+              پشتیبان‌گیری
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent dir="rtl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>تأیید پشتیبان‌گیری</AlertDialogTitle>
+              <AlertDialogDescription>
+                آیا از ایجاد نسخه پشتیبان از هاستینگ خود اطمینان دارید؟
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>انصراف</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handlePowerAction('backup')}>
+                پشتیبان‌گیری
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              تمدید SSL
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent dir="rtl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>تأیید تمدید SSL</AlertDialogTitle>
+              <AlertDialogDescription>
+                آیا از تمدید گواهی SSL اطمینان دارید؟
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>انصراف</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handlePowerAction('ssl-renew')}>
+                تمدید SSL
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <RotateCcw className="w-4 h-4" />
+              راه‌اندازی مجدد
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent dir="rtl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>تأیید راه‌اندازی مجدد</AlertDialogTitle>
+              <AlertDialogDescription>
+                آیا از راه‌اندازی مجدد سرویس هاستینگ اطمینان دارید؟
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>انصراف</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handlePowerAction('restart')}>
+                راه‌اندازی مجدد
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">

@@ -225,8 +225,8 @@ const RecommendationSection = () => {
             
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <div className="text-3xl mb-2">💎</div>
-              <h3 className="font-semibold mb-2">SSL رایگان مادام‌العمر</h3>
-              <p className="text-sm text-muted-foreground mb-4">با هر سرور اختصاصی</p>
+              <h3 className="font-semibold mb-2">دامنه رایگان یکساله</h3>
+              <p className="text-sm text-muted-foreground mb-4">با خرید هاستینگ سالانه</p>
               <Button size="sm">استفاده کن</Button>
             </div>
           </div>

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { 
-  ArrowLeft, 
+  ArrowRight, 
   Globe, 
   Server, 
   Mail, 
@@ -101,7 +101,7 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
         <div className="flex items-center gap-3">
           {onBack && (
             <Button variant="outline" size="icon" onClick={onBack}>
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
           )}
           <div>

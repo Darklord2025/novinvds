@@ -173,7 +173,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                           <DropdownMenuContent align="end">
                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
                               <Settings className="ml-2 h-4 w-4" />
-                              مدیریت سرور
+                              مدیریت
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -251,7 +251,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                       onClick={() => onManageService(service.id)}
                       className="flex-1"
                     >
-                      مدیریت سرور
+                      مدیریت
                     </Button>
                   </div>
                 </CardContent>
