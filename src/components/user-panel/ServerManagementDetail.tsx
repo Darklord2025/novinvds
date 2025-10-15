@@ -13,6 +13,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
@@ -59,6 +69,7 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
   const [showPassword, setShowPassword] = useState(false);
   const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'restarting'>('online');
   const [rebuildDialogOpen, setRebuildDialogOpen] = useState(false);
+  const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const [selectedOS, setSelectedOS] = useState('');
   const [selectedVersion, setSelectedVersion] = useState('');
 
@@ -271,15 +282,11 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
             
             <Button
               variant="outline"
-              onClick={() => {
-                if (window.confirm('آیا از راه‌اندازی مجدد سرور اطمینان دارید؟ این عملیات موجب قطع موقت سرویس می‌شود.')) {
-                  handlePowerAction('restart');
-                }
-              }}
+              onClick={() => setRestartDialogOpen(true)}
               disabled={isLoading || serverStatus !== 'online'}
               className="h-20 flex-col gap-2"
             >
-              {isLoading ? (
+              {isLoading && serverStatus === 'restarting' ? (
                 <RefreshCw className="w-6 h-6 animate-spin" />
               ) : (
                 <RotateCcw className="w-6 h-6" />
@@ -738,6 +745,27 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Restart Confirmation Dialog */}
+      <AlertDialog open={restartDialogOpen} onOpenChange={setRestartDialogOpen}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>راه‌اندازی مجدد سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا از راه‌اندازی مجدد سرور اطمینان دارید؟ این عملیات موجب قطع موقت سرویس می‌شود.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setRestartDialogOpen(false);
+              handlePowerAction('restart');
+            }}>
+              راه‌اندازی مجدد
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
