@@ -37,7 +37,8 @@ export const formatDate = (dateString: string, language: 'fa' | 'en' = 'fa'): st
 };
 
 export const formatBytes = (bytes: number, language: 'fa' | 'en' = 'fa'): string => {
-  const gb = (bytes / 1024).toFixed(1);
+  const mb = bytes;
+  const gb = (mb / 1024).toFixed(1);
   const formattedNumber = formatNumber(parseFloat(gb), language);
   
   return language === 'fa' ? `${formattedNumber} گیگابایت` : `${formattedNumber} GB`;

@@ -3,6 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from 'sonner';
 import { 
   Server, 
   Power, 
@@ -61,11 +72,22 @@ const ServerManagementPage = () => {
     }
   };
 
+  const [showRestartDialog, setShowRestartDialog] = useState(false);
+
+  const handleRestartServer = async () => {
+    setShowRestartDialog(false);
+    // Simulate restart process
+    toast.success('سرور در حال راه‌اندازی مجدد است...');
+    setTimeout(() => {
+      toast.success('سرور با موفقیت راه‌اندازی مجدد شد');
+    }, 3000);
+  };
+
   const serverActions = [
-    { icon: Power, label: 'روشن/خاموش', action: 'power', color: 'bg-blue-500' },
-    { icon: RotateCcw, label: 'ریست', action: 'restart', color: 'bg-orange-500' },
-    { icon: Monitor, label: 'کنسول', action: 'console', color: 'bg-purple-500' },
-    { icon: Settings, label: 'تنظیمات', action: 'settings', color: 'bg-gray-500' }
+    { icon: Power, label: 'روشن/خاموش', action: 'power', color: 'bg-blue-500', onClick: () => {} },
+    { icon: RotateCcw, label: 'راه‌اندازی مجدد', action: 'restart', color: 'bg-orange-500', onClick: () => setShowRestartDialog(true) },
+    { icon: Monitor, label: 'کنسول', action: 'console', color: 'bg-purple-500', onClick: () => {} },
+    { icon: Settings, label: 'تنظیمات', action: 'settings', color: 'bg-gray-500', onClick: () => {} }
   ];
 
   return (
@@ -170,6 +192,7 @@ const ServerManagementPage = () => {
                         key={action.action}
                         variant="outline"
                         className="h-20 flex-col gap-2"
+                        onClick={action.onClick}
                       >
                         <action.icon className="w-6 h-6" />
                         <span className="text-sm">{action.label}</span>
@@ -297,6 +320,24 @@ const ServerManagementPage = () => {
           )}
         </div>
       </div>
+
+      {/* Restart Confirmation Dialog */}
+      <AlertDialog open={showRestartDialog} onOpenChange={setShowRestartDialog}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>راه‌اندازی مجدد سرور</AlertDialogTitle>
+            <AlertDialogDescription>
+              آیا مطمئن هستید که می‌خواهید سرور را راه‌اندازی مجدد کنید؟ این عملیات ممکن است چند دقیقه طول بکشد.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRestartServer}>
+              راه‌اندازی مجدد
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
