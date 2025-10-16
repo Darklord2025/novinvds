@@ -13,11 +13,11 @@ const HostingServices = () => {
       <div className="container mx-auto px-4 py-8 mt-20">
         <Button 
           variant="outline" 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/user-panel')}
           className="mb-6 flex items-center gap-2"
         >
           <ArrowRight className="w-4 h-4" />
-          بازگشت
+          بازگشت به پنل کاربری
         </Button>
         
         <h1 className="text-3xl font-bold mb-6">سرویس‌های هاستینگ</h1>
