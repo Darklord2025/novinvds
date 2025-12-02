@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockWHMCSDomains, WHMCSDomain } from '@/data/whmcsServices';
 import { Search, Globe, Settings, RefreshCw, Shield, Mail, Eye, Edit, Calendar, Server } from 'lucide-react';
+import { toPersianDigits, formatDate } from '@/lib/numberUtils';
 
 interface DomainServicesPageProps {
   onManageDomain: (domainId: string, serviceType?: string) => void;
@@ -40,16 +41,12 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+  const formatDatePersian = (dateString: string) => {
+    return formatDate(dateString, 'fa');
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fa-IR', {
-      style: 'currency',
-      currency: 'IRR',
-      minimumFractionDigits: 0
-    }).format(amount);
+    return toPersianDigits(amount.toLocaleString('fa-IR')) + ' ریال';
   };
 
   const getStatusLabel = (status: string) => {
@@ -72,7 +69,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">مدیریت دامنه‌ها</h1>
-        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+        <div className="flex items-center gap-2">
           <div className="relative">
             <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
             <Input
@@ -105,7 +102,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
             <Globe className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalDomains}</div>
+            <div className="text-2xl font-bold">{toPersianDigits(totalDomains)}</div>
           </CardContent>
         </Card>
         
@@ -115,7 +112,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{activeDomains}</div>
+            <div className="text-2xl font-bold text-green-600">{toPersianDigits(activeDomains)}</div>
           </CardContent>
         </Card>
         
@@ -125,7 +122,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{expiredDomains}</div>
+            <div className="text-2xl font-bold text-red-600">{toPersianDigits(expiredDomains)}</div>
           </CardContent>
         </Card>
       </div>
@@ -134,7 +131,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>فهرست دامنه‌ها</span>
-            <Badge variant="outline">{filteredDomains.length} دامنه</Badge>
+            <Badge variant="outline">{toPersianDigits(filteredDomains.length)} دامنه</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -161,21 +158,21 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                   {filteredDomains.map((domain) => (
                     <TableRow key={domain.id}>
                       <TableCell className="font-medium">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex items-center gap-2">
                           <Globe className="h-4 w-4" />
                           <span>{domain.domain}</span>
                         </div>
                       </TableCell>
                       <TableCell>{domain.registrar}</TableCell>
-                      <TableCell>{formatDate(domain.registrationDate)}</TableCell>
-                      <TableCell>{formatDate(domain.expiryDate)}</TableCell>
+                      <TableCell>{formatDatePersian(domain.registrationDate)}</TableCell>
+                      <TableCell>{formatDatePersian(domain.expiryDate)}</TableCell>
                       <TableCell>
                         <Badge className={getStatusColor(domain.status)}>
                           {getStatusLabel(domain.status)}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-1 rtl:space-x-reverse">
+                        <div className="flex gap-1">
                           {domain.dnsManagement && (
                             <Badge variant="outline" className="text-xs">
                               <Server className="h-3 w-3 ml-1" />
@@ -197,7 +194,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex items-center gap-2">
                           <Button 
                             size="sm" 
                             variant="outline"
@@ -226,7 +223,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                   <Card key={domain.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex items-center gap-2">
                           <Globe className="h-5 w-5 text-primary" />
                           <CardTitle className="text-lg">{domain.domain}</CardTitle>
                         </div>
@@ -238,13 +235,13 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                     <CardContent className="space-y-3">
                       <div className="text-sm text-muted-foreground">
                         <div>ثبت‌کننده: {domain.registrar}</div>
-                        <div>انقضا: {formatDate(domain.expiryDate)}</div>
+                        <div>انقضا: {formatDatePersian(domain.expiryDate)}</div>
                         {domain.autoRenew && (
                           <div className="text-green-600">تمدید خودکار فعال</div>
                         )}
                       </div>
                       
-                      <div className="flex space-x-1 rtl:space-x-reverse">
+                      <div className="flex gap-1">
                         {domain.dnsManagement && (
                           <Badge variant="outline" className="text-xs">DNS</Badge>
                         )}
@@ -256,7 +253,7 @@ const DomainServicesPage: React.FC<DomainServicesPageProps> = ({
                         )}
                       </div>
                       
-                      <div className="flex space-x-2 rtl:space-x-reverse pt-2">
+                      <div className="flex gap-2 pt-2">
                         <Button 
                           size="sm" 
                           variant="outline" 

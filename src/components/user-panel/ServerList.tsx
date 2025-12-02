@@ -13,8 +13,8 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import { HostingCard, VpsCard, DedicatedCard, DomainCard, CloudCard } from "../services/ServiceCards";
+import { toPersianDigits } from '@/lib/numberUtils';
 
-// Update the interface to include all possible props
 interface ServerListProps {
   serviceType: string;
   onManage?: (id: string) => void;
@@ -68,7 +68,6 @@ const ServerList: React.FC<ServerListProps> = ({
     }
   };
 
-  // For now, we'll just render simple cards instead of using the imported components
   const renderServiceCard = (service: any) => {
     return (
       <div className="flex items-center">
@@ -164,24 +163,24 @@ const ServerList: React.FC<ServerListProps> = ({
                 {serviceType === 'vps' && (
                   <>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Gauge className="h-4 w-4 text-gray-500" />
-                        <span>CPU: {service.cpuUsage}%</span>
+                        <span>CPU: {toPersianDigits(service.cpuUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Award className="h-4 w-4 text-gray-500" />
-                        <span>RAM: {service.ramUsage}%</span>
+                        <span>RAM: {toPersianDigits(service.ramUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <FileEdit className="h-4 w-4 text-gray-500" />
-                        <span>Disk: {service.diskUsage}%</span>
+                        <span>دیسک: {toPersianDigits(service.diskUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <FastForward className="h-4 w-4 text-gray-500" />
-                        <span>Bandwidth: {service.bandwidthUsage}%</span>
+                        <span>پهنای باند: {toPersianDigits(service.bandwidthUsage)}%</span>
                       </div>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4">
+                    <div className="flex justify-end gap-2 mt-4">
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
@@ -221,16 +220,16 @@ const ServerList: React.FC<ServerListProps> = ({
                 {serviceType === 'dedicated' && (
                   <>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Gauge className="h-4 w-4 text-gray-500" />
-                        <span>CPU: {service.cpuUsage}%</span>
+                        <span>CPU: {toPersianDigits(service.cpuUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Award className="h-4 w-4 text-gray-500" />
-                        <span>RAM: {service.ramUsage}%</span>
+                        <span>RAM: {toPersianDigits(service.ramUsage)}%</span>
                       </div>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4">
+                    <div className="flex justify-end gap-2 mt-4">
                       <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
                         <MessageSquare className="h-4 w-4 ml-2" />
                         مدیریت
@@ -249,16 +248,16 @@ const ServerList: React.FC<ServerListProps> = ({
                 {serviceType === 'cloud' && (
                   <>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Gauge className="h-4 w-4 text-gray-500" />
-                        <span>CPU: {service.cpuUsage}%</span>
+                        <span>CPU: {toPersianDigits(service.cpuUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <Award className="h-4 w-4 text-gray-500" />
-                        <span>RAM: {service.ramUsage}%</span>
+                        <span>RAM: {toPersianDigits(service.ramUsage)}%</span>
                       </div>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4">
+                    <div className="flex justify-end gap-2 mt-4">
                       <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
                         <MessageSquare className="h-4 w-4 ml-2" />
                         مدیریت
@@ -275,7 +274,7 @@ const ServerList: React.FC<ServerListProps> = ({
                   </>
                 )}
                 {serviceType === 'domain' && (
-                  <div className="flex justify-end space-x-2 mt-4">
+                  <div className="flex justify-end gap-2 mt-4">
                     <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
                       <MessageSquare className="h-4 w-4 ml-2" />
                       مدیریت
@@ -289,16 +288,16 @@ const ServerList: React.FC<ServerListProps> = ({
                 {serviceType === 'hosting' && (
                   <>
                     <div className="grid grid-cols-2 gap-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <FileEdit className="h-4 w-4 text-gray-500" />
-                        <span>Disk: {service.diskUsage}%</span>
+                        <span>دیسک: {toPersianDigits(service.diskUsage)}%</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <FastForward className="h-4 w-4 text-gray-500" />
-                        <span>Bandwidth: {service.bandwidthUsage}%</span>
+                        <span>پهنای باند: {toPersianDigits(service.bandwidthUsage)}%</span>
                       </div>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4">
+                    <div className="flex justify-end gap-2 mt-4">
                       <Button variant="outline" size="sm" onClick={() => handleManage(service.id)}>
                         <MessageSquare className="h-4 w-4 ml-2" />
                         مدیریت

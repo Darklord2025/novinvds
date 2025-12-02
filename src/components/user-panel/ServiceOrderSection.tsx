@@ -42,7 +42,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  // Updated service categories with more detailed subcategories
   const serviceCategories: ServiceCategory[] = [
     {
       id: "hosting",
@@ -79,9 +78,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "vps-daily", name: "سرور مجازی روزانه", link: "/vps/daily" },
         { id: "vps-linux-iran", name: "سرور مجازی لینوکس ایران", link: "/vps/linux-iran" },
         { id: "vps-windows-iran", name: "سرور مجازی ویندوز ایران", link: "/vps/windows-iran" },
-        { id: "cpanel", name: "کنترل پنل Cpanel", link: "/panels/cpanel-vps" },
-        { id: "directadmin", name: "کنترل پنل DirectAdmin", link: "/panels/directadmin-vps" },
-        { id: "plesk", name: "کنترل پنل Plesk", link: "/panels/plesk-vps" },
       ]
     },
     {
@@ -96,9 +92,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "dedicated-europe", name: "سرور اختصاصی اروپا", link: "/dedicated/europe" },
         { id: "dedicated-usa", name: "سرور اختصاصی آمریکا", link: "/dedicated/usa" },
         { id: "dedicated-asia", name: "سرور اختصاصی آسیا", link: "/dedicated/asia" },
-        { id: "extra-traffic", name: "ترافیک اضافه", link: "/modules/extra-traffic-dedicated" },
-        { id: "extra-hdd", name: "هارد اضافه", link: "/modules/extra-hdd-dedicated" },
-        { id: "extra-ram", name: "رم اضافه", link: "/modules/extra-ram-dedicated" },
       ]
     },
     {
@@ -111,10 +104,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       services: [
         { id: "cloud-linux", name: "سرور ابری لینوکس", link: "/cloud/linux" },
         { id: "cloud-windows", name: "سرور ابری ویندوز", link: "/cloud/windows" },
-        { id: "cloud-kubernetes", name: "سرور ابری کوبرنتیز", link: "/cloud/kubernetes" },
-        { id: "cloud-container", name: "سرور ابری کانتینر", link: "/cloud/container" },
-        { id: "extra-traffic", name: "ترافیک اضافه", link: "/modules/extra-traffic-cloud" },
-        { id: "extra-storage", name: "فضای ذخیره‌سازی اضافه", link: "/modules/extra-storage-cloud" },
       ]
     },
     {
@@ -142,11 +131,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       hoverColor: "from-indigo-600 to-indigo-800",
       services: [
         { id: "ssl", name: "گواهی SSL", link: "/security/ssl" },
-        { id: "ddos", name: "محافظت DDoS", link: "/security/ddos" },
-        { id: "waf", name: "فایروال اپلیکیشن وب", link: "/security/waf" },
         { id: "backup", name: "پشتیبان‌گیری خودکار", link: "/security/backup" },
-        { id: "firewall", name: "فایروال پیشرفته", link: "/security/firewall" },
-        { id: "antivirus", name: "آنتی‌ویروس سرور", link: "/security/antivirus" },
         { id: "vpn", name: "سرویس VPN اختصاصی", link: "/security/vpn" },
       ]
     },
@@ -159,9 +144,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       hoverColor: "from-cyan-600 to-cyan-800",
       services: [
         { id: "traffic", name: "ترافیک اضافه", link: "/network/traffic" },
-        { id: "cdn", name: "شبکه تحویل محتوا (CDN)", link: "/network/cdn" },
-        { id: "ip", name: "IP استاتیک", link: "/network/ip" },
-        { id: "load-balancer", name: "لود بالانسر", link: "/network/load-balancer" },
         { id: "dns", name: "سرویس DNS اختصاصی", link: "/network/dns" },
         { id: "proxy", name: "سرویس پروکسی", link: "/network/proxy" },
       ]
@@ -240,16 +222,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       icon: <Settings className="h-6 w-6" />,
       color: "bg-gradient-to-br from-gray-500 to-gray-700",
       hoverColor: "from-gray-600 to-gray-800",
-      services: [
-        { id: "migration", name: "انتقال وب‌سایت", link: "/services/migration" },
-        { id: "optimization", name: "بهینه‌سازی سایت", link: "/services/optimization" },
-        { id: "backup", name: "سرویس بک‌آپ", link: "/services/backup" },
-        { id: "monitoring", name: "مانیتورینگ", link: "/services/monitoring" },
-        { id: "seo", name: "خدمات SEO", link: "/services/seo" },
-        { id: "content", name: "تولید محتوا", link: "/services/content" },
-        { id: "email", name: "ایمیل حرفه‌ای", link: "/services/email" },
-        { id: "analytics", name: "آنالیز وب‌سایت", link: "/services/analytics" },
-      ]
+      services: []
     },
   ];
 
@@ -265,6 +238,9 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
     setOpenDropdown(openDropdown === categoryId ? null : categoryId);
   };
 
+  // Filter out categories with no services
+  const filteredCategories = serviceCategories.filter(cat => cat.services.length > 0);
+
   return (
     <section className="my-8">
       <Card className="overflow-hidden shadow-2xl border-0 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -279,7 +255,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {serviceCategories.map((category) => (
+            {filteredCategories.map((category) => (
               <div 
                 key={category.id} 
                 className="transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
