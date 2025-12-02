@@ -14,7 +14,304 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hosting_backups: {
+        Row: {
+          backup_type: string
+          created_at: string
+          file_path: string | null
+          id: string
+          service_id: string
+          size_mb: number
+          status: string
+        }
+        Insert: {
+          backup_type?: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          service_id: string
+          size_mb?: number
+          status?: string
+        }
+        Update: {
+          backup_type?: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          service_id?: string
+          size_mb?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_backups_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosting_databases: {
+        Row: {
+          created_at: string
+          db_name: string
+          db_user: string
+          id: string
+          service_id: string
+          size_mb: number
+        }
+        Insert: {
+          created_at?: string
+          db_name: string
+          db_user: string
+          id?: string
+          service_id: string
+          size_mb?: number
+        }
+        Update: {
+          created_at?: string
+          db_name?: string
+          db_user?: string
+          id?: string
+          service_id?: string
+          size_mb?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_databases_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosting_dns_records: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          name: string
+          proxied: boolean
+          service_id: string
+          ttl: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          proxied?: boolean
+          service_id: string
+          ttl?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          proxied?: boolean
+          service_id?: string
+          ttl?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_dns_records_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosting_email_accounts: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          quota_mb: number
+          service_id: string
+          used_mb: number
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          quota_mb?: number
+          service_id: string
+          used_mb?: number
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          quota_mb?: number
+          service_id?: string
+          used_mb?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_email_accounts_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosting_packages: {
+        Row: {
+          addon_domains: number
+          backup_daily: boolean
+          bandwidth_gb: number
+          created_at: string
+          databases: number
+          description: string | null
+          description_fa: string | null
+          disk_space_gb: number
+          email_accounts: number
+          id: string
+          is_active: boolean
+          name: string
+          name_fa: string
+          price_monthly: number
+          price_yearly: number
+          sort_order: number
+          ssl_free: boolean
+          subdomains: number
+          supported_panels: Database["public"]["Enums"]["hosting_panel_type"][]
+          updated_at: string
+        }
+        Insert: {
+          addon_domains?: number
+          backup_daily?: boolean
+          bandwidth_gb?: number
+          created_at?: string
+          databases?: number
+          description?: string | null
+          description_fa?: string | null
+          disk_space_gb?: number
+          email_accounts?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          name_fa: string
+          price_monthly?: number
+          price_yearly?: number
+          sort_order?: number
+          ssl_free?: boolean
+          subdomains?: number
+          supported_panels?: Database["public"]["Enums"]["hosting_panel_type"][]
+          updated_at?: string
+        }
+        Update: {
+          addon_domains?: number
+          backup_daily?: boolean
+          bandwidth_gb?: number
+          created_at?: string
+          databases?: number
+          description?: string | null
+          description_fa?: string | null
+          disk_space_gb?: number
+          email_accounts?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          name_fa?: string
+          price_monthly?: number
+          price_yearly?: number
+          sort_order?: number
+          ssl_free?: boolean
+          subdomains?: number
+          supported_panels?: Database["public"]["Enums"]["hosting_panel_type"][]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hosting_services: {
+        Row: {
+          bandwidth_used_mb: number | null
+          created_at: string
+          database_count: number | null
+          disk_used_mb: number | null
+          domain: string
+          email_count: number | null
+          expires_at: string | null
+          id: string
+          nameserver1: string | null
+          nameserver2: string | null
+          package_id: string | null
+          panel_type: Database["public"]["Enums"]["hosting_panel_type"]
+          password: string | null
+          server_ip: string | null
+          server_location: string | null
+          service_name: string
+          status: Database["public"]["Enums"]["hosting_status"]
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          bandwidth_used_mb?: number | null
+          created_at?: string
+          database_count?: number | null
+          disk_used_mb?: number | null
+          domain: string
+          email_count?: number | null
+          expires_at?: string | null
+          id?: string
+          nameserver1?: string | null
+          nameserver2?: string | null
+          package_id?: string | null
+          panel_type?: Database["public"]["Enums"]["hosting_panel_type"]
+          password?: string | null
+          server_ip?: string | null
+          server_location?: string | null
+          service_name: string
+          status?: Database["public"]["Enums"]["hosting_status"]
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          bandwidth_used_mb?: number | null
+          created_at?: string
+          database_count?: number | null
+          disk_used_mb?: number | null
+          domain?: string
+          email_count?: number | null
+          expires_at?: string | null
+          id?: string
+          nameserver1?: string | null
+          nameserver2?: string | null
+          package_id?: string | null
+          panel_type?: Database["public"]["Enums"]["hosting_panel_type"]
+          password?: string | null
+          server_ip?: string | null
+          server_location?: string | null
+          service_name?: string
+          status?: Database["public"]["Enums"]["hosting_status"]
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_services_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +320,19 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      hosting_panel_type:
+        | "cpanel"
+        | "directadmin"
+        | "cyberpanel"
+        | "aapanel"
+        | "plesk"
+        | "cwp"
+      hosting_status:
+        | "pending"
+        | "active"
+        | "suspended"
+        | "cancelled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +459,22 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      hosting_panel_type: [
+        "cpanel",
+        "directadmin",
+        "cyberpanel",
+        "aapanel",
+        "plesk",
+        "cwp",
+      ],
+      hosting_status: [
+        "pending",
+        "active",
+        "suspended",
+        "cancelled",
+        "expired",
+      ],
+    },
   },
 } as const
