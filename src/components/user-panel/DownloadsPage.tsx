@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Download, Search, Filter, FileIcon } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const DownloadsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,54 +15,54 @@ const DownloadsPage = () => {
       title: 'راهنمای نصب سرور مجازی لینوکس',
       category: 'documentation',
       type: 'pdf',
-      size: '2.5 MB',
-      date: '1403/02/15',
-      downloadCount: 354,
+      size: toPersianDigits('2.5') + ' MB',
+      date: toPersianDigits('1403/02/15'),
+      downloadCount: toPersianDigits(354),
     },
     {
       id: '2',
       title: 'آموزش پیکربندی سرویس DNS',
       category: 'documentation',
       type: 'pdf',
-      size: '1.8 MB',
-      date: '1403/01/20',
-      downloadCount: 215,
+      size: toPersianDigits('1.8') + ' MB',
+      date: toPersianDigits('1403/01/20'),
+      downloadCount: toPersianDigits(215),
     },
     {
       id: '3',
       title: 'نرم‌افزار کانکشن SSH برای ویندوز',
       category: 'software',
       type: 'exe',
-      size: '15.2 MB',
-      date: '1402/11/05',
-      downloadCount: 432,
+      size: toPersianDigits('15.2') + ' MB',
+      date: toPersianDigits('1402/11/05'),
+      downloadCount: toPersianDigits(432),
     },
     {
       id: '4',
       title: 'نرم‌افزار مدیریت فایل FTP',
       category: 'software',
       type: 'exe',
-      size: '24.7 MB',
-      date: '1402/10/12',
-      downloadCount: 198,
+      size: toPersianDigits('24.7') + ' MB',
+      date: toPersianDigits('1402/10/12'),
+      downloadCount: toPersianDigits(198),
     },
     {
       id: '5',
       title: 'قالب وردپرس اختصاصی',
       category: 'script',
       type: 'zip',
-      size: '8.3 MB',
-      date: '1402/09/18',
-      downloadCount: 127,
+      size: toPersianDigits('8.3') + ' MB',
+      date: toPersianDigits('1402/09/18'),
+      downloadCount: toPersianDigits(127),
     },
     {
       id: '6',
       title: 'پلاگین امنیتی وردپرس',
       category: 'script',
       type: 'zip',
-      size: '4.1 MB',
-      date: '1402/08/30',
-      downloadCount: 256,
+      size: toPersianDigits('4.1') + ' MB',
+      date: toPersianDigits('1402/08/30'),
+      downloadCount: toPersianDigits(256),
     },
   ];
   

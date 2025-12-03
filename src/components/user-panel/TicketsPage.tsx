@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus, MessageSquare, AlertCircle } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface TicketsPageProps {
   onViewTicket: (ticketId: string) => void;
@@ -16,54 +17,54 @@ interface TicketsPageProps {
 const TicketsPage: React.FC<TicketsPageProps> = ({ onViewTicket, onCreateNewTicket }) => {
   const tickets = [
     {
-      id: "TKT-100423",
+      id: "TKT-" + toPersianDigits(100423),
       subject: "مشکل در اتصال به سرور",
       department: "پشتیبانی فنی",
       status: "open",
       priority: "بالا",
       lastReply: "پشتیبانی",
-      createdAt: "1402/03/15",
-      lastUpdate: "1402/03/16"
+      createdAt: toPersianDigits("1402/03/15"),
+      lastUpdate: toPersianDigits("1402/03/16")
     },
     {
-      id: "TKT-100422",
+      id: "TKT-" + toPersianDigits(100422),
       subject: "سوال در مورد تمدید دامنه",
       department: "فروش",
       status: "answered",
       priority: "متوسط",
       lastReply: "پشتیبانی",
-      createdAt: "1402/03/10",
-      lastUpdate: "1402/03/11"
+      createdAt: toPersianDigits("1402/03/10"),
+      lastUpdate: toPersianDigits("1402/03/11")
     },
     {
-      id: "TKT-100421",
+      id: "TKT-" + toPersianDigits(100421),
       subject: "افزایش منابع سرور",
       department: "فروش",
       status: "closed",
       priority: "متوسط",
       lastReply: "کاربر",
-      createdAt: "1402/02/25",
-      lastUpdate: "1402/02/28"
+      createdAt: toPersianDigits("1402/02/25"),
+      lastUpdate: toPersianDigits("1402/02/28")
     },
     {
-      id: "TKT-100420",
+      id: "TKT-" + toPersianDigits(100420),
       subject: "مشکل در نصب نرم افزار روی سرور",
       department: "پشتیبانی فنی",
       status: "answered",
       priority: "کم",
       lastReply: "پشتیبانی",
-      createdAt: "1402/02/15",
-      lastUpdate: "1402/02/16"
+      createdAt: toPersianDigits("1402/02/15"),
+      lastUpdate: toPersianDigits("1402/02/16")
     },
     {
-      id: "TKT-100419",
+      id: "TKT-" + toPersianDigits(100419),
       subject: "سوال در مورد فاکتور پرداخت نشده",
       department: "مالی",
       status: "closed",
       priority: "متوسط",
       lastReply: "سیستم",
-      createdAt: "1402/02/05",
-      lastUpdate: "1402/02/08"
+      createdAt: toPersianDigits("1402/02/05"),
+      lastUpdate: toPersianDigits("1402/02/08")
     }
   ];
 

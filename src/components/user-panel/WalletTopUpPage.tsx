@@ -18,6 +18,7 @@ import {
   Plus,
   ArrowRight
 } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface WalletTopUpPageProps {
   onBack?: () => void;
@@ -28,8 +29,9 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const currentBalance = '11,200,000';
-  const presetAmounts = ['100,000', '500,000', '1,000,000', '2,000,000', '5,000,000'];
+  const currentBalance = toPersianDigits('11,200,000');
+  const presetAmounts = [toPersianDigits('100,000'), toPersianDigits('500,000'), toPersianDigits('1,000,000'), toPersianDigits('2,000,000'), toPersianDigits('5,000,000')];
+  const presetAmountsRaw = ['100,000', '500,000', '1,000,000', '2,000,000', '5,000,000'];
 
   const paymentMethods = [
     {
@@ -60,32 +62,32 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
 
   const recentTopUps = [
     {
-      date: '1402/08/15',
-      amount: '+2,000,000',
+      date: toPersianDigits('1402/08/15'),
+      amount: toPersianDigits('+2,000,000'),
       method: 'کارت بانکی',
       status: 'Success',
-      referenceId: 'REF789123'
+      referenceId: toPersianDigits('REF789123')
     },
     {
-      date: '1402/08/10',
-      amount: '+1,000,000',
+      date: toPersianDigits('1402/08/10'),
+      amount: toPersianDigits('+1,000,000'),
       method: 'کریپتو',
       status: 'Success',
-      referenceId: 'REF789124'
+      referenceId: toPersianDigits('REF789124')
     },
     {
-      date: '1402/08/05',
-      amount: '+500,000',
+      date: toPersianDigits('1402/08/05'),
+      amount: toPersianDigits('+500,000'),
       method: 'Perfect Money',
       status: 'Success',
-      referenceId: 'REF789125'
+      referenceId: toPersianDigits('REF789125')
     },
     {
-      date: '1402/08/01',
-      amount: '+3,000,000',
+      date: toPersianDigits('1402/08/01'),
+      amount: toPersianDigits('+3,000,000'),
       method: 'کارت بانکی',
       status: 'Success',
-      referenceId: 'REF789126'
+      referenceId: toPersianDigits('REF789126')
     }
   ];
 
@@ -174,7 +176,7 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                   className="text-lg font-bold"
                 />
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {presetAmounts.map((presetAmount) => (
+                  {presetAmountsRaw.map((presetAmount, index) => (
                     <Button
                       key={presetAmount}
                       variant="outline"
@@ -182,7 +184,7 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                       onClick={() => handlePresetAmount(presetAmount)}
                       className="text-xs"
                     >
-                      {presetAmount} تومان
+                      {presetAmounts[index]} تومان
                     </Button>
                   ))}
                 </div>

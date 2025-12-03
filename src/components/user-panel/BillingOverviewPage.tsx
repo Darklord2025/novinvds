@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Calculator
 } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface BillingOverviewPageProps {
   navigateToServiceOrderPage?: (serviceLink: string) => void;
@@ -21,52 +22,52 @@ interface BillingOverviewPageProps {
 
 const BillingOverviewPage: React.FC<BillingOverviewPageProps> = ({ navigateToServiceOrderPage, onNavigateToTransactions, onNavigateToInvoices, onBack }) => {
 
-  const walletBalance = "11,200,000";
-  const totalSpent = "25,200,000";
-  const totalEarned = "88,458,000";
-  const totalPending = "7,500,000";
+  const walletBalance = toPersianDigits("11,200,000");
+  const totalSpent = toPersianDigits("25,200,000");
+  const totalEarned = toPersianDigits("88,458,000");
+  const totalPending = toPersianDigits("7,500,000");
   
   const recentTransactions = [
     {
-      date: '1402/08/04',
+      date: toPersianDigits('1402/08/04'),
       description: 'خرید از فروشگاه آنلاین',
       paymentMethod: 'کیف پول',
-      amount: '-50,000',
+      amount: toPersianDigits('-50,000'),
       status: 'Success'
     },
     {
-      date: '1402/08/03',
+      date: toPersianDigits('1402/08/03'),
       description: 'پرداخت فاکتور هاستینگ',
       paymentMethod: 'کارت بانکی',
-      amount: '-1,200,000',
+      amount: toPersianDigits('-1,200,000'),
       status: 'Success'
     },
     {
-      date: '1402/08/02',
+      date: toPersianDigits('1402/08/02'),
       description: 'افزایش موجودی کیف پول',
       paymentMethod: 'کریپتو',
-      amount: '+2,000,000',
+      amount: toPersianDigits('+2,000,000'),
       status: 'Success'
     }
   ];
 
   const allInvoices = [
     {
-      id: 'INV-1402-001',
-      dueDate: '1402/08/15',
-      amount: '1,250,000',
+      id: toPersianDigits('INV-1402-001'),
+      dueDate: toPersianDigits('1402/08/15'),
+      amount: toPersianDigits('1,250,000'),
       status: 'Paid'
     },
     {
-      id: 'INV-1402-002',
-      dueDate: '1402/08/20',
-      amount: '850,000',
+      id: toPersianDigits('INV-1402-002'),
+      dueDate: toPersianDigits('1402/08/20'),
+      amount: toPersianDigits('850,000'),
       status: 'Paid'
     },
     {
-      id: 'INV-1402-003',
-      dueDate: '1402/09/01',
-      amount: '2,100,000',
+      id: toPersianDigits('INV-1402-003'),
+      dueDate: toPersianDigits('1402/09/01'),
+      amount: toPersianDigits('2,100,000'),
       status: 'Unpaid'
     }
   ];

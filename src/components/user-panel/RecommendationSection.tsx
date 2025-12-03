@@ -3,48 +3,49 @@ import { Star, ShoppingCart, TrendingUp, Heart, Eye, Clock } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const RecommendationSection = () => {
   const recommendedProducts = [
     {
       id: 1,
       name: 'سرور مجازی SSD Pro',
-      price: '285,000',
-      originalPrice: '320,000',
-      discount: '11%',
-      rating: 4.8,
+      price: toPersianDigits('285,000'),
+      originalPrice: toPersianDigits('320,000'),
+      discount: toPersianDigits(11) + '%',
+      rating: toPersianDigits(4.8),
       image: '/placeholder.svg',
       category: 'vps',
       tag: 'پیشنهاد ویژه',
-      features: ['2 CPU Core', '4GB RAM', '50GB SSD']
+      features: [toPersianDigits(2) + ' CPU Core', toPersianDigits(4) + 'GB RAM', toPersianDigits(50) + 'GB SSD']
     },
     {
       id: 2,
       name: 'هاستینگ وردپرس',
-      price: '120,000',
-      rating: 4.9,
+      price: toPersianDigits('120,000'),
+      rating: toPersianDigits(4.9),
       image: '/placeholder.svg',
       category: 'hosting',
       tag: 'محبوب',
-      features: ['5GB فضا', 'SSL رایگان', 'پشتیبانی 24/7']
+      features: [toPersianDigits(5) + 'GB فضا', 'SSL رایگان', 'پشتیبانی ۲۴/۷']
     },
     {
       id: 3,
       name: 'سرور اختصاصی E3',
-      price: '2,800,000',
-      originalPrice: '3,200,000',
-      discount: '12.5%',
-      rating: 4.7,
+      price: toPersianDigits('2,800,000'),
+      originalPrice: toPersianDigits('3,200,000'),
+      discount: toPersianDigits(12.5) + '%',
+      rating: toPersianDigits(4.7),
       image: '/placeholder.svg',
       category: 'dedicated',
       tag: 'جدید',
-      features: ['Intel E3', '16GB RAM', '1TB HDD']
+      features: ['Intel E3', toPersianDigits(16) + 'GB RAM', toPersianDigits(1) + 'TB HDD']
     },
     {
       id: 4,
       name: 'دامنه .com',
-      price: '390,000',
-      rating: 5.0,
+      price: toPersianDigits('390,000'),
+      rating: toPersianDigits(5.0),
       image: '/placeholder.svg',
       category: 'domain',
       tag: 'بهترین قیمت',
@@ -53,16 +54,15 @@ const RecommendationSection = () => {
   ];
 
   const trendingServices = [
-    { name: 'سرور مجازی SSD', growth: '+23%', icon: '🖥️' },
-    { name: 'هاستینگ وردپرس', growth: '+18%', icon: '🌐' },
-    { name: 'سرور ابری', growth: '+35%', icon: '☁️' },
-    { name: 'گواهی SSL', growth: '+15%', icon: '🔒' }
+    { name: 'سرور مجازی SSD', growth: '+' + toPersianDigits(23) + '%', icon: '🖥️' },
+    { name: 'هاستینگ وردپرس', growth: '+' + toPersianDigits(18) + '%', icon: '🌐' },
+    { name: 'گواهی SSL', growth: '+' + toPersianDigits(15) + '%', icon: '🔒' }
   ];
 
   const recentlyViewed = [
-    { name: 'سرور مجازی پیشرفته', price: '450,000', image: '/placeholder.svg' },
-    { name: 'هاستینگ نامحدود', price: '180,000', image: '/placeholder.svg' },
-    { name: 'دامنه .ir', price: '120,000', image: '/placeholder.svg' }
+    { name: 'سرور مجازی پیشرفته', price: toPersianDigits('450,000'), image: '/placeholder.svg' },
+    { name: 'هاستینگ نامحدود', price: toPersianDigits('180,000'), image: '/placeholder.svg' },
+    { name: 'دامنه .ir', price: toPersianDigits('120,000'), image: '/placeholder.svg' }
   ];
 
   const ProductCard = ({ product }: { product: any }) => (
