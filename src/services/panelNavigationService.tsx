@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export interface NavigationHandlers {
   navigateToServiceOrderPage: (serviceLink: string) => void;
+  handleSidebarClick: (tabId: string) => void;
   handleViewAllNotifications: () => void;
   handleViewImportantAnnouncements: () => void;
   handleViewNotification: (notification: any) => void;
@@ -229,6 +230,15 @@ export const createNavigationHandlers = (
     }
   };
   
+  const handleSidebarClick = (tabId: string) => {
+    setSelectedService(null);
+    setIsNewTicket(false);
+    setSelectedTicket(null);
+    setSelectedNotification(null);
+    setSelectedAnnouncement(null);
+    setActiveTab(tabId);
+  };
+
   const handleViewAllNotifications = () => {
     setActiveTab('notifications');
     
@@ -438,6 +448,7 @@ export const createNavigationHandlers = (
 
   return {
     navigateToServiceOrderPage,
+    handleSidebarClick,
     handleViewAllNotifications,
     handleViewImportantAnnouncements,
     handleViewNotification,

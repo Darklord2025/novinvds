@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Download, Filter, ArrowRight } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface TransactionsPageProps {
   onBack?: () => void;
@@ -16,58 +17,58 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ onBack }) => {
 
   const recentTransactions = [
     {
-      id: 'TXN-1402-001',
-      date: '1402/08/15',
+      id: 'TXN-۱۴۰۲-۰۰۱',
+      date: toPersianDigits('1402/08/15'),
       description: 'خرید سرویس VPS',
       paymentMethod: 'کیف پول',
-      amount: '-1,500,000',
+      amount: toPersianDigits('-1,500,000'),
       status: 'Success',
-      referenceId: 'REF123456'
+      referenceId: toPersianDigits('REF123456')
     },
     {
-      id: 'TXN-1402-002',
-      date: '1402/08/14',
+      id: 'TXN-۱۴۰۲-۰۰۲',
+      date: toPersianDigits('1402/08/14'),
       description: 'افزایش موجودی کیف پول',
       paymentMethod: 'کارت بانکی',
-      amount: '+5,000,000',
+      amount: toPersianDigits('+5,000,000'),
       status: 'Success',
-      referenceId: 'REF123457'
+      referenceId: toPersianDigits('REF123457')
     },
     {
-      id: 'TXN-1402-003',
-      date: '1402/08/13',
+      id: 'TXN-۱۴۰۲-۰۰۳',
+      date: toPersianDigits('1402/08/13'),
       description: 'پرداخت فاکتور هاستینگ',
       paymentMethod: 'درگاه پرداخت',
-      amount: '-850,000',
+      amount: toPersianDigits('-850,000'),
       status: 'Success',
-      referenceId: 'REF123458'
+      referenceId: toPersianDigits('REF123458')
     },
     {
-      id: 'TXN-1402-004',
-      date: '1402/08/12',
+      id: 'TXN-۱۴۰۲-۰۰۴',
+      date: toPersianDigits('1402/08/12'),
       description: 'خرید دامنه',
       paymentMethod: 'کریپتو',
-      amount: '-120,000',
+      amount: toPersianDigits('-120,000'),
       status: 'Pending',
-      referenceId: 'REF123459'
+      referenceId: toPersianDigits('REF123459')
     },
     {
-      id: 'TXN-1402-005',
-      date: '1402/08/11',
+      id: 'TXN-۱۴۰۲-۰۰۵',
+      date: toPersianDigits('1402/08/11'),
       description: 'بازگشت وجه سرویس لغو شده',
       paymentMethod: 'کیف پول',
-      amount: '+300,000',
+      amount: toPersianDigits('+300,000'),
       status: 'Success',
-      referenceId: 'REF123460'
+      referenceId: toPersianDigits('REF123460')
     },
     {
-      id: 'TXN-1402-006',
-      date: '1402/08/10',
+      id: 'TXN-۱۴۰۲-۰۰۶',
+      date: toPersianDigits('1402/08/10'),
       description: 'خرید SSL',
       paymentMethod: 'کارت بانکی',
-      amount: '-450,000',
+      amount: toPersianDigits('-450,000'),
       status: 'Failed',
-      referenceId: 'REF123461'
+      referenceId: toPersianDigits('REF123461')
     }
   ];
 

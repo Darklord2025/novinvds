@@ -62,6 +62,7 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "windows-iran", name: "هاست ویندوز ایران", link: "/hosting/windows-iran" },
         { id: "python", name: "هاست پایتون", link: "/hosting/python" },
         { id: "download", name: "هاست دانلود", link: "/hosting/download" },
+        { id: "custom", name: "هاست سفارشی", link: "/hosting/custom" },
       ]
     },
     {
@@ -75,9 +76,10 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "vps-windows", name: "سرور مجازی ویندوز", link: "/vps/windows" },
         { id: "vps-linux", name: "سرور مجازی لینوکس", link: "/vps/linux" },
         { id: "vps-ubuntu-desktop", name: "سرور مجازی اوبونتو دسکتاپ", link: "/vps/ubuntu-desktop" },
-        { id: "vps-daily", name: "سرور مجازی روزانه", link: "/vps/daily" },
+        { id: "vps-hourly", name: "سرور مجازی ساعتی و روزانه", link: "/vps/hourly" },
         { id: "vps-linux-iran", name: "سرور مجازی لینوکس ایران", link: "/vps/linux-iran" },
         { id: "vps-windows-iran", name: "سرور مجازی ویندوز ایران", link: "/vps/windows-iran" },
+        { id: "vps-custom", name: "سرور مجازی سفارشی", link: "/vps/custom" },
       ]
     },
     {
@@ -92,18 +94,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "dedicated-europe", name: "سرور اختصاصی اروپا", link: "/dedicated/europe" },
         { id: "dedicated-usa", name: "سرور اختصاصی آمریکا", link: "/dedicated/usa" },
         { id: "dedicated-asia", name: "سرور اختصاصی آسیا", link: "/dedicated/asia" },
-      ]
-    },
-    {
-      id: "cloud",
-      title: "سرور ابری",
-      description: "سرورهای ابری با انعطاف‌پذیری و مقیاس‌پذیری بالا",
-      icon: <Cloud className="h-6 w-6" />,
-      color: "bg-gradient-to-br from-emerald-500 to-emerald-700",
-      hoverColor: "from-emerald-600 to-emerald-800",
-      services: [
-        { id: "cloud-linux", name: "سرور ابری لینوکس", link: "/cloud/linux" },
-        { id: "cloud-windows", name: "سرور ابری ویندوز", link: "/cloud/windows" },
       ]
     },
     {
@@ -159,6 +149,8 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "cpanel", name: "لایسنس Cpanel", link: "/panels/cpanel" },
         { id: "directadmin", name: "لایسنس DirectAdmin", link: "/panels/directadmin" },
         { id: "plesk", name: "لایسنس Plesk", link: "/panels/plesk" },
+        { id: "aapanel", name: "لایسنس aaPanel", link: "/panels/aapanel" },
+        { id: "cyberpanel", name: "لایسنس CyberPanel", link: "/panels/cyberpanel" },
         { id: "whm", name: "لایسنس WHM", link: "/panels/whm" },
         { id: "vestacp", name: "لایسنس VestaCP", link: "/panels/vestacp" },
         { id: "webmin", name: "لایسنس Webmin", link: "/panels/webmin" },

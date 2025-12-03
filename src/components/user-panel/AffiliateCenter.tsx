@@ -9,10 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Users, DollarSign, Share, Gift, Copy, QrCode, BarChart3, Calendar, TrendingUp } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const AffiliateCenter: React.FC = () => {
-  const [affiliateCode] = useState('AFC123456');
-  const [referralLink] = useState(`https://novinvds.com/register?ref=${affiliateCode}`);
+  const [affiliateCode] = useState('AFC' + toPersianDigits(123456));
+  const [referralLink] = useState(`https://novinvds.com/register?ref=AFC123456`);
   
   // Mock data
   const [stats] = useState({
@@ -73,15 +74,12 @@ const AffiliateCenter: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fa-IR', {
-      style: 'currency',
-      currency: 'IRR',
-      minimumFractionDigits: 0
-    }).format(amount);
+    return toPersianDigits(new Intl.NumberFormat('fa-IR').format(amount)) + ' ریال';
   };
 
   const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    const formatted = new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    return toPersianDigits(formatted);
   };
 
   const getStatusColor = (status: string) => {
@@ -146,9 +144,9 @@ const AffiliateCenter: React.FC = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalReferrals}</div>
+            <div className="text-2xl font-bold">{toPersianDigits(stats.totalReferrals)}</div>
             <p className="text-xs text-muted-foreground">
-              فعال: {stats.activeReferrals}
+              فعال: {toPersianDigits(stats.activeReferrals)}
             </p>
           </CardContent>
         </Card>
@@ -159,7 +157,7 @@ const AffiliateCenter: React.FC = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.conversionRate}%</div>
+            <div className="text-2xl font-bold">{toPersianDigits(stats.conversionRate)}%</div>
             <Progress value={stats.conversionRate} className="mt-2" />
           </CardContent>
         </Card>
@@ -230,15 +228,15 @@ const AffiliateCenter: React.FC = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-primary">10%</div>
+                  <div className="text-2xl font-bold text-primary">{toPersianDigits(10)}%</div>
                   <div className="text-sm text-muted-foreground">خدمات VPS</div>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-primary">15%</div>
+                  <div className="text-2xl font-bold text-primary">{toPersianDigits(15)}%</div>
                   <div className="text-sm text-muted-foreground">سرور اختصاصی</div>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
-                  <div className="text-2xl font-bold text-primary">8%</div>
+                  <div className="text-2xl font-bold text-primary">{toPersianDigits(8)}%</div>
                   <div className="text-sm text-muted-foreground">هاستینگ و دامنه</div>
                 </div>
               </div>
@@ -249,9 +247,9 @@ const AffiliateCenter: React.FC = () => {
         <TabsContent value="referrals">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between">
                 <span>فهرست معرفی‌ها</span>
-                <Badge variant="outline">{referrals.length} نفر</Badge>
+                <Badge variant="outline">{toPersianDigits(referrals.length)} نفر</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -292,9 +290,9 @@ const AffiliateCenter: React.FC = () => {
         <TabsContent value="commissions">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between">
                 <span>تاریخچه کمیسیون‌ها</span>
-                <Badge variant="outline">{commissions.length} مورد</Badge>
+                <Badge variant="outline">{toPersianDigits(commissions.length)} مورد</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>

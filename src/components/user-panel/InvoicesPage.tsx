@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Search, Download, Eye, CreditCard, Filter, ArrowRight } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface InvoicesPageProps {
   onBack?: () => void;
@@ -18,52 +19,52 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
 
   const allInvoices = [
     {
-      id: 'INV-1402-001',
+      id: 'INV-۱۴۰۲-۰۰۱',
       service: 'سرویس VPS - پلن پیشرفته',
-      dueDate: '1402/09/15',
-      amount: '2,500,000',
+      dueDate: toPersianDigits('1402/09/15'),
+      amount: toPersianDigits('2,500,000'),
       status: 'Paid',
-      issueDate: '1402/08/15'
+      issueDate: toPersianDigits('1402/08/15')
     },
     {
-      id: 'INV-1402-002',
+      id: 'INV-۱۴۰۲-۰۰۲',
       service: 'هاستینگ وب - پلن حرفه‌ای',
-      dueDate: '1402/09/20',
-      amount: '850,000',
+      dueDate: toPersianDigits('1402/09/20'),
+      amount: toPersianDigits('850,000'),
       status: 'Unpaid',
-      issueDate: '1402/08/20'
+      issueDate: toPersianDigits('1402/08/20')
     },
     {
-      id: 'INV-1402-003',
+      id: 'INV-۱۴۰۲-۰۰۳',
       service: 'سرویس اختصاصی - سرور قدرتمند',
-      dueDate: '1402/09/25',
-      amount: '5,200,000',
+      dueDate: toPersianDigits('1402/09/25'),
+      amount: toPersianDigits('5,200,000'),
       status: 'Paid',
-      issueDate: '1402/08/25'
+      issueDate: toPersianDigits('1402/08/25')
     },
     {
-      id: 'INV-1402-004',
+      id: 'INV-۱۴۰۲-۰۰۴',
       service: 'ثبت دامنه - example.com',
-      dueDate: '1402/09/30',
-      amount: '120,000',
+      dueDate: toPersianDigits('1402/09/30'),
+      amount: toPersianDigits('120,000'),
       status: 'Overdue',
-      issueDate: '1402/08/30'
+      issueDate: toPersianDigits('1402/08/30')
     },
     {
-      id: 'INV-1402-005',
+      id: 'INV-۱۴۰۲-۰۰۵',
       service: 'گواهی SSL - Wildcard',
-      dueDate: '1402/10/05',
-      amount: '750,000',
+      dueDate: toPersianDigits('1402/10/05'),
+      amount: toPersianDigits('750,000'),
       status: 'Unpaid',
-      issueDate: '1402/09/05'
+      issueDate: toPersianDigits('1402/09/05')
     },
     {
-      id: 'INV-1402-006',
+      id: 'INV-۱۴۰۲-۰۰۶',
       service: 'سرویس Cloud - پلن کسب‌وکار',
-      dueDate: '1402/10/10',
-      amount: '1,200,000',
+      dueDate: toPersianDigits('1402/10/10'),
+      amount: toPersianDigits('1,200,000'),
       status: 'Paid',
-      issueDate: '1402/09/10'
+      issueDate: toPersianDigits('1402/09/10')
     }
   ];
 
@@ -237,15 +238,15 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
                   <PaginationPrevious href="#" />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
+                  <PaginationLink href="#">{toPersianDigits(1)}</PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink href="#" isActive>
-                    2
+                    {toPersianDigits(2)}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
+                  <PaginationLink href="#">{toPersianDigits(3)}</PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext href="#" />

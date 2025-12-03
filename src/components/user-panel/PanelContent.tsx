@@ -164,7 +164,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedService ? 
         <DomainManagement 
           domainId={selectedService} 
-          onBack={() => navigationHandlers.navigateToServiceOrderPage('/domains')} 
+          onBack={() => navigationHandlers.handleSidebarClick('domains')} 
         /> : null;
     case 'vps-management':
       return selectedService ? 
@@ -188,7 +188,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedService ? 
         <HostingManagementDetail 
           serviceId={selectedService} 
-          onBack={() => navigationHandlers.navigateToServiceOrderPage('/hosting')} 
+          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
     case 'tickets':
       return isNewTicket ? 
