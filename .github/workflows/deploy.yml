@@ -1,5 +1,5 @@
       - name: Activate new version (backup & swap, reload nginx)
-        uses: appleboy/ssh-action@v0.1.0
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
