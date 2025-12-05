@@ -22,14 +22,16 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Auth from "./pages/Auth";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import UserPanel from "./pages/UserPanel";
 import NotFound from "./pages/NotFound";
 import HostingPlans from "./pages/HostingPlans";
 import VpsPlans from "./pages/VpsPlans";
 import DedicatedPlans from "./pages/DedicatedPlans";
 import HostingServices from "./pages/HostingServices";
-import VPSServices from "./pages/VPSServices";
+import VpsServices from "./pages/VpsServices";
 import DedicatedServices from "./pages/DedicatedServices";
 import DomainServices from "./pages/DomainServices";
 import NetworkServices from "./pages/NetworkServices";
@@ -59,15 +61,17 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Auth />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/register" element={<Auth />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/user-panel" element={<UserPanel />} />
               <Route path="/hosting-plans" element={<HostingPlans />} />
               <Route path="/vps-plans" element={<VpsPlans />} />
               <Route path="/dedicated-plans" element={<DedicatedPlans />} />
               <Route path="/hosting-services" element={<HostingServices />} />
-              <Route path="/vps-services" element={<VPSServices />} />
+              <Route path="/vps-services" element={<VpsServices />} />
               <Route path="/dedicated-services" element={<DedicatedServices />} />
               <Route path="/domain-services" element={<DomainServices />} />
               <Route path="/network-services" element={<NetworkServices />} />
