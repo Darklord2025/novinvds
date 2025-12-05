@@ -27,7 +27,8 @@ import {
   FileText,
   PlusCircle,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  ShoppingCart
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     
     switch (iconName) {
       case 'home': return <LayoutDashboard className={`${className} text-blue-500`} />;
+      case 'shopping-cart': return <ShoppingCart className={`${className} text-rose-500`} />;
       case 'server': return <Server className={`${className} text-green-500`} />;
       case 'server-stack': return <HardDrive className={`${className} text-purple-500`} />;
       case 'hard-drive': return <HardDrive className={`${className} text-purple-500`} />;

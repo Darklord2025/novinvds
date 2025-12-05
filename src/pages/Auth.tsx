@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isFlipping, setIsFlipping] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -24,6 +25,14 @@ const Auth = () => {
   const [registerPassword, setRegisterPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const handleFlip = (toLogin: boolean) => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setIsLogin(toLogin);
+      setIsFlipping(false);
+    }, 300);
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,18 +83,27 @@ const Auth = () => {
       <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
         <div className="max-w-5xl w-full flex flex-col lg:flex-row items-center gap-12">
           
-          {/* Right side - Form */}
-          <div className="w-full lg:w-1/2 perspective-1000">
+          {/* Right side - Form with flip animation */}
+          <div className="w-full lg:w-1/2" style={{ perspective: '1500px' }}>
             <div 
-              className={`relative w-full transition-transform duration-700 transform-style-preserve-3d ${
-                !isLogin ? 'rotate-y-180' : ''
-              }`}
-              style={{ transformStyle: 'preserve-3d' }}
+              className={`relative w-full transition-all duration-700 ${isFlipping ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+              style={{ 
+                transformStyle: 'preserve-3d',
+                transform: isLogin ? 'rotateY(0deg)' : 'rotateY(180deg)',
+                transition: 'transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1)'
+              }}
             >
               {/* Login Form - Front */}
               <div 
-                className={`w-full backface-hidden ${!isLogin ? 'hidden' : ''}`}
-                style={{ backfaceVisibility: 'hidden' }}
+                className="w-full"
+                style={{ 
+                  backfaceVisibility: 'hidden',
+                  position: isLogin ? 'relative' : 'absolute',
+                  top: 0,
+                  left: 0,
+                  opacity: isLogin ? 1 : 0,
+                  pointerEvents: isLogin ? 'auto' : 'none'
+                }}
               >
                 <div className="bg-white rounded-3xl overflow-hidden shadow-2xl">
                   {/* Header gradient */}
@@ -161,7 +179,7 @@ const Auth = () => {
                       حساب کاربری ندارید؟{' '}
                       <button
                         type="button"
-                        onClick={() => setIsLogin(false)}
+                        onClick={() => handleFlip(false)}
                         className="text-primary font-medium hover:underline"
                       >
                         ثبت نام کنید
@@ -173,15 +191,23 @@ const Auth = () => {
 
               {/* Register Form - Back */}
               <div 
-                className={`w-full backface-hidden ${isLogin ? 'hidden' : ''}`}
-                style={{ backfaceVisibility: 'hidden' }}
+                className="w-full"
+                style={{ 
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  position: !isLogin ? 'relative' : 'absolute',
+                  top: 0,
+                  left: 0,
+                  opacity: !isLogin ? 1 : 0,
+                  pointerEvents: !isLogin ? 'auto' : 'none'
+                }}
               >
                 <div className="bg-white rounded-3xl overflow-hidden shadow-2xl">
                   {/* Header gradient - Pink/Purple for register */}
                   <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 text-center text-white relative">
                     <button
                       type="button"
-                      onClick={() => setIsLogin(true)}
+                      onClick={() => handleFlip(true)}
                       className="absolute top-4 left-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
                       ✕
@@ -311,7 +337,7 @@ const Auth = () => {
                       قبلا ثبت نام کرده‌اید؟{' '}
                       <button
                         type="button"
-                        onClick={() => setIsLogin(true)}
+                        onClick={() => handleFlip(true)}
                         className="text-primary font-medium hover:underline"
                       >
                         وارد شوید
