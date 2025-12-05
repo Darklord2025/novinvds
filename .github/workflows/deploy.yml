@@ -1,0 +1,82 @@
+name: NovinVDS CI-CD (staging & prod, zero-downtime)
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload dist to server (_new folder)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "dist/*"
+          target: ${{ github.ref == 'refs/heads/main' && secrets.REMOTE_PROD || secrets.REMOTE_STAGING }}/_new
+
+      - name: Activate new version (backup & swap, reload nginx)
+        uses: appleboy/ssh-action@v1.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+
+            # انتخاب مسیر هدف
+            if [ "${GITHUB_REF##*/}" = "main" ]; then
+              TARGET="${{ secrets.REMOTE_PROD }}"
+            else
+              TARGET="${{ secrets.REMOTE_STAGING }}"
+            fi
+
+            TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+            BACKUP_DIR="/var/www/backups/$(basename $TARGET)-$TIMESTAMP"
+
+            # اگر مسیر وجود داشته باشد، بکاپ بگیر
+            if [ -d "$TARGET" ]; then
+              mkdir -p "$BACKUP_DIR"
+              cp -a "$TARGET/." "$BACKUP_DIR/"
+            fi
+
+            # جایگزینی با نسخه جدید
+            rm -rf "${TARGET}/old_tmp" || true
+            mv "$TARGET" "${TARGET}_old" || true
+            mkdir -p "$TARGET"
+            mv "${TARGET}/../_new"/* "$TARGET/" || true
+
+            # پاکسازی موقت
+            if [ -d "${TARGET}_old" ]; then
+              rm -rf "${TARGET}_old"
+            fi
+
+            # اطمینان از دسترسی‌ها
+            chown -R www-data:www-data "$TARGET"
+            chmod -R 755 "$TARGET"
+
+            # ری‌لود nginx
+            nginx -t && systemctl reload nginx || true
+
+      - name: Notify (optional)
+        run: echo "Deployed $GITHUB_REF to server ${{ secrets.SERVER_IP }}"
