@@ -19,6 +19,8 @@ import NetworkStoreSection from './NetworkStoreSection';
 import RecommendationSection from './RecommendationSection';
 import ServerManagementDetail from './ServerManagementDetail';
 import HostingManagementDetail from './HostingManagementDetail';
+import HostingGateway from './HostingGateway';
+import CartPage from './CartPage';
 import BillingOverviewPage from './BillingOverviewPage';
 import TransactionsPage from './TransactionsPage';
 import InvoicesPage from './InvoicesPage';
@@ -141,6 +143,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
       );
     case 'recommendations':
       return <RecommendationSection />;
+    case 'cart':
+      return <CartPage onCheckout={() => navigateToServiceOrderPage('/checkout')} />;
     case 'profile':
       return <ProfileSettingsPage />;
     case 'servers':
@@ -189,6 +193,13 @@ const PanelContent: React.FC<PanelContentProps> = ({
         <HostingManagementDetail 
           serviceId={selectedService} 
           onBack={() => navigationHandlers.handleSidebarClick('servers')} 
+        /> : null;
+    case 'hosting-gateway':
+      return selectedService ? 
+        <HostingGateway 
+          serviceId={selectedService} 
+          onBack={() => navigationHandlers.handleSidebarClick('servers')}
+          onEnterPanel={() => navigationHandlers.handleManageService('hosting', selectedService)}
         /> : null;
     case 'tickets':
       return isNewTicket ? 
