@@ -76,10 +76,10 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
         { id: "vps-windows", name: "سرور مجازی ویندوز", link: "/vps/windows" },
         { id: "vps-linux", name: "سرور مجازی لینوکس", link: "/vps/linux" },
         { id: "vps-ubuntu-desktop", name: "سرور مجازی اوبونتو دسکتاپ", link: "/vps/ubuntu-desktop" },
-        { id: "vps-hourly", name: "سرور مجازی ساعتی و روزانه", link: "/vps/hourly" },
+        { id: "vps-hourly", name: "سرور مجازی ساعتی و روزانه", link: "/vps-hourly" },
         { id: "vps-linux-iran", name: "سرور مجازی لینوکس ایران", link: "/vps/linux-iran" },
         { id: "vps-windows-iran", name: "سرور مجازی ویندوز ایران", link: "/vps/windows-iran" },
-        { id: "vps-custom", name: "سرور مجازی سفارشی", link: "/vps/custom" },
+        { id: "vps-custom", name: "سرور مجازی سفارشی", link: "/vps-custom" },
       ]
     },
     {

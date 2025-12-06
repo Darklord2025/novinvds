@@ -32,6 +32,7 @@ import VpsPlans from "./pages/VpsPlans";
 import DedicatedPlans from "./pages/DedicatedPlans";
 import HostingServices from "./pages/HostingServices";
 import VpsServices from "./pages/VpsServices";
+import VpsCustomOrder from "./pages/VpsCustomOrder";
 import DedicatedServices from "./pages/DedicatedServices";
 import DomainServices from "./pages/DomainServices";
 import NetworkServices from "./pages/NetworkServices";
@@ -72,6 +73,8 @@ const App = () => (
               <Route path="/dedicated-plans" element={<DedicatedPlans />} />
               <Route path="/hosting-services" element={<HostingServices />} />
               <Route path="/vps-services" element={<VpsServices />} />
+              <Route path="/vps-custom" element={<VpsCustomOrder />} />
+              <Route path="/vps-hourly" element={<VpsCustomOrder />} />
               <Route path="/dedicated-services" element={<DedicatedServices />} />
               <Route path="/domain-services" element={<DomainServices />} />
               <Route path="/network-services" element={<NetworkServices />} />

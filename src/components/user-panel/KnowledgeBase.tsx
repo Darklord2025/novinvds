@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Book, Video, FileText, Star, Clock, Eye, ThumbsUp, Download } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const KnowledgeBase: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -116,7 +117,8 @@ const KnowledgeBase: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    const formatted = new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    return toPersianDigits(formatted);
   };
 
   return (
@@ -124,7 +126,7 @@ const KnowledgeBase: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">مرکز دانش</h1>
         <Badge variant="outline">
-          {filteredArticles.length + filteredFaqs.length} مطلب
+          {toPersianDigits(filteredArticles.length + filteredFaqs.length)} مطلب
         </Badge>
       </div>
 
@@ -154,7 +156,7 @@ const KnowledgeBase: React.FC = () => {
               size="sm"
               onClick={() => setSelectedCategory(category.id)}
             >
-              {category.name} ({category.count})
+              {category.name} ({toPersianDigits(category.count)})
             </Button>
           ))}
         </div>
@@ -193,14 +195,14 @@ const KnowledgeBase: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-2 rtl:space-x-reverse">
                       <Eye className="h-4 w-4" />
-                      <span>{article.views.toLocaleString('fa-IR')}</span>
+                      <span>{toPersianDigits(article.views.toLocaleString())}</span>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1 rtl:space-x-reverse">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium">{article.rating}</span>
+                      <span className="text-sm font-medium">{toPersianDigits(article.rating)}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {formatDate(article.lastUpdated)}
@@ -242,7 +244,7 @@ const KnowledgeBase: React.FC = () => {
                             <div className="flex items-center space-x-2 rtl:space-x-reverse">
                               <Button variant="ghost" size="sm">
                                 <ThumbsUp className="h-4 w-4 ml-1" />
-                                {faq.helpful}
+                                {toPersianDigits(faq.helpful)}
                               </Button>
                             </div>
                           </div>
