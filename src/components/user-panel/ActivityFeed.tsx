@@ -16,8 +16,8 @@ const ActivityFeed = () => {
             </div>
             <div>
               <p className="text-sm font-medium">پرداخت فاکتور</p>
-              <p className="text-xs text-gray-500">فاکتور شماره #12348 با موفقیت پرداخت شد.</p>
-              <p className="text-xs text-gray-400 mt-1">امروز - 10:25</p>
+              <p className="text-xs text-gray-500">فاکتور شماره #۱۲۳۴۸ با موفقیت پرداخت شد.</p>
+              <p className="text-xs text-gray-400 mt-1">امروز - ۱۰:۲۵</p>
             </div>
           </div>
           <div className="flex items-start">
@@ -26,8 +26,8 @@ const ActivityFeed = () => {
             </div>
             <div>
               <p className="text-sm font-medium">راه‌اندازی سرور</p>
-              <p className="text-xs text-gray-500">سرور آلمان 1 با موفقیت راه‌اندازی شد.</p>
-              <p className="text-xs text-gray-400 mt-1">دیروز - 18:30</p>
+              <p className="text-xs text-gray-500">سرور آلمان ۱ با موفقیت راه‌اندازی شد.</p>
+              <p className="text-xs text-gray-400 mt-1">دیروز - ۱۸:۳۰</p>
             </div>
           </div>
           <div className="flex items-start">
@@ -36,8 +36,8 @@ const ActivityFeed = () => {
             </div>
             <div>
               <p className="text-sm font-medium">تیکت جدید</p>
-              <p className="text-xs text-gray-500">تیکت #54321 با موضوع "درخواست ارتقا سرور" ایجاد شد.</p>
-              <p className="text-xs text-gray-400 mt-1">دیروز - 14:15</p>
+              <p className="text-xs text-gray-500">تیکت #۵۴۳۲۱ با موضوع "درخواست ارتقا سرور" ایجاد شد.</p>
+              <p className="text-xs text-gray-400 mt-1">دیروز - ۱۴:۱۵</p>
             </div>
           </div>
           <div className="flex items-start">
@@ -47,7 +47,7 @@ const ActivityFeed = () => {
             <div>
               <p className="text-sm font-medium">ثبت دامنه</p>
               <p className="text-xs text-gray-500">دامنه example.com با موفقیت ثبت شد.</p>
-              <p className="text-xs text-gray-400 mt-1">1402/12/20 - 09:45</p>
+              <p className="text-xs text-gray-400 mt-1">۱۴۰۲/۱۲/۲۰ - ۰۹:۴۵</p>
             </div>
           </div>
         </div>

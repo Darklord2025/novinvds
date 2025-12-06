@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Book, Video, FileText, Star, Clock, Eye, ThumbsUp, Download } from 'lucide-react';
-import { toPersianDigits } from '@/lib/numberUtils';
+import { toPersianDigits, formatNumber } from '@/lib/numberUtils';
 
 const KnowledgeBase: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,7 +27,7 @@ const KnowledgeBase: React.FC = () => {
       category: 'hosting',
       type: 'article',
       difficulty: 'مبتدی',
-      readTime: '5 دقیقه',
+      readTime: toPersianDigits('5') + ' دقیقه',
       views: 1250,
       rating: 4.8,
       lastUpdated: '2024-01-20',
@@ -39,7 +39,7 @@ const KnowledgeBase: React.FC = () => {
       category: 'domain',
       type: 'article',
       difficulty: 'متوسط',
-      readTime: '8 دقیقه',
+      readTime: toPersianDigits('8') + ' دقیقه',
       views: 890,
       rating: 4.6,
       lastUpdated: '2024-01-18',
@@ -51,7 +51,7 @@ const KnowledgeBase: React.FC = () => {
       category: 'vps',
       type: 'video',
       difficulty: 'پیشرفته',
-      readTime: '15 دقیقه',
+      readTime: toPersianDigits('15') + ' دقیقه',
       views: 2100,
       rating: 4.9,
       lastUpdated: '2024-01-15',
@@ -273,7 +273,7 @@ const KnowledgeBase: React.FC = () => {
                 </p>
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">Windows/Mac/Linux</Badge>
-                  <span className="text-sm text-muted-foreground">25.2 MB</span>
+                  <span className="text-sm text-muted-foreground">{toPersianDigits('25.2')} MB</span>
                 </div>
                 <Button variant="outline" className="w-full">
                   <Download className="h-4 w-4 ml-1" />
@@ -295,7 +295,7 @@ const KnowledgeBase: React.FC = () => {
                 </p>
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">Windows</Badge>
-                  <span className="text-sm text-muted-foreground">2.8 MB</span>
+                  <span className="text-sm text-muted-foreground">{toPersianDigits('2.8')} MB</span>
                 </div>
                 <Button variant="outline" className="w-full">
                   <Download className="h-4 w-4 ml-1" />
@@ -317,7 +317,7 @@ const KnowledgeBase: React.FC = () => {
                 </p>
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">PDF</Badge>
-                  <span className="text-sm text-muted-foreground">5.4 MB</span>
+                  <span className="text-sm text-muted-foreground">{toPersianDigits('5.4')} MB</span>
                 </div>
                 <Button variant="outline" className="w-full">
                   <Download className="h-4 w-4 ml-1" />

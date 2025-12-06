@@ -24,6 +24,7 @@ import {
   Settings
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 export interface DomainManagementProps {
   domainId: string;
@@ -49,14 +50,15 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
     autoRenewal: autoRenew,
     privacyProtection: privacyProtection,
     dnsRecords: [
-      { type: 'A', name: '@', value: '185.123.45.67', ttl: '3600' },
-      { type: 'CNAME', name: 'www', value: 'example.com', ttl: '3600' },
-      { type: 'MX', name: '@', value: 'mail.example.com', ttl: '3600', priority: '10' }
+      { type: 'A', name: '@', value: '۱۸۵.۱۲۳.۴۵.۶۷', ttl: '۳۶۰۰' },
+      { type: 'CNAME', name: 'www', value: 'example.com', ttl: '۳۶۰۰' },
+      { type: 'MX', name: '@', value: 'mail.example.com', ttl: '۳۶۰۰', priority: '۱۰' }
     ]
   };
 
   const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    const formatted = new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
+    return toPersianDigits(formatted);
   };
 
   const copyToClipboard = (text: string, label: string) => {
