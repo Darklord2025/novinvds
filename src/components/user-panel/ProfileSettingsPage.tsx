@@ -29,12 +29,12 @@ const ProfileSettingsPage = () => {
     firstName: 'محمد',
     lastName: 'رضایی',
     email: 'mohammad@example.com',
-    phone: '09123456789',
+    phone: '۰۹۱۲۳۴۵۶۷۸۹',
     companyName: 'شرکت نمونه',
     address: 'تهران، خیابان ولیعصر',
     city: 'تهران',
     province: 'تهران',
-    postalCode: '1234567890',
+    postalCode: '۱۲۳۴۵۶۷۸۹۰',
   });
   
   const [securityForm, setSecurityForm] = useState({
@@ -49,14 +49,14 @@ const ProfileSettingsPage = () => {
   });
   
   const [apiKeys, setApiKeys] = useState([
-    { id: '1', name: 'کلید API اصلی', key: 'api_key_1234567890', created: '1402/06/15', lastUsed: '1402/06/20' },
-    { id: '2', name: 'کلید مربوط به وب سرویس', key: 'api_key_0987654321', created: '1402/05/10', lastUsed: '1402/06/18' },
+    { id: '۱', name: 'کلید API اصلی', key: 'api_key_1234567890', created: '۱۴۰۲/۰۶/۱۵', lastUsed: '۱۴۰۲/۰۶/۲۰' },
+    { id: '۲', name: 'کلید مربوط به وب سرویس', key: 'api_key_0987654321', created: '۱۴۰۲/۰۵/۱۰', lastUsed: '۱۴۰۲/۰۶/۱۸' },
   ]);
   
   const [bankCards, setBankCards] = useState([
     { 
-      id: '1', 
-      cardNumber: '6037-9974-1234-5678', 
+      id: '۱', 
+      cardNumber: '۶۰۳۷-۹۹۷۴-۱۲۳۴-۵۶۷۸', 
       bankName: 'بانک ملی', 
       ownerName: 'محمد رضایی',
       isDefault: true 
@@ -65,9 +65,9 @@ const ProfileSettingsPage = () => {
   
   const [bankAccounts, setBankAccounts] = useState([
     { 
-      id: '1', 
-      accountNumber: '1234567890', 
-      iban: 'IR123456789012345678901234',
+      id: '۱', 
+      accountNumber: '۱۲۳۴۵۶۷۸۹۰', 
+      iban: 'IR۱۲۳۴۵۶۷۸۹۰۱۲۳۴۵۶۷۸۹۰۱۲۳۴',
       bankName: 'بانک ملی', 
       ownerName: 'محمد رضایی',
       isDefault: true 
@@ -182,7 +182,7 @@ const ProfileSettingsPage = () => {
       id: (apiKeys.length + 1).toString(),
       name: 'کلید API جدید',
       key: `api_key_${Math.random().toString(36).substring(2, 15)}`,
-      created: '1402/06/21',
+      created: '۱۴۰۲/۰۶/۲۱',
       lastUsed: '-'
     };
     

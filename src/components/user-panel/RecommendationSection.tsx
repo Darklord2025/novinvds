@@ -211,14 +211,14 @@ const RecommendationSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <div className="text-3xl mb-2">🎯</div>
-              <h3 className="font-semibold mb-2">تخفیف 25% سرور مجازی</h3>
-              <p className="text-sm text-muted-foreground mb-4">برای 3 روز آینده</p>
+              <h3 className="font-semibold mb-2">تخفیف {toPersianDigits(25)}٪ سرور مجازی</h3>
+              <p className="text-sm text-muted-foreground mb-4">برای {toPersianDigits(3)} روز آینده</p>
               <Button size="sm">استفاده کن</Button>
             </div>
             
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
               <div className="text-3xl mb-2">🚀</div>
-              <h3 className="font-semibold mb-2">هاستینگ رایگان 3 ماهه</h3>
+              <h3 className="font-semibold mb-2">هاستینگ رایگان {toPersianDigits(3)} ماهه</h3>
               <p className="text-sm text-muted-foreground mb-4">با خرید دامنه</p>
               <Button size="sm">استفاده کن</Button>
             </div>

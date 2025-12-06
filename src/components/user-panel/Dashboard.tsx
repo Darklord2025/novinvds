@@ -234,19 +234,19 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="space-y-4">
               <div className="flex justify-between items-center border-b pb-2">
                 <span className="text-sm font-medium">تیکت‌های باز</span>
-                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">2</span>
+                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">۲</span>
               </div>
               <div className="flex justify-between items-center border-b pb-2">
                 <span className="text-sm font-medium">در حال بررسی</span>
-                <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">1</span>
+                <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">۱</span>
               </div>
               <div className="flex justify-between items-center border-b pb-2">
                 <span className="text-sm font-medium">پاسخ داده شده</span>
-                <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">3</span>
+                <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">۳</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">بسته شده</span>
-                <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">8</span>
+                <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">۸</span>
               </div>
               
               <div className="pt-2">
@@ -271,8 +271,8 @@ const Dashboard: React.FC<DashboardProps> = ({
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-2 bg-red-50 text-red-700 rounded-md">
-                <span className="text-sm font-medium">INV-1234</span>
-                <span className="text-xs">1402/04/15</span>
+                <span className="text-sm font-medium">INV-۱۲۳۴</span>
+                <span className="text-xs">۱۴۰۲/۰۴/۱۵</span>
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" title="مشاهده فاکتور" 
                     onClick={() => handleViewInvoice('INV-1234')}>
@@ -292,8 +292,8 @@ const Dashboard: React.FC<DashboardProps> = ({
               </Button>
               
               <div className="flex justify-between items-center p-2 bg-green-50 text-green-700 rounded-md">
-                <span className="text-sm font-medium">INV-1233</span>
-                <span className="text-xs">1402/04/01</span>
+                <span className="text-sm font-medium">INV-۱۲۳۳</span>
+                <span className="text-xs">۱۴۰۲/۰۴/۰۱</span>
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" title="مشاهده فاکتور"
                     onClick={() => handleViewInvoice('INV-1233', true)}>
@@ -307,8 +307,8 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
               
               <div className="flex justify-between items-center p-2 bg-green-50 text-green-700 rounded-md">
-                <span className="text-sm font-medium">INV-1232</span>
-                <span className="text-xs">1402/03/15</span>
+                <span className="text-sm font-medium">INV-۱۲۳۲</span>
+                <span className="text-xs">۱۴۰۲/۰۳/۱۵</span>
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" title="مشاهده فاکتور"
                     onClick={() => handleViewInvoice('INV-1232', true)}>
@@ -339,14 +339,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="space-y-3">
               <div className="p-3 border rounded-md bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcement-details/1')}>
                 <h4 className="text-sm font-medium mb-1">به‌روزرسانی سرورها</h4>
-                <p className="text-xs text-gray-600">سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد.</p>
-                <div className="text-xs text-gray-500 mt-1">1402/06/01</div>
+                <p className="text-xs text-gray-600">سرورهای ابری در تاریخ ۱۵ شهریور بروزرسانی خواهند شد.</p>
+                <div className="text-xs text-gray-500 mt-1">۱۴۰۲/۰۶/۰۱</div>
               </div>
               
               <div className="p-3 border rounded-md bg-amber-50 hover:bg-amber-100 transition-colors cursor-pointer" onClick={() => safeNavigate('/announcement-details/2')}>
                 <h4 className="text-sm font-medium mb-1">افزایش ظرفیت دیتاسنتر</h4>
                 <p className="text-xs text-gray-600">ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شد.</p>
-                <div className="text-xs text-gray-500 mt-1">1402/05/20</div>
+                <div className="text-xs text-gray-500 mt-1">۱۴۰۲/۰۵/۲۰</div>
               </div>
               
               <Button className="w-full mt-2" variant="outline" onClick={() => safeNavigate('/important-announcements')}>

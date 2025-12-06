@@ -272,7 +272,7 @@ const HostingGateway: React.FC<HostingGatewayProps> = ({ serviceId, onBack, onEn
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">انقضا:</span>
-                <span className="font-medium">{toPersianDigits(hostingData.expiryDate)}</span>
+                <span className="font-medium">{toPersianDigits('۱۴۰۴/۰۳/۲۵')}</span>
               </div>
             </CardContent>
           </Card>
