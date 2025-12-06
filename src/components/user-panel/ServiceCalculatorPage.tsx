@@ -16,6 +16,7 @@ import {
   Clock,
   Globe
 } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const ServiceCalculatorPage = () => {
   const [serviceType, setServiceType] = useState('vps');
@@ -84,7 +85,7 @@ const ServiceCalculatorPage = () => {
   }, [serviceType, cpu, ram, storage, bandwidth, paymentPeriod, location]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fa-IR').format(price);
+    return toPersianDigits(new Intl.NumberFormat('fa-IR').format(price));
   };
 
   const getServiceIcon = () => {
@@ -156,7 +157,7 @@ const ServiceCalculatorPage = () => {
                     <Cpu className="w-4 h-4 text-blue-500" />
                     تعداد هسته CPU
                   </label>
-                  <Badge variant="outline">{cpu[0]} هسته</Badge>
+                  <Badge variant="outline">{toPersianDigits(cpu[0])} هسته</Badge>
                 </div>
                 <Slider
                   value={cpu}
@@ -175,7 +176,7 @@ const ServiceCalculatorPage = () => {
                     <MemoryStick className="w-4 h-4 text-green-500" />
                     حافظه RAM
                   </label>
-                  <Badge variant="outline">{ram[0]} گیگابایت</Badge>
+                  <Badge variant="outline">{toPersianDigits(ram[0])} گیگابایت</Badge>
                 </div>
                 <Slider
                   value={ram}
@@ -194,7 +195,7 @@ const ServiceCalculatorPage = () => {
                     <HardDrive className="w-4 h-4 text-purple-500" />
                     فضای ذخیره‌سازی
                   </label>
-                  <Badge variant="outline">{storage[0]} گیگابایت</Badge>
+                  <Badge variant="outline">{toPersianDigits(storage[0])} گیگابایت</Badge>
                 </div>
                 <Slider
                   value={storage}
@@ -213,7 +214,7 @@ const ServiceCalculatorPage = () => {
                     <Zap className="w-4 h-4 text-orange-500" />
                     پهنای باند
                   </label>
-                  <Badge variant="outline">{bandwidth[0]} گیگابایت</Badge>
+                  <Badge variant="outline">{toPersianDigits(bandwidth[0])} گیگابایت</Badge>
                 </div>
                 <Slider
                   value={bandwidth}
@@ -284,19 +285,19 @@ const ServiceCalculatorPage = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>CPU:</span>
-                    <span>{cpu[0]} هسته</span>
+                    <span>{toPersianDigits(cpu[0])} هسته</span>
                   </div>
                   <div className="flex justify-between">
                     <span>RAM:</span>
-                    <span>{ram[0]} گیگابایت</span>
+                    <span>{toPersianDigits(ram[0])} گیگابایت</span>
                   </div>
                   <div className="flex justify-between">
                     <span>ذخیره‌سازی:</span>
-                    <span>{storage[0]} گیگابایت</span>
+                    <span>{toPersianDigits(storage[0])} گیگابایت</span>
                   </div>
                   <div className="flex justify-between">
                     <span>پهنای باند:</span>
-                    <span>{bandwidth[0]} گیگابایت</span>
+                    <span>{toPersianDigits(bandwidth[0])} گیگابایت</span>
                   </div>
                   <div className="flex justify-between">
                     <span>مکان:</span>

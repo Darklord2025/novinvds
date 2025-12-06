@@ -12,8 +12,8 @@ import { toast } from '@/components/ui/use-toast';
 import { toPersianDigits } from '@/lib/numberUtils';
 
 const AffiliateCenter: React.FC = () => {
-  const [affiliateCode] = useState('AFC' + toPersianDigits(123456));
-  const [referralLink] = useState(`https://novinvds.com/register?ref=AFC123456`);
+  const [affiliateCode] = useState('AFC۱۲۳۴۵۶');
+  const [referralLink] = useState(`https://novinvds.com/register?ref=AFC۱۲۳۴۵۶`);
   
   // Mock data
   const [stats] = useState({
