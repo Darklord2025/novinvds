@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface HeaderProps {
   activeTab: string;
@@ -116,27 +117,51 @@ const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center space-x-4 space-x-reverse">
         <div className="hidden md:flex items-center bg-gray-100 rounded-md px-3 py-1 text-gray-700">
           <Clock className="h-4 w-4 ml-1" />
-          <span className="text-sm">{sessionTimeLeft}</span>
+          <span className="text-sm">{toPersianDigits(sessionTimeLeft)}</span>
         </div>
         
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative"
-          onClick={handleViewImportantAnnouncements}
-        >
-          <MegaphoneIcon className="h-5 w-5" />
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
-            2
-          </Badge>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+            >
+              <MegaphoneIcon className="h-5 w-5" />
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
+                ۲
+              </Badge>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel>اطلاعیه‌های مهم</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="max-h-96 overflow-auto">
+              <DropdownMenuItem className="flex flex-col items-start py-3">
+                <span className="font-medium">به‌روزرسانی سرورهای ابری</span>
+                <span className="text-sm text-gray-500 mt-1">سرورهای ابری در تاریخ ۱۵ شهریور بروزرسانی خواهند شد.</span>
+                <span className="text-xs text-gray-400 mt-2">۱ روز پیش</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex flex-col items-start py-3">
+                <span className="font-medium">اختلال موقت سرویس DNS</span>
+                <span className="text-sm text-gray-500 mt-1">سرویس DNS ممکن است با اختلال موقت مواجه شود.</span>
+                <span className="text-xs text-gray-400 mt-2">۳ روز پیش</span>
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-center text-blue-600 justify-center" onClick={handleViewImportantAnnouncements}>
+              مشاهده همه اطلاعیه‌ها
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
-                3
+                ۳
               </Badge>
             </Button>
           </DropdownMenuTrigger>

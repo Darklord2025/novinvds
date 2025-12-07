@@ -23,8 +23,6 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Auth from "./pages/Auth";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
 import UserPanel from "./pages/UserPanel";
 import NotFound from "./pages/NotFound";
 import HostingPlans from "./pages/HostingPlans";
@@ -65,8 +63,8 @@ const App = () => (
               <Route path="/login" element={<Auth />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/register" element={<Auth />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/cart" element={<UserPanel />} />
+              <Route path="/checkout" element={<UserPanel />} />
               <Route path="/user-panel" element={<UserPanel />} />
               <Route path="/hosting-plans" element={<HostingPlans />} />
               <Route path="/vps-plans" element={<VpsPlans />} />

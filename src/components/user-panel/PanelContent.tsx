@@ -28,6 +28,7 @@ import WalletTopUpPage from './WalletTopUpPage';
 import ServerManagementPage from './ServerManagementPage';
 import ServiceCalculatorPage from './ServiceCalculatorPage';
 import SecurityCenterPage from './SecurityCenterPage';
+import CheckoutPage from './CheckoutPage';
 // Components will be imported when available
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
@@ -144,7 +145,9 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'recommendations':
       return <RecommendationSection />;
     case 'cart':
-      return <CartPage onCheckout={() => navigateToServiceOrderPage('/checkout')} />;
+      return <CartPage onCheckout={() => navigationHandlers.handleSidebarClick('checkout')} />;
+    case 'checkout':
+      return <CheckoutPage onBack={() => navigationHandlers.handleSidebarClick('cart')} />;
     case 'profile':
       return <ProfileSettingsPage />;
     case 'servers':
