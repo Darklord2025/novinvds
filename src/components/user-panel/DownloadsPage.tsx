@@ -143,11 +143,11 @@ const DownloadsPage = () => {
                   {getFileIcon(item.type)}
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-1">
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>{item.downloadCount} دانلود</span>
+                      <span>دانلود {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -176,11 +176,11 @@ const DownloadsPage = () => {
                   {getFileIcon(item.type)}
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-1">
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>{item.downloadCount} دانلود</span>
+                      <span>دانلود {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -209,11 +209,11 @@ const DownloadsPage = () => {
                   {getFileIcon(item.type)}
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-1">
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>{item.downloadCount} دانلود</span>
+                      <span>دانلود {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -242,11 +242,11 @@ const DownloadsPage = () => {
                   {getFileIcon(item.type)}
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-1">
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>{item.downloadCount} دانلود</span>
+                      <span>دانلود {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>

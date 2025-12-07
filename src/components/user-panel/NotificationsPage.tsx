@@ -9,6 +9,7 @@ import { Check, Mail, Search, Trash2, Bell, AlertCircle, Info } from "lucide-rea
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface Notification {
   id: string;
@@ -36,8 +37,8 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
     {
       id: '1',
       title: 'به‌روزرسانی سرورها',
-      content: 'سرورهای ابری در تاریخ 15 شهریور بروزرسانی خواهند شد. لطفاً برای جلوگیری از اختلال در سرویس، تمهیدات لازم را در نظر بگیرید. این به‌روزرسانی شامل ارتقای سیستم عامل و به‌روزرسانی‌های امنیتی است. زمان تقریبی اختلال: 2 ساعت.',
-      date: '1402/06/01',
+      content: 'سرورهای ابری در تاریخ ۱۵ شهریور بروزرسانی خواهند شد. لطفاً برای جلوگیری از اختلال در سرویس، تمهیدات لازم را در نظر بگیرید. این به‌روزرسانی شامل ارتقای سیستم عامل و به‌روزرسانی‌های امنیتی است. زمان تقریبی اختلال: ۲ ساعت.',
+      date: toPersianDigits('1402/06/01'),
       type: 'info',
       read: false,
       important: true
@@ -46,7 +47,7 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
       id: '2',
       title: 'افزایش ظرفیت دیتاسنتر',
       content: 'به اطلاع می‌رساند ظرفیت جدید سرورهای اختصاصی در دیتاسنتر اضافه شده است. برای سفارش سرورهای جدید با پشتیبانی تماس بگیرید یا از طریق پنل کاربری اقدام نمایید.',
-      date: '1402/05/20',
+      date: toPersianDigits('1402/05/20'),
       type: 'info',
       read: true,
       important: true
@@ -54,8 +55,8 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
     {
       id: '3',
       title: 'سرویس شما نیاز به تمدید دارد',
-      content: 'سرویس هاستینگ شما با شناسه HOSTxxxx تا 10 روز دیگر منقضی خواهد شد. لطفاً نسبت به تمدید آن اقدام نمایید تا در سرویس‌دهی شما اختلالی ایجاد نشود.',
-      date: '1402/06/10',
+      content: 'سرویس هاستینگ شما با شناسه HOSTxxxx تا ۱۰ روز دیگر منقضی خواهد شد. لطفاً نسبت به تمدید آن اقدام نمایید تا در سرویس‌دهی شما اختلالی ایجاد نشود.',
+      date: toPersianDigits('1402/06/10'),
       type: 'alert',
       read: false,
       important: false
@@ -64,7 +65,7 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
       id: '4',
       title: 'فاکتور جدید صادر شد',
       content: 'فاکتور جدیدی برای سرویس سرور مجازی شما صادر شده است. لطفاً نسبت به پرداخت آن اقدام نمایید.',
-      date: '1402/06/12',
+      date: toPersianDigits('1402/06/12'),
       type: 'info',
       read: false,
       important: false
@@ -73,7 +74,7 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
       id: '5',
       title: 'تیکت شما پاسخ داده شد',
       content: 'تیکت شماره TICKxxxx توسط کارشناسان پشتیبانی پاسخ داده شد. برای مشاهده پاسخ به بخش تیکت‌ها مراجعه نمایید.',
-      date: '1402/06/15',
+      date: toPersianDigits('1402/06/15'),
       type: 'success',
       read: true,
       important: false
@@ -81,8 +82,8 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
     {
       id: '6',
       title: 'اختلال موقت در سرویس DNS',
-      content: 'به اطلاع می‌رساند به دلیل عملیات به‌روزرسانی، سرویس DNS ممکن است با اختلال موقت مواجه شود. این اختلال از ساعت 2 تا 4 بامداد فردا خواهد بود.',
-      date: '1402/06/18',
+      content: 'به اطلاع می‌رساند به دلیل عملیات به‌روزرسانی، سرویس DNS ممکن است با اختلال موقت مواجه شود. این اختلال از ساعت ۲ تا ۴ بامداد فردا خواهد بود.',
+      date: toPersianDigits('1402/06/18'),
       type: 'alert',
       read: false,
       important: true
@@ -91,7 +92,7 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
       id: '7',
       title: 'ارتقاء سطح امنیتی',
       content: 'سطح امنیتی تمامی سرورها و خدمات ارتقاء یافته است. توصیه می‌شود رمزهای عبور خود را تغییر دهید و از احراز هویت دو مرحله‌ای استفاده نمایید.',
-      date: '1402/06/05',
+      date: toPersianDigits('1402/06/05'),
       type: 'info',
       read: true,
       important: false
@@ -189,9 +190,9 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
         </div>
         
         <div className="flex gap-2 self-stretch md:self-auto">
-          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">همه: {notifications.length}</Badge>
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-200">خوانده نشده: {notifications.filter(n => !n.read).length}</Badge>
-          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-200">مهم: {notifications.filter(n => n.important).length}</Badge>
+          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">همه: {toPersianDigits(notifications.length)}</Badge>
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-200">خوانده نشده: {toPersianDigits(notifications.filter(n => !n.read).length)}</Badge>
+          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-200">مهم: {toPersianDigits(notifications.filter(n => n.important).length)}</Badge>
         </div>
       </div>
 
