@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import PanelContent from './PanelContent';
@@ -10,6 +10,8 @@ import { sidebarItems } from '@/data/sidebarItems';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 const UserPanelLayout: React.FC = () => {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  
   const {
     activeTab,
     setActiveTab,
@@ -37,27 +39,43 @@ const UserPanelLayout: React.FC = () => {
     setSelectedNotification,
     setSelectedAnnouncement
   );
+
+  const handleMobileSidebarClick = (itemId: string) => {
+    handleSidebarItemClick(itemId);
+    setIsMobileSidebarOpen(false);
+  };
+
+  const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
   
   return (
     <TooltipProvider>
       <div className="flex h-screen bg-gray-100 w-full">
+        {/* Desktop Sidebar */}
         <Sidebar 
           items={sidebarItems} 
           activeTab={activeTab}
           onItemClick={handleSidebarItemClick}
           className="hidden md:flex"
+          isMobile={false}
+        />
+        
+        {/* Mobile Sidebar */}
+        <Sidebar 
+          items={sidebarItems} 
+          activeTab={activeTab}
+          onItemClick={handleMobileSidebarClick}
+          isMobile={true}
+          isOpen={isMobileSidebarOpen}
+          onClose={() => setIsMobileSidebarOpen(false)}
         />
         
         <div className="flex flex-col flex-1 overflow-hidden min-w-0">
           <Header 
             activeTab={activeTab}
-            sidebarItems={sidebarItems}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            sessionTimeLeft={sessionTimeLeft}
-            onSidebarItemClick={handleSidebarItemClick}
-            onViewAllNotifications={navigationHandlers.handleViewAllNotifications}
-            onViewImportantAnnouncements={navigationHandlers.handleViewImportantAnnouncements}
+            onNavigate={handleSidebarItemClick}
+            onToggleMobileSidebar={toggleMobileSidebar}
           />
           
           <main className="flex-1 overflow-auto bg-gray-100 p-3 md:p-4 lg:p-6">

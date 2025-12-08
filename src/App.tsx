@@ -20,8 +20,6 @@ import Datacenter from "./pages/Datacenter";
 import Blog from "./pages/Blog";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Auth from "./pages/Auth";
 import UserPanel from "./pages/UserPanel";
 import NotFound from "./pages/NotFound";
