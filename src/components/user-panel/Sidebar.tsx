@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Server, 
@@ -28,20 +28,47 @@ import {
   PlusCircle,
   ChevronDown,
   ChevronRight,
-  ShoppingCart
+  ShoppingCart,
+  CreditCard,
+  X,
+  Menu
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarProps, SidebarItem } from './interfaces';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
-const Sidebar: React.FC<SidebarProps> = ({ 
+interface ExtendedSidebarProps extends SidebarProps {
+  isMobile?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar: React.FC<ExtendedSidebarProps> = ({ 
   activeTab, 
   setActiveTab, 
   items = [], 
   onItemClick, 
   onHomeClick, 
-  className 
+  className,
+  isMobile = false,
+  isOpen = false,
+  onClose
 }) => {
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  // Auto-expand parent if a child is active
+  useEffect(() => {
+    items.forEach(item => {
+      if (item.submenu) {
+        const hasActiveChild = item.submenu.some(sub => sub.id === activeTab);
+        if (hasActiveChild && !expandedItems.includes(item.id)) {
+          setExpandedItems(prev => [...prev, item.id]);
+        }
+      }
+    });
+  }, [activeTab, items]);
+
   // Handle item clicks for both interfaces
   const handleItemClick = (itemId: string) => {
     if (onItemClick) {
@@ -49,11 +76,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     } else if (setActiveTab) {
       setActiveTab(itemId);
     }
+    // Close sidebar on mobile after selection
+    if (isMobile && onClose) {
+      onClose();
+    }
   };
 
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
-
-  const toggleExpanded = (itemId: string) => {
+  const toggleExpanded = (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpandedItems(prev => 
       prev.includes(itemId) 
         ? prev.filter(id => id !== itemId)
@@ -62,11 +92,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const getIcon = (iconName: string, className: string = "h-5 w-5") => {
-    const coloredClass = className.includes('text-') ? className : `${className} text-blue-500`;
-    
     switch (iconName) {
       case 'home': return <LayoutDashboard className={`${className} text-blue-500`} />;
       case 'shopping-cart': return <ShoppingCart className={`${className} text-rose-500`} />;
+      case 'credit-card': return <CreditCard className={`${className} text-teal-500`} />;
       case 'server': return <Server className={`${className} text-green-500`} />;
       case 'server-stack': return <HardDrive className={`${className} text-purple-500`} />;
       case 'hard-drive': return <HardDrive className={`${className} text-purple-500`} />;
@@ -76,7 +105,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       case 'calculator': return <Calculator className={`${className} text-yellow-500`} />;
       case 'message-square': return <TicketCheck className={`${className} text-red-500`} />;
       case 'file-text': return <FileText className={`${className} text-gray-500`} />;
-      case 'credit-card': return <History className={`${className} text-teal-500`} />;
+      case 'receipt': return <Receipt className={`${className} text-teal-500`} />;
+      case 'history': return <History className={`${className} text-indigo-500`} />;
       case 'wallet': return <Wallet className={`${className} text-emerald-500`} />;
       case 'download': return <Download className={`${className} text-blue-600`} />;
       case 'user': return <User className={`${className} text-pink-500`} />;
@@ -94,21 +124,32 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  return (
-    <div className={cn("w-64 bg-white border-l shadow-sm hidden md:flex md:flex-col", className)}>
+  const renderSidebarContent = () => (
+    <>
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-blue-600">نوین وی‌دی‌اس</h2>
-          {onHomeClick && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              title="بازگشت به صفحه اصلی"
-              onClick={onHomeClick}
-            >
-              <Home className="h-5 w-5" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {onHomeClick && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                title="بازگشت به صفحه اصلی"
+                onClick={onHomeClick}
+              >
+                <Home className="h-5 w-5" />
+              </Button>
+            )}
+            {isMobile && onClose && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onClose}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </div>
         <p className="text-sm text-gray-500 mt-1">پنل کاربری</p>
       </div>
@@ -124,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       "w-full flex items-center justify-between px-4 py-2 text-sm text-right rounded-lg transition-colors",
                       "text-gray-700 hover:bg-gray-100"
                     )}
-                    onClick={() => toggleExpanded(item.id)}
+                    onClick={(e) => toggleExpanded(item.id, e)}
                   >
                     <div className="flex items-center">
                       <span className="ml-2">{getIcon(item.icon)}</span>
@@ -184,6 +225,24 @@ const Sidebar: React.FC<SidebarProps> = ({
           <span>خروج از حساب</span>
         </button>
       </div>
+    </>
+  );
+
+  // For mobile, render as Sheet
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={(open) => !open && onClose?.()}>
+        <SheetContent side="right" className="w-72 p-0 flex flex-col">
+          {renderSidebarContent()}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // For desktop, render as fixed sidebar
+  return (
+    <div className={cn("w-64 bg-white border-l shadow-sm hidden md:flex md:flex-col", className)}>
+      {renderSidebarContent()}
     </div>
   );
 };

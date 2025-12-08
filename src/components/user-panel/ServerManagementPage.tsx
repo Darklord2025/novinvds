@@ -30,6 +30,7 @@ import {
   Terminal,
   FileText
 } from 'lucide-react';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 const ServerManagementPage = () => {
   const [selectedServer, setSelectedServer] = useState('vps-001');
@@ -37,27 +38,27 @@ const ServerManagementPage = () => {
   const servers = [
     {
       id: 'vps-001',
-      name: 'VPS-001',
+      name: 'VPS-۰۰۱',
       type: 'مجازی',
       status: 'online',
-      cpu: '4 هسته',
-      ram: '8 گیگابایت',
-      disk: '80 گیگابایت SSD',
-      ip: '185.123.45.67',
+      cpu: '۴ هسته',
+      ram: '۸ گیگابایت',
+      disk: '۸۰ گیگابایت SSD',
+      ip: toPersianDigits('185.123.45.67'),
       os: 'Ubuntu 22.04',
-      uptime: '25 روز'
+      uptime: '۲۵ روز'
     },
     {
       id: 'dedicated-001',
-      name: 'Dedicated-001',
+      name: 'Dedicated-۰۰۱',
       type: 'اختصاصی',
       status: 'online',
       cpu: 'Intel Xeon E5-2620',
-      ram: '32 گیگابایت',
-      disk: '1 ترابایت SSD',
-      ip: '185.123.45.68',
+      ram: '۳۲ گیگابایت',
+      disk: '۱ ترابایت SSD',
+      ip: toPersianDigits('185.123.45.68'),
       os: 'CentOS 8',
-      uptime: '45 روز'
+      uptime: '۴۵ روز'
     }
   ];
 
@@ -229,14 +230,14 @@ const ServerManagementPage = () => {
                               <Cpu className="w-5 h-5 text-green-500" />
                               <span className="font-medium">استفاده CPU</span>
                             </div>
-                            <div className="text-2xl font-bold text-green-600">35%</div>
+                            <div className="text-2xl font-bold text-green-600">{toPersianDigits('35')}٪</div>
                           </div>
                           <div className="bg-purple-50 p-4 rounded-lg">
                             <div className="flex items-center gap-2 mb-2">
                               <MemoryStick className="w-5 h-5 text-purple-500" />
                               <span className="font-medium">استفاده RAM</span>
                             </div>
-                            <div className="text-2xl font-bold text-purple-600">62%</div>
+                            <div className="text-2xl font-bold text-purple-600">{toPersianDigits('62')}٪</div>
                           </div>
                         </div>
                         
@@ -249,7 +250,7 @@ const ServerManagementPage = () => {
                             </div>
                             <div>
                               <span className="text-gray-600">کرنل:</span>
-                              <span className="font-medium mr-2">5.15.0-72</span>
+                              <span className="font-medium mr-2">{toPersianDigits('5.15.0-72')}</span>
                             </div>
                             <div>
                               <span className="text-gray-600">معماری:</span>
@@ -257,7 +258,7 @@ const ServerManagementPage = () => {
                             </div>
                             <div>
                               <span className="text-gray-600">آخرین آپدیت:</span>
-                              <span className="font-medium mr-2">2 روز پیش</span>
+                              <span className="font-medium mr-2">۲ روز پیش</span>
                             </div>
                           </div>
                         </div>
@@ -290,7 +291,7 @@ const ServerManagementPage = () => {
                             <Terminal className="w-5 h-5 text-yellow-500" />
                             <div>
                               <div className="font-medium">دسترسی SSH</div>
-                              <div className="text-sm text-gray-600">پورت 22 - فعال</div>
+                              <div className="text-sm text-gray-600">پورت ۲۲ - فعال</div>
                             </div>
                           </div>
                           <Button variant="outline" size="sm">مدیریت کلیدها</Button>

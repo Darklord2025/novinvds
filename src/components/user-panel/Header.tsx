@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Bell, Search, Menu, User, Clock, MegaphoneIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,85 +16,60 @@ import { Badge } from "@/components/ui/badge";
 import { toPersianDigits } from '@/lib/numberUtils';
 
 interface HeaderProps {
-  activeTab: string;
-  sidebarItems: Array<{ id: string; label: string; icon: string }>;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  sessionTimeLeft?: string;
-  onSidebarItemClick?: (itemId: string) => void;
-  onViewAllNotifications?: () => void;
-  onViewImportantAnnouncements?: () => void;
+  activeTab?: string;
+  onNavigate?: (tab: string) => void;
+  onToggleMobileSidebar?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   activeTab, 
-  sidebarItems, 
-  searchQuery, 
-  setSearchQuery, 
-  sessionTimeLeft = "60:00",
-  onSidebarItemClick,
-  onViewAllNotifications,
-  onViewImportantAnnouncements
+  onNavigate,
+  onToggleMobileSidebar
 }) => {
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const sessionTimeLeft = "۶۰:۰۰";
   
   const getPageTitle = () => {
-    const item = sidebarItems.find(item => item.id === activeTab);
-    return item ? item.label : 'داشبورد';
+    const titles: Record<string, string> = {
+      'dashboard': 'داشبورد',
+      'cart': 'سبد خرید',
+      'checkout': 'پرداخت نهایی',
+      'recommendations': 'پیشنهادات ویژه',
+      'services': 'سرویس‌ها',
+      'tickets': 'تیکت‌ها',
+      'billing': 'امور مالی',
+      'downloads': 'دانلودها',
+      'profile': 'تنظیمات حساب',
+      'notifications': 'اعلان‌ها',
+      'announcements': 'اطلاعیه‌های مهم',
+      'knowledge': 'مرکز دانش',
+      'security': 'مرکز امنیت',
+      'affiliate': 'معرفی و کسب درآمد',
+    };
+    return titles[activeTab || 'dashboard'] || 'داشبورد';
   };
   
-  const handleSidebarItemClick = (itemId: string) => {
-    if (onSidebarItemClick) {
-      onSidebarItemClick(itemId);
+  const handleNavigate = (tab: string) => {
+    if (onNavigate) {
+      onNavigate(tab);
     }
   };
   
   const handleViewAllNotifications = () => {
-    if (onViewAllNotifications) {
-      onViewAllNotifications();
-    }
+    handleNavigate('notifications');
   };
   
   const handleViewImportantAnnouncements = () => {
-    if (onViewImportantAnnouncements) {
-      onViewImportantAnnouncements();
-    }
+    handleNavigate('announcements');
   };
   
   return (
     <header className="bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-10">
+      {/* Mobile Menu Button */}
       <div className="flex items-center md:hidden">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" title="منو">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-64 p-0">
-            <div className="p-4 border-b">
-              <h2 className="text-xl font-bold text-blue-600">نوین وی‌دی‌اس</h2>
-              <p className="text-sm text-gray-500 mt-1">پنل کاربری</p>
-            </div>
-            <div className="py-4">
-              <ul className="space-y-1">
-                {sidebarItems.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className={
-                        activeTab === item.id
-                          ? "w-full flex items-center px-4 py-2 text-sm text-right text-blue-600 bg-blue-50 font-medium border-r-4 border-blue-600"
-                          : "w-full flex items-center px-4 py-2 text-sm text-right text-gray-700 hover:bg-gray-100"
-                      }
-                      onClick={() => handleSidebarItemClick(item.id)}
-                    >
-                      <span>{item.label}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <Button variant="ghost" size="icon" title="منو" onClick={onToggleMobileSidebar}>
+          <Menu className="h-5 w-5" />
+        </Button>
       </div>
       
       <div className="flex-1 md:flex-initial">
@@ -117,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center space-x-4 space-x-reverse">
         <div className="hidden md:flex items-center bg-gray-100 rounded-md px-3 py-1 text-gray-700">
           <Clock className="h-4 w-4 ml-1" />
-          <span className="text-sm">{toPersianDigits(sessionTimeLeft)}</span>
+          <span className="text-sm">{sessionTimeLeft}</span>
         </div>
         
         <DropdownMenu>
@@ -206,11 +180,11 @@ const Header: React.FC<HeaderProps> = ({
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>حساب کاربری</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleSidebarItemClick('profile')}>
+            <DropdownMenuItem onClick={() => handleNavigate('profile')}>
               <User className="ml-2 h-4 w-4" />
               <span>پروفایل کاربری</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleSidebarItemClick('tickets')}>پشتیبانی</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleNavigate('tickets')}>پشتیبانی</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600">خروج از حساب</DropdownMenuItem>
           </DropdownMenuContent>

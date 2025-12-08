@@ -66,6 +66,10 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
     return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
   };
 
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('fa-IR').format(num);
+  };
+
   const getUsagePercentage = (used: number, limit: number) => {
     return Math.round((used / limit) * 100);
   };
@@ -229,7 +233,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>استفاده از دیسک</span>
-                        <span>{service.diskUsage}GB / {service.diskLimit}GB</span>
+                        <span>{formatNumber(service.diskUsage)}GB / {formatNumber(service.diskLimit)}GB</span>
                       </div>
                       <Progress value={getUsagePercentage(service.diskUsage, service.diskLimit)} />
                     </div>
@@ -239,7 +243,7 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>استفاده از پهنای باند</span>
-                        <span>{service.bandwidthUsage}GB / {service.bandwidthLimit}GB</span>
+                        <span>{formatNumber(service.bandwidthUsage)}GB / {formatNumber(service.bandwidthLimit)}GB</span>
                       </div>
                       <Progress value={getUsagePercentage(service.bandwidthUsage, service.bandwidthLimit)} />
                     </div>
