@@ -306,7 +306,7 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                     </div>
                     <div className="text-left">
                       {getStatusBadge(topup.status)}
-                      <div className="text-xs text-muted-foreground mt-1 font-mono">
+                      <div className="text-xs text-muted-foreground mt-1">
                         {topup.referenceId}
                       </div>
                     </div>

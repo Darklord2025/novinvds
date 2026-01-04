@@ -162,6 +162,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onUnsuspendService={handleUnsuspendService}
         onTerminateService={handleTerminateService}
         onViewInvoice={handleViewInvoice}
+        onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
       />;
     case 'domains':
       return <DomainServicesPage 

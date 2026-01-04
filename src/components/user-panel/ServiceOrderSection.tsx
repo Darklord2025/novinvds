@@ -113,19 +113,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       ]
     },
     {
-      id: "security",
-      title: "امنیتی",
-      description: "خدمات و محصولات امنیتی",
-      icon: <Shield className="h-6 w-6" />,
-      color: "bg-gradient-to-br from-indigo-500 to-indigo-700",
-      hoverColor: "from-indigo-600 to-indigo-800",
-      services: [
-        { id: "ssl", name: "گواهی SSL", link: "/security/ssl" },
-        { id: "backup", name: "پشتیبان‌گیری خودکار", link: "/security/backup" },
-        { id: "vpn", name: "سرویس VPN اختصاصی", link: "/security/vpn" },
-      ]
-    },
-    {
       id: "network",
       title: "خدمات شبکه",
       description: "راه‌حل‌های شبکه و ترافیک",
@@ -174,23 +161,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       ]
     },
     {
-      id: "design",
-      title: "طراحی سایت",
-      description: "خدمات طراحی و توسعه وب",
-      icon: <Monitor className="h-6 w-6" />,
-      color: "bg-gradient-to-br from-pink-500 to-pink-700",
-      hoverColor: "from-pink-600 to-pink-800",
-      services: [
-        { id: "templates", name: "قالب‌های آماده", link: "/design/templates" },
-        { id: "custom-design", name: "طراحی اختصاصی", link: "/design/custom" },
-        { id: "wordpress", name: "راه‌اندازی وردپرس", link: "/design/wordpress" },
-        { id: "woocommerce", name: "راه‌اندازی فروشگاه", link: "/design/woocommerce" },
-        { id: "seo", name: "بهینه‌سازی سئو", link: "/design/seo" },
-        { id: "responsive", name: "طراحی ریسپانسیو", link: "/design/responsive" },
-        { id: "mobile-app", name: "طراحی اپلیکیشن موبایل", link: "/design/mobile-app" },
-      ]
-    },
-    {
       id: "support",
       title: "پشتیبانی تخصصی",
       description: "خدمات پشتیبانی تخصصی در زمینه‌های مختلف",
@@ -198,10 +168,6 @@ const ServiceOrderSection: React.FC<ServiceOrderSectionProps> = ({ navigateToSer
       color: "bg-gradient-to-br from-teal-500 to-teal-700",
       hoverColor: "from-teal-600 to-teal-800",
       services: [
-        { id: "support-basic", name: "پشتیبانی پایه", link: "/support/basic" },
-        { id: "support-advanced", name: "پشتیبانی پیشرفته", link: "/support/advanced" },
-        { id: "support-premium", name: "پشتیبانی ویژه", link: "/support/premium" },
-        { id: "support-online", name: "پشتیبانی آنلاین", link: "/support/online" },
         { id: "support-managed", name: "مدیریت سرور", link: "/support/managed" },
         { id: "support-emergency", name: "پشتیبانی اضطراری", link: "/support/emergency" },
         { id: "support-consultation", name: "مشاوره تخصصی", link: "/support/consultation" },

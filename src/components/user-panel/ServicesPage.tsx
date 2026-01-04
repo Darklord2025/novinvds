@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import ServerList from "./ServerList";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileDown, RefreshCw, Settings, Download, Eye } from 'lucide-react';
+import { ExternalLink, FileDown, RefreshCw, Settings, Download, Eye, ChevronRight } from 'lucide-react';
 
 interface OperatingSystem {
   id: string;
@@ -26,6 +26,7 @@ interface ServicesPageProps {
   onManage?: (serviceType: string, id: string) => void;
   onReset?: (serviceType: string, id: string) => void;
   onRenew?: (serviceType: string, id: string) => void;
+  onBack?: () => void;
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ 
@@ -33,7 +34,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
   operatingSystems,
   onManage,
   onReset,
-  onRenew
+  onRenew,
+  onBack
 }) => {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [serverToReset, setServerToReset] = useState({ type: '', id: '' });
@@ -231,15 +233,23 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
-          <p className="text-gray-500 mt-1">مدیریت و مشاهده {getPageTitle()} شما</p>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
+              <ChevronRight className="w-4 h-4" />
+              بازگشت
+            </Button>
+          )}
+          <div>
+            <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
+            <p className="text-gray-500 mt-1">مدیریت و مشاهده {getPageTitle()} شما</p>
+          </div>
         </div>
         
         <div className="flex gap-2">
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">فعال: 3</Badge>
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">در انتظار: 0</Badge>
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-200">منقضی شده: 1</Badge>
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">فعال: ۳</Badge>
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">در انتظار: ۰</Badge>
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-200">منقضی شده: ۱</Badge>
         </div>
       </div>
       

@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Phone, User, Eye, EyeOff, Shield, Server, Zap, Headphones, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isFlipping, setIsFlipping] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Login state
@@ -26,6 +29,23 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
 
+  // Check for existing session
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        navigate('/user-panel');
+      }
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        navigate('/user-panel');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   const handleFlip = (toLogin: boolean) => {
     setIsFlipping(true);
     setTimeout(() => {
@@ -34,16 +54,112 @@ const Auth = () => {
     }, 300);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, password, rememberMe });
-    navigate('/user-panel');
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "خطا در ورود",
+          description: error.message === "Invalid login credentials" 
+            ? "ایمیل یا رمز عبور اشتباه است" 
+            : error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "ورود موفق",
+          description: "به پنل کاربری خوش آمدید",
+        });
+        navigate('/user-panel');
+      }
+    } catch (error: any) {
+      toast({
+        title: "خطا",
+        description: "مشکلی در ارتباط با سرور رخ داد",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ fullName, registerEmail, mobile, registerPassword, confirmPassword, acceptTerms });
-    navigate('/user-panel');
+
+    if (registerPassword !== confirmPassword) {
+      toast({
+        title: "خطا",
+        description: "رمز عبور و تکرار آن مطابقت ندارند",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (registerPassword.length < 6) {
+      toast({
+        title: "خطا",
+        description: "رمز عبور باید حداقل ۶ کاراکتر باشد",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: registerEmail,
+        password: registerPassword,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            phone: mobile,
+          }
+        }
+      });
+
+      if (error) {
+        let errorMessage = error.message;
+        if (error.message.includes("already registered")) {
+          errorMessage = "این ایمیل قبلاً ثبت شده است";
+        }
+        toast({
+          title: "خطا در ثبت نام",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "ثبت نام موفق",
+          description: "حساب کاربری شما با موفقیت ایجاد شد",
+        });
+        navigate('/user-panel');
+      }
+    } catch (error: any) {
+      toast({
+        title: "خطا",
+        description: "مشکلی در ارتباط با سرور رخ داد",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const features = [
@@ -128,6 +244,7 @@ const Auth = () => {
                           placeholder="example@email.com"
                           dir="ltr"
                           required
+                          disabled={isLoading}
                         />
                         <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                       </div>
@@ -148,6 +265,7 @@ const Auth = () => {
                           className="pr-10 pl-10"
                           placeholder="رمز عبور خود را وارد کنید"
                           required
+                          disabled={isLoading}
                         />
                         <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <button
@@ -171,8 +289,19 @@ const Auth = () => {
                       </Label>
                     </div>
 
-                    <Button type="submit" className="w-full py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-                      ورود به حساب
+                    <Button 
+                      type="submit" 
+                      className="w-full py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <span className="animate-spin mr-2">●</span>
+                          در حال ورود...
+                        </>
+                      ) : (
+                        'ورود به حساب'
+                      )}
                     </Button>
 
                     <p className="text-center text-gray-600">
@@ -231,6 +360,7 @@ const Auth = () => {
                           className="pr-10"
                           placeholder="نام کامل خود را وارد کنید"
                           required
+                          disabled={isLoading}
                         />
                         <User className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                       </div>
@@ -248,6 +378,7 @@ const Auth = () => {
                             placeholder="ایمیل"
                             dir="ltr"
                             required
+                            disabled={isLoading}
                           />
                           <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         </div>
@@ -263,6 +394,7 @@ const Auth = () => {
                             placeholder="موبایل"
                             dir="ltr"
                             required
+                            disabled={isLoading}
                           />
                           <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         </div>
@@ -280,6 +412,7 @@ const Auth = () => {
                             className="pr-10 pl-10"
                             placeholder="رمز عبور"
                             required
+                            disabled={isLoading}
                           />
                           <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <button
@@ -301,6 +434,7 @@ const Auth = () => {
                             className="pr-10 pl-10"
                             placeholder="تکرار رمز"
                             required
+                            disabled={isLoading}
                           />
                           <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <button
@@ -328,9 +462,16 @@ const Auth = () => {
                     <Button 
                       type="submit" 
                       className="w-full py-6 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
-                      disabled={!acceptTerms}
+                      disabled={!acceptTerms || isLoading}
                     >
-                      ایجاد حساب کاربری
+                      {isLoading ? (
+                        <>
+                          <span className="animate-spin mr-2">●</span>
+                          در حال ثبت نام...
+                        </>
+                      ) : (
+                        'ایجاد حساب کاربری'
+                      )}
                     </Button>
 
                     <p className="text-center text-gray-600 text-sm">
