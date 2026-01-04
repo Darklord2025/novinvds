@@ -306,7 +306,7 @@ const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
                 </div>
                 
                 <Button 
-                  onClick={() => window.location.href = '/checkout'}
+                  onClick={onCheckout}
                   className="w-full py-6 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-700"
                 >
                   <CreditCard className="w-5 h-5 ml-2" />

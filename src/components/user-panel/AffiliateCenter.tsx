@@ -265,9 +265,9 @@ const AffiliateCenter: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {referrals.map((referral) => (
+                  {referrals.map((referral, index) => (
                     <TableRow key={referral.id}>
-                      <TableCell className="font-medium">{referral.username}</TableCell>
+                      <TableCell className="font-medium">{toPersianDigits((index + 1).toString())}. {referral.username}</TableCell>
                       <TableCell>{referral.email}</TableCell>
                       <TableCell>{formatDate(referral.joinDate)}</TableCell>
                       <TableCell>

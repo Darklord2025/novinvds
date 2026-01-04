@@ -85,22 +85,15 @@ const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onBack }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center">
-          <Button variant="ghost" onClick={onBack} className="ml-2">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">{ticketData.subject}</h1>
-        </div>
-        <div className="flex items-center space-x-2 space-x-reverse">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            ${ticketData.status === 'باز' ? 'bg-green-100 text-green-800' : 
-            ticketData.status === 'در انتظار پاسخ' ? 'bg-blue-100 text-blue-800' : 
-            ticketData.status === 'بسته شده' ? 'bg-gray-100 text-gray-800' : 
-            'bg-yellow-100 text-yellow-800'}
-          `}>
-            {ticketData.status}
-          </span>
-        </div>
+        <h1 className="text-2xl font-bold">{ticketData.subject}</h1>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+          ${ticketData.status === 'باز' ? 'bg-green-100 text-green-800' : 
+          ticketData.status === 'در انتظار پاسخ' ? 'bg-blue-100 text-blue-800' : 
+          ticketData.status === 'بسته شده' ? 'bg-gray-100 text-gray-800' : 
+          'bg-yellow-100 text-yellow-800'}
+        `}>
+          {ticketData.status}
+        </span>
       </div>
 
       <Card>

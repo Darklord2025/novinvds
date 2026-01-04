@@ -168,15 +168,15 @@ const TransactionsPage: React.FC<TransactionsPageProps> = ({ onBack }) => {
               <tbody>
                 {filteredTransactions.map((transaction) => (
                   <tr key={transaction.id} className="border-b hover:bg-muted/50">
-                    <td className="p-3 font-mono text-sm">{transaction.id}</td>
+                    <td className="p-3 text-sm">{transaction.id}</td>
                     <td className="p-3 text-sm">{transaction.date}</td>
                     <td className="p-3">{transaction.description}</td>
                     <td className="p-3 text-sm">{transaction.paymentMethod}</td>
-                    <td className={`p-3 font-bold ${transaction.amount.startsWith('-') ? 'text-red-600' : 'text-green-600'}`}>
+                    <td className={`p-3 font-bold ${transaction.amount.includes('-') || transaction.amount.includes('−') ? 'text-red-600' : 'text-green-600'}`}>
                       {transaction.amount} تومان
                     </td>
                     <td className="p-3">{getStatusBadge(transaction.status)}</td>
-                    <td className="p-3 font-mono text-sm text-muted-foreground">{transaction.referenceId}</td>
+                    <td className="p-3 text-sm text-muted-foreground">{transaction.referenceId}</td>
                   </tr>
                 ))}
               </tbody>

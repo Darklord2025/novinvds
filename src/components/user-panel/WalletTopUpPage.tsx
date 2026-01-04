@@ -250,15 +250,15 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                 <div className="bg-muted/50 p-4 rounded-lg space-y-2">
                   <div className="flex justify-between">
                     <span>مبلغ درخواستی:</span>
-                    <span className="font-bold">{amount} تومان</span>
+                    <span className="font-bold">{toPersianDigits(amount)} تومان</span>
                   </div>
                   <div className="flex justify-between">
                     <span>کارمزد:</span>
-                    <span className="font-bold">{fee.toLocaleString()} تومان</span>
+                    <span className="font-bold">{toPersianDigits(fee.toLocaleString())} تومان</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between text-lg font-bold">
                     <span>مبلغ قابل پرداخت:</span>
-                    <span className="text-green-600">{totalAmount.toLocaleString()} تومان</span>
+                    <span className="text-green-600">{toPersianDigits(totalAmount.toLocaleString())} تومان</span>
                   </div>
                 </div>
               )}

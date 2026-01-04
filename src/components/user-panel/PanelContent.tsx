@@ -19,6 +19,7 @@ import NetworkStoreSection from './NetworkStoreSection';
 import RecommendationSection from './RecommendationSection';
 import ServerManagementDetail from './ServerManagementDetail';
 import HostingManagementDetail from './HostingManagementDetail';
+import HostingManagementPanel from './HostingManagementPanel';
 import HostingGateway from './HostingGateway';
 import CartPage from './CartPage';
 import BillingOverviewPage from './BillingOverviewPage';
@@ -193,7 +194,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
         /> : null;
     case 'hosting-management':
       return selectedService ? 
-        <HostingManagementDetail 
+        <HostingManagementPanel 
           serviceId={selectedService} 
           onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
