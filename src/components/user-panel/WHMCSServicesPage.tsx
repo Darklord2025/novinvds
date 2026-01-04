@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { mockWHMCSServices, WHMCSService } from '@/data/whmcsServices';
-import { Search, Filter, MoreHorizontal, Play, Pause, RotateCcw, Settings, CreditCard } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Play, Pause, RotateCcw, Settings, CreditCard, ArrowRight } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface WHMCSServicesPageProps {
@@ -19,6 +19,7 @@ interface WHMCSServicesPageProps {
   onUnsuspendService: (serviceId: string) => void;
   onTerminateService: (serviceId: string) => void;
   onViewInvoice: (invoiceId: string) => void;
+  onBack?: () => void;
 }
 
 const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
@@ -27,7 +28,8 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
   onSuspendService,
   onUnsuspendService,
   onTerminateService,
-  onViewInvoice
+  onViewInvoice,
+  onBack
 }) => {
   const [services] = useState<WHMCSService[]>(mockWHMCSServices);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +81,15 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">خدمات من</h1>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
+              <ArrowRight className="w-4 h-4" />
+              بازگشت
+            </Button>
+          )}
+          <h1 className="text-2xl font-bold">خدمات من</h1>
+        </div>
         <div className="flex items-center space-x-2 rtl:space-x-reverse">
           <div className="relative">
             <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />

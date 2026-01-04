@@ -181,7 +181,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
               <tbody>
                 {filteredInvoices.map((invoice) => (
                   <tr key={invoice.id} className="border-b hover:bg-muted/50">
-                    <td className="p-3 font-mono text-sm">{invoice.id}</td>
+                    <td className="p-3 text-sm">{invoice.id}</td>
                     <td className="p-3">{invoice.service}</td>
                     <td className="p-3 text-sm">{invoice.dueDate}</td>
                     <td className="p-3 font-bold">{invoice.amount} تومان</td>
