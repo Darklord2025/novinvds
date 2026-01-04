@@ -10,8 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { 
   ArrowRight, 
   Globe, 
-  Server, 
-  Mail, 
+  Server,
   Shield, 
   RefreshCw,
   Lock,
@@ -158,10 +157,9 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
 
       {/* Main Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 gap-1">
           <TabsTrigger value="overview" className="text-xs md:text-sm">نمای کلی</TabsTrigger>
           <TabsTrigger value="dns" className="text-xs md:text-sm">DNS</TabsTrigger>
-          <TabsTrigger value="transfer" className="text-xs md:text-sm">انتقال</TabsTrigger>
           <TabsTrigger value="settings" className="text-xs md:text-sm">تنظیمات</TabsTrigger>
         </TabsList>
 
@@ -262,52 +260,6 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
                 <Button className="w-full" variant="outline">
                   افزودن رکورد جدید
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="transfer" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <RefreshCw className="w-5 h-5 text-orange-500" />
-                انتقال دامنه
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600">
-                برای انتقال دامنه به ثبت‌کننده دیگر، از کد انتقال (Auth Code) استفاده کنید.
-              </p>
-              
-              <div className="bg-gray-50 p-4 rounded">
-                <Label className="text-sm font-medium mb-2 block">کد انتقال (Auth Code)</Label>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 bg-white p-2 rounded border font-mono text-sm">
-                    {showTransferCode ? domainData.transferCode : '••••••••••••'}
-                  </code>
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    onClick={() => setShowTransferCode(!showTransferCode)}
-                  >
-                    {showTransferCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    onClick={() => copyToClipboard(domainData.transferCode, 'کد انتقال')}
-                  >
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded p-4 text-sm">
-                <AlertTriangle className="w-4 h-4 text-amber-600 inline ml-2" />
-                <span className="text-amber-800">
-                  توجه: انتقال دامنه ممکن است 5-7 روز کاری طول بکشد.
-                </span>
               </div>
             </CardContent>
           </Card>

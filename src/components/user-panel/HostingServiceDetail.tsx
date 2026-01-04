@@ -140,11 +140,10 @@ const HostingServiceDetail: React.FC<HostingServiceDetailProps> = ({ serviceId, 
       {/* Header Section */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          {onBack && (
-            <Button variant="outline" size="icon" onClick={onBack}>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          )}
+          <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
+            <ArrowRight className="h-4 w-4" />
+            بازگشت به سرویس‌ها
+          </Button>
           <div>
             <h1 className="text-2xl font-bold">{hostingData.packageName}</h1>
             <p className="text-muted-foreground flex items-center gap-2">

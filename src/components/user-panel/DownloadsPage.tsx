@@ -17,7 +17,7 @@ const DownloadsPage = () => {
       type: 'pdf',
       size: toPersianDigits('2.5') + ' MB',
       date: toPersianDigits('1403/02/15'),
-      downloadCount: toPersianDigits(354),
+      downloadCount: toPersianDigits('354'),
     },
     {
       id: '2',
@@ -26,7 +26,7 @@ const DownloadsPage = () => {
       type: 'pdf',
       size: toPersianDigits('1.8') + ' MB',
       date: toPersianDigits('1403/01/20'),
-      downloadCount: toPersianDigits(215),
+      downloadCount: toPersianDigits('215'),
     },
     {
       id: '3',
@@ -35,7 +35,7 @@ const DownloadsPage = () => {
       type: 'exe',
       size: toPersianDigits('15.2') + ' MB',
       date: toPersianDigits('1402/11/05'),
-      downloadCount: toPersianDigits(432),
+      downloadCount: toPersianDigits('432'),
     },
     {
       id: '4',
@@ -44,7 +44,7 @@ const DownloadsPage = () => {
       type: 'exe',
       size: toPersianDigits('24.7') + ' MB',
       date: toPersianDigits('1402/10/12'),
-      downloadCount: toPersianDigits(198),
+      downloadCount: toPersianDigits('198'),
     },
     {
       id: '5',
@@ -53,7 +53,7 @@ const DownloadsPage = () => {
       type: 'zip',
       size: toPersianDigits('8.3') + ' MB',
       date: toPersianDigits('1402/09/18'),
-      downloadCount: toPersianDigits(127),
+      downloadCount: toPersianDigits('127'),
     },
     {
       id: '6',
@@ -62,7 +62,7 @@ const DownloadsPage = () => {
       type: 'zip',
       size: toPersianDigits('4.1') + ' MB',
       date: toPersianDigits('1402/08/30'),
-      downloadCount: toPersianDigits(256),
+      downloadCount: toPersianDigits('256'),
     },
   ];
   
@@ -147,7 +147,7 @@ const DownloadsPage = () => {
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>دانلود {item.downloadCount}</span>
+                      <span>دانلود: {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -180,7 +180,7 @@ const DownloadsPage = () => {
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>دانلود {item.downloadCount}</span>
+                      <span>دانلود: {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ const DownloadsPage = () => {
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>دانلود {item.downloadCount}</span>
+                      <span>دانلود: {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ const DownloadsPage = () => {
                       <span>نوع: {item.type.toUpperCase()}</span>
                       <span>حجم: {item.size}</span>
                       <span>تاریخ: {item.date}</span>
-                      <span>دانلود {item.downloadCount}</span>
+                      <span>دانلود: {item.downloadCount}</span>
                     </div>
                   </div>
                 </div>
