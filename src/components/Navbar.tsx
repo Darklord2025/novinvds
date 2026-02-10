@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Phone, ShoppingCart } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 
 const serviceLinks = [
   { to: "/vps", label: "سرور مجازی" },
@@ -96,12 +96,7 @@ const Navbar = () => {
               <span className="font-medium">021-12345678</span>
             </a>
             
-            <Link to="/cart" className="relative p-2 text-foreground hover:text-primary transition-colors">
-              <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-            </Link>
-            
-            <Link to="/login" className="px-6 py-2 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 shadow-md hover:shadow-lg">
+            <Link to="/auth" className="px-6 py-2 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 shadow-md hover:shadow-lg">
               ورود / ثبت نام
             </Link>
           </div>
@@ -181,18 +176,10 @@ const Navbar = () => {
                 <span className="font-medium">021-12345678</span>
               </a>
               
-              <Link 
-                to="/cart" 
-                className="relative p-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <ShoppingCart size={20} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-              </Link>
             </div>
             
             <Link 
-              to="/login" 
+              to="/auth" 
               className="px-6 py-3 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 text-center mt-4 shadow-md"
               onClick={() => setIsMenuOpen(false)}
             >

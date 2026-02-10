@@ -29,8 +29,8 @@ import WalletTopUpPage from './WalletTopUpPage';
 import ServerManagementPage from './ServerManagementPage';
 import ServiceCalculatorPage from './ServiceCalculatorPage';
 import SecurityCenterPage from './SecurityCenterPage';
-import CheckoutPage from './CheckoutPage';
-// Components will be imported when available
+import ProformaInvoicePage from './ProformaInvoicePage';
+import ServiceOrderPage from './ServiceOrderPage';
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,19 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'cart':
       return <CartPage onCheckout={() => navigationHandlers.handleSidebarClick('checkout')} />;
     case 'checkout':
-      return <CheckoutPage onBack={() => navigationHandlers.handleSidebarClick('cart')} />;
+      return <ProformaInvoicePage onBack={() => navigationHandlers.handleSidebarClick('cart')} />;
+    case 'order-hosting':
+    case 'order-vps':
+    case 'order-dedicated':
+    case 'order-domain':
+    case 'order-network':
+    case 'order-panels':
+    case 'order-modules':
+    case 'order-support':
+      return <ServiceOrderPage 
+        category={activeTab} 
+        onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
+      />;
     case 'profile':
       return <ProfileSettingsPage />;
     case 'servers':

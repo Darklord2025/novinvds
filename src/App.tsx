@@ -58,11 +58,7 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Auth />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/register" element={<Auth />} />
-              <Route path="/cart" element={<UserPanel />} />
-              <Route path="/checkout" element={<UserPanel />} />
               <Route path="/user-panel" element={<UserPanel />} />
               <Route path="/hosting-plans" element={<HostingPlans />} />
               <Route path="/vps-plans" element={<VpsPlans />} />

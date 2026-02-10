@@ -8,9 +8,21 @@ export interface SidebarItem {
 
 export const sidebarItems: SidebarItem[] = [
   { id: 'dashboard', label: 'داشبورد', icon: 'home' },
-  { id: 'cart', label: 'سبد خرید', icon: 'shopping-cart' },
-  { id: 'checkout', label: 'پرداخت نهایی', icon: 'credit-card' },
-  { id: 'recommendations', label: 'پیشنهادات ویژه', icon: 'star' },
+  { 
+    id: 'order-services', 
+    label: 'سفارش سرویس جدید', 
+    icon: 'plus-circle',
+    submenu: [
+      { id: 'order-hosting', label: 'میزبانی وب', icon: 'database' },
+      { id: 'order-vps', label: 'سرور مجازی', icon: 'server' },
+      { id: 'order-dedicated', label: 'سرور اختصاصی', icon: 'hard-drive' },
+      { id: 'order-domain', label: 'دامنه', icon: 'globe' },
+      { id: 'order-network', label: 'خدمات شبکه', icon: 'cloud' },
+      { id: 'order-panels', label: 'کنترل پنل‌ها', icon: 'layout-dashboard' },
+      { id: 'order-modules', label: 'ماژول‌های اضافی', icon: 'calculator' },
+      { id: 'order-support', label: 'پشتیبانی تخصصی', icon: 'users' },
+    ]
+  },
   { id: 'servers', label: 'سرویس‌های من', icon: 'server' },
   { id: 'domains', label: 'دامنه‌ها', icon: 'globe' },
   { 
