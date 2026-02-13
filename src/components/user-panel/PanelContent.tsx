@@ -150,9 +150,61 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'checkout':
       return <ProformaInvoicePage onBack={() => navigationHandlers.handleSidebarClick('cart')} />;
     case 'order-hosting':
+    case 'order-hosting-linux-eco':
+    case 'order-hosting-linux-pro':
+    case 'order-hosting-linux-pro-ir':
+    case 'order-hosting-linux-vip':
+    case 'order-hosting-linux-ir':
+    case 'order-hosting-wordpress':
+    case 'order-hosting-woocommerce':
+    case 'order-hosting-windows':
+    case 'order-hosting-windows-ir':
+    case 'order-hosting-python':
+    case 'order-hosting-nodejs':
+    case 'order-hosting-download':
+    case 'order-hosting-warez':
+    case 'order-hosting-email':
+    case 'order-hosting-custom':
     case 'order-vps':
+    case 'order-vps-linux':
+    case 'order-vps-windows':
+    case 'order-vps-ubuntu-desktop':
+    case 'order-vps-linux-ir':
+    case 'order-vps-windows-ir':
+    case 'order-vps-mikrotik':
+    case 'order-vps-storage':
+    case 'order-vps-hourly':
+    case 'order-vps-daily':
+    case 'order-vps-managed':
+    case 'order-vps-custom':
     case 'order-dedicated':
+    case 'order-dedicated-iran':
+    case 'order-dedicated-europe':
+    case 'order-dedicated-usa':
+    case 'order-dedicated-asia':
+    case 'order-dedicated-gpu':
+    case 'order-dedicated-storage':
     case 'order-domain':
+    case 'order-domain-ir':
+    case 'order-domain-com':
+    case 'order-domain-net':
+    case 'order-domain-org':
+    case 'order-domain-co':
+    case 'order-domain-io':
+    case 'order-domain-me':
+    case 'order-domain-info':
+    case 'order-domain-biz':
+    case 'order-domain-shop':
+    case 'order-domain-app':
+    case 'order-domain-dev':
+    case 'order-domain-xyz':
+    case 'order-domain-online':
+    case 'order-domain-site':
+    case 'order-domain-store':
+    case 'order-domain-asia':
+    case 'order-domain-co-ir':
+    case 'order-domain-ac-ir':
+    case 'order-ssl':
     case 'order-network':
     case 'order-panels':
     case 'order-modules':

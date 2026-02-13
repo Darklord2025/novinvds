@@ -7,7 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import DashboardCards from "./DashboardCards";
 import ServerList from "./ServerList";
 import ActivityFeed from "./ActivityFeed";
-import ServiceOrderSection from "./ServiceOrderSection";
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Download, Eye, RefreshCw } from "lucide-react";
 
@@ -217,9 +217,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
       
-      <ServiceOrderSection 
-        navigateToServiceOrderPage={navigateToServiceOrderPage}
-      />
+      
       
       {/* Cards for support tickets and invoices */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
