@@ -259,9 +259,8 @@ const ProfileSettingsPage = () => {
                   <Input
                     id="cardNumber"
                     name="cardNumber"
-                    placeholder="1234-5678-9012-3456"
-                    className="text-left"
-                    dir="ltr"
+                    placeholder="۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶"
+                    className="text-right"
                   />
                 </div>
                 
@@ -273,9 +272,8 @@ const ProfileSettingsPage = () => {
                   <Input
                     id="accountNumber"
                     name="accountNumber"
-                    placeholder="123-456-789012-3"
-                    className="text-left"
-                    dir="ltr"
+                    placeholder="۱۲۳-۴۵۶-۷۸۹۰۱۲-۳"
+                    className="text-right"
                   />
                 </div>
                 
@@ -300,9 +298,8 @@ const ProfileSettingsPage = () => {
                   <Input
                     id="shebaNumber"
                     name="shebaNumber"
-                    placeholder="IR123456789012345678901234"
-                    className="text-left"
-                    dir="ltr"
+                    placeholder="IR۱۲۳۴۵۶۷۸۹۰۱۲۳۴۵۶۷۸۹۰۱۲۳۴"
+                    className="text-right"
                   />
                 </div>
                 
@@ -314,9 +311,8 @@ const ProfileSettingsPage = () => {
                   <Input
                     id="nationalCode"
                     name="nationalCode"
-                    placeholder="1234567890"
-                    className="text-left"
-                    dir="ltr"
+                    placeholder="۱۲۳۴۵۶۷۸۹۰"
+                    className="text-right"
                   />
                 </div>
                 
@@ -328,9 +324,8 @@ const ProfileSettingsPage = () => {
                   <Input
                     id="taxCode"
                     name="taxCode"
-                    placeholder="123456789012"
-                    className="text-left"
-                    dir="ltr"
+                    placeholder="۱۲۳۴۵۶۷۸۹۰۱۲"
+                    className="text-right"
                   />
                 </div>
               </div>

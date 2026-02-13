@@ -65,11 +65,11 @@ const categoryData: Record<string, { title: string; icon: React.ReactNode; plans
     title: 'دامنه',
     icon: <Globe className="w-6 h-6" />,
     plans: [
-      { id: 'dm1', name: 'دامنه .ir', specs: ['ثبت یکساله'], price: 12000, period: 'سالانه' },
-      { id: 'dm2', name: 'دامنه .com', specs: ['ثبت یکساله'], price: 390000, period: 'سالانه', popular: true },
-      { id: 'dm3', name: 'دامنه .net', specs: ['ثبت یکساله'], price: 420000, period: 'سالانه' },
-      { id: 'dm4', name: 'دامنه .org', specs: ['ثبت یکساله'], price: 450000, period: 'سالانه' },
-      { id: 'dm5', name: 'دامنه .io', specs: ['ثبت یکساله'], price: 1200000, period: 'سالانه' },
+      { id: 'dm1', name: 'ir.', specs: ['ثبت یکساله'], price: 12000, period: 'سالانه' },
+      { id: 'dm2', name: 'com.', specs: ['ثبت یکساله'], price: 390000, period: 'سالانه', popular: true },
+      { id: 'dm3', name: 'net.', specs: ['ثبت یکساله'], price: 420000, period: 'سالانه' },
+      { id: 'dm4', name: 'org.', specs: ['ثبت یکساله'], price: 450000, period: 'سالانه' },
+      { id: 'dm5', name: 'io.', specs: ['ثبت یکساله'], price: 1200000, period: 'سالانه' },
     ]
   },
   'order-network': {
@@ -213,7 +213,11 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
               </div>
             )}
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">{plan.name}</CardTitle>
+              <CardTitle className="text-lg">
+                {category === 'order-domain' ? (
+                  <span>دامنه <span dir="ltr" className="inline-block">{plan.name}</span></span>
+                ) : plan.name}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
