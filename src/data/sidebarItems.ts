@@ -23,6 +23,7 @@ export const sidebarItems: SidebarItem[] = [
       { id: 'order-support', label: 'پشتیبانی تخصصی', icon: 'users' },
     ]
   },
+  { id: 'cart', label: 'سبد خرید', icon: 'shopping-cart' },
   { id: 'servers', label: 'سرویس‌های من', icon: 'server' },
   { id: 'domains', label: 'دامنه‌ها', icon: 'globe' },
   { 
