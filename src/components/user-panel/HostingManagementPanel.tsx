@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,31 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { 
-  ArrowRight, 
-  Globe, 
-  Copy,
-  Eye,
-  EyeOff,
-  ExternalLink,
-  HardDrive,
-  Database,
-  Mail,
-  Shield,
-  FileText,
-  Download,
-  RefreshCw,
-  Calendar,
-  CreditCard,
-  Server,
-  LayoutDashboard,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Settings,
-  Lock,
-  Terminal
+  ArrowRight, Globe, Copy, Eye, EyeOff, ExternalLink,
+  HardDrive, Database, Mail, Shield, FileText, Download,
+  RefreshCw, CreditCard, Server, LayoutDashboard,
+  CheckCircle2, XCircle, AlertCircle, Settings, Terminal, Lock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPersianDigits, formatNumber, formatDate } from '@/lib/numberUtils';
@@ -39,44 +20,13 @@ interface HostingManagementPanelProps {
   onBack?: () => void;
 }
 
-// Panel type icons and colors
 const panelConfigs = {
-  cpanel: {
-    name: 'cPanel',
-    color: 'bg-orange-500',
-    icon: LayoutDashboard,
-    loginUrl: ':2083'
-  },
-  directadmin: {
-    name: 'DirectAdmin',
-    color: 'bg-blue-600',
-    icon: Settings,
-    loginUrl: ':2222'
-  },
-  cyberpanel: {
-    name: 'CyberPanel',
-    color: 'bg-green-500',
-    icon: Terminal,
-    loginUrl: ':8090'
-  },
-  aapanel: {
-    name: 'aaPanel',
-    color: 'bg-sky-500',
-    icon: Server,
-    loginUrl: ':8888'
-  },
-  plesk: {
-    name: 'Plesk',
-    color: 'bg-indigo-600',
-    icon: Globe,
-    loginUrl: ':8443'
-  },
-  cwp: {
-    name: 'CWP',
-    color: 'bg-purple-600',
-    icon: Database,
-    loginUrl: ':2030'
-  }
+  cpanel: { name: 'cPanel', color: 'bg-orange-500', icon: LayoutDashboard, loginUrl: ':2083' },
+  directadmin: { name: 'DirectAdmin', color: 'bg-blue-600', icon: Settings, loginUrl: ':2222' },
+  cyberpanel: { name: 'CyberPanel', color: 'bg-green-500', icon: Terminal, loginUrl: ':8090' },
+  aapanel: { name: 'aaPanel', color: 'bg-sky-500', icon: Server, loginUrl: ':8888' },
+  plesk: { name: 'Plesk', color: 'bg-indigo-600', icon: Globe, loginUrl: ':8443' },
+  cwp: { name: 'CWP', color: 'bg-purple-600', icon: Database, loginUrl: ':2030' }
 };
 
 const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ serviceId, onBack }) => {
@@ -84,7 +34,6 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
   const [showFtpPassword, setShowFtpPassword] = useState(false);
   const [showDbPassword, setShowDbPassword] = useState(false);
 
-  // Mock data
   const hostingData = {
     id: serviceId,
     packageName: 'پکیج هاستینگ Premium',
@@ -95,47 +44,26 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
     nextDueDate: '2025-01-15',
     billingCycle: 'سالانه',
     recurringAmount: 1200000,
-    
-    // Server
     serverName: 'Server IR-1',
     serverIP: '۱۸۵.۱۲۳.۴۵.۶۷',
     nameservers: ['ns1.novinvds.ir', 'ns2.novinvds.ir'],
-    
-    // Panel Access
     panelUrl: 'https://server.novinvds.ir',
     panelUsername: 'exampleir',
     panelPassword: 'SecurePass123',
-    
-    // FTP Access
     ftpHostname: 'ftp.example.ir',
     ftpPort: '۲۱',
     ftpUsername: 'exampleir',
     ftpPassword: 'FtpPass456',
-    
-    // Database
     dbHost: 'localhost',
     dbUsername: 'exampleir_db',
     dbPassword: 'DbPass789',
     phpMyAdminUrl: 'https://server.novinvds.ir:2083/phpmyadmin',
-    
-    // Webmail
     webmailUrl: 'https://webmail.example.ir',
-    
-    // Resources
-    diskUsed: 2.5,
-    diskLimit: 10,
-    diskUsagePercent: 25,
-    bandwidthUsed: 15.3,
-    bandwidthLimit: 100,
-    bandwidthUsagePercent: 15.3,
-    emailAccounts: 5,
-    emailLimit: 50,
-    databases: 3,
-    databaseLimit: 10,
-    
-    // SSL
-    sslStatus: 'فعال',
-    sslExpiryDate: '2025-04-15'
+    diskUsed: 2.5, diskLimit: 10, diskUsagePercent: 25,
+    bandwidthUsed: 15.3, bandwidthLimit: 100, bandwidthUsagePercent: 15.3,
+    emailAccounts: 5, emailLimit: 50,
+    databases: 3, databaseLimit: 10,
+    sslStatus: 'فعال', sslExpiryDate: '2025-04-15'
   };
 
   const panelConfig = panelConfigs[hostingData.panelType];
@@ -147,227 +75,143 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
   };
 
   const openPanel = () => {
-    const url = `${hostingData.panelUrl}${panelConfig.loginUrl}`;
-    window.open(url, '_blank');
+    window.open(`${hostingData.panelUrl}${panelConfig.loginUrl}`, '_blank');
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === 'Active') {
-      return (
-        <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100 flex items-center gap-1">
-          <CheckCircle2 className="w-3 h-3" />
-          فعال
-        </Badge>
-      );
-    } else if (status === 'Suspended') {
-      return (
-        <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 flex items-center gap-1">
-          <AlertCircle className="w-3 h-3" />
-          تعلیق شده
-        </Badge>
-      );
-    }
-    return (
-      <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100 flex items-center gap-1">
-        <XCircle className="w-3 h-3" />
-        غیرفعال
-      </Badge>
-    );
+    if (status === 'Active') return <Badge className="bg-emerald-100 text-emerald-800 flex items-center gap-1 text-[10px] md:text-xs"><CheckCircle2 className="w-3 h-3" />فعال</Badge>;
+    if (status === 'Suspended') return <Badge className="bg-amber-100 text-amber-800 flex items-center gap-1 text-[10px] md:text-xs"><AlertCircle className="w-3 h-3" />تعلیق</Badge>;
+    return <Badge className="bg-red-100 text-red-800 flex items-center gap-1 text-[10px] md:text-xs"><XCircle className="w-3 h-3" />غیرفعال</Badge>;
   };
 
+  const CredentialField = ({ label, value, hidden, onToggle, showCopy = true }: { label: string; value: string; hidden?: boolean; onToggle?: () => void; showCopy?: boolean }) => (
+    <div className="bg-muted/50 p-2.5 md:p-3 rounded-lg">
+      <label className="text-[10px] md:text-xs text-muted-foreground">{label}</label>
+      <div className="flex items-center justify-between mt-1 gap-2">
+        <code className="flex-1 text-xs md:text-sm font-mono truncate">{hidden !== undefined ? (hidden ? '••••••••' : value) : value}</code>
+        <div className="flex gap-0.5 shrink-0">
+          {onToggle && (
+            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onToggle}>
+              {hidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+            </Button>
+          )}
+          {showCopy && (
+            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copyToClipboard(value, label)}>
+              <Copy className="w-3.5 h-3.5" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-4 md:space-y-6" dir="rtl">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
-            <ArrowRight className="h-4 w-4" />
-            بازگشت به سرویس‌ها
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Globe className="w-6 h-6 text-blue-500" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <Button variant="outline" size="sm" onClick={onBack} className="self-start flex items-center gap-1 text-xs">
+          <ArrowRight className="h-3.5 w-3.5" />
+          بازگشت
+        </Button>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${panelConfig.color} flex items-center justify-center shrink-0`}>
+            <PanelIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-base md:text-xl font-bold truncate flex items-center gap-2">
               {hostingData.domain}
+              {getStatusBadge(hostingData.status)}
             </h1>
-            <p className="text-muted-foreground">{hostingData.packageName}</p>
+            <p className="text-xs md:text-sm text-muted-foreground truncate">{hostingData.packageName} • {panelConfig.name}</p>
           </div>
         </div>
-        {getStatusBadge(hostingData.status)}
       </div>
 
-      {/* Panel Access Card */}
+      {/* Panel Quick Access */}
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl ${panelConfig.color} flex items-center justify-center`}>
-                <PanelIcon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold">ورود به پنل {panelConfig.name}</h3>
-                <p className="text-sm text-muted-foreground">مدیریت کامل هاستینگ</p>
-              </div>
-            </div>
-            <Button onClick={openPanel} className="gap-2">
-              <ExternalLink className="w-4 h-4" />
+        <CardContent className="p-3 md:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 md:mb-4">
+            <h3 className="text-sm md:text-base font-bold">دسترسی سریع به پنل {panelConfig.name}</h3>
+            <Button onClick={openPanel} size="sm" className="gap-1.5 text-xs md:text-sm w-full sm:w-auto">
+              <ExternalLink className="w-3.5 h-3.5" />
               ورود به پنل
             </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-background rounded-lg p-4">
-              <label className="text-sm text-muted-foreground">آدرس پنل</label>
-              <div className="flex items-center gap-2 mt-1">
-                <code className="flex-1 text-sm font-mono">{hostingData.panelUrl}{panelConfig.loginUrl}</code>
-                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(`${hostingData.panelUrl}${panelConfig.loginUrl}`, 'آدرس پنل')}>
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="bg-background rounded-lg p-4">
-              <label className="text-sm text-muted-foreground">نام کاربری</label>
-              <div className="flex items-center gap-2 mt-1">
-                <code className="flex-1 text-sm font-mono">{hostingData.panelUsername}</code>
-                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.panelUsername, 'نام کاربری')}>
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="bg-background rounded-lg p-4">
-              <label className="text-sm text-muted-foreground">رمز عبور</label>
-              <div className="flex items-center gap-2 mt-1">
-                <code className="flex-1 text-sm font-mono">
-                  {showPassword ? hostingData.panelPassword : '••••••••••'}
-                </code>
-                <Button size="icon" variant="ghost" onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
-                <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.panelPassword, 'رمز عبور')}>
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
+            <CredentialField label="آدرس پنل" value={`${hostingData.panelUrl}${panelConfig.loginUrl}`} />
+            <CredentialField label="نام کاربری" value={hostingData.panelUsername} />
+            <CredentialField label="رمز عبور" value={hostingData.panelPassword} hidden={!showPassword} onToggle={() => setShowPassword(!showPassword)} />
           </div>
         </CardContent>
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-          onClick={openPanel}
-        >
-          <PanelIcon className="w-6 h-6" />
-          <span className="text-xs">{panelConfig.name}</span>
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-          onClick={() => window.open(hostingData.webmailUrl, '_blank')}
-        >
-          <Mail className="w-6 h-6" />
-          <span className="text-xs">Webmail</span>
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-        >
-          <FileText className="w-6 h-6" />
-          <span className="text-xs">مدیریت فایل</span>
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-          onClick={() => window.open(hostingData.phpMyAdminUrl, '_blank')}
-        >
-          <Database className="w-6 h-6" />
-          <span className="text-xs">phpMyAdmin</span>
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-        >
-          <Shield className="w-6 h-6" />
-          <span className="text-xs">SSL</span>
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-auto py-4 flex-col gap-2"
-        >
-          <Download className="w-6 h-6" />
-          <span className="text-xs">پشتیبان‌گیری</span>
-        </Button>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {[
+          { label: panelConfig.name, icon: PanelIcon, onClick: openPanel },
+          { label: 'Webmail', icon: Mail, onClick: () => window.open(hostingData.webmailUrl, '_blank') },
+          { label: 'مدیریت فایل', icon: FileText, onClick: () => {} },
+          { label: 'phpMyAdmin', icon: Database, onClick: () => window.open(hostingData.phpMyAdminUrl, '_blank') },
+          { label: 'SSL', icon: Shield, onClick: () => {} },
+          { label: 'پشتیبان‌گیری', icon: Download, onClick: () => {} },
+        ].map((action, i) => (
+          <Button key={i} variant="outline" className="h-auto py-2.5 md:py-3 flex-col gap-1.5" onClick={action.onClick}>
+            <action.icon className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-[9px] md:text-xs">{action.label}</span>
+          </Button>
+        ))}
       </div>
 
       {/* Main Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="overview">نمای کلی</TabsTrigger>
-          <TabsTrigger value="access">اطلاعات دسترسی</TabsTrigger>
-          <TabsTrigger value="resources">منابع</TabsTrigger>
-          <TabsTrigger value="billing">صورتحساب</TabsTrigger>
+        <TabsList className="w-full overflow-x-auto justify-start gap-0 h-auto p-1">
+          <TabsTrigger value="overview" className="text-[10px] md:text-xs px-2 md:px-3 py-1.5">نمای کلی</TabsTrigger>
+          <TabsTrigger value="access" className="text-[10px] md:text-xs px-2 md:px-3 py-1.5">دسترسی‌ها</TabsTrigger>
+          <TabsTrigger value="resources" className="text-[10px] md:text-xs px-2 md:px-3 py-1.5">منابع</TabsTrigger>
+          <TabsTrigger value="billing" className="text-[10px] md:text-xs px-2 md:px-3 py-1.5">صورتحساب</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <TabsContent value="overview" className="space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle>اطلاعات سرویس</CardTitle>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="text-sm md:text-base">اطلاعات سرویس</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">نام بسته</TableCell>
-                      <TableCell>{hostingData.packageName}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">دامنه اصلی</TableCell>
-                      <TableCell className="font-mono">{hostingData.domain}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">کنترل پنل</TableCell>
-                      <TableCell>
-                        <Badge className={`${panelConfig.color} text-white`}>
-                          {panelConfig.name}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">آی‌پی سرور</TableCell>
-                      <TableCell className="font-mono">{hostingData.serverIP}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">وضعیت SSL</TableCell>
-                      <TableCell>
-                        <Badge className="bg-emerald-100 text-emerald-800">
-                          {hostingData.sslStatus}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+              <CardContent className="px-3 md:px-6">
+                <div className="space-y-2">
+                  {[
+                    { label: 'نام بسته', value: hostingData.packageName },
+                    { label: 'دامنه اصلی', value: hostingData.domain, mono: true },
+                    { label: 'کنترل پنل', value: panelConfig.name, badge: true, badgeColor: panelConfig.color },
+                    { label: 'آی‌پی سرور', value: hostingData.serverIP, mono: true },
+                    { label: 'وضعیت SSL', value: hostingData.sslStatus, badgeGreen: true },
+                  ].map((row, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                      <span className="text-[10px] md:text-sm text-muted-foreground">{row.label}</span>
+                      {row.badge ? (
+                        <Badge className={`${row.badgeColor} text-white text-[10px] md:text-xs`}>{row.value}</Badge>
+                      ) : row.badgeGreen ? (
+                        <Badge className="bg-emerald-100 text-emerald-800 text-[10px] md:text-xs">{row.value}</Badge>
+                      ) : (
+                        <span className={`text-xs md:text-sm font-medium ${row.mono ? 'font-mono' : ''}`}>{row.value}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">نیم‌سرورها</CardTitle>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="text-sm md:text-base">نیم‌سرورها</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {hostingData.nameservers.map((ns, index) => (
-                  <div key={index} className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
-                    <span className="text-sm font-mono">{ns}</span>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(ns, 'نیم‌سرور')}>
-                      <Copy className="w-4 h-4" />
+              <CardContent className="px-3 md:px-6 space-y-2">
+                {hostingData.nameservers.map((ns, i) => (
+                  <div key={i} className="flex items-center justify-between bg-muted/50 p-2 md:p-3 rounded-lg">
+                    <span className="text-xs md:text-sm font-mono truncate">{ns}</span>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => copyToClipboard(ns, 'نیم‌سرور')}>
+                      <Copy className="w-3.5 h-3.5" />
                     </Button>
                   </div>
                 ))}
@@ -375,162 +219,86 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
             </Card>
           </div>
 
-          {/* Resource Usage */}
+          {/* Resource Summary */}
           <Card>
-            <CardHeader>
-              <CardTitle>میزان استفاده از منابع</CardTitle>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <CardTitle className="text-sm md:text-base">مصرف منابع</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <HardDrive className="w-5 h-5 text-primary" />
-                    <span className="font-medium">فضای دیسک</span>
+            <CardContent className="px-3 md:px-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <HardDrive className="w-4 h-4 text-primary" />
+                      <span className="text-xs md:text-sm font-medium">فضای دیسک</span>
+                    </div>
+                    <span className="text-[10px] md:text-xs">{toPersianDigits(hostingData.diskUsed.toString())} / {toPersianDigits(hostingData.diskLimit.toString())} GB</span>
                   </div>
-                  <span className="text-sm font-medium">
-                    {toPersianDigits(hostingData.diskUsed.toString())} / {toPersianDigits(hostingData.diskLimit.toString())} GB
-                  </span>
+                  <Progress value={hostingData.diskUsagePercent} className="h-2" />
                 </div>
-                <Progress value={hostingData.diskUsagePercent} className="h-3" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-primary" />
+                      <span className="text-xs md:text-sm font-medium">پهنای باند</span>
+                    </div>
+                    <span className="text-[10px] md:text-xs">{toPersianDigits(hostingData.bandwidthUsed.toString())} / {toPersianDigits(hostingData.bandwidthLimit.toString())} GB</span>
+                  </div>
+                  <Progress value={hostingData.bandwidthUsagePercent} className="h-2" />
+                </div>
               </div>
 
               <Separator />
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-5 h-5 text-primary" />
-                    <span className="font-medium">پهنای باند</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { icon: Mail, label: 'ایمیل', used: hostingData.emailAccounts, total: hostingData.emailLimit },
+                  { icon: Database, label: 'دیتابیس', used: hostingData.databases, total: hostingData.databaseLimit },
+                ].map((item, i) => (
+                  <div key={i} className="text-center p-2 md:p-3 bg-muted/50 rounded-lg">
+                    <item.icon className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <div className="text-base md:text-lg font-bold">{toPersianDigits(item.used.toString())}</div>
+                    <div className="text-[9px] md:text-xs text-muted-foreground">از {toPersianDigits(item.total.toString())} {item.label}</div>
                   </div>
-                  <span className="text-sm font-medium">
-                    {toPersianDigits(hostingData.bandwidthUsed.toString())} / {toPersianDigits(hostingData.bandwidthLimit.toString())} GB
-                  </span>
-                </div>
-                <Progress value={hostingData.bandwidthUsagePercent} className="h-3" />
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <Mail className="w-5 h-5 mx-auto mb-2 text-primary" />
-                  <div className="text-lg font-bold">{toPersianDigits(hostingData.emailAccounts.toString())}</div>
-                  <div className="text-xs text-muted-foreground">از {toPersianDigits(hostingData.emailLimit.toString())} ایمیل</div>
-                </div>
-
-                <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <Database className="w-5 h-5 mx-auto mb-2 text-primary" />
-                  <div className="text-lg font-bold">{toPersianDigits(hostingData.databases.toString())}</div>
-                  <div className="text-xs text-muted-foreground">از {toPersianDigits(hostingData.databaseLimit.toString())} دیتابیس</div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Access Info Tab */}
-        <TabsContent value="access" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* FTP Access */}
+        {/* Access Tab */}
+        <TabsContent value="access" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* FTP */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Server className="w-5 h-5" />
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+                  <Server className="w-4 h-4" />
                   اطلاعات FTP
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">آدرس FTP</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">{hostingData.ftpHostname}</code>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.ftpHostname, 'آدرس FTP')}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">پورت</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">{hostingData.ftpPort}</code>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.ftpPort, 'پورت')}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">نام کاربری</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">{hostingData.ftpUsername}</code>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.ftpUsername, 'نام کاربری')}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">رمز عبور</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">
-                      {showFtpPassword ? hostingData.ftpPassword : '••••••••••'}
-                    </code>
-                    <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => setShowFtpPassword(!showFtpPassword)}>
-                        {showFtpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.ftpPassword, 'رمز عبور')}>
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+              <CardContent className="px-3 md:px-6 space-y-2">
+                <CredentialField label="آدرس FTP" value={hostingData.ftpHostname} />
+                <CredentialField label="پورت" value={hostingData.ftpPort} />
+                <CredentialField label="نام کاربری" value={hostingData.ftpUsername} />
+                <CredentialField label="رمز عبور" value={hostingData.ftpPassword} hidden={!showFtpPassword} onToggle={() => setShowFtpPassword(!showFtpPassword)} />
               </CardContent>
             </Card>
 
-            {/* Database Access */}
+            {/* Database */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="w-5 h-5" />
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+                  <Database className="w-4 h-4" />
                   اطلاعات دیتابیس
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">هاست دیتابیس</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">{hostingData.dbHost}</code>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.dbHost, 'هاست')}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">نام کاربری</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">{hostingData.dbUsername}</code>
-                    <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.dbUsername, 'نام کاربری')}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg">
-                  <label className="text-sm text-muted-foreground">رمز عبور</label>
-                  <div className="flex items-center justify-between mt-1">
-                    <code className="font-mono text-sm">
-                      {showDbPassword ? hostingData.dbPassword : '••••••••••'}
-                    </code>
-                    <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => setShowDbPassword(!showDbPassword)}>
-                        {showDbPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => copyToClipboard(hostingData.dbPassword, 'رمز عبور')}>
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <Button className="w-full" variant="outline" onClick={() => window.open(hostingData.phpMyAdminUrl, '_blank')}>
-                  <ExternalLink className="w-4 h-4 ml-2" />
+              <CardContent className="px-3 md:px-6 space-y-2">
+                <CredentialField label="هاست" value={hostingData.dbHost} />
+                <CredentialField label="نام کاربری" value={hostingData.dbUsername} />
+                <CredentialField label="رمز عبور" value={hostingData.dbPassword} hidden={!showDbPassword} onToggle={() => setShowDbPassword(!showDbPassword)} />
+                <Button className="w-full text-xs h-8 mt-2" variant="outline" onClick={() => window.open(hostingData.phpMyAdminUrl, '_blank')}>
+                  <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                   ورود به phpMyAdmin
                 </Button>
               </CardContent>
@@ -539,26 +307,25 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
         </TabsContent>
 
         {/* Resources Tab */}
-        <TabsContent value="resources" className="space-y-6">
+        <TabsContent value="resources" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>مصرف منابع</CardTitle>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <CardTitle className="text-sm md:text-base">مصرف منابع</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-medium">فضای دیسک</h3>
-                  <Progress value={hostingData.diskUsagePercent} className="h-4" />
-                  <p className="text-sm text-muted-foreground">
-                    {toPersianDigits(hostingData.diskUsed.toString())} GB از {toPersianDigits(hostingData.diskLimit.toString())} GB استفاده شده
+            <CardContent className="px-3 md:px-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h3 className="text-xs md:text-sm font-medium">فضای دیسک</h3>
+                  <Progress value={hostingData.diskUsagePercent} className="h-3" />
+                  <p className="text-[10px] md:text-xs text-muted-foreground">
+                    {toPersianDigits(hostingData.diskUsed.toString())} GB از {toPersianDigits(hostingData.diskLimit.toString())} GB
                   </p>
                 </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-medium">پهنای باند</h3>
-                  <Progress value={hostingData.bandwidthUsagePercent} className="h-4" />
-                  <p className="text-sm text-muted-foreground">
-                    {toPersianDigits(hostingData.bandwidthUsed.toString())} GB از {toPersianDigits(hostingData.bandwidthLimit.toString())} GB استفاده شده
+                <div className="space-y-3">
+                  <h3 className="text-xs md:text-sm font-medium">پهنای باند</h3>
+                  <Progress value={hostingData.bandwidthUsagePercent} className="h-3" />
+                  <p className="text-[10px] md:text-xs text-muted-foreground">
+                    {toPersianDigits(hostingData.bandwidthUsed.toString())} GB از {toPersianDigits(hostingData.bandwidthLimit.toString())} GB
                   </p>
                 </div>
               </div>
@@ -567,42 +334,33 @@ const HostingManagementPanel: React.FC<HostingManagementPanelProps> = ({ service
         </TabsContent>
 
         {/* Billing Tab */}
-        <TabsContent value="billing" className="space-y-6">
+        <TabsContent value="billing" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>اطلاعات صورتحساب</CardTitle>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <CardTitle className="text-sm md:text-base">اطلاعات صورتحساب</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">دوره پرداخت</TableCell>
-                    <TableCell>{hostingData.billingCycle}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">تاریخ ثبت</TableCell>
-                    <TableCell>{formatDate(hostingData.registrationDate, 'fa')}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">تاریخ تمدید بعدی</TableCell>
-                    <TableCell className="text-orange-600">{formatDate(hostingData.nextDueDate, 'fa')}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">مبلغ تمدید</TableCell>
-                    <TableCell className="font-bold text-lg">
-                      {formatNumber(hostingData.recurringAmount, 'fa')} تومان
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+            <CardContent className="px-3 md:px-6">
+              <div className="space-y-2">
+                {[
+                  { label: 'دوره پرداخت', value: hostingData.billingCycle },
+                  { label: 'تاریخ ثبت', value: formatDate(hostingData.registrationDate, 'fa') },
+                  { label: 'تاریخ تمدید بعدی', value: formatDate(hostingData.nextDueDate, 'fa'), warning: true },
+                  { label: 'مبلغ تمدید', value: `${formatNumber(hostingData.recurringAmount, 'fa')} تومان`, bold: true },
+                ].map((row, i) => (
+                  <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                    <span className="text-[10px] md:text-sm text-muted-foreground">{row.label}</span>
+                    <span className={`text-xs md:text-sm ${row.bold ? 'font-bold text-base' : ''} ${row.warning ? 'text-orange-600' : ''}`}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
 
-              <div className="mt-6 flex gap-3">
-                <Button className="flex-1">
-                  <RefreshCw className="w-4 h-4 ml-2" />
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Button className="text-xs md:text-sm h-9">
+                  <RefreshCw className="w-3.5 h-3.5 ml-1.5" />
                   تمدید سرویس
                 </Button>
-                <Button variant="outline" className="flex-1">
-                  <CreditCard className="w-4 h-4 ml-2" />
+                <Button variant="outline" className="text-xs md:text-sm h-9">
+                  <CreditCard className="w-3.5 h-3.5 ml-1.5" />
                   ارتقا پلن
                 </Button>
               </div>
