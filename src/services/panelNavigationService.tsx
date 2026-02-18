@@ -168,7 +168,7 @@ export const createNavigationHandlers = (
       const serviceType = parts[1].split('-')[0]; // Extract 'vps', 'dedicated', etc.
       const serviceId = parts[2];
       
-      handleManageService(serviceId);
+      handleManageService(serviceId, serviceType);
     } else if (serviceLink && serviceLink.startsWith('/renew/')) {
       const parts = serviceLink.split('/');
       if (parts && parts.length >= 4) {
@@ -340,6 +340,9 @@ export const createNavigationHandlers = (
         break;
       case 'cloud':
         setActiveTab('cloud-management');
+        break;
+      case 'hourly':
+        setActiveTab('hourly-management');
         break;
       default:
         setActiveTab('vps-management');

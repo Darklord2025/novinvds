@@ -1,70 +1,31 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Server, 
-  Power, 
-  RotateCcw, 
-  Monitor, 
-  Settings, 
-  Activity, 
-  HardDrive, 
-  Cpu, 
-  MemoryStick, 
-  Network,
-  Shield,
-  Database,
-  Terminal,
-  FileText,
-  ArrowRight,
-  Eye,
-  EyeOff,
-  Copy,
-  Download,
-  Upload,
-  Globe,
-  Lock,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
-  Zap,
-  RefreshCw,
-  BarChart3,
-  Calendar,
-  HardDriveDownload
+  Server, Power, RotateCcw, Monitor, Settings, Activity, HardDrive, Cpu, MemoryStick, Network,
+  Shield, Database, Terminal, FileText, ArrowRight, Eye, EyeOff, Copy, Download, Upload,
+  Globe, Lock, CheckCircle, AlertTriangle, Clock, Zap, RefreshCw, BarChart3, Calendar,
+  HardDriveDownload, Plus, Wifi, CreditCard, Disc, Camera, Trash2
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { toPersianDigits } from '@/lib/numberUtils';
 
 interface ServerManagementDetailProps {
   serverId: string;
+  serverType?: 'vps' | 'dedicated' | 'cloud' | 'hourly';
   onBack?: () => void;
 }
 
-const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverId, onBack }) => {
+const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverId, serverType = 'vps', onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'restarting'>('online');
@@ -73,60 +34,50 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
   const [selectedOS, setSelectedOS] = useState('');
   const [selectedVersion, setSelectedVersion] = useState('');
 
-  // Operating Systems and their versions
+  const isDedicated = serverType === 'dedicated';
+  const isCloud = serverType === 'cloud';
+  const isHourly = serverType === 'hourly';
+
   const operatingSystems = [
-    {
-      name: 'Ubuntu',
-      versions: ['22.04 LTS', '20.04 LTS', '18.04 LTS']
-    },
-    {
-      name: 'CentOS',
-      versions: ['Stream 9', 'Stream 8', '7']
-    },
-    {
-      name: 'Debian',
-      versions: ['12 (Bookworm)', '11 (Bullseye)', '10 (Buster)']
-    },
-    {
-      name: 'Windows Server',
-      versions: ['2022', '2019', '2016']
-    },
-    {
-      name: 'AlmaLinux',
-      versions: ['9', '8']
-    },
-    {
-      name: 'Rocky Linux',
-      versions: ['9', '8']
-    }
+    { name: 'Ubuntu', versions: ['24.04 LTS', '22.04 LTS', '20.04 LTS'] },
+    { name: 'CentOS', versions: ['Stream 9', 'Stream 8'] },
+    { name: 'Debian', versions: ['12 (Bookworm)', '11 (Bullseye)'] },
+    { name: 'Windows Server', versions: ['2022', '2019'] },
+    { name: 'AlmaLinux', versions: ['9', '8'] },
+    { name: 'Rocky Linux', versions: ['9', '8'] },
+    ...(serverType === 'vps' ? [{ name: 'MikroTik', versions: ['7.x', '6.x'] }] : []),
   ];
 
-  const getVersionsForOS = (osName: string) => {
-    return operatingSystems.find(os => os.name === osName)?.versions || [];
-  };
-
-  // Mock server data - در پروژه واقعی از API دریافت می‌شود
   const serverData = {
     id: serverId,
     name: `سرور-${serverId}`,
-    type: serverId.startsWith('vps') ? 'مجازی' : serverId.startsWith('dedicated') ? 'اختصاصی' : 'ابری',
+    type: isDedicated ? 'اختصاصی' : isCloud ? 'ابری' : isHourly ? 'ساعتی' : 'مجازی',
     status: serverStatus,
     ip: '185.123.45.67',
     ipv6: '2001:db8::1',
     os: 'Ubuntu 22.04 LTS',
     rootPassword: 'SecurePass123!',
     sshPort: 22,
-    specs: {
+    specs: isDedicated ? {
+      cpu: 'Intel Xeon E3-1270v6 (4C/8T)',
+      ram: '32 گیگابایت DDR4 ECC',
+      disk: '2x 480GB SSD (RAID 1)',
+      bandwidth: 'نامحدود',
+      network: '1 گیگابیت',
+      raidStatus: 'RAID 1 - سالم',
+      storageType: 'NVMe SSD',
+    } : {
       cpu: '4 هسته Intel Xeon',
       ram: '8 گیگابایت DDR4',
       disk: '80 گیگابایت NVMe SSD',
       bandwidth: '10 ترابایت',
-      network: '1 گیگابیت'
+      network: '1 گیگابیت',
     },
     uptime: '25 روز و 14 ساعت',
     location: 'تهران، ایران',
     created: '1402/06/15',
-    expiry: '1403/06/15'
+    expiry: '1403/06/15',
+    ...(isHourly && { hourlyCost: 2500, totalCostToday: 60000, runningHours: 24 }),
   };
 
   const [cpuUsage] = useState(35);
@@ -134,26 +85,17 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
   const [diskUsage] = useState(45);
   const [networkUsage] = useState(28);
 
-  const handlePowerAction = async (action: 'start' | 'stop' | 'restart') => {
+  const handlePowerAction = async (action: 'start' | 'stop' | 'restart' | 'hard-reboot' | 'shutdown') => {
     setIsLoading(true);
     setServerStatus('restarting');
-    
     try {
-      // شبیه‌سازی عمل power action
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (action === 'stop') {
+      if (action === 'stop' || action === 'shutdown') {
         setServerStatus('offline');
-        toast({
-          title: "سرور خاموش شد",
-          description: `سرور ${serverData.name} با موفقیت خاموش شد.`,
-        });
+        toast({ title: "سرور خاموش شد", description: `سرور ${serverData.name} با موفقیت خاموش شد.` });
       } else {
         setServerStatus('online');
-        toast({
-          title: action === 'restart' ? "سرور راه‌اندازی مجدد شد" : "سرور روشن شد",
-          description: `سرور ${serverData.name} با موفقیت ${action === 'restart' ? 'راه‌اندازی مجدد' : 'روشن'} شد.`,
-        });
+        toast({ title: action === 'restart' || action === 'hard-reboot' ? "سرور راه‌اندازی مجدد شد" : "سرور روشن شد", description: `عملیات با موفقیت انجام شد.` });
       }
     } finally {
       setIsLoading(false);
@@ -162,39 +104,19 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
 
   const handleRebuildServer = async () => {
     if (!selectedOS || !selectedVersion) {
-      toast({
-        title: "خطا",
-        description: "لطفاً سیستم عامل و نسخه را انتخاب کنید.",
-        variant: "destructive"
-      });
+      toast({ title: "خطا", description: "لطفاً سیستم عامل و نسخه را انتخاب کنید.", variant: "destructive" });
       return;
     }
-
     setRebuildDialogOpen(false);
     setIsLoading(true);
     setServerStatus('restarting');
-
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
-      toast({
-        title: "نصب مجدد سیستم عامل آغاز شد",
-        description: `نصب مجدد ${selectedOS} ${selectedVersion} شروع شد. این فرآیند ممکن است چند دقیقه طول بکشد.`,
-      });
-      
-      // Simulate completion
+      toast({ title: "نصب مجدد آغاز شد", description: `نصب ${selectedOS} ${selectedVersion} شروع شد.` });
       setTimeout(() => {
         setServerStatus('online');
-        toast({
-          title: "نصب مجدد کامل شد",
-          description: `سرور با ${selectedOS} ${selectedVersion} با موفقیت نصب شد.`,
-        });
+        toast({ title: "نصب مجدد کامل شد", description: `سرور با ${selectedOS} ${selectedVersion} نصب شد.` });
       }, 5000);
-    } catch (error) {
-      toast({
-        title: "خطا در نصب مجدد",
-        description: "مشکلی در نصب مجدد سیستم عامل رخ داد.",
-        variant: "destructive"
-      });
     } finally {
       setIsLoading(false);
     }
@@ -202,124 +124,97 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast({
-      title: "کپی شد",
-      description: "متن در کلیپ‌بورد کپی شد.",
-    });
+    toast({ title: "کپی شد", description: "متن در کلیپ‌بورد کپی شد." });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'online': return 'bg-green-500';
-      case 'offline': return 'bg-red-500';
-      case 'restarting': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'online': return 'آنلاین';
-      case 'offline': return 'آفلاین';
-      case 'restarting': return 'در حال ریست';
-      default: return 'نامشخص';
-    }
-  };
+  const ResourceBar = ({ label, value, spec }: { label: string; value: number; spec: string }) => (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium">{label}</span>
+        <span className={`text-xs font-bold ${value >= 80 ? 'text-red-500' : value >= 60 ? 'text-amber-500' : 'text-emerald-500'}`}>
+          {toPersianDigits(value)}٪
+        </span>
+      </div>
+      <Progress value={value} className="h-2" />
+      <p className="text-[10px] text-muted-foreground">{spec}</p>
+    </div>
+  );
 
   return (
-    <div className="space-y-6 p-4 md:p-6" dir="rtl">
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          {onBack && (
-            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
-              <ArrowRight className="w-4 h-4" />
-              بازگشت
-            </Button>
-          )}
-          <div className="flex-1">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 mb-2">
-              <h1 className="text-xl md:text-2xl font-bold">مدیریت {serverData.name}</h1>
-              <Badge variant={serverStatus === 'online' ? 'default' : 'destructive'}>
-                {getStatusText(serverStatus)}
+    <div className="space-y-4 md:space-y-6" dir="rtl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        {onBack && (
+          <Button variant="outline" size="sm" onClick={onBack} className="self-start flex items-center gap-1 text-xs">
+            <ArrowRight className="w-3.5 h-3.5" />
+            بازگشت به سرویس‌ها
+          </Button>
+        )}
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDedicated ? 'bg-red-500' : isCloud ? 'bg-sky-500' : isHourly ? 'bg-amber-500' : 'bg-blue-500'}`}>
+            <Server className="w-5 h-5 text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-base md:text-xl font-bold truncate">{serverData.name}</h1>
+              <Badge variant={serverStatus === 'online' ? 'default' : 'destructive'} className="text-[10px]">
+                <span className={`w-1.5 h-1.5 rounded-full ml-1 ${serverStatus === 'online' ? 'bg-green-400' : serverStatus === 'offline' ? 'bg-red-400' : 'bg-yellow-400'}`} />
+                {serverStatus === 'online' ? 'آنلاین' : serverStatus === 'offline' ? 'آفلاین' : 'در حال ریست'}
               </Badge>
+              <Badge variant="outline" className="text-[10px]">سرور {serverData.type}</Badge>
             </div>
-            <p className="text-muted-foreground text-sm md:text-base">پنل مدیریت کامل سرور شما</p>
+            <p className="text-xs text-muted-foreground truncate">{serverData.os} • {serverData.location} • آپتایم: {serverData.uptime}</p>
           </div>
         </div>
       </div>
 
-      {/* Status Alert */}
+      {/* Hourly Billing Alert */}
+      {isHourly && (
+        <Card className="border-amber-200 bg-amber-50 dark:bg-amber-900/20">
+          <CardContent className="p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div>
+              <h4 className="text-xs font-bold text-amber-800">💰 صورتحساب لحظه‌ای</h4>
+              <p className="text-[10px] text-amber-700 mt-0.5">
+                هزینه مصرف: {toPersianDigits('60,000')} تومان • {toPersianDigits(24)} ساعت فعال • {toPersianDigits('2,500')} تومان/ساعت
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" className="text-xs h-7 border-amber-300" onClick={() => handlePowerAction('stop')}>
+                توقف بدون حذف
+              </Button>
+              <Button size="sm" variant="destructive" className="text-xs h-7">حذف سرور</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Offline Alert */}
       {serverStatus === 'offline' && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
+        <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            سرور شما در حال حاضر خاموش است. برای استفاده از سرویس‌ها، آن را روشن کنید.
-          </AlertDescription>
+          <AlertDescription className="text-red-800 text-xs">سرور خاموش است. برای استفاده آن را روشن کنید.</AlertDescription>
         </Alert>
       )}
 
-      {/* Quick Actions */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="w-5 h-5" />
-            عملیات سریع
-          </CardTitle>
+      {/* Power Controls */}
+      <Card>
+        <CardHeader className="pb-2 px-3 md:px-6">
+          <CardTitle className="flex items-center gap-2 text-sm"><Zap className="w-4 h-4" />کنترل پاور</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <Button
-              variant={serverStatus === 'online' ? 'destructive' : 'default'}
-              onClick={() => handlePowerAction(serverStatus === 'online' ? 'stop' : 'start')}
-              disabled={isLoading || serverStatus === 'restarting'}
-              className="h-20 flex-col gap-2"
-            >
-              <Power className="w-6 h-6" />
-              <span className="text-sm">
-                {serverStatus === 'online' ? 'خاموش' : 'روشن'}
-              </span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={() => setRestartDialogOpen(true)}
-              disabled={isLoading || serverStatus !== 'online'}
-              className="h-20 flex-col gap-2"
-            >
-              {isLoading && serverStatus === 'restarting' ? (
-                <RefreshCw className="w-6 h-6 animate-spin" />
-              ) : (
-                <RotateCcw className="w-6 h-6" />
-              )}
-              <span className="text-sm">راه‌اندازی مجدد</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={() => setRebuildDialogOpen(true)}
-              disabled={isLoading}
-              className="h-20 flex-col gap-2"
-            >
-              <HardDriveDownload className="w-6 h-6" />
-              <span className="text-sm">نصب مجدد</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              disabled={serverStatus !== 'online'}
-              className="h-20 flex-col gap-2"
-            >
-              <Monitor className="w-6 h-6" />
-              <span className="text-sm">کنسول</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="h-20 flex-col gap-2"
-            >
-              <Settings className="w-6 h-6" />
-              <span className="text-sm">تنظیمات</span>
-            </Button>
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {[
+              { label: serverStatus === 'online' ? 'خاموش' : 'روشن', icon: Power, action: () => handlePowerAction(serverStatus === 'online' ? 'stop' : 'start'), variant: serverStatus === 'online' ? 'destructive' as const : 'default' as const },
+              { label: 'Reboot', icon: RotateCcw, action: () => setRestartDialogOpen(true), variant: 'outline' as const },
+              { label: 'Hard Reboot', icon: RefreshCw, action: () => handlePowerAction('hard-reboot'), variant: 'outline' as const },
+              { label: 'نصب مجدد', icon: HardDriveDownload, action: () => setRebuildDialogOpen(true), variant: 'outline' as const },
+              { label: 'کنسول', icon: Monitor, action: () => toast({ title: "کنسول", description: "در حال باز کردن کنسول HTML5..." }), variant: 'outline' as const },
+            ].map((btn, i) => (
+              <Button key={i} variant={btn.variant} disabled={isLoading} onClick={btn.action} className="h-auto py-2.5 flex-col gap-1.5 text-[10px] md:text-xs">
+                <btn.icon className="w-4 h-4" />
+                {btn.label}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -328,444 +223,400 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
       <Dialog open={rebuildDialogOpen} onOpenChange={setRebuildDialogOpen}>
         <DialogContent className="sm:max-w-[500px]" dir="rtl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <HardDriveDownload className="w-5 h-5" />
-              نصب مجدد سیستم عامل
-            </DialogTitle>
-            <DialogDescription>
-              توجه: این عملیات تمام داده‌های سرور را پاک کرده و سیستم عامل جدید را نصب می‌کند.
-            </DialogDescription>
+            <DialogTitle className="flex items-center gap-2 text-sm"><HardDriveDownload className="w-4 h-4" />نصب مجدد سیستم عامل</DialogTitle>
+            <DialogDescription className="text-xs">توجه: تمام داده‌های سرور پاک خواهد شد.</DialogDescription>
           </DialogHeader>
-
-          <div className="space-y-4 py-4">
-            <Alert className="bg-red-50 border-red-200">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                هشدار: این عملیات غیرقابل بازگشت است و تمام اطلاعات سرور حذف خواهد شد.
-              </AlertDescription>
-            </Alert>
-
-            <div className="space-y-2">
-              <Label htmlFor="os-select">سیستم عامل</Label>
-              <Select value={selectedOS} onValueChange={(value) => {
-                setSelectedOS(value);
-                setSelectedVersion('');
-              }}>
-                <SelectTrigger id="os-select">
-                  <SelectValue placeholder="انتخاب سیستم عامل" />
-                </SelectTrigger>
-                <SelectContent>
-                  {operatingSystems.map((os) => (
-                    <SelectItem key={os.name} value={os.name}>
-                      {os.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+          <Alert className="bg-red-50 border-red-200">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800 text-xs">هشدار: این عملیات غیرقابل بازگشت است.</AlertDescription>
+          </Alert>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs">سیستم عامل</Label>
+              <Select value={selectedOS} onValueChange={(v) => { setSelectedOS(v); setSelectedVersion(''); }}>
+                <SelectTrigger className="h-9 text-xs"><SelectValue placeholder="انتخاب سیستم عامل" /></SelectTrigger>
+                <SelectContent>{operatingSystems.map(os => <SelectItem key={os.name} value={os.name}>{os.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-
             {selectedOS && (
-              <div className="space-y-2">
-                <Label htmlFor="version-select">نسخه</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">نسخه</Label>
                 <Select value={selectedVersion} onValueChange={setSelectedVersion}>
-                  <SelectTrigger id="version-select">
-                    <SelectValue placeholder="انتخاب نسخه" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getVersionsForOS(selectedOS).map((version) => (
-                      <SelectItem key={version} value={version}>
-                        {version}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                  <SelectTrigger className="h-9 text-xs"><SelectValue placeholder="انتخاب نسخه" /></SelectTrigger>
+                  <SelectContent>{operatingSystems.find(os => os.name === selectedOS)?.versions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             )}
           </div>
-
           <DialogFooter className="gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setRebuildDialogOpen(false)}
-            >
-              انصراف
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={handleRebuildServer}
-              disabled={!selectedOS || !selectedVersion}
-            >
-              تأیید و شروع نصب مجدد
-            </Button>
+            <Button variant="outline" onClick={() => setRebuildDialogOpen(false)} className="text-xs">انصراف</Button>
+            <Button variant="destructive" onClick={handleRebuildServer} disabled={!selectedOS || !selectedVersion} className="text-xs">تأیید و شروع نصب</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Main Content Tabs */}
-      <Card>
-        <CardContent className="p-0">
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full gap-1">
-              <TabsTrigger value="overview" className="text-xs md:text-sm">اطلاعات کلی</TabsTrigger>
-              <TabsTrigger value="monitoring" className="text-xs md:text-sm">مانیتورینگ</TabsTrigger>
-              <TabsTrigger value="network" className="text-xs md:text-sm">شبکه</TabsTrigger>
-              <TabsTrigger value="security" className="text-xs md:text-sm">امنیت</TabsTrigger>
-              <TabsTrigger value="backup" className="text-xs md:text-sm">پشتیبان</TabsTrigger>
-              <TabsTrigger value="logs" className="text-xs md:text-sm">لاگ‌ها</TabsTrigger>
-            </TabsList>
-            
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="p-6 space-y-6">
-              {/* Server Info */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Server className="w-5 h-5" />
-                      مشخصات سرور
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">نوع سرور:</span>
-                        <p className="font-medium">{serverData.type}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">مکان:</span>
-                        <p className="font-medium">{serverData.location}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">سیستم عامل:</span>
-                        <p className="font-medium">{serverData.os}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">تاریخ ایجاد:</span>
-                        <p className="font-medium">{serverData.created}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">تاریخ انقضا:</span>
-                        <p className="font-medium">{serverData.expiry}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">آپتایم:</span>
-                        <p className="font-medium text-green-600">{serverData.uptime}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Network className="w-5 h-5" />
-                      اطلاعات اتصال
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">آی‌پی اصلی:</span>
-                        <div className="flex items-center gap-2">
-                          <code className="bg-muted px-2 py-1 rounded text-sm">{serverData.ip}</code>
-                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard(serverData.ip)}>
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">IPv6:</span>
-                        <div className="flex items-center gap-2">
-                          <code className="bg-muted px-2 py-1 rounded text-sm">{serverData.ipv6}</code>
-                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard(serverData.ipv6)}>
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">پورت SSH:</span>
-                        <code className="bg-muted px-2 py-1 rounded text-sm">{serverData.sshPort}</code>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">رمز root:</span>
-                        <div className="flex items-center gap-2">
-                          <code className="bg-muted px-2 py-1 rounded text-sm">
-                            {showPassword ? serverData.rootPassword : '••••••••••'}
-                          </code>
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard(serverData.rootPassword)}>
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Resource Usage */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    استفاده از منابع
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">پردازنده</span>
-                        <span className="text-sm text-muted-foreground">{cpuUsage}%</span>
-                      </div>
-                      <Progress value={cpuUsage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">{serverData.specs.cpu}</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">حافظه</span>
-                        <span className="text-sm text-muted-foreground">{ramUsage}%</span>
-                      </div>
-                      <Progress value={ramUsage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">{serverData.specs.ram}</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">دیسک</span>
-                        <span className="text-sm text-muted-foreground">{diskUsage}%</span>
-                      </div>
-                      <Progress value={diskUsage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">{serverData.specs.disk}</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">شبکه</span>
-                        <span className="text-sm text-muted-foreground">{networkUsage}%</span>
-                      </div>
-                      <Progress value={networkUsage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">{serverData.specs.network}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Monitoring Tab */}
-            <TabsContent value="monitoring" className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>نمودار CPU</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center py-12">
-                    <Activity className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">نمودار استفاده از پردازنده</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>نمودار RAM</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center py-12">
-                    <MemoryStick className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">نمودار استفاده از حافظه</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>نمودار شبکه</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center py-12">
-                    <Network className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">نمودار ترافیک شبکه</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>نمودار دیسک</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center py-12">
-                    <HardDrive className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">نمودار استفاده از دیسک</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            {/* Network Tab */}
-            <TabsContent value="network" className="p-6">
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>تنظیمات شبکه</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 border rounded-lg">
-                        <h3 className="font-medium mb-2">فایروال</h3>
-                        <p className="text-sm text-muted-foreground mb-3">مدیریت قوانین فایروال</p>
-                        <Button size="sm">مدیریت قوانین</Button>
-                      </div>
-                      
-                      <div className="p-4 border rounded-lg">
-                        <h3 className="font-medium mb-2">DNS</h3>
-                        <p className="text-sm text-muted-foreground mb-3">تنظیمات سرور DNS</p>
-                        <Button size="sm">تنظیمات DNS</Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>آمار ترافیک</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Globe className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">آمار ترافیک شبکه</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            {/* Security Tab */}
-            <TabsContent value="security" className="p-6">
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>وضعیت امنیت</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <div>
-                          <div className="font-medium">فایروال فعال</div>
-                          <div className="text-sm text-muted-foreground">محافظت در برابر حملات</div>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">تنظیمات</Button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Lock className="w-5 h-5 text-blue-500" />
-                        <div>
-                          <div className="font-medium">SSH محافظت شده</div>
-                          <div className="text-sm text-muted-foreground">دسترسی با کلید عمومی</div>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">مدیریت کلیدها</Button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                        <div>
-                          <div className="font-medium">آپدیت‌های امنیتی</div>
-                          <div className="text-sm text-muted-foreground">2 آپدیت در انتظار</div>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">بررسی آپدیت‌ها</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            {/* Backup Tab */}
-            <TabsContent value="backup" className="p-6">
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>مدیریت پشتیبان‌گیری</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <div className="font-medium">پشتیبان‌گیری خودکار</div>
-                        <div className="text-sm text-muted-foreground">هر روز در ساعت 3:00 صبح</div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Calendar className="w-4 h-4 ml-2" />
-                          زمان‌بندی
-                        </Button>
-                        <Button size="sm">
-                          <Database className="w-4 h-4 ml-2" />
-                          بک‌آپ فوری
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="text-center py-12">
-                      <Database className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">فهرست پشتیبان‌های ذخیره شده</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            {/* Logs Tab */}
-            <TabsContent value="logs" className="p-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>لاگ‌های سیستم</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12">
-                    <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">مشاهده و دانلود لاگ‌های سرور</p>
-                    <Button className="mt-4">
-                      <Download className="w-4 h-4 ml-2" />
-                      دانلود لاگ‌ها
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Restart Confirmation Dialog */}
+      {/* Restart Dialog */}
       <AlertDialog open={restartDialogOpen} onOpenChange={setRestartDialogOpen}>
         <AlertDialogContent dir="rtl">
           <AlertDialogHeader>
-            <AlertDialogTitle>راه‌اندازی مجدد سرور</AlertDialogTitle>
-            <AlertDialogDescription>
-              آیا از راه‌اندازی مجدد سرور اطمینان دارید؟ این عملیات موجب قطع موقت سرویس می‌شود.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="text-sm">راه‌اندازی مجدد سرور</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs">آیا از راه‌اندازی مجدد سرور اطمینان دارید؟</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>انصراف</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              setRestartDialogOpen(false);
-              handlePowerAction('restart');
-            }}>
-              راه‌اندازی مجدد
-            </AlertDialogAction>
+            <AlertDialogCancel className="text-xs">انصراف</AlertDialogCancel>
+            <AlertDialogAction className="text-xs" onClick={() => { setRestartDialogOpen(false); handlePowerAction('restart'); }}>راه‌اندازی مجدد</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Main Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="w-full overflow-x-auto justify-start gap-0 h-auto p-1 flex-wrap">
+          {[
+            { value: 'overview', label: 'اطلاعات' },
+            { value: 'monitoring', label: 'مانیتورینگ' },
+            { value: 'access', label: 'دسترسی' },
+            { value: 'network', label: 'شبکه' },
+            { value: 'backup', label: 'بکاپ / Snapshot' },
+            ...(isDedicated ? [{ value: 'hardware', label: 'سخت‌افزار' }] : []),
+            ...(isCloud ? [{ value: 'scale', label: 'مقیاس‌دهی' }] : []),
+            { value: 'upgrade', label: 'ارتقا' },
+          ].map(tab => (
+            <TabsTrigger key={tab.value} value={tab.value} className="text-[10px] md:text-xs px-2 md:px-3 py-1.5">{tab.label}</TabsTrigger>
+          ))}
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm"><Server className="w-4 h-4" />مشخصات سرور</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6">
+                <div className="space-y-1.5">
+                  {[
+                    { label: 'نوع سرور', value: serverData.type },
+                    { label: 'سیستم عامل', value: serverData.os },
+                    { label: 'پردازنده', value: serverData.specs.cpu },
+                    { label: 'حافظه', value: serverData.specs.ram },
+                    { label: 'دیسک', value: serverData.specs.disk },
+                    { label: 'پهنای باند', value: serverData.specs.bandwidth },
+                    { label: 'مکان', value: serverData.location },
+                    { label: 'آپتایم', value: serverData.uptime },
+                    { label: 'تاریخ انقضا', value: serverData.expiry, warning: true },
+                    ...(isDedicated && serverData.specs.raidStatus ? [{ label: 'RAID', value: serverData.specs.raidStatus }] : []),
+                  ].map((row, i) => (
+                    <div key={i} className="flex items-center justify-between py-1.5 border-b border-muted/50 last:border-0">
+                      <span className="text-[10px] md:text-xs text-muted-foreground">{row.label}</span>
+                      <span className={`text-xs font-medium ${row.warning ? 'text-orange-600' : ''}`}>{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm"><BarChart3 className="w-4 h-4" />مصرف منابع</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 space-y-4">
+                <ResourceBar label="پردازنده" value={cpuUsage} spec={serverData.specs.cpu} />
+                <ResourceBar label="حافظه" value={ramUsage} spec={serverData.specs.ram} />
+                <ResourceBar label="دیسک" value={diskUsage} spec={serverData.specs.disk} />
+                <ResourceBar label="شبکه" value={networkUsage} spec={serverData.specs.network} />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Monitoring Tab */}
+        <TabsContent value="monitoring" className="space-y-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: 'نمودار CPU', icon: Cpu, desc: 'استفاده از پردازنده در 24 ساعت' },
+              { title: 'نمودار RAM', icon: MemoryStick, desc: 'مصرف حافظه در 24 ساعت' },
+              { title: 'ترافیک شبکه (RX/TX)', icon: Network, desc: 'ترافیک ورودی و خروجی' },
+              { title: 'Disk I/O', icon: HardDrive, desc: 'عملیات خواندن/نوشتن دیسک' },
+            ].map((chart, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2 px-3 md:px-6">
+                  <CardTitle className="flex items-center gap-2 text-sm"><chart.icon className="w-4 h-4" />{chart.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="px-3 md:px-6">
+                  <div className="h-32 flex items-center justify-center bg-muted/20 rounded-lg border border-dashed">
+                    <div className="text-center">
+                      <chart.icon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-[10px] text-muted-foreground">{chart.desc}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* Access Tab */}
+        <TabsContent value="access" className="space-y-4 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm"><Terminal className="w-4 h-4" />اطلاعات اتصال</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 space-y-2">
+                {[
+                  { label: 'آی‌پی اصلی', value: serverData.ip },
+                  { label: 'IPv6', value: serverData.ipv6 },
+                  { label: 'پورت SSH', value: String(serverData.sshPort) },
+                ].map((item, i) => (
+                  <div key={i} className="bg-muted/50 p-2.5 rounded-lg">
+                    <label className="text-[10px] text-muted-foreground">{item.label}</label>
+                    <div className="flex items-center justify-between mt-1">
+                      <code className="text-xs font-mono">{item.value}</code>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copyToClipboard(item.value)}><Copy className="w-3.5 h-3.5" /></Button>
+                    </div>
+                  </div>
+                ))}
+                <div className="bg-muted/50 p-2.5 rounded-lg">
+                  <label className="text-[10px] text-muted-foreground">رمز root</label>
+                  <div className="flex items-center justify-between mt-1 gap-2">
+                    <code className="text-xs font-mono flex-1 truncate">{showPassword ? serverData.rootPassword : '••••••••••'}</code>
+                    <div className="flex gap-0.5">
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copyToClipboard(serverData.rootPassword)}><Copy className="w-3.5 h-3.5" /></Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="flex items-center gap-2 text-sm"><Monitor className="w-4 h-4" />دسترسی ریموت</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 space-y-2">
+                {[
+                  { label: 'کنسول HTML5', icon: Monitor, desc: 'دسترسی مستقیم از مرورگر' },
+                  { label: isDedicated ? 'KVM Remote' : 'VNC', icon: Monitor, desc: isDedicated ? 'دسترسی KVM از راه دور' : 'دسترسی VNC' },
+                  { label: 'تغییر رمز Root', icon: Lock, desc: 'بازنشانی رمز عبور ریشه' },
+                  { label: 'Reset Network', icon: Network, desc: 'بازنشانی تنظیمات شبکه' },
+                  ...(isDedicated ? [{ label: 'Rescue Mode', icon: Shield, desc: 'بوت در حالت نجات' }] : []),
+                ].map((item, i) => (
+                  <Button key={i} variant="outline" className="w-full justify-start h-auto py-2 text-xs" onClick={() => toast({ title: item.label, description: item.desc })}>
+                    <item.icon className="w-4 h-4 ml-2 shrink-0" />
+                    <div className="text-right">
+                      <div className="font-medium">{item.label}</div>
+                      <div className="text-[10px] text-muted-foreground">{item.desc}</div>
+                    </div>
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Network Tab */}
+        <TabsContent value="network" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-sm"><Globe className="w-4 h-4" />آدرس‌های IP</CardTitle>
+                <Button size="sm" className="text-xs h-8"><Plus className="w-3 h-3 ml-1" />افزودن IP</Button>
+              </div>
+            </CardHeader>
+            <CardContent className="px-3 md:px-6">
+              <div className="space-y-2">
+                {[
+                  { ip: serverData.ip, type: 'IPv4 اصلی', status: 'فعال' },
+                  { ip: serverData.ipv6, type: 'IPv6', status: 'فعال' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 bg-muted/30 rounded-lg border">
+                    <div>
+                      <code className="text-xs font-mono">{item.ip}</code>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{item.type}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-emerald-100 text-emerald-800 text-[10px]">{item.status}</Badge>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copyToClipboard(item.ip)}><Copy className="w-3 h-3" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6"><CardTitle className="text-sm">فایروال</CardTitle></CardHeader>
+              <CardContent className="px-3 md:px-6">
+                <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg mb-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    <span className="text-xs font-medium">فایروال فعال</span>
+                  </div>
+                  <Button size="sm" variant="outline" className="text-xs h-7">مدیریت قوانین</Button>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6"><CardTitle className="text-sm">DNS</CardTitle></CardHeader>
+              <CardContent className="px-3 md:px-6">
+                <Button variant="outline" className="w-full text-xs h-9"><Settings className="w-3.5 h-3.5 ml-1.5" />تنظیمات DNS</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Backup Tab */}
+        <TabsContent value="backup" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-sm"><Camera className="w-4 h-4" />Snapshot ها</CardTitle>
+                <Button size="sm" className="text-xs h-8"><Plus className="w-3 h-3 ml-1" />ساخت Snapshot</Button>
+              </div>
+            </CardHeader>
+            <CardContent className="px-3 md:px-6">
+              <div className="space-y-2">
+                {[
+                  { name: 'snapshot-auto-20240115', date: '1402/10/25', size: '4.2 GB' },
+                  { name: 'snapshot-manual-20240110', date: '1402/10/20', size: '3.8 GB' },
+                ].map((snap, i) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 bg-muted/30 rounded-lg border">
+                    <div>
+                      <code className="text-xs font-mono font-medium">{snap.name}</code>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{snap.date} • {snap.size}</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="outline" className="h-7 text-[10px]"><RotateCcw className="w-3 h-3 ml-1" />Restore</Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500"><Trash2 className="w-3 h-3" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <CardTitle className="text-sm">زمان‌بندی بکاپ</CardTitle>
+            </CardHeader>
+            <CardContent className="px-3 md:px-6">
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <div className="text-xs font-medium">بکاپ روزانه خودکار</div>
+                  <div className="text-[10px] text-muted-foreground">هر روز ساعت 3:00 صبح</div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-8"><Calendar className="w-3.5 h-3.5 ml-1" />تغییر زمان</Button>
+                  <Button size="sm" className="text-xs h-8"><Database className="w-3.5 h-3.5 ml-1" />بکاپ فوری</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Hardware Tab (Dedicated only) */}
+        {isDedicated && (
+          <TabsContent value="hardware" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="text-sm">اطلاعات سخت‌افزار</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6">
+                <div className="space-y-1.5">
+                  {[
+                    { label: 'CPU Model', value: 'Intel Xeon E3-1270v6' },
+                    { label: 'RAM', value: '32GB DDR4 ECC' },
+                    { label: 'Storage', value: '2x 480GB SSD' },
+                    { label: 'RAID', value: 'RAID 1 - سالم' },
+                    { label: 'نوع دیسک', value: 'NVMe SSD' },
+                  ].map((row, i) => (
+                    <div key={i} className="flex items-center justify-between py-1.5 border-b border-muted/50 last:border-0">
+                      <span className="text-xs text-muted-foreground">{row.label}</span>
+                      <span className="text-xs font-medium font-mono">{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { label: 'نصب کنترل پنل', icon: Settings, desc: 'cPanel / DirectAdmin' },
+                { label: 'مانیتورینگ', icon: Activity, desc: 'نظارت سخت‌افزار' },
+                { label: 'پشتیبانی سخت‌افزاری', icon: Shield, desc: 'درخواست تعمیر' },
+              ].map((item, i) => (
+                <Button key={i} variant="outline" className="h-auto py-3 flex-col gap-1.5" onClick={() => toast({ title: item.label })}>
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">{item.label}</span>
+                  <span className="text-[10px] text-muted-foreground">{item.desc}</span>
+                </Button>
+              ))}
+            </div>
+          </TabsContent>
+        )}
+
+        {/* Scale Tab (Cloud only) */}
+        {isCloud && (
+          <TabsContent value="scale" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader className="pb-2 px-3 md:px-6">
+                <CardTitle className="text-sm">مدیریت منابع لحظه‌ای</CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 space-y-3">
+                <p className="text-xs text-muted-foreground">افزایش آنی منابع سرور ابری بدون نیاز به خاموشی</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { label: 'افزایش CPU', current: '4 هسته', icon: Cpu },
+                    { label: 'افزایش RAM', current: '8 GB', icon: MemoryStick },
+                  ].map((item, i) => (
+                    <div key={i} className="p-3 border rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <item.icon className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-medium">{item.label}</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mb-2">فعلی: {item.current}</p>
+                      <Button size="sm" className="w-full text-xs h-8">ارتقا</Button>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="outline" className="w-full text-xs h-9 mt-2"><Copy className="w-3.5 h-3.5 ml-1.5" />Clone Server</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {/* Upgrade Tab */}
+        <TabsContent value="upgrade" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-2 px-3 md:px-6">
+              <CardTitle className="text-sm">ارتقا سرور</CardTitle>
+            </CardHeader>
+            <CardContent className="px-3 md:px-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { label: 'ارتقا RAM', current: serverData.specs.ram, icon: MemoryStick },
+                  { label: 'ارتقا CPU', current: serverData.specs.cpu, icon: Cpu },
+                  { label: 'افزایش دیسک', current: serverData.specs.disk, icon: HardDrive },
+                ].map((item, i) => (
+                  <div key={i} className="p-3 border rounded-lg text-center">
+                    <item.icon className="w-6 h-6 mx-auto mb-2 text-primary" />
+                    <h4 className="text-xs font-medium">{item.label}</h4>
+                    <p className="text-[10px] text-muted-foreground mt-1 mb-2">فعلی: {item.current}</p>
+                    <Button size="sm" className="w-full text-xs h-8"><CreditCard className="w-3 h-3 ml-1" />ارتقا</Button>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3">
+                <Button className="w-full text-xs h-9"><RefreshCw className="w-3.5 h-3.5 ml-1.5" />تمدید سرویس</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
