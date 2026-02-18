@@ -242,20 +242,30 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'vps-management':
       return selectedService ? 
         <ServerManagementDetail 
-          serverId={selectedService} 
-          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
+          serverId={selectedService}
+          serverType="vps"
+          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
     case 'dedicated-management':
       return selectedService ? 
         <ServerManagementDetail 
-          serverId={selectedService} 
-          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
+          serverId={selectedService}
+          serverType="dedicated"
+          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
     case 'cloud-management':
       return selectedService ? 
         <ServerManagementDetail 
-          serverId={selectedService} 
-          onBack={() => navigationHandlers.navigateToServiceOrderPage('/servers')} 
+          serverId={selectedService}
+          serverType="cloud"
+          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
+        /> : null;
+    case 'hourly-management':
+      return selectedService ? 
+        <ServerManagementDetail 
+          serverId={selectedService}
+          serverType="hourly"
+          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
     case 'hosting-management':
       return selectedService ? 
