@@ -14,6 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { toPersianDigits } from '@/lib/numberUtils';
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 
 interface HeaderProps {
   activeTab?: string;
@@ -28,6 +31,12 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const sessionTimeLeft = "۶۰:۰۰";
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
   
   const getPageTitle = () => {
     const titles: Record<string, string> = {
@@ -186,7 +195,10 @@ const Header: React.FC<HeaderProps> = ({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleNavigate('tickets')}>پشتیبانی</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">خروج از حساب</DropdownMenuItem>
+            <DropdownMenuItem className="text-red-600" onClick={handleLogout}>
+              <LogOut className="ml-2 h-4 w-4" />
+              خروج از حساب
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -40,7 +40,20 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
   };
 
   const handleManageService = (type: string, id: string) => {
+    // Use the correct navigation path format that panelNavigationService expects
     navigateToServiceOrderPage(`/${type}-management/${id}`);
+  };
+
+  const handleViewAllServices = (tab: string) => {
+    // Map tab values to sidebar nav ids
+    const tabToNav: Record<string, string> = {
+      'servers': '/servers',
+      'dedicated': '/dedicated',
+      'hourly': '/servers',
+      'hosting': '/hosting',
+      'domains': '/domains',
+    };
+    safeNavigate(tabToNav[tab] || '/servers');
   };
 
   const safeNavigate = (link: string) => {
@@ -227,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm md:text-lg">سرویس‌های من</CardTitle>
-                  <Button variant="ghost" size="sm" className="text-[10px] text-primary" onClick={() => safeNavigate('/servers')}>
+                  <Button variant="ghost" size="sm" className="text-[10px] text-primary" onClick={() => handleViewAllServices(activeTab)}>
                     مشاهده همه<ChevronLeft className="w-3 h-3 mr-1" />
                   </Button>
                 </div>
@@ -265,7 +278,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-0">
         <Card className="shadow-sm border-0 rounded-xl">
           <CardHeader className="pb-2 px-3 md:px-6">
             <CardTitle className="text-sm">تیکت‌های پشتیبانی</CardTitle>
