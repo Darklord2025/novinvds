@@ -138,6 +138,14 @@ export const createNavigationHandlers = (
         title: "افزایش موجودی",
         description: "در حال بارگذاری صفحه افزایش موجودی...",
       });
+    } else if (serviceLink === '/servers' || serviceLink === 'servers') {
+      setActiveTab('servers');
+    } else if (serviceLink === '/hosting' || serviceLink === 'hosting') {
+      setActiveTab('hosting');
+    } else if (serviceLink === '/dedicated' || serviceLink === 'dedicated') {
+      setActiveTab('dedicated');
+    } else if (serviceLink === '/domains' || serviceLink === 'domains') {
+      setActiveTab('domains');
     } else if (serviceLink === '/settings') {
       setActiveTab('settings');
       

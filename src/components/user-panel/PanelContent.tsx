@@ -271,7 +271,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       return selectedService ? 
         <HostingManagementPanel 
           serviceId={selectedService} 
-          onBack={() => navigationHandlers.handleSidebarClick('servers')} 
+          onBack={() => navigationHandlers.handleSidebarClick('hosting')} 
         /> : null;
     case 'hosting-gateway':
       return selectedService ? 

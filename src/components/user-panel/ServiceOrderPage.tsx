@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   ArrowRight, Search, ShoppingCart, Server, Globe, 
   Database, HardDrive, Cpu, Users, PanelLeft, Wifi, Shield,
@@ -465,8 +466,15 @@ const getDataForCategory = (category: string) => {
 const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, onAddToCart }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'popular'>('popular');
+  const [vpsMode, setVpsMode] = useState<'virtual' | 'hourly'>('virtual');
   
-  const data = getDataForCategory(category);
+  const isVpsMainCategory = category === 'order-vps';
+  
+  const effectiveCategory = isVpsMainCategory 
+    ? (vpsMode === 'hourly' ? 'order-vps-hourly' : 'order-vps') 
+    : category;
+  
+  const data = getDataForCategory(effectiveCategory);
   const isDomain = category.startsWith('order-domain');
   
   const filteredPlans = data.plans
@@ -512,6 +520,22 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
           </div>
         </div>
       </div>
+
+      {/* VPS Mode Tabs */}
+      {isVpsMainCategory && (
+        <Tabs value={vpsMode} onValueChange={(v) => setVpsMode(v as 'virtual' | 'hourly')} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="virtual" className="gap-2">
+              <Server className="w-4 h-4" />
+              سرور مجازی
+            </TabsTrigger>
+            <TabsTrigger value="hourly" className="gap-2">
+              <Clock className="w-4 h-4" />
+              سرور ساعتی
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
 
       {/* Search & Filter */}
       <Card>

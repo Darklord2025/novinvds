@@ -37,6 +37,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarProps, SidebarItem } from './interfaces';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface ExtendedSidebarProps extends SidebarProps {
   isMobile?: boolean;
@@ -56,6 +58,12 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
   onClose
 }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   // Auto-expand parent if a child is active
   useEffect(() => {
@@ -220,6 +228,7 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
       <div className="p-4 border-t mt-auto">
         <button
           className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+          onClick={handleLogout}
         >
           <LogOut className="h-5 w-5 ml-2" />
           <span>خروج از حساب</span>
