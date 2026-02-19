@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
 import { toast } from '@/components/ui/use-toast';
+import VpsOrderPage from './VpsOrderPage';
 
 interface ServiceOrderPageProps {
   category: string;
@@ -293,9 +294,9 @@ const categoryData: Record<string, { title: string; icon: React.ReactNode; plans
     title: 'سرور اختصاصی',
     icon: <HardDrive className="w-6 h-6" />,
     plans: [
-      { id: 'd1', name: 'سرور اختصاصی پایه', specs: ['Intel Xeon E3', '۱۶ گیگ رم', '۲×۱ ترا HDD'], price: 3500000, period: 'ماهانه' },
-      { id: 'd2', name: 'سرور اختصاصی حرفه‌ای', specs: ['Intel Xeon E5', '۳۲ گیگ رم', '۲×۲ ترا SSD'], price: 6500000, period: 'ماهانه', popular: true },
-      { id: 'd3', name: 'سرور اختصاصی سازمانی', specs: ['۲× Intel Xeon', '۶۴ گیگ رم', '۴×۲ ترا SSD'], price: 12000000, period: 'ماهانه' },
+      { id: 'd1', name: 'سرور اختصاصی پایه', specs: ['Intel Xeon E3', '۱۶ گیگ رم', '۲×۱ ترا HDD', 'ESXi / Proxmox / Linux / Windows'], price: 3500000, period: 'ماهانه' },
+      { id: 'd2', name: 'سرور اختصاصی حرفه‌ای', specs: ['Intel Xeon E5', '۳۲ گیگ رم', '۲×۲ ترا SSD', 'ESXi / Proxmox / Linux / Windows'], price: 6500000, period: 'ماهانه', popular: true },
+      { id: 'd3', name: 'سرور اختصاصی سازمانی', specs: ['۲× Intel Xeon', '۶۴ گیگ رم', '۴×۲ ترا SSD', 'ESXi / Proxmox / Linux / Windows'], price: 12000000, period: 'ماهانه' },
     ]
   },
   'order-dedicated-iran': {
@@ -466,15 +467,21 @@ const getDataForCategory = (category: string) => {
 const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, onAddToCart }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'popular'>('popular');
-  const [vpsMode, setVpsMode] = useState<'virtual' | 'hourly'>('virtual');
   
-  const isVpsMainCategory = category === 'order-vps';
+  // Use dedicated VPS order page for main VPS and hourly categories
+  const isVpsOrder = category === 'order-vps' || category === 'order-vps-hourly';
   
-  const effectiveCategory = isVpsMainCategory 
-    ? (vpsMode === 'hourly' ? 'order-vps-hourly' : 'order-vps') 
-    : category;
+  if (isVpsOrder) {
+    return (
+      <VpsOrderPage 
+        onBack={onBack} 
+        onAddToCart={onAddToCart} 
+        initialMode={category === 'order-vps-hourly' ? 'hourly' : 'virtual'} 
+      />
+    );
+  }
   
-  const data = getDataForCategory(effectiveCategory);
+  const data = getDataForCategory(category);
   const isDomain = category.startsWith('order-domain');
   
   const filteredPlans = data.plans
@@ -521,21 +528,8 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
         </div>
       </div>
 
-      {/* VPS Mode Tabs */}
-      {isVpsMainCategory && (
-        <Tabs value={vpsMode} onValueChange={(v) => setVpsMode(v as 'virtual' | 'hourly')} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="virtual" className="gap-2">
-              <Server className="w-4 h-4" />
-              سرور مجازی
-            </TabsTrigger>
-            <TabsTrigger value="hourly" className="gap-2">
-              <Clock className="w-4 h-4" />
-              سرور ساعتی
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      )}
+
+
 
       {/* Search & Filter */}
       <Card>
