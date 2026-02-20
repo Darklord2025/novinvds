@@ -40,12 +40,20 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
 
   const operatingSystems = [
     { name: 'Ubuntu', versions: ['24.04 LTS', '22.04 LTS', '20.04 LTS'] },
-    { name: 'CentOS', versions: ['Stream 9', 'Stream 8'] },
+    { name: 'AlmaLinux', versions: ['9.3', '8.9'] },
+    { name: 'Rocky Linux', versions: ['9.3', '8.9'] },
     { name: 'Debian', versions: ['12 (Bookworm)', '11 (Bullseye)'] },
-    { name: 'Windows Server', versions: ['2022', '2019'] },
-    { name: 'AlmaLinux', versions: ['9', '8'] },
-    { name: 'Rocky Linux', versions: ['9', '8'] },
-    ...(serverType === 'vps' ? [{ name: 'MikroTik', versions: ['7.x', '6.x'] }] : []),
+    { name: 'CentOS Stream', versions: ['9', '8'] },
+    { name: 'Fedora Server', versions: ['39', '38'] },
+    { name: 'openSUSE', versions: ['Leap 15.5', 'Tumbleweed'] },
+    { name: 'Arch Linux', versions: ['Latest'] },
+    { name: 'Windows Server 2022', versions: ['Standard', 'Datacenter'] },
+    { name: 'Windows Server 2019', versions: ['Standard', 'Datacenter'] },
+    { name: 'Windows Server 2016', versions: ['Standard'] },
+    { name: 'Windows 10 Pro', versions: ['LTSC 2021'] },
+    { name: 'MikroTik RouterOS', versions: ['7.x', '6.x'] },
+    { name: 'Proxmox VE', versions: ['8.1', '7.4'] },
+    { name: 'VMware ESXi', versions: ['8.0 U2', '7.0 U3'] },
   ];
 
   const serverData = {

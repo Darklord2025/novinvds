@@ -14,7 +14,7 @@ import { toast } from '@/components/ui/use-toast';
 interface VpsOrderPageProps {
   onBack?: () => void;
   onAddToCart?: (item: any) => void;
-  initialMode?: 'virtual' | 'hourly';
+  initialMode?: 'virtual' | 'hourly' | 'multilocation';
 }
 
 interface VpsPlan {
@@ -52,20 +52,22 @@ const hourlyPlans: VpsPlan[] = [
 ];
 
 const locations = [
-  { id: 'iran-tehran', name: 'ایران - تهران', flag: '🇮🇷', datacenter: 'آسیاتک' },
-  { id: 'iran-tabriz', name: 'ایران - تبریز', flag: '🇮🇷', datacenter: 'شاتل' },
-  { id: 'germany-falkenstein', name: 'آلمان - فالکنشتاین', flag: '🇩🇪', datacenter: 'Hetzner' },
-  { id: 'germany-nuremberg', name: 'آلمان - نورنبرگ', flag: '🇩🇪', datacenter: 'Hetzner' },
-  { id: 'netherlands-amsterdam', name: 'هلند - آمستردام', flag: '🇳🇱', datacenter: 'Serverius' },
-  { id: 'france-paris', name: 'فرانسه - پاریس', flag: '🇫🇷', datacenter: 'OVH' },
-  { id: 'uk-london', name: 'انگلستان - لندن', flag: '🇬🇧', datacenter: 'Equinix' },
-  { id: 'usa-dallas', name: 'آمریکا - دالاس', flag: '🇺🇸', datacenter: 'ColoCrossing' },
-  { id: 'usa-losangeles', name: 'آمریکا - لس‌آنجلس', flag: '🇺🇸', datacenter: 'Psychz' },
-  { id: 'canada-montreal', name: 'کانادا - مونترال', flag: '🇨🇦', datacenter: 'OVH' },
+  { id: 'iran-asiatech', name: 'ایران', flag: '🇮🇷', datacenter: 'آسیاتک' },
+  { id: 'iran-pishgaman', name: 'ایران', flag: '🇮🇷', datacenter: 'پیشگامان' },
+  { id: 'iran-shatel', name: 'ایران', flag: '🇮🇷', datacenter: 'شاتل' },
+  { id: 'iran-afranet', name: 'ایران', flag: '🇮🇷', datacenter: 'افرانت' },
+  { id: 'germany-falkenstein', name: 'آلمان', flag: '🇩🇪', datacenter: 'Hetzner (Falkenstein)' },
+  { id: 'germany-nuremberg', name: 'آلمان', flag: '🇩🇪', datacenter: 'Hetzner (Nuremberg)' },
+  { id: 'netherlands-amsterdam', name: 'هلند', flag: '🇳🇱', datacenter: 'Serverius' },
+  { id: 'france-paris', name: 'فرانسه', flag: '🇫🇷', datacenter: 'OVH' },
+  { id: 'uk-london', name: 'انگلستان', flag: '🇬🇧', datacenter: 'Equinix' },
+  { id: 'usa-dallas', name: 'آمریکا', flag: '🇺🇸', datacenter: 'ColoCrossing (Dallas)' },
+  { id: 'usa-losangeles', name: 'آمریکا', flag: '🇺🇸', datacenter: 'Psychz (LA)' },
+  { id: 'canada-montreal', name: 'کانادا', flag: '🇨🇦', datacenter: 'OVH' },
   { id: 'singapore', name: 'سنگاپور', flag: '🇸🇬', datacenter: 'Equinix' },
-  { id: 'japan-tokyo', name: 'ژاپن - توکیو', flag: '🇯🇵', datacenter: 'Equinix' },
-  { id: 'turkey-istanbul', name: 'ترکیه - استانبول', flag: '🇹🇷', datacenter: 'TurkTelekom' },
-  { id: 'uae-dubai', name: 'امارات - دبی', flag: '🇦🇪', datacenter: 'Khazna' },
+  { id: 'japan-tokyo', name: 'ژاپن', flag: '🇯🇵', datacenter: 'Equinix' },
+  { id: 'turkey-istanbul', name: 'ترکیه', flag: '🇹🇷', datacenter: 'TurkTelekom' },
+  { id: 'uae-dubai', name: 'امارات', flag: '🇦🇪', datacenter: 'Khazna' },
 ];
 
 interface OsOption {
@@ -94,6 +96,14 @@ const operatingSystems: OsOption[] = [
   { id: 'esxi', name: 'VMware ESXi', icon: '🖥️', versions: ['8.0 U2', '7.0 U3'], category: 'other' },
 ];
 
+const multilocationPlans: VpsPlan[] = [
+  { id: 'ml1', name: 'Multi-1', cpu: 2, ram: 2, disk: 40, diskType: 'SSD', bandwidth: '۱ ترابایت', port: '۱ Gbps', price: 499000, period: 'ماهانه' },
+  { id: 'ml2', name: 'Multi-2', cpu: 2, ram: 4, disk: 60, diskType: 'NVMe', bandwidth: '۲ ترابایت', port: '۱ Gbps', price: 799000, period: 'ماهانه', popular: true },
+  { id: 'ml3', name: 'Multi-3', cpu: 4, ram: 8, disk: 100, diskType: 'NVMe', bandwidth: '۳ ترابایت', port: '۱ Gbps', price: 1299000, period: 'ماهانه' },
+  { id: 'ml4', name: 'Multi-4', cpu: 6, ram: 16, disk: 200, diskType: 'NVMe', bandwidth: '۵ ترابایت', port: '۱ Gbps', price: 1999000, period: 'ماهانه' },
+  { id: 'ml5', name: 'Multi-5', cpu: 8, ram: 32, disk: 300, diskType: 'NVMe', bandwidth: '۱۰ ترابایت', port: '۱ Gbps', price: 3499000, period: 'ماهانه' },
+];
+
 const billingPeriods = [
   { id: 'monthly', name: 'ماهانه', multiplier: 1, discount: 0 },
   { id: 'quarterly', name: 'سه‌ماهه', multiplier: 2.7, discount: 10 },
@@ -102,7 +112,7 @@ const billingPeriods = [
 ];
 
 const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initialMode = 'virtual' }) => {
-  const [mode, setMode] = useState<'virtual' | 'hourly'>(initialMode);
+  const [mode, setMode] = useState<'virtual' | 'hourly' | 'multilocation'>(initialMode === 'multilocation' ? 'multilocation' : initialMode === 'hourly' ? 'hourly' : 'virtual');
   const [step, setStep] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<VpsPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
@@ -111,7 +121,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
   const [billingPeriod, setBillingPeriod] = useState('monthly');
   const [osFilter, setOsFilter] = useState<'all' | 'linux' | 'windows' | 'other'>('all');
 
-  const plans = mode === 'virtual' ? virtualPlans : hourlyPlans;
+  const plans = mode === 'multilocation' ? multilocationPlans : mode === 'virtual' ? virtualPlans : hourlyPlans;
 
   const filteredOs = useMemo(() => {
     if (osFilter === 'all') return operatingSystems;
@@ -180,9 +190,10 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
 
       {/* Mode Toggle */}
       <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setStep(1); setSelectedPlan(null); }} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
+        <TabsList className="grid w-full grid-cols-3 max-w-lg">
           <TabsTrigger value="virtual" className="gap-2"><Server className="w-4 h-4" />سرور مجازی</TabsTrigger>
           <TabsTrigger value="hourly" className="gap-2"><Clock className="w-4 h-4" />سرور ساعتی</TabsTrigger>
+          <TabsTrigger value="multilocation" className="gap-2"><Globe className="w-4 h-4" />مولتی لوکیشن</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -216,6 +227,17 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
                 <div className="text-sm">
                   <p className="font-medium text-amber-800">سرور ساعتی - پرداخت به ازای مصرف</p>
                   <p className="text-amber-700">فقط به ازای ساعاتی که سرور روشن است هزینه پرداخت می‌کنید. مناسب تست، توسعه و پروژه‌های موقت.</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {mode === 'multilocation' && (
+            <Card className="border-blue-200 bg-blue-50/50">
+              <CardContent className="p-4 flex items-start gap-3">
+                <Globe className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-blue-800">سرور مولتی لوکیشن - یک سرور با چند IP</p>
+                  <p className="text-blue-700">سرور شما با چندین IP از لوکیشن‌های مختلف تنظیم می‌شود. مناسب سرویس‌های بین‌المللی و کاهش تأخیر.</p>
                 </div>
               </CardContent>
             </Card>
@@ -386,7 +408,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
             </Card>
 
             {/* Billing period for virtual (not hourly) */}
-            {mode === 'virtual' && (
+            {(mode === 'virtual' || mode === 'multilocation') && (
               <Card>
                 <CardHeader><CardTitle>دوره پرداخت</CardTitle></CardHeader>
                 <CardContent>
@@ -428,6 +450,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
                   <p>✓ تحویل آنی پس از پرداخت</p>
                   <p>✓ پشتیبانی ۲۴/۷</p>
                   <p>✓ گارانتی بازگشت وجه ۷ روزه</p>
+                  {mode === 'multilocation' && <p>✓ چندین IP از لوکیشن‌های مختلف</p>}
                 </div>
               </CardContent>
             </Card>
