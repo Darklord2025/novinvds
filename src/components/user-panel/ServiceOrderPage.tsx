@@ -13,6 +13,7 @@ import {
 import { toPersianDigits } from '@/lib/numberUtils';
 import { toast } from '@/components/ui/use-toast';
 import VpsOrderPage from './VpsOrderPage';
+import DedicatedOrderPage from './DedicatedOrderPage';
 
 interface ServiceOrderPageProps {
   category: string;
@@ -375,31 +376,7 @@ const categoryData: Record<string, { title: string; icon: React.ReactNode; plans
       { id: 'dm19', name: '.ac.ir', specs: ['ثبت یکساله', 'ویژه دانشگاهی'], price: 8000, period: 'سالانه' },
     ]
   },
-  // === SSL ===
-  'order-ssl': {
-    title: 'گواهی SSL',
-    icon: <Shield className="w-6 h-6" />,
-    plans: [
-      { id: 'ssl1', name: 'SSL DV', specs: ['اعتبارسنجی دامنه', 'صدور فوری', 'قفل سبز مرورگر'], price: 250000, period: 'سالانه' },
-      { id: 'ssl2', name: 'SSL OV', specs: ['اعتبارسنجی سازمان', 'نام شرکت در گواهی'], price: 800000, period: 'سالانه', popular: true },
-      { id: 'ssl3', name: 'SSL EV', specs: ['اعتبارسنجی گسترده', 'نوار سبز مرورگر', 'بالاترین اعتبار'], price: 2500000, period: 'سالانه' },
-      { id: 'ssl4', name: 'Wildcard SSL', specs: ['تمام ساب‌دامین‌ها', 'اعتبارسنجی دامنه'], price: 1200000, period: 'سالانه' },
-      { id: 'ssl5', name: 'Multi-Domain SSL', specs: ['تا ۱۰ دامنه', 'SAN Certificate'], price: 1500000, period: 'سالانه' },
-    ]
-  },
-  // === NETWORK ===
-  'order-network': {
-    title: 'خدمات شبکه',
-    icon: <Wifi className="w-6 h-6" />,
-    plans: [
-      { id: 'n1', name: 'ترافیک اضافه ۱۰۰ گیگ', specs: ['ترافیک بین‌الملل'], price: 50000, period: 'یکبار' },
-      { id: 'n2', name: 'ترافیک اضافه ۵۰۰ گیگ', specs: ['ترافیک بین‌الملل'], price: 200000, period: 'یکبار' },
-      { id: 'n3', name: 'DNS اختصاصی', specs: ['۴ سرور DNS', 'GeoDNS'], price: 80000, period: 'ماهانه' },
-      { id: 'n4', name: 'سرویس پروکسی', specs: ['آی‌پی اختصاصی', 'ترافیک نامحدود'], price: 120000, period: 'ماهانه' },
-      { id: 'n5', name: 'CDN', specs: ['شبکه توزیع محتوا', 'کش هوشمند'], price: 200000, period: 'ماهانه' },
-      { id: 'n6', name: 'فایروال اختصاصی', specs: ['محافظت DDoS', 'قوانین سفارشی'], price: 300000, period: 'ماهانه' },
-    ]
-  },
+  // === PANELS ===
   // === PANELS ===
   'order-panels': {
     title: 'کنترل پنل‌ها',
@@ -429,8 +406,6 @@ const categoryData: Record<string, { title: string; icon: React.ReactNode; plans
       { id: 'm6', name: 'پردازنده اضافه ۱ هسته', specs: ['vCPU'], price: 120000, period: 'ماهانه' },
       { id: 'm7', name: 'فضای بکاپ ۵۰ گیگ', specs: ['بکاپ روزانه'], price: 60000, period: 'ماهانه' },
       { id: 'm8', name: 'فضای بکاپ ۱۰۰ گیگ', specs: ['بکاپ روزانه'], price: 100000, period: 'ماهانه' },
-      { id: 'm9', name: 'پهنای باند اضافه ۱۰۰ گیگ', specs: ['بین‌الملل'], price: 50000, period: 'یکبار' },
-      { id: 'm10', name: 'ترافیک داخلی ۱ ترا', specs: ['ایران'], price: 30000, period: 'یکبار' },
     ]
   },
   // === SUPPORT ===
@@ -468,15 +443,37 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'popular'>('popular');
   
-  // Use dedicated VPS order page for main VPS and hourly categories
-  const isVpsOrder = category === 'order-vps' || category === 'order-vps-hourly';
+  // Use dedicated VPS order page for main VPS, hourly, and multilocation categories
+  const isVpsOrder = category === 'order-vps' || category === 'order-vps-hourly' || category === 'order-vps-multilocation';
+  
+  // Use dedicated server order page
+  const isDedicatedOrder = category === 'order-dedicated' || category.startsWith('order-dedicated-');
   
   if (isVpsOrder) {
     return (
       <VpsOrderPage 
         onBack={onBack} 
         onAddToCart={onAddToCart} 
-        initialMode={category === 'order-vps-hourly' ? 'hourly' : 'virtual'} 
+        initialMode={category === 'order-vps-hourly' ? 'hourly' : category === 'order-vps-multilocation' ? 'multilocation' : 'virtual'} 
+      />
+    );
+  }
+  
+  if (isDedicatedOrder) {
+    const regionMap: Record<string, string> = {
+      'order-dedicated': 'iran',
+      'order-dedicated-iran': 'iran',
+      'order-dedicated-europe': 'international',
+      'order-dedicated-usa': 'international',
+      'order-dedicated-asia': 'international',
+      'order-dedicated-gpu': 'international',
+      'order-dedicated-storage': 'international',
+    };
+    return (
+      <DedicatedOrderPage
+        onBack={onBack}
+        onAddToCart={onAddToCart}
+        initialRegion={regionMap[category] || 'iran'}
       />
     );
   }

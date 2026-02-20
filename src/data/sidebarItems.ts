@@ -46,6 +46,7 @@ export const sidebarItems: SidebarItem[] = [
           { id: 'order-vps-linux-ir', label: 'سرور مجازی لینوکس ایران', icon: 'server' },
           { id: 'order-vps-windows-ir', label: 'سرور مجازی ویندوز ایران', icon: 'server' },
           { id: 'order-vps-mikrotik', label: 'سرور مجازی میکروتیک', icon: 'server' },
+          { id: 'order-vps-multilocation', label: 'سرور مجازی مولتی لوکیشن', icon: 'globe' },
           { id: 'order-vps-storage', label: 'سرور مجازی استوریج', icon: 'server' },
           { id: 'order-vps-hourly', label: 'سرور مجازی ساعتی', icon: 'clock' },
           { id: 'order-vps-daily', label: 'سرور مجازی روزانه', icon: 'clock' },
@@ -92,8 +93,6 @@ export const sidebarItems: SidebarItem[] = [
           { id: 'order-domain-ac-ir', label: 'دامنه .ac.ir', icon: 'globe' },
         ]
       },
-      { id: 'order-ssl', label: 'گواهی SSL', icon: 'shield' },
-      { id: 'order-network', label: 'خدمات شبکه', icon: 'cloud' },
       { id: 'order-panels', label: 'کنترل پنل‌ها', icon: 'layout-dashboard' },
       { id: 'order-modules', label: 'ماژول‌های اضافی', icon: 'calculator' },
       { id: 'order-support', label: 'پشتیبانی تخصصی', icon: 'users' },

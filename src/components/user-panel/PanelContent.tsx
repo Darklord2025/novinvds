@@ -172,6 +172,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'order-vps-linux-ir':
     case 'order-vps-windows-ir':
     case 'order-vps-mikrotik':
+    case 'order-vps-multilocation':
     case 'order-vps-storage':
     case 'order-vps-hourly':
     case 'order-vps-daily':
@@ -204,8 +205,6 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'order-domain-asia':
     case 'order-domain-co-ir':
     case 'order-domain-ac-ir':
-    case 'order-ssl':
-    case 'order-network':
     case 'order-panels':
     case 'order-modules':
     case 'order-support':
