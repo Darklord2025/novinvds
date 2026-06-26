@@ -14,6 +14,7 @@ import { toPersianDigits } from '@/lib/numberUtils';
 import { toast } from '@/components/ui/use-toast';
 import VpsOrderPage from './VpsOrderPage';
 import DedicatedOrderPage from './DedicatedOrderPage';
+import { useCart } from '@/contexts/CartContext';
 
 interface ServiceOrderPageProps {
   category: string;
