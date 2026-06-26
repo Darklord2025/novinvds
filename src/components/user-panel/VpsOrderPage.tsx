@@ -346,7 +346,12 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   selectedOs === os.id ? 'border-primary border-2 ring-2 ring-primary/20' : ''
                 }`}
-                onClick={() => { setSelectedOs(os.id); setSelectedOsVersion(os.versions[0]); }}
+                onClick={() => {
+                  if (selectedOs !== os.id) {
+                    setSelectedOs(os.id);
+                    setSelectedOsVersion(os.versions[0]);
+                  }
+                }}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3 mb-3">
@@ -360,16 +365,18 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
                     {selectedOs === os.id && <Check className="w-5 h-5 text-primary shrink-0" />}
                   </div>
                   {selectedOs === os.id && (
-                    <Select value={selectedOsVersion} onValueChange={setSelectedOsVersion}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="انتخاب نسخه" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {os.versions.map(v => (
-                          <SelectItem key={v} value={v}>{v}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+                      <Select value={selectedOsVersion} onValueChange={setSelectedOsVersion}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="انتخاب نسخه" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {os.versions.map(v => (
+                            <SelectItem key={v} value={v}>{v}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </CardContent>
               </Card>
