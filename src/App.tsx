@@ -77,6 +77,7 @@ const App = () => (
             <Chatbot />
           </BrowserRouter>
         </TooltipProvider>
+        </CartProvider>
       </LanguageProvider>
     </HelmetProvider>
   </QueryClientProvider>
