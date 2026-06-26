@@ -5,8 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Download, Eye, CreditCard, Filter, ArrowRight } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Search, Download, Eye, CreditCard, Filter, ArrowRight, Wallet, Building2, Bitcoin } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
+import { toast } from '@/components/ui/use-toast';
+import { jsPDF } from 'jspdf';
 
 interface InvoicesPageProps {
   onBack?: () => void;
