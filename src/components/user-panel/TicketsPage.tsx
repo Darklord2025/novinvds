@@ -15,6 +15,8 @@ interface TicketsPageProps {
 }
 
 const TicketsPage: React.FC<TicketsPageProps> = ({ onViewTicket, onCreateNewTicket }) => {
+  const [statusFilter, setStatusFilter] = React.useState<string>('all');
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const tickets = [
     {
       id: "TKT-" + toPersianDigits(100423),
