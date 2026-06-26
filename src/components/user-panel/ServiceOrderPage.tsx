@@ -443,7 +443,13 @@ const getDataForCategory = (category: string) => {
 const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, onAddToCart }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'popular'>('popular');
-  
+  const { addItem } = useCart();
+
+  const pushToCart = (item: any) => {
+    if (onAddToCart) onAddToCart(item);
+    addItem(item);
+  };
+
   // Use dedicated VPS order page for main VPS, hourly, and multilocation categories
   const isVpsOrder = category === 'order-vps' || category === 'order-vps-hourly' || category === 'order-vps-multilocation';
   
@@ -454,7 +460,19 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
     return (
       <VpsOrderPage 
         onBack={onBack} 
-        onAddToCart={onAddToCart} 
+        onAddToCart={(it: any) => pushToCart({
+          id: `vps-${Date.now()}`,
+          name: `سرور مجازی ${it.plan?.name || ''}`,
+          type: 'vps' as const,
+          price: it.price || 0,
+          period: it.plan?.period || 'ماهانه',
+          specs: it.plan ? [
+            `${it.plan.cpu} هسته CPU`,
+            `${it.plan.ram} گیگ RAM`,
+            `${it.plan.disk} گیگ ${it.plan.diskType}`,
+          ] : [],
+          meta: it,
+        })}
         initialMode={category === 'order-vps-hourly' ? 'hourly' : category === 'order-vps-multilocation' ? 'multilocation' : 'virtual'} 
       />
     );
@@ -473,7 +491,15 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
     return (
       <DedicatedOrderPage
         onBack={onBack}
-        onAddToCart={onAddToCart}
+        onAddToCart={(it: any) => pushToCart({
+          id: `ded-${Date.now()}`,
+          name: `سرور اختصاصی ${it.plan?.name || ''}`,
+          type: 'dedicated' as const,
+          price: it.price || 0,
+          period: 'ماهانه',
+          specs: it.plan ? [it.plan.cpu, it.plan.ram, it.plan.disk] : [],
+          meta: it,
+        })}
         initialRegion={regionMap[category] || 'iran'}
       />
     );
@@ -492,14 +518,16 @@ const ServiceOrderPage: React.FC<ServiceOrderPageProps> = ({ category, onBack, o
     });
 
   const handleOrder = (plan: PlanItem) => {
-    toast({
-      title: "افزودن به سبد خرید",
-      description: `${plan.name} با موفقیت به سبد خرید اضافه شد.`,
+    pushToCart({
+      id: `${category}-${plan.id}-${Date.now()}`,
+      name: isDomain ? `دامنه ${plan.name}` : plan.name,
+      type: isDomain ? 'domain' as const : category.startsWith('order-hosting') ? 'hosting' as const : category.startsWith('order-vps') ? 'vps' as const : category.startsWith('order-dedicated') ? 'dedicated' as const : 'addon' as const,
+      price: plan.price,
+      period: plan.period,
+      specs: plan.specs,
     });
-    if (onAddToCart) {
-      onAddToCart(plan);
-    }
   };
+
 
   return (
     <div className="space-y-6" dir="rtl">
