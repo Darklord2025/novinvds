@@ -62,8 +62,8 @@ const Chatbot = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const chatTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const chatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
