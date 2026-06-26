@@ -224,7 +224,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleViewInvoice(invoice.id)}
+                          onClick={() => handleViewInvoice(invoice)}
                           className="flex items-center gap-1"
                         >
                           <Eye className="w-4 h-4" />
@@ -233,7 +233,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDownloadInvoice(invoice.id)}
+                          onClick={() => handleDownloadInvoice(invoice)}
                           className="flex items-center gap-1"
                         >
                           <Download className="w-4 h-4" />
@@ -243,7 +243,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
                           <Button
                             variant="default"
                             size="sm"
-                            onClick={() => handlePayInvoice(invoice.id)}
+                            onClick={() => handlePayInvoice(invoice)}
                             className="flex items-center gap-1"
                           >
                             <CreditCard className="w-4 h-4" />
