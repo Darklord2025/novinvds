@@ -18,6 +18,73 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { toPersianDigits } from '@/lib/numberUtils';
+import { Slider } from '@/components/ui/slider';
+
+interface ResourceScalerProps {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  min: number;
+  max: number;
+  step: number;
+  initial: number;
+  unit: string;
+  pricePerUnit: number;
+}
+
+const ResourceScaler: React.FC<ResourceScalerProps> = ({ label, icon: Icon, min, max, step, initial, unit, pricePerUnit }) => {
+  const [value, setValue] = useState(initial);
+  const delta = value - initial;
+  const cost = delta * pricePerUnit;
+  const isUpgrade = delta > 0;
+  const isDowngrade = delta < 0;
+
+  return (
+    <div className="rounded-lg border p-3 space-y-3 bg-card">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Icon className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+        <div className="text-xs text-muted-foreground">فعلی: <span className="font-medium text-foreground">{toPersianDigits(initial)} {unit}</span></div>
+      </div>
+      <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => setValue(v[0])} />
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">{toPersianDigits(min)} {unit}</span>
+        <span className="font-bold text-primary text-base">{toPersianDigits(value)} {unit}</span>
+        <span className="text-muted-foreground">{toPersianDigits(max)} {unit}</span>
+      </div>
+      {delta !== 0 && (
+        <div className={`flex items-center justify-between rounded-md p-2 text-xs ${isUpgrade ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+          <span>{isUpgrade ? 'ارتقا' : 'کاهش'}: {toPersianDigits(Math.abs(delta))} {unit}</span>
+          <span className="font-medium">
+            {isUpgnotice(cost)}
+          </span>
+        </div>
+      )}
+      <Button
+        size="sm"
+        className="w-full text-xs h-8"
+        disabled={delta === 0}
+        onClick={() => {
+          toast({
+            title: isUpgrade ? 'درخواست ارتقا ثبت شد' : 'درخواست کاهش منابع ثبت شد',
+            description: `${label}: ${toPersianDigits(initial)} → ${toPersianDigits(value)} ${unit}`,
+          });
+        }}
+      >
+        <CreditCard className="w-3 h-3 ml-1" />
+        {isUpgrade ? 'ارتقا و پرداخت' : isDowngrade ? 'اعمال کاهش' : 'بدون تغییر'}
+      </Button>
+    </div>
+  );
+};
+
+function isUpgnotice(cost: number) {
+  if (cost === 0) return '';
+  const sign = cost > 0 ? '+' : '-';
+  return `${sign}${toPersianDigits(Math.abs(cost).toLocaleString())} تومان`;
+}
+
 
 interface ServerManagementDetailProps {
   serverId: string;
