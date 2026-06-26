@@ -123,7 +123,7 @@ const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
                     {/* Item Info */}
                     <div className="flex-1 p-4 flex items-start gap-4">
                       <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${getTypeIcon(item.type)}`}>
-                        {item.icon}
+                        {typeIconMap[item.type] || <Server size={20} />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
