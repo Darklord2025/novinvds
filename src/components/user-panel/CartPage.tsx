@@ -30,19 +30,6 @@ const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
   
-  const removeItem = (id: number) => {
-    setItems(items.filter(item => item.id !== id));
-  };
-
-  const updateQuantity = (id: number, delta: number) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const newQuantity = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
-  };
   
   const applyDiscount = () => {
     if (discountCode.toLowerCase() === 'novinvds') {
