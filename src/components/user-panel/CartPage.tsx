@@ -7,72 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toPersianDigits } from '@/lib/numberUtils';
-
-type CartItem = {
-  id: number;
-  name: string;
-  type: 'domain' | 'vps' | 'hosting' | 'license';
-  price: number;
-  period: string;
-  quantity: number;
-  icon: React.ReactNode;
-  specs?: string[];
-};
+import { useCart } from '@/contexts/CartContext';
 
 interface CartPageProps {
   onCheckout?: () => void;
 }
 
+const typeIconMap: Record<string, React.ReactNode> = {
+  vps: <Server size={20} />,
+  domain: <Globe size={20} />,
+  hosting: <HardDrive size={20} />,
+  dedicated: <Server size={20} />,
+  license: <Server size={20} />,
+  addon: <Server size={20} />,
+};
+
 const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: 'سرور مجازی استاندارد',
-      type: 'vps',
-      price: 399000,
-      period: 'ماهانه',
-      quantity: 1,
-      icon: <Server size={20} />,
-      specs: ['۲ هسته CPU', '۴ گیگ رم', '۵۰ گیگ SSD']
-    },
-    {
-      id: 2,
-      name: 'example.com',
-      type: 'domain',
-      price: 390000,
-      period: 'سالانه',
-      quantity: 1,
-      icon: <Globe size={20} />
-    },
-    {
-      id: 3,
-      name: 'هاست پایه وردپرس',
-      type: 'hosting',
-      price: 150000,
-      period: 'ماهانه',
-      quantity: 1,
-      icon: <HardDrive size={20} />,
-      specs: ['۵ گیگ فضا', '۵۰ گیگ پهنای باند']
-    }
-  ]);
+  const { items, removeItem, updateQuantity } = useCart();
+
   
   const [discountCode, setDiscountCode] = useState('');
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
   
-  const removeItem = (id: number) => {
-    setItems(items.filter(item => item.id !== id));
-  };
-
-  const updateQuantity = (id: number, delta: number) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const newQuantity = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    }));
-  };
   
   const applyDiscount = () => {
     if (discountCode.toLowerCase() === 'novinvds') {
@@ -166,7 +123,7 @@ const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
                     {/* Item Info */}
                     <div className="flex-1 p-4 flex items-start gap-4">
                       <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${getTypeIcon(item.type)}`}>
-                        {item.icon}
+                        {typeIconMap[item.type] || <Server size={20} />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">

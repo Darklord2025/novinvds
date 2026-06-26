@@ -177,17 +177,25 @@ const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
                          service.billingCycle === 'Annually' ? 'سالانه' :
                          service.billingCycle === 'Quarterly' ? 'فصلی' : service.billingCycle}
                       </TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                           <DropdownMenuItem onClick={() => onManageService(service.id)}>
+                          <DropdownMenuContent align="end" className="z-50">
+                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
                               <Settings className="ml-2 h-4 w-4" />
                               مدیریت
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
+                              <CreditCard className="ml-2 h-4 w-4" />
+                              تمدید
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
+                              <RotateCcw className="ml-2 h-4 w-4" />
+                              راه‌اندازی مجدد
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

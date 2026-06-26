@@ -101,8 +101,9 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
           {onBack && (
-            <Button variant="outline" size="icon" onClick={onBack}>
+            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
               <ArrowRight className="h-4 w-4" />
+              بازگشت
             </Button>
           )}
           <div>

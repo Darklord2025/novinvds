@@ -15,6 +15,8 @@ interface TicketsPageProps {
 }
 
 const TicketsPage: React.FC<TicketsPageProps> = ({ onViewTicket, onCreateNewTicket }) => {
+  const [statusFilter, setStatusFilter] = React.useState<string>('all');
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const tickets = [
     {
       id: "TKT-" + toPersianDigits(100423),
@@ -118,9 +120,11 @@ const TicketsPage: React.FC<TicketsPageProps> = ({ onViewTicket, onCreateNewTick
                 <Input
                   placeholder="جستجو در تیکت‌ها..."
                   className="pr-10 w-56 h-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Select defaultValue="all">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-40 h-9">
                   <Filter className="h-4 w-4 ml-2" />
                   <SelectValue placeholder="وضعیت" />
@@ -137,8 +141,8 @@ const TicketsPage: React.FC<TicketsPageProps> = ({ onViewTicket, onCreateNewTick
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all">
-            <TabsList className="grid grid-cols-5 mb-4">
+          <Tabs value={statusFilter} onValueChange={setStatusFilter} dir="rtl">
+            <TabsList className="grid grid-cols-5 mb-4" dir="rtl">
               <TabsTrigger value="all">همه</TabsTrigger>
               <TabsTrigger value="open">باز</TabsTrigger>
               <TabsTrigger value="answered">پاسخ داده شده</TabsTrigger>

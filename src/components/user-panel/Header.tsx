@@ -85,15 +85,62 @@ const Header: React.FC<HeaderProps> = ({
         <h1 className="text-xl font-bold">{getPageTitle()}</h1>
       </div>
       
-      <div className="hidden md:flex flex-1 max-w-md mx-auto">
+      <div className="hidden md:flex flex-1 max-w-md mx-auto relative">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
-            placeholder="جستجو..."
+            placeholder="جستجو در داشبورد... (سرویس، فاکتور، تیکت)"
             className="pl-10 w-full"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchQuery.trim()) {
+                const q = searchQuery.toLowerCase();
+                if (q.includes('فاکتور') || q.includes('invoice')) handleNavigate('billing');
+                else if (q.includes('تیکت') || q.includes('ticket')) handleNavigate('tickets');
+                else if (q.includes('دامنه') || q.includes('domain')) handleNavigate('domains');
+                else if (q.includes('سرور') || q.includes('vps') || q.includes('سرویس')) handleNavigate('services');
+                else if (q.includes('کیف') || q.includes('موجودی') || q.includes('wallet')) handleNavigate('billing');
+                else if (q.includes('پروفایل') || q.includes('حساب')) handleNavigate('profile');
+                else if (q.includes('دانلود')) handleNavigate('downloads');
+                else handleNavigate('services');
+                setSearchQuery('');
+              }
+            }}
           />
+          {searchQuery.trim().length > 1 && (
+            <div className="absolute top-full mt-1 right-0 left-0 bg-white border rounded-lg shadow-lg z-50 max-h-80 overflow-auto">
+              {[
+                { label: 'سرویس‌های من', tab: 'services', icon: '🖥️' },
+                { label: 'فاکتورها و امور مالی', tab: 'billing', icon: '💳' },
+                { label: 'تیکت‌های پشتیبانی', tab: 'tickets', icon: '🎫' },
+                { label: 'مدیریت دامنه‌ها', tab: 'domains', icon: '🌐' },
+                { label: 'سفارش سرویس جدید', tab: 'order-vps', icon: '🛒' },
+                { label: 'دانلودها', tab: 'downloads', icon: '⬇️' },
+                { label: 'پروفایل کاربری', tab: 'profile', icon: '👤' },
+                { label: 'مرکز دانش', tab: 'knowledge', icon: '📚' },
+              ]
+                .filter((s) => s.label.includes(searchQuery))
+                .map((s) => (
+                  <button
+                    key={s.tab}
+                    type="button"
+                    onClick={() => { handleNavigate(s.tab); setSearchQuery(''); }}
+                    className="w-full text-right px-3 py-2 hover:bg-muted text-sm flex items-center gap-2"
+                  >
+                    <span>{s.icon}</span>
+                    <span>{s.label}</span>
+                  </button>
+                ))}
+              <button
+                type="button"
+                onClick={() => { handleNavigate('services'); setSearchQuery(''); }}
+                className="w-full text-right px-3 py-2 hover:bg-muted text-xs text-primary border-t"
+              >
+                مشاهده همه نتایج برای «{searchQuery}»
+              </button>
+            </div>
+          )}
         </div>
       </div>
       
