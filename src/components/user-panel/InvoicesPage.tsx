@@ -98,16 +98,42 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
     return matchesStatus && matchesSearch;
   });
 
-  const handleViewInvoice = (invoiceId: string) => {
-    console.log('View invoice:', invoiceId);
+  const handleViewInvoice = (invoice: any) => {
+    setSelectedInvoice(invoice);
+    setViewMode('view');
   };
 
-  const handleDownloadInvoice = (invoiceId: string) => {
-    console.log('Download invoice:', invoiceId);
+  const handleDownloadInvoice = (invoice: any) => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Invoice / Factor', 14, 18);
+    doc.setFontSize(11);
+    doc.text(`Invoice #: ${invoice.id}`, 14, 32);
+    doc.text(`Service: ${invoice.service}`, 14, 42);
+    doc.text(`Issue Date: ${invoice.issueDate}`, 14, 52);
+    doc.text(`Due Date: ${invoice.dueDate}`, 14, 62);
+    doc.text(`Amount: ${invoice.amount} Toman`, 14, 72);
+    doc.text(`Status: ${invoice.status}`, 14, 82);
+    doc.line(14, 90, 196, 90);
+    doc.text('NovinVDS - Thank you for your business.', 14, 100);
+    doc.save(`${invoice.id}.pdf`);
+    toast({ title: 'دانلود انجام شد', description: `فاکتور ${invoice.id} با موفقیت دانلود شد.` });
   };
 
-  const handlePayInvoice = (invoiceId: string) => {
-    console.log('Pay invoice:', invoiceId);
+  const handlePayInvoice = (invoice: any) => {
+    setSelectedInvoice(invoice);
+    setViewMode('pay');
+  };
+
+  const confirmPayment = () => {
+    if (!selectedInvoice) return;
+    const methodLabel = paymentMethod === 'wallet' ? 'کیف پول' : paymentMethod === 'gateway' ? 'درگاه بانکی' : 'ارز دیجیتال';
+    toast({
+      title: 'انتقال به درگاه پرداخت',
+      description: `پرداخت فاکتور ${selectedInvoice.id} از طریق ${methodLabel} در حال انجام است...`,
+    });
+    setViewMode(null);
+    setSelectedInvoice(null);
   };
 
   return (
