@@ -289,6 +289,80 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Invoice Preview / Payment Dialog */}
+      <Dialog open={viewMode !== null} onOpenChange={(o) => { if (!o) { setViewMode(null); setSelectedInvoice(null); } }}>
+        <DialogContent className="max-w-2xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>
+              {viewMode === 'pay' ? 'پرداخت فاکتور' : 'پیش‌نمایش فاکتور'} {selectedInvoice?.id}
+            </DialogTitle>
+            <DialogDescription>
+              {viewMode === 'pay' ? 'لطفاً روش پرداخت خود را انتخاب کنید.' : 'جزئیات کامل فاکتور در زیر نمایش داده شده است.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedInvoice && (
+            <div className="space-y-4">
+              <div className="rounded-lg border p-4 bg-muted/30 space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-muted-foreground">شماره فاکتور:</span><span className="font-medium">{selectedInvoice.id}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">سرویس:</span><span className="font-medium">{selectedInvoice.service}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">تاریخ صدور:</span><span>{selectedInvoice.issueDate}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">تاریخ سررسید:</span><span>{selectedInvoice.dueDate}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">وضعیت:</span>{getStatusBadge(selectedInvoice.status)}</div>
+                <div className="flex justify-between border-t pt-2 mt-2"><span className="font-bold">مبلغ قابل پرداخت:</span><span className="font-bold text-primary text-lg">{selectedInvoice.amount} تومان</span></div>
+              </div>
+
+              {viewMode === 'pay' && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">روش پرداخت:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {[
+                      { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'پرداخت از موجودی کیف پول' },
+                      { id: 'gateway', label: 'درگاه بانکی', icon: Building2, desc: 'زرین‌پال / پی‌پینگ' },
+                      { id: 'crypto', label: 'ارز دیجیتال', icon: Bitcoin, desc: 'BTC / USDT' },
+                    ].map((m) => {
+                      const Icon = m.icon;
+                      const active = paymentMethod === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setPaymentMethod(m.id as any)}
+                          className={`text-right rounded-lg border p-3 transition-all ${active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-primary/50'}`}
+                        >
+                          <Icon className="w-5 h-5 mb-2 text-primary" />
+                          <p className="font-medium text-sm">{m.label}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{m.desc}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => { setViewMode(null); setSelectedInvoice(null); }}>بستن</Button>
+            {selectedInvoice && (
+              <Button variant="outline" onClick={() => handleDownloadInvoice(selectedInvoice)}>
+                <Download className="w-4 h-4 ml-1" /> دانلود PDF
+              </Button>
+            )}
+            {viewMode === 'view' && selectedInvoice && (selectedInvoice.status === 'Unpaid' || selectedInvoice.status === 'Overdue') && (
+              <Button onClick={() => setViewMode('pay')}>
+                <CreditCard className="w-4 h-4 ml-1" /> ادامه پرداخت
+              </Button>
+            )}
+            {viewMode === 'pay' && (
+              <Button onClick={confirmPayment}>
+                <CreditCard className="w-4 h-4 ml-1" /> پرداخت
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
