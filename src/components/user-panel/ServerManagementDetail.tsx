@@ -601,24 +601,13 @@ const ServerManagementDetail: React.FC<ServerManagementDetailProps> = ({ serverI
         <TabsContent value="upgrade" className="space-y-4 mt-4">
           <Card>
             <CardHeader className="pb-2 px-3 md:px-6">
-              <CardTitle className="text-sm">ارتقا سرور</CardTitle>
+              <CardTitle className="text-sm">ارتقا / کاهش منابع</CardTitle>
             </CardHeader>
-            <CardContent className="px-3 md:px-6">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { label: 'ارتقا RAM', current: serverData.specs.ram, icon: MemoryStick },
-                  { label: 'ارتقا CPU', current: serverData.specs.cpu, icon: Cpu },
-                  { label: 'افزایش دیسک', current: serverData.specs.disk, icon: HardDrive },
-                ].map((item, i) => (
-                  <div key={i} className="p-3 border rounded-lg text-center">
-                    <item.icon className="w-6 h-6 mx-auto mb-2 text-primary" />
-                    <h4 className="text-xs font-medium">{item.label}</h4>
-                    <p className="text-[10px] text-muted-foreground mt-1 mb-2">فعلی: {item.current}</p>
-                    <Button size="sm" className="w-full text-xs h-8"><CreditCard className="w-3 h-3 ml-1" />ارتقا</Button>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3">
+            <CardContent className="px-3 md:px-6 space-y-5">
+              <ResourceScaler label="CPU (هسته)" icon={Cpu} min={1} max={32} step={1} initial={4} unit="هسته" pricePerUnit={150000} />
+              <ResourceScaler label="RAM (گیگابایت)" icon={MemoryStick} min={1} max={128} step={1} initial={8} unit="GB" pricePerUnit={80000} />
+              <ResourceScaler label="دیسک SSD (گیگابایت)" icon={HardDrive} min={20} max={2000} step={10} initial={100} unit="GB" pricePerUnit={5000} />
+              <div className="pt-2 border-t">
                 <Button className="w-full text-xs h-9"><RefreshCw className="w-3.5 h-3.5 ml-1.5" />تمدید سرویس</Button>
               </div>
             </CardContent>
