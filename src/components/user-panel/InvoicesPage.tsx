@@ -19,6 +19,10 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'view' | 'pay' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'gateway' | 'crypto'>('gateway');
+
 
   const allInvoices = [
     {
