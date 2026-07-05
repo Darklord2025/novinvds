@@ -8,6 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Chatbot from "./components/Chatbot";
 import Index from "./pages/Index";
 import Vps from "./pages/Vps";
@@ -40,8 +41,9 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <LanguageProvider>
-        <CartProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <CartProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -77,8 +79,9 @@ const App = () => (
             <Chatbot />
           </BrowserRouter>
         </TooltipProvider>
-        </CartProvider>
-      </LanguageProvider>
+          </CartProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </HelmetProvider>
   </QueryClientProvider>
 );
