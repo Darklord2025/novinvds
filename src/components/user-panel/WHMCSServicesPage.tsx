@@ -1,285 +1,202 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { mockWHMCSServices, WHMCSService } from '@/data/whmcsServices';
-import { Search, Filter, MoreHorizontal, Play, Pause, RotateCcw, Settings, CreditCard, ArrowRight } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
+import {
+  Search, Settings, ArrowRight, Server, HardDrive, Clock, Cloud, Database, Globe, RefreshCw, CreditCard, MapPin,
+} from 'lucide-react';
+import { userServices, ServiceKind } from '@/data/userServices';
+import { toPersianDigits } from '@/lib/numberUtils';
 
-interface WHMCSServicesPageProps {
-  onManageService: (serviceId: string) => void;
-  onRenewService: (serviceId: string) => void;
-  onSuspendService: (serviceId: string) => void;
-  onUnsuspendService: (serviceId: string) => void;
-  onTerminateService: (serviceId: string) => void;
-  onViewInvoice: (invoiceId: string) => void;
+interface Props {
+  onManageService: (serviceId: string, serviceType?: string) => void;
+  onRenewService: (serviceId: string, serviceType?: string) => void;
+  onSuspendService?: (serviceId: string) => void;
+  onUnsuspendService?: (serviceId: string) => void;
+  onTerminateService?: (serviceId: string) => void;
+  onViewInvoice?: (invoiceId: string) => void;
   onBack?: () => void;
+  initialKind?: ServiceKind | 'all';
 }
 
-const WHMCSServicesPage: React.FC<WHMCSServicesPageProps> = ({
-  onManageService,
-  onRenewService,
-  onSuspendService,
-  onUnsuspendService,
-  onTerminateService,
-  onViewInvoice,
-  onBack
-}) => {
-  const [services] = useState<WHMCSService[]>(mockWHMCSServices);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [groupFilter, setGroupFilter] = useState('all');
+const KIND_META: Record<ServiceKind | 'all', { label: string; icon: any }> = {
+  all: { label: 'همه', icon: Server },
+  vps: { label: 'سرور مجازی', icon: Server },
+  dedicated: { label: 'اختصاصی', icon: HardDrive },
+  hourly: { label: 'ساعتی', icon: Clock },
+  cloud: { label: 'ابری', icon: Cloud },
+  multilocation: { label: 'مولتی‌لوکیشن', icon: Globe },
+  hosting: { label: 'هاست', icon: Database },
+};
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = service.domain.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.productName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || service.status === statusFilter;
-    const matchesGroup = groupFilter === 'all' || service.groupName === groupFilter;
-    
-    return matchesSearch && matchesStatus && matchesGroup;
+const statusMeta = (s: string) => {
+  switch (s) {
+    case 'active': return { label: 'فعال', cls: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30' };
+    case 'expiring': return { label: 'در حال انقضا', cls: 'bg-amber-500/15 text-amber-600 border-amber-500/30' };
+    case 'suspended': return { label: 'تعلیق', cls: 'bg-red-500/15 text-red-600 border-red-500/30' };
+    case 'expired': return { label: 'منقضی', cls: 'bg-red-500/15 text-red-600 border-red-500/30' };
+    default: return { label: s, cls: 'bg-muted text-muted-foreground border-border' };
+  }
+};
+
+const WHMCSServicesPage: React.FC<Props> = ({
+  onManageService, onRenewService, onBack, initialKind = 'all',
+}) => {
+  const [kind, setKind] = useState<ServiceKind | 'all'>(initialKind);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const services = userServices.filter((s) => {
+    if (kind !== 'all' && s.kind !== kind) return false;
+    if (statusFilter !== 'all' && s.status !== statusFilter) return false;
+    const q = search.toLowerCase();
+    if (q && !s.name.toLowerCase().includes(q) && !s.id.toLowerCase().includes(q) && !s.productName.toLowerCase().includes(q)) return false;
+    return true;
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return 'bg-green-100 text-green-800';
-      case 'Suspended': return 'bg-yellow-100 text-yellow-800';
-      case 'Terminated': return 'bg-red-100 text-red-800';
-      case 'Pending': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const kinds: (ServiceKind | 'all')[] = ['all', 'vps', 'dedicated', 'hourly', 'cloud', 'multilocation', 'hosting'];
 
-  const formatCurrency = (amount: number, currency: string) => {
-    const formatter = new Intl.NumberFormat('fa-IR', {
-      style: 'currency',
-      currency: currency === 'IRR' ? 'IRR' : 'USD',
-      minimumFractionDigits: 0
-    });
-    return formatter.format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('fa-IR').format(new Date(dateString));
-  };
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('fa-IR').format(num);
-  };
-
-  const getUsagePercentage = (used: number, limit: number) => {
-    return Math.round((used / limit) * 100);
-  };
-
-  const uniqueGroups = [...new Set(services.map(s => s.groupName))];
+  const counts = kinds.reduce<Record<string, number>>((acc, k) => {
+    acc[k] = k === 'all' ? userServices.length : userServices.filter((s) => s.kind === k).length;
+    return acc;
+  }, {});
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4" dir="rtl">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-3">
           {onBack && (
-            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
-              <ArrowRight className="w-4 h-4" />
-              بازگشت
+            <Button variant="outline" size="sm" onClick={onBack}>
+              <ArrowRight className="w-4 h-4 ml-1" /> بازگشت
             </Button>
           )}
-          <h1 className="text-2xl font-bold">خدمات من</h1>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold">سرویس‌های من</h1>
+            <p className="text-xs text-muted-foreground">مجموع {toPersianDigits(userServices.length)} سرویس ثبت‌شده</p>
+          </div>
         </div>
-        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-          <div className="relative">
-            <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="جستجو در خدمات..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pr-10 w-64"
-            />
+        <div className="flex items-center gap-2 flex-1 md:flex-none md:min-w-[400px]">
+          <div className="relative flex-1">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="جستجو در سرویس‌ها…" value={search} onChange={(e) => setSearch(e.target.value)} className="pr-10" />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="وضعیت" />
-            </SelectTrigger>
+            <SelectTrigger className="w-32"><SelectValue placeholder="وضعیت" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">همه</SelectItem>
-              <SelectItem value="Active">فعال</SelectItem>
-              <SelectItem value="Suspended">معلق</SelectItem>
-              <SelectItem value="Terminated">خاتمه یافته</SelectItem>
-              <SelectItem value="Pending">در انتظار</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={groupFilter} onValueChange={setGroupFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="گروه خدمات" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">همه گروه‌ها</SelectItem>
-              {uniqueGroups.map(group => (
-                <SelectItem key={group} value={group}>{group}</SelectItem>
-              ))}
+              <SelectItem value="all">همه وضعیت‌ها</SelectItem>
+              <SelectItem value="active">فعال</SelectItem>
+              <SelectItem value="expiring">در حال انقضا</SelectItem>
+              <SelectItem value="suspended">تعلیق</SelectItem>
+              <SelectItem value="expired">منقضی</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="list">نمایش فهرست</TabsTrigger>
-          <TabsTrigger value="cards">نمایش کارت</TabsTrigger>
+      <Tabs value={kind} onValueChange={(v) => setKind(v as any)} dir="rtl">
+        <TabsList className="w-full flex-nowrap overflow-x-auto justify-start h-auto p-1 scrollbar-hide">
+          {kinds.map((k) => {
+            const M = KIND_META[k]; const Icon = M.icon;
+            return (
+              <TabsTrigger key={k} value={k} className="shrink-0 gap-1.5 text-xs md:text-sm">
+                <Icon className="w-3.5 h-3.5" />
+                {M.label}
+                <span className="text-[10px] opacity-70 mr-1">({toPersianDigits(counts[k])})</span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
-        
-        <TabsContent value="list" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>فهرست خدمات</span>
-                <Badge variant="outline">{filteredServices.length} خدمت</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>نام محصول/خدمت</TableHead>
-                    <TableHead>دامنه</TableHead>
-                    <TableHead>وضعیت</TableHead>
-                    <TableHead>تاریخ سررسید</TableHead>
-                    <TableHead>مبلغ</TableHead>
-                    <TableHead>چرخه پرداخت</TableHead>
-                    <TableHead>عملیات</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredServices.map((service) => (
-                    <TableRow key={service.id}>
-                      <TableCell className="font-medium">
-                        <div>
-                          <div className="font-semibold">{service.productName}</div>
-                          <div className="text-sm text-gray-500">{service.groupName}</div>
+
+        <TabsContent value={kind} className="mt-4">
+          {services.length === 0 ? (
+            <div className="text-center py-16 text-muted-foreground">
+              <Server className="w-10 h-10 mx-auto mb-3 opacity-50" />
+              <p className="text-sm">سرویسی یافت نشد</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {services.map((s) => {
+                const st = statusMeta(s.status);
+                return (
+                  <Card key={s.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            {(() => { const I = KIND_META[s.kind].icon; return <I className="w-4 h-4 text-primary shrink-0" />; })()}
+                            <CardTitle className="text-sm md:text-base truncate">{s.name}</CardTitle>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">{s.productName}</p>
                         </div>
-                      </TableCell>
-                      <TableCell>{service.domain}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(service.status)}>
-                          {service.status === 'Active' ? 'فعال' : 
-                           service.status === 'Suspended' ? 'معلق' :
-                           service.status === 'Terminated' ? 'خاتمه یافته' : 'در انتظار'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatDate(service.nextDueDate)}</TableCell>
-                      <TableCell>{formatCurrency(service.amount, service.currency)}</TableCell>
-                      <TableCell>
-                        {service.billingCycle === 'Monthly' ? 'ماهانه' :
-                         service.billingCycle === 'Annually' ? 'سالانه' :
-                         service.billingCycle === 'Quarterly' ? 'فصلی' : service.billingCycle}
-                      </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="z-50">
-                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
-                              <Settings className="ml-2 h-4 w-4" />
-                              مدیریت
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
-                              <CreditCard className="ml-2 h-4 w-4" />
-                              تمدید
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onManageService(service.id)}>
-                              <RotateCcw className="ml-2 h-4 w-4" />
-                              راه‌اندازی مجدد
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="cards" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredServices.map((service) => (
-              <Card key={service.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{service.productName}</CardTitle>
-                    <Badge className={getStatusColor(service.status)}>
-                      {service.status === 'Active' ? 'فعال' : 
-                       service.status === 'Suspended' ? 'معلق' :
-                       service.status === 'Terminated' ? 'خاتمه یافته' : 'در انتظار'}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-500">{service.domain}</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">گروه:</span>
-                      <p className="font-medium">{service.groupName}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">مبلغ:</span>
-                      <p className="font-medium">{formatCurrency(service.amount, service.currency)}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">چرخه:</span>
-                      <p className="font-medium">
-                        {service.billingCycle === 'Monthly' ? 'ماهانه' :
-                         service.billingCycle === 'Annually' ? 'سالانه' :
-                         service.billingCycle === 'Quarterly' ? 'فصلی' : service.billingCycle}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">سررسید:</span>
-                      <p className="font-medium">{formatDate(service.nextDueDate)}</p>
-                    </div>
-                  </div>
-
-                  {service.diskUsage && service.diskLimit && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>استفاده از دیسک</span>
-                        <span>{formatNumber(service.diskUsage)}GB / {formatNumber(service.diskLimit)}GB</span>
+                        <Badge className={`text-[10px] border ${st.cls}`} variant="outline">{st.label}</Badge>
                       </div>
-                      <Progress value={getUsagePercentage(service.diskUsage, service.diskLimit)} />
-                    </div>
-                  )}
-
-                  {service.bandwidthUsage && service.bandwidthLimit && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>استفاده از پهنای باند</span>
-                        <span>{formatNumber(service.bandwidthUsage)}GB / {formatNumber(service.bandwidthLimit)}GB</span>
+                    </CardHeader>
+                    <CardContent className="space-y-2.5">
+                      {(s.ip || s.ips) && (
+                        <div className="text-xs text-muted-foreground flex flex-col gap-0.5">
+                          {s.ip && <span className="font-mono" dir="ltr">{s.ip}</span>}
+                          {s.ips && s.ips.map((ip) => <span key={ip} className="font-mono" dir="ltr">{ip}</span>)}
+                        </div>
+                      )}
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                        {s.os && <span>سیستم: {s.os}</span>}
+                        {s.panel && <span>پنل: {s.panel}</span>}
+                        {s.location && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{s.location}</span>}
                       </div>
-                      <Progress value={getUsagePercentage(service.bandwidthUsage, service.bandwidthLimit)} />
-                    </div>
-                  )}
 
-                  <div className="flex space-x-2 rtl:space-x-reverse">
-                    <Button 
-                      size="sm" 
-                      onClick={() => onManageService(service.id)}
-                      className="flex-1"
-                    >
-                      مدیریت
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                      {(s.cpu != null || s.disk != null) && (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          {s.cpu != null && (
+                            <div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>CPU</span><span>{toPersianDigits(s.cpu)}٪</span></div>
+                              <Progress value={s.cpu} className="h-1" />
+                            </div>
+                          )}
+                          {s.ram != null && (
+                            <div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>RAM</span><span>{toPersianDigits(s.ram)}٪</span></div>
+                              <Progress value={s.ram} className="h-1" />
+                            </div>
+                          )}
+                          {s.disk != null && (
+                            <div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>دیسک</span><span>{toPersianDigits(s.disk)}٪</span></div>
+                              <Progress value={s.disk} className="h-1" />
+                            </div>
+                          )}
+                          {s.bandwidth != null && (
+                            <div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>ترافیک</span><span>{toPersianDigits(s.bandwidth)}٪</span></div>
+                              <Progress value={s.bandwidth} className="h-1" />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t">
+                        <span>پلن: {s.plan}</span>
+                        <span>انقضا: {toPersianDigits(s.expiry)}</span>
+                      </div>
+                      {s.hourlyCost && <div className="text-[11px] text-amber-600 font-medium">{s.hourlyCost}</div>}
+
+                      <div className="flex gap-2 pt-1">
+                        <Button size="sm" className="flex-1 text-xs" onClick={() => onManageService(s.id, s.kind === 'hosting' ? 'hosting' : s.kind === 'dedicated' ? 'dedicated' : s.kind === 'cloud' ? 'cloud' : s.kind === 'hourly' ? 'hourly' : 'vps')}>
+                          <Settings className="w-3.5 h-3.5 ml-1" /> مدیریت
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs" onClick={() => onRenewService(s.id, s.kind)}>
+                          <CreditCard className="w-3.5 h-3.5 ml-1" /> تمدید
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

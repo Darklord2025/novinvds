@@ -153,12 +153,13 @@ const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl">
+            <TabsList className="grid w-full grid-cols-5" dir="rtl">
               <TabsTrigger value="all">همه</TabsTrigger>
+              <TabsTrigger value="alert">مهم</TabsTrigger>
               <TabsTrigger value="maintenance">تعمیرات</TabsTrigger>
               <TabsTrigger value="update">به‌روزرسانی</TabsTrigger>
-              <TabsTrigger value="info">اطلاعیه‌ها</TabsTrigger>
+              <TabsTrigger value="info">اطلاعیه</TabsTrigger>
             </TabsList>
             
             <TabsContent value={activeTab} className="mt-6">

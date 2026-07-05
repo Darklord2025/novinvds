@@ -292,30 +292,131 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
 
       {/* Invoice Preview / Payment Dialog */}
       <Dialog open={viewMode !== null} onOpenChange={(o) => { if (!o) { setViewMode(null); setSelectedInvoice(null); } }}>
-        <DialogContent className="max-w-2xl" dir="rtl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" dir="rtl">
           <DialogHeader>
-            <DialogTitle>
-              {viewMode === 'pay' ? 'پرداخت فاکتور' : 'پیش‌نمایش فاکتور'} {selectedInvoice?.id}
+            <DialogTitle className="text-lg">
+              {viewMode === 'pay' ? 'انتخاب روش پرداخت' : 'پیش‌فاکتور رسمی'}
             </DialogTitle>
-            <DialogDescription>
-              {viewMode === 'pay' ? 'لطفاً روش پرداخت خود را انتخاب کنید.' : 'جزئیات کامل فاکتور در زیر نمایش داده شده است.'}
+            <DialogDescription className="text-xs">
+              {viewMode === 'pay' ? 'روش پرداخت مورد نظر خود را انتخاب کنید.' : 'پیش‌نمایش کامل فاکتور مطابق فرمت رسمی.'}
             </DialogDescription>
           </DialogHeader>
 
           {selectedInvoice && (
             <div className="space-y-4">
-              <div className="rounded-lg border p-4 bg-muted/30 space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">شماره فاکتور:</span><span className="font-medium">{selectedInvoice.id}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">سرویس:</span><span className="font-medium">{selectedInvoice.service}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">تاریخ صدور:</span><span>{selectedInvoice.issueDate}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">تاریخ سررسید:</span><span>{selectedInvoice.dueDate}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">وضعیت:</span>{getStatusBadge(selectedInvoice.status)}</div>
-                <div className="flex justify-between border-t pt-2 mt-2"><span className="font-bold">مبلغ قابل پرداخت:</span><span className="font-bold text-primary text-lg">{selectedInvoice.amount} تومان</span></div>
+              {/* PROFESSIONAL INVOICE TEMPLATE */}
+              <div id="invoice-template" className="bg-card border-2 border-border rounded-lg overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-l from-primary to-primary/80 text-primary-foreground p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-lg md:text-2xl font-bold">نوین وی‌دی‌اس</div>
+                      <div className="text-xs opacity-90 mt-1">NovinVDS — ارائه‌دهنده خدمات میزبانی و سرور</div>
+                      <div className="text-[11px] opacity-80 mt-2">
+                        شناسه ملی: ۱۴۰۰۱۲۳۴۵۶۷ • کد اقتصادی: ۴۱۱۲۷۸۹۶۵۴۳۱ • شماره ثبت: ۵۴۳۲۱
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <div className={`inline-block px-3 py-1 rounded-md text-xs font-bold border-2 ${
+                        selectedInvoice.status === 'Paid'
+                          ? 'bg-emerald-500/20 border-emerald-300 text-emerald-50'
+                          : 'bg-red-500/20 border-red-300 text-red-50'
+                      }`}>
+                        {selectedInvoice.status === 'Paid' ? 'پرداخت شده' : selectedInvoice.status === 'Overdue' ? 'معوقه' : 'پرداخت نشده'}
+                      </div>
+                      <div className="text-xs mt-2 opacity-90">شماره فاکتور</div>
+                      <div className="text-sm font-bold" dir="ltr">{selectedInvoice.id}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Meta rows */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b border-border">
+                  <div className="p-4 border-b md:border-b-0 md:border-l border-border">
+                    <div className="text-[11px] text-muted-foreground mb-1">صادرکننده / فروشنده</div>
+                    <div className="text-sm font-bold">شرکت نوین وی‌دی‌اس</div>
+                    <div className="text-xs text-muted-foreground mt-1">تهران، ولیعصر، پلاک ۱۰۰</div>
+                    <div className="text-xs text-muted-foreground">۰۲۱-۹۱۰۰۰۰۰۰ • info@novinvds.com</div>
+                  </div>
+                  <div className="p-4">
+                    <div className="text-[11px] text-muted-foreground mb-1">خریدار</div>
+                    <div className="text-sm font-bold">کاربر گرامی</div>
+                    <div className="text-xs text-muted-foreground mt-1">شماره مشتری: {toPersianDigits('CU-4521')}</div>
+                    <div className="text-xs text-muted-foreground">user@example.com</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-0 border-b border-border text-center">
+                  <div className="p-3 border-l border-border">
+                    <div className="text-[11px] text-muted-foreground">تاریخ صدور</div>
+                    <div className="text-sm font-medium mt-1">{selectedInvoice.issueDate}</div>
+                  </div>
+                  <div className="p-3 border-l border-border">
+                    <div className="text-[11px] text-muted-foreground">تاریخ سررسید</div>
+                    <div className="text-sm font-medium mt-1">{selectedInvoice.dueDate}</div>
+                  </div>
+                  <div className="p-3">
+                    <div className="text-[11px] text-muted-foreground">دوره پرداخت</div>
+                    <div className="text-sm font-medium mt-1">یک ماهه</div>
+                  </div>
+                </div>
+
+                {/* Items table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-muted">
+                      <tr className="text-xs">
+                        <th className="p-2 text-right font-medium">ردیف</th>
+                        <th className="p-2 text-right font-medium">شرح سرویس</th>
+                        <th className="p-2 text-center font-medium">تعداد</th>
+                        <th className="p-2 text-left font-medium">مبلغ واحد</th>
+                        <th className="p-2 text-left font-medium">مبلغ کل</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-xs">
+                      <tr className="border-t border-border">
+                        <td className="p-2 text-right">{toPersianDigits(1)}</td>
+                        <td className="p-2 text-right">{selectedInvoice.service}</td>
+                        <td className="p-2 text-center">{toPersianDigits(1)}</td>
+                        <td className="p-2 text-left" dir="ltr">{selectedInvoice.amount}</td>
+                        <td className="p-2 text-left font-medium" dir="ltr">{selectedInvoice.amount}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Totals */}
+                <div className="p-4 bg-muted/30 space-y-1.5 text-sm">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>جمع کل:</span>
+                    <span dir="ltr">{selectedInvoice.amount} تومان</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>تخفیف:</span>
+                    <span>۰ تومان</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>مالیات ارزش افزوده (۹٪):</span>
+                    <span>۰ تومان (معاف)</span>
+                  </div>
+                  <div className="flex justify-between font-bold pt-2 border-t border-border">
+                    <span>مبلغ قابل پرداخت:</span>
+                    <span className="text-primary text-base" dir="ltr">{selectedInvoice.amount} تومان</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="border-t border-border p-3 bg-card text-[10px] text-muted-foreground text-center leading-5">
+                  با پرداخت این فاکتور، شرایط و ضوابط سرویس مطالعه و پذیرفته می‌شود.
+                  <br />
+                  در صورت هرگونه سؤال با پشتیبانی ۲۴/۷ تماس بگیرید یا تیکت ثبت کنید.
+                </div>
               </div>
 
+              {/* Payment method selection */}
               {viewMode === 'pay' && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">روش پرداخت:</p>
+                  <p className="text-sm font-medium">روش پرداخت را انتخاب کنید:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {[
                       { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'پرداخت از موجودی کیف پول' },
@@ -352,12 +453,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
             )}
             {viewMode === 'view' && selectedInvoice && (selectedInvoice.status === 'Unpaid' || selectedInvoice.status === 'Overdue') && (
               <Button onClick={() => setViewMode('pay')}>
-                <CreditCard className="w-4 h-4 ml-1" /> ادامه پرداخت
+                <CreditCard className="w-4 h-4 ml-1" /> پرداخت
               </Button>
             )}
             {viewMode === 'pay' && (
               <Button onClick={confirmPayment}>
-                <CreditCard className="w-4 h-4 ml-1" /> پرداخت
+                <CreditCard className="w-4 h-4 ml-1" /> تأیید و پرداخت
               </Button>
             )}
           </DialogFooter>

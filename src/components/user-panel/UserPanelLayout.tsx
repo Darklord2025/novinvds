@@ -51,7 +51,7 @@ const UserPanelLayout: React.FC = () => {
   
   return (
     <TooltipProvider>
-      <div className="flex h-screen bg-gray-100 w-full">
+      <div className="flex h-screen bg-background w-full">
         {/* Desktop Sidebar */}
         <Sidebar 
           items={sidebarItems} 
@@ -78,7 +78,7 @@ const UserPanelLayout: React.FC = () => {
             onToggleMobileSidebar={toggleMobileSidebar}
           />
           
-          <main className="flex-1 overflow-auto bg-gray-100 p-3 md:p-4 lg:p-6">
+          <main className="flex-1 overflow-auto bg-background p-3 md:p-4 lg:p-6">
             <div className="container mx-auto max-w-full px-2 md:px-0">
               <PanelContent
                 activeTab={activeTab}

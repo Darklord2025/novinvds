@@ -3,7 +3,7 @@ import React from 'react';
 
 const PanelFooter: React.FC = () => {
   return (
-    <footer className="bg-white border-t p-4 text-center text-sm text-gray-600">
+    <footer className="bg-card border-t border-border p-4 text-center text-sm text-muted-foreground">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div>
