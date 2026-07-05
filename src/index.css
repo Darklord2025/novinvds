@@ -49,35 +49,58 @@
   }
 
   .dark {
-    --background: 222 47% 11%;
+    --background: 222 47% 7%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 11%;
+    --card: 222 40% 11%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 11%;
+    --popover: 222 40% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 7%;
 
-    --secondary: 217 33% 18%;
+    --secondary: 217 33% 16%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 222 47% 7%;
 
-    --destructive: 0 63% 31%;
+    --destructive: 0 63% 45%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 213 27% 84%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 217 91% 60%;
+
+    --sidebar-background: 222 47% 9%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 7%;
+    --sidebar-accent: 217 33% 16%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 20%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
+
+/* Dark-mode overrides for hardcoded utility colors used throughout the panel */
+.dark .bg-white { @apply bg-card; }
+.dark .bg-gray-50, .dark .bg-gray-100 { @apply bg-muted; }
+.dark .bg-gray-200 { @apply bg-secondary; }
+.dark .text-gray-500, .dark .text-gray-600, .dark .text-gray-700 { @apply text-muted-foreground; }
+.dark .text-gray-800, .dark .text-gray-900 { @apply text-foreground; }
+.dark .border-gray-200, .dark .border-gray-100 { @apply border-border; }
+.dark .divide-gray-200 > * + * { border-color: hsl(var(--border)); }
+.dark .hover\:bg-gray-50:hover, .dark .hover\:bg-gray-100:hover { @apply bg-muted; }
+
+/* Scrollbar hide utility used by mobile tabs */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 @layer base {
   * {
