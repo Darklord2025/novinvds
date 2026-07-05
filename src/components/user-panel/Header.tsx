@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Bell, Search, Menu, User, Clock, MegaphoneIcon } from 'lucide-react';
+import { Bell, Search, Menu, User, Clock, MegaphoneIcon, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,6 +33,7 @@ const Header: React.FC<HeaderProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const sessionTimeLeft = "۶۰:۰۰";
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -73,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({
   };
   
   return (
-    <header className="bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-10">
+    <header className="bg-card border-b border-border px-4 py-3 flex justify-between items-center sticky top-0 z-10">
       {/* Mobile Menu Button */}
       <div className="flex items-center md:hidden">
         <Button variant="ghost" size="icon" title="منو" onClick={onToggleMobileSidebar}>
@@ -144,8 +146,12 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
       
-      <div className="flex items-center space-x-4 space-x-reverse">
-        <div className="hidden md:flex items-center bg-gray-100 rounded-md px-3 py-1 text-gray-700">
+      <div className="flex items-center space-x-2 md:space-x-4 space-x-reverse">
+        <Button variant="ghost" size="icon" onClick={toggleTheme} title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}>
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </Button>
+
+        <div className="hidden lg:flex items-center bg-muted rounded-md px-3 py-1 text-muted-foreground">
           <Clock className="h-4 w-4 ml-1" />
           <span className="text-sm">{sessionTimeLeft}</span>
         </div>
