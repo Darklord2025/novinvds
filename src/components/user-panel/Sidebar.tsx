@@ -250,7 +250,7 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
 
   // For desktop, render as fixed sidebar
   return (
-    <div className={cn("w-64 bg-white border-l shadow-sm hidden md:flex md:flex-col", className)}>
+    <div className={cn("w-64 bg-card border-l border-border shadow-sm hidden md:flex md:flex-col", className)}>
       {renderSidebarContent()}
     </div>
   );
