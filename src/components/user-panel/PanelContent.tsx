@@ -217,7 +217,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'servers':
     case 'dedicated':
     case 'cloud':
-    case 'hosting':
+    case 'hosting': {
+      const kindMap: Record<string, any> = { servers: 'all', dedicated: 'dedicated', cloud: 'cloud', hosting: 'hosting' };
       return <WHMCSServicesPage 
         onManageService={handleManageService}
         onRenewService={handleRenewService}
@@ -226,11 +227,14 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onTerminateService={handleTerminateService}
         onViewInvoice={handleViewInvoice}
         onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
+        initialKind={kindMap[activeTab]}
       />;
+    }
     case 'domains':
       return <DomainServicesPage 
         onManageDomain={handleManageService}
         onRenewDomain={handleRenewService}
+        onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
       />;
     case 'domain-management':
       return selectedService ? 
