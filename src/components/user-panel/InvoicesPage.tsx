@@ -533,10 +533,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
               {viewMode === 'pay' && (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">روش پرداخت را انتخاب کنید:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                     {[
-                      { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'پرداخت از موجودی کیف پول' },
+                      { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'موجودی کیف پول' },
                       { id: 'gateway', label: 'درگاه بانکی', icon: Building2, desc: 'زرین‌پال / پی‌پینگ' },
+                      { id: 'card', label: 'کارت به کارت', icon: CreditCard, desc: 'واریز مستقیم' },
+                      { id: 'transfer', label: 'حواله بانکی', icon: Landmark, desc: 'شبا / حساب' },
                       { id: 'crypto', label: 'ارز دیجیتال', icon: Bitcoin, desc: 'BTC / USDT' },
                     ].map((m) => {
                       const Icon = m.icon;
@@ -560,8 +562,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
             </div>
           )}
 
-          <DialogFooter className="gap-2 sm:gap-2">
+          <DialogFooter className="gap-2 sm:gap-2 flex-wrap">
             <Button variant="outline" onClick={() => { setViewMode(null); setSelectedInvoice(null); }}>بستن</Button>
+            {selectedInvoice && viewMode === 'view' && (
+              <Button variant="outline" onClick={handlePrintInvoice}>
+                <Printer className="w-4 h-4 ml-1" /> چاپ
+              </Button>
+            )}
             {selectedInvoice && (
               <Button variant="outline" onClick={() => handleDownloadInvoice(selectedInvoice)}>
                 <Download className="w-4 h-4 ml-1" /> دانلود PDF
