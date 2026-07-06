@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Phone, User, Eye, EyeOff, Shield, Server, Zap, Headphones, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Phone, User, Eye, EyeOff, Shield, Server, Zap, Headphones, ArrowLeft, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,6 +16,7 @@ const Auth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   // Login state
   const [email, setEmail] = useState('');
@@ -195,6 +197,17 @@ const Auth = () => {
         بازگشت به صفحه اصلی
         <ArrowLeft size={18} />
       </Link>
+
+      {/* Theme toggle */}
+      <button
+        type="button"
+        onClick={toggleTheme}
+        title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}
+        className="absolute top-6 right-6 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors backdrop-blur-sm"
+      >
+        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+
 
       <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
         <div className="max-w-5xl w-full flex flex-col lg:flex-row items-center gap-12">

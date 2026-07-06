@@ -62,6 +62,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
 
   const tabOptions = [
     { value: 'servers', label: 'سرور مجازی', icon: Server },
+    { value: 'multilocation', label: 'مولتی لوکیشن', icon: Globe },
     { value: 'dedicated', label: 'اختصاصی', icon: HardDrive },
     { value: 'hourly', label: 'ساعتی', icon: Clock },
     { value: 'hosting', label: 'هاستینگ', icon: Database },
@@ -72,6 +73,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
     servers: [
       { id: 'VPS-1234', name: 'سرور لینوکس ۱', ip: '۱۸۵.۱۲۳.۴۵.۶۷', os: 'Ubuntu 22.04', status: 'active', cpu: 45, ram: 62, disk: 35, bandwidth: 20, plan: 'پلن حرفه‌ای', expiry: '۱۴۰۳/۰۶/۱۵' },
       { id: 'VPS-5678', name: 'سرور ویندوز ۱', ip: '۱۸۵.۱۲۳.۴۵.۶۸', os: 'Windows Server 2022', status: 'active', cpu: 78, ram: 85, disk: 60, bandwidth: 45, plan: 'پلن ویژه', expiry: '۱۴۰۳/۰۸/۲۰' },
+    ],
+    multilocation: [
+      { id: 'ML-2222', name: 'سرور مولتی‌لوکیشن ۱', ip: '۱۸۵.۲۲.۳۳.۴۴ / ۹۵.۱۱.۲۲.۳۳', os: 'Ubuntu 22.04', status: 'active', cpu: 40, ram: 55, disk: 30, bandwidth: 25, plan: 'مولتی حرفه‌ای', expiry: '۱۴۰۳/۰۷/۱۰' },
     ],
     dedicated: [
       { id: 'DED-9012', name: 'سرور اختصاصی ایران', ip: '۱۸۵.۲۲۰.۱۰.۵', os: 'CentOS 8', status: 'active', cpu: 30, ram: 40, disk: 25, bandwidth: 15, plan: 'E3-1270v6', expiry: '۱۴۰۳/۰۹/۰۱' },

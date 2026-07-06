@@ -8,9 +8,11 @@ import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp, MessageSquare, Shield, ShieldCheck, Building2 } from "lucide-react";
+import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp, MessageSquare, Shield, ShieldCheck, Building2, Palette, Sun, Moon, Monitor, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useTheme, type ThemeMode } from '@/contexts/ThemeContext';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const iranianProvinces = [
   'آذربایجان شرقی', 'آذربایجان غربی', 'اردبیل', 'اصفهان', 'ایلام', 'بوشهر', 'تهران',
@@ -24,6 +26,7 @@ const ProfileSettingsPage = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { mode: themeMode, setMode: setThemeMode, settings: themeSettings, updateSchedule, theme } = useTheme();
   
   const [profileForm, setProfileForm] = useState({
     firstName: 'محمد',
@@ -219,24 +222,130 @@ const ProfileSettingsPage = () => {
       </Alert>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="personal" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 gap-1 h-auto">
+          <TabsTrigger value="personal" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
             <User className="h-4 w-4 text-blue-500" />
             <span>اطلاعات شخصی</span>
           </TabsTrigger>
-          <TabsTrigger value="financial" className="flex items-center gap-2">
+          <TabsTrigger value="financial" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
             <CreditCard className="h-4 w-4 text-green-500" />
             <span>اطلاعات مالی</span>
           </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
+          <TabsTrigger value="security" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
             <ShieldAlert className="h-4 w-4 text-red-500" />
             <span>امنیت</span>
           </TabsTrigger>
-          <TabsTrigger value="notification" className="flex items-center gap-2">
+          <TabsTrigger value="notification" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
             <Bell className="h-4 w-4 text-yellow-500" />
             <span>اعلان‌ها</span>
           </TabsTrigger>
+          <TabsTrigger value="appearance" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
+            <Palette className="h-4 w-4 text-purple-500" />
+            <span>ظاهر و تم</span>
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="appearance" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-purple-500" />
+                ظاهر و تم
+              </CardTitle>
+              <CardDescription>
+                حالت روشن یا تاریک را انتخاب کنید یا زمان‌بندی خودکار برای سوئیچ بین دو حالت تنظیم کنید.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <Label className="mb-3 block font-medium">حالت نمایش</Label>
+                <RadioGroup
+                  value={themeMode}
+                  onValueChange={(v) => {
+                    setThemeMode(v as ThemeMode);
+                    toast({ title: 'حالت نمایش تغییر کرد', description: `حالت ${
+                      v === 'light' ? 'روشن' : v === 'dark' ? 'تاریک' : v === 'system' ? 'خودکار (سیستم)' : 'زمان‌بندی'
+                    } فعال شد.` });
+                  }}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                >
+                  {[
+                    { id: 'light', label: 'روشن', desc: 'همیشه روشن', icon: Sun, color: 'text-amber-500' },
+                    { id: 'dark', label: 'تاریک', desc: 'همیشه تاریک', icon: Moon, color: 'text-indigo-500' },
+                    { id: 'system', label: 'خودکار (سیستم)', desc: 'مطابق تنظیمات سیستم‌عامل', icon: Monitor, color: 'text-blue-500' },
+                    { id: 'schedule', label: 'زمان‌بندی', desc: 'سوئیچ خودکار بر اساس ساعت', icon: Clock, color: 'text-emerald-500' },
+                  ].map((opt) => {
+                    const Icon = opt.icon;
+                    const active = themeMode === opt.id;
+                    return (
+                      <Label
+                        key={opt.id}
+                        htmlFor={`theme-${opt.id}`}
+                        className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-all ${
+                          active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-primary/50'
+                        }`}
+                      >
+                        <RadioGroupItem id={`theme-${opt.id}`} value={opt.id} className="mt-1" />
+                        <Icon className={`h-5 w-5 ${opt.color} shrink-0 mt-0.5`} />
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{opt.label}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                        </div>
+                      </Label>
+                    );
+                  })}
+                </RadioGroup>
+              </div>
+
+              {themeMode === 'schedule' && (
+                <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-emerald-500" />
+                    زمان‌بندی حالت تاریک
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="darkStart">شروع حالت تاریک</Label>
+                      <Input
+                        id="darkStart"
+                        type="time"
+                        dir="ltr"
+                        value={themeSettings.darkStart}
+                        onChange={(e) => updateSchedule(e.target.value, themeSettings.darkEnd)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="darkEnd">پایان حالت تاریک</Label>
+                      <Input
+                        id="darkEnd"
+                        type="time"
+                        dir="ltr"
+                        value={themeSettings.darkEnd}
+                        onChange={(e) => updateSchedule(themeSettings.darkStart, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    در بازه‌ی انتخاب شده حالت تاریک فعال و در بقیه ساعات حالت روشن استفاده می‌شود.
+                  </p>
+                </div>
+              )}
+
+              <Separator />
+
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div>
+                  <p className="text-sm font-medium">حالت جاری</p>
+                  <p className="text-xs text-muted-foreground">{theme === 'dark' ? 'تاریک' : 'روشن'}</p>
+                </div>
+                <Badge variant="outline" className="gap-1">
+                  {theme === 'dark' ? <Moon className="h-3 w-3" /> : <Sun className="h-3 w-3" />}
+                  {theme === 'dark' ? 'Dark' : 'Light'}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
         
         <TabsContent value="financial" className="mt-6">
           <Card>
