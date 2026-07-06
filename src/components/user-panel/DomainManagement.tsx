@@ -158,9 +158,8 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
 
       {/* Main Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 gap-1">
+        <TabsList className="grid w-full grid-cols-2 gap-1">
           <TabsTrigger value="overview" className="text-xs md:text-sm">نمای کلی</TabsTrigger>
-          <TabsTrigger value="dns" className="text-xs md:text-sm">DNS</TabsTrigger>
           <TabsTrigger value="settings" className="text-xs md:text-sm">تنظیمات</TabsTrigger>
         </TabsList>
 
@@ -226,45 +225,6 @@ const DomainManagement: React.FC<DomainManagementProps> = ({ domainId, onBack })
           </Card>
         </TabsContent>
 
-        <TabsContent value="dns" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Server className="w-5 h-5 text-blue-500" />
-                مدیریت رکوردهای DNS
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {domainData.dnsRecords.map((record, index) => (
-                  <div key={index} className="border rounded p-4 space-y-2">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                      <div>
-                        <Label className="text-xs text-gray-600">نوع</Label>
-                        <p className="font-medium">{record.type}</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-gray-600">نام</Label>
-                        <p className="font-medium font-mono">{record.name}</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-gray-600">مقدار</Label>
-                        <p className="font-medium font-mono text-xs">{record.value}</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-gray-600">TTL</Label>
-                        <p className="font-medium">{record.ttl}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <Button className="w-full" variant="outline">
-                  افزودن رکورد جدید
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="settings" className="space-y-6">
           <Card>
