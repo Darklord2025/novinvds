@@ -190,10 +190,10 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({ onBack, onAddToCart, initia
 
       {/* Mode Toggle */}
       <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setStep(1); setSelectedPlan(null); }} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-lg">
-          <TabsTrigger value="virtual" className="gap-2"><Server className="w-4 h-4" />سرور مجازی</TabsTrigger>
-          <TabsTrigger value="hourly" className="gap-2"><Clock className="w-4 h-4" />سرور ساعتی</TabsTrigger>
-          <TabsTrigger value="multilocation" className="gap-2"><Globe className="w-4 h-4" />مولتی لوکیشن</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto">
+          <TabsTrigger value="virtual" className="gap-1 sm:gap-2 text-[11px] sm:text-sm px-1 sm:px-3 py-2 whitespace-nowrap"><Server className="w-3.5 h-3.5 sm:w-4 sm:h-4" />سرور مجازی</TabsTrigger>
+          <TabsTrigger value="hourly" className="gap-1 sm:gap-2 text-[11px] sm:text-sm px-1 sm:px-3 py-2 whitespace-nowrap"><Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />سرور ساعتی</TabsTrigger>
+          <TabsTrigger value="multilocation" className="gap-1 sm:gap-2 text-[11px] sm:text-sm px-1 sm:px-3 py-2 whitespace-nowrap"><Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />مولتی لوکیشن</TabsTrigger>
         </TabsList>
       </Tabs>
 
