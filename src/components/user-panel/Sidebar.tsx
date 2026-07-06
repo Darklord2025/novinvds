@@ -148,15 +148,7 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
                 <Home className="h-5 w-5" />
               </Button>
             )}
-            {isMobile && onClose && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={onClose}
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            )}
+            {/* mobile close button is provided by SheetContent to avoid duplicate X */}
           </div>
         </div>
         <p className="text-sm text-gray-500 mt-1">پنل کاربری</p>

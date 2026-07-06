@@ -62,6 +62,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigateToServiceOrderPage, onRes
 
   const tabOptions = [
     { value: 'servers', label: 'سرور مجازی', icon: Server },
+    { value: 'multilocation', label: 'مولتی لوکیشن', icon: Globe },
     { value: 'dedicated', label: 'اختصاصی', icon: HardDrive },
     { value: 'hourly', label: 'ساعتی', icon: Clock },
     { value: 'hosting', label: 'هاستینگ', icon: Database },
