@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Search, Download, Eye, CreditCard, Filter, ArrowRight, Wallet, Building2, Bitcoin } from 'lucide-react';
+import { Search, Download, Eye, CreditCard, Filter, ArrowRight, Wallet, Building2, Bitcoin, Printer, Landmark } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
 import { toast } from '@/components/ui/use-toast';
 import { jsPDF } from 'jspdf';
@@ -21,7 +21,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'view' | 'pay' | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'gateway' | 'crypto'>('gateway');
+  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'gateway' | 'crypto' | 'card' | 'transfer'>('gateway');
 
 
   const allInvoices = [
@@ -104,20 +104,133 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   };
 
   const handleDownloadInvoice = (invoice: any) => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Invoice / Factor', 14, 18);
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const primary = [37, 99, 235] as const;
+    const gray = [107, 114, 128] as const;
+
+    // Header bar
+    doc.setFillColor(primary[0], primary[1], primary[2]);
+    doc.rect(0, 0, pageW, 32, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text('NovinVDS', 14, 16);
+    doc.setFontSize(10);
+    doc.text('Hosting & Server Provider', 14, 23);
+    doc.text('www.novinvds.com  |  info@novinvds.com  |  +98-21-91000000', 14, 28);
+
+    // Status stamp
+    const statusText = invoice.status === 'Paid' ? 'PAID' : invoice.status === 'Overdue' ? 'OVERDUE' : 'UNPAID';
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.text(statusText, pageW - 14, 16, { align: 'right' });
+    doc.setFontSize(9);
+    doc.text(`Invoice: ${invoice.id}`, pageW - 14, 23, { align: 'right' });
+
+    // Meta block
+    doc.setTextColor(30, 41, 59);
     doc.setFontSize(11);
-    doc.text(`Invoice #: ${invoice.id}`, 14, 32);
-    doc.text(`Service: ${invoice.service}`, 14, 42);
-    doc.text(`Issue Date: ${invoice.issueDate}`, 14, 52);
-    doc.text(`Due Date: ${invoice.dueDate}`, 14, 62);
-    doc.text(`Amount: ${invoice.amount} Toman`, 14, 72);
-    doc.text(`Status: ${invoice.status}`, 14, 82);
-    doc.line(14, 90, 196, 90);
-    doc.text('NovinVDS - Thank you for your business.', 14, 100);
+    doc.text('INVOICE / FACTOR', 14, 46);
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, 49, pageW - 14, 49);
+
+    doc.setFontSize(9);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.text('Bill From:', 14, 57);
+    doc.text('Bill To:', pageW / 2 + 4, 57);
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(10);
+    doc.text('NovinVDS Co.', 14, 63);
+    doc.text('Customer', pageW / 2 + 4, 63);
+    doc.setFontSize(8);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.text('Tehran, Valiasr St., #100', 14, 69);
+    doc.text('National ID: 14001234567', 14, 74);
+    doc.text('Customer #: CU-4521', pageW / 2 + 4, 69);
+    doc.text('user@example.com', pageW / 2 + 4, 74);
+
+    // Info row
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, 82, pageW - 14, 82);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.setFontSize(8);
+    doc.text('Issue Date:', 14, 89);
+    doc.text('Due Date:', 70, 89);
+    doc.text('Period:', 130, 89);
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(10);
+    doc.text(String(invoice.issueDate || '-'), 14, 95);
+    doc.text(String(invoice.dueDate || '-'), 70, 95);
+    doc.text('Monthly', 130, 95);
+
+    // Items table
+    const tableTop = 108;
+    doc.setFillColor(241, 245, 249);
+    doc.rect(14, tableTop, pageW - 28, 8, 'F');
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(9);
+    doc.text('#', 17, tableTop + 5.5);
+    doc.text('Description', 26, tableTop + 5.5);
+    doc.text('Qty', 130, tableTop + 5.5);
+    doc.text('Unit', 148, tableTop + 5.5);
+    doc.text('Total', pageW - 17, tableTop + 5.5, { align: 'right' });
+
+    const rowY = tableTop + 15;
+    doc.setFontSize(9);
+    doc.text('1', 17, rowY);
+    doc.text(String(invoice.service || '-'), 26, rowY);
+    doc.text('1', 130, rowY);
+    doc.text(String(invoice.amount || '0'), 148, rowY);
+    doc.text(String(invoice.amount || '0'), pageW - 17, rowY, { align: 'right' });
+
+    // Totals
+    const totalsY = rowY + 12;
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, totalsY, pageW - 14, totalsY);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.setFontSize(9);
+    doc.text('Subtotal:', pageW - 60, totalsY + 7);
+    doc.text('VAT (9%):', pageW - 60, totalsY + 13);
+    doc.setTextColor(30, 41, 59);
+    doc.text(`${invoice.amount} T`, pageW - 17, totalsY + 7, { align: 'right' });
+    doc.text('Exempt', pageW - 17, totalsY + 13, { align: 'right' });
+
+    doc.setFillColor(primary[0], primary[1], primary[2]);
+    doc.rect(pageW - 90, totalsY + 18, 76, 10, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(11);
+    doc.text('Total Payable:', pageW - 86, totalsY + 25);
+    doc.text(`${invoice.amount} Toman`, pageW - 17, totalsY + 25, { align: 'right' });
+
+    // Footer
+    doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.setFontSize(8);
+    doc.text('By paying this invoice, you accept the service terms & conditions.', pageW / 2, 275, { align: 'center' });
+    doc.text('For any inquiry contact 24/7 support via ticket system.', pageW / 2, 280, { align: 'center' });
+    doc.setDrawColor(primary[0], primary[1], primary[2]);
+    doc.setLineWidth(0.5);
+    doc.line(14, 285, pageW - 14, 285);
+    doc.text('NovinVDS © ' + new Date().getFullYear(), pageW / 2, 290, { align: 'center' });
+
     doc.save(`${invoice.id}.pdf`);
     toast({ title: 'دانلود انجام شد', description: `فاکتور ${invoice.id} با موفقیت دانلود شد.` });
+  };
+
+  const handlePrintInvoice = () => {
+    const el = document.getElementById('invoice-template');
+    if (!el) return;
+    const w = window.open('', 'PRINT', 'height=800,width=900');
+    if (!w) return;
+    w.document.write(`<html dir="rtl"><head><title>چاپ پیش‌فاکتور</title>
+      <style>
+        body { font-family: Vazirmatn, Tahoma, sans-serif; padding: 20px; color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #e2e8f0; }
+        thead { background: #f1f5f9; }
+      </style></head><body>${el.innerHTML}</body></html>`);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 300);
   };
 
   const handlePayInvoice = (invoice: any) => {
@@ -127,10 +240,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
 
   const confirmPayment = () => {
     if (!selectedInvoice) return;
-    const methodLabel = paymentMethod === 'wallet' ? 'کیف پول' : paymentMethod === 'gateway' ? 'درگاه بانکی' : 'ارز دیجیتال';
+    const labels: Record<string, string> = {
+      wallet: 'کیف پول', gateway: 'درگاه بانکی آنلاین', crypto: 'ارز دیجیتال',
+      card: 'کارت به کارت', transfer: 'حواله بانکی',
+    };
     toast({
-      title: 'انتقال به درگاه پرداخت',
-      description: `پرداخت فاکتور ${selectedInvoice.id} از طریق ${methodLabel} در حال انجام است...`,
+      title: 'انتقال به روش پرداخت',
+      description: `پرداخت فاکتور ${selectedInvoice.id} از طریق ${labels[paymentMethod]} در حال انجام است...`,
     });
     setViewMode(null);
     setSelectedInvoice(null);
