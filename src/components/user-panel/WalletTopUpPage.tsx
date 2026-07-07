@@ -16,7 +16,9 @@ import {
   CheckCircle,
   Info,
   Plus,
-  ArrowRight
+  ArrowRight,
+  Landmark,
+  Building2
 } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
 
@@ -41,6 +43,22 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
       fee: 0,
       description: 'پرداخت امن از طریق درگاه بانک',
       processingTime: 'فوری'
+    },
+    {
+      id: 'card2card',
+      name: 'کارت به کارت',
+      icon: CreditCard,
+      fee: 0,
+      description: 'واریز مستقیم به کارت شرکت و ارسال رسید',
+      processingTime: '۵ تا ۳۰ دقیقه پس از تأیید'
+    },
+    {
+      id: 'transfer',
+      name: 'حواله بانکی',
+      icon: Landmark,
+      fee: 0,
+      description: 'انتقال از طریق شماره شبا یا حساب بانکی',
+      processingTime: '۱ تا ۲۴ ساعت کاری'
     },
     {
       id: 'crypto',
@@ -229,6 +247,16 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                     {selectedPaymentMethod.name === 'کارت بانکی' && (
                       <>
                         پس از کلیک روی دکمه پرداخت، به درگاه امن بانک منتقل می‌شوید. پرداخت شما توسط پروتکل‌های امنیتی بانک محافظت می‌شود.
+                      </>
+                    )}
+                    {selectedPaymentMethod.name === 'کارت به کارت' && (
+                      <>
+                        شماره کارت شرکت در مرحله بعد نمایش داده می‌شود. پس از واریز، شناسه پیگیری و تصویر رسید را در فرم تأیید ثبت کنید تا موجودی شما شارژ شود.
+                      </>
+                    )}
+                    {selectedPaymentMethod.name === 'حواله بانکی' && (
+                      <>
+                        شماره شبا و شماره حساب شرکت در مرحله بعد نمایش داده می‌شود. پس از انجام حواله، شناسه پیگیری بانک را برای ما ارسال کنید.
                       </>
                     )}
                     {selectedPaymentMethod.name === 'ارز دیجیتال' && (
