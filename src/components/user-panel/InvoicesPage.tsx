@@ -491,11 +491,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
                   <p className="text-sm font-medium">روش پرداخت را انتخاب کنید:</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                     {[
-                      { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'موجودی کیف پول' },
-                      { id: 'gateway', label: 'درگاه بانکی', icon: Building2, desc: 'زرین‌پال / پی‌پینگ' },
-                      { id: 'card', label: 'کارت به کارت', icon: CreditCard, desc: 'واریز مستقیم' },
-                      { id: 'transfer', label: 'حواله بانکی', icon: Landmark, desc: 'شبا / حساب' },
-                      { id: 'crypto', label: 'ارز دیجیتال', icon: Bitcoin, desc: 'BTC / USDT' },
+                      { id: 'wallet', label: 'کیف پول', icon: Wallet, desc: 'پرداخت از موجودی کیف پول' },
+                      { id: 'gateway', label: 'کارت بانکی', icon: CreditCard, desc: 'پرداخت امن از طریق درگاه بانک' },
+                      { id: 'card2card', label: 'کارت به کارت', icon: CreditCard, desc: 'واریز مستقیم به کارت شرکت و ارسال رسید' },
+                      { id: 'transfer', label: 'حواله بانکی', icon: Landmark, desc: 'انتقال از طریق شماره شبا یا حساب بانکی' },
+                      { id: 'crypto', label: 'ارز دیجیتال', icon: Coins, desc: 'پرداخت با بیت‌کوین، اتریوم و سایر ارزها' },
+                      { id: 'perfectmoney', label: 'Perfect Money', icon: Wallet, desc: 'پرداخت از طریق کیف پول Perfect Money' },
                     ].map((m) => {
                       const Icon = m.icon;
                       const active = paymentMethod === m.id;
