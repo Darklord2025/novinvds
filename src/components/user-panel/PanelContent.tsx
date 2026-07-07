@@ -31,6 +31,7 @@ import ServiceCalculatorPage from './ServiceCalculatorPage';
 import SecurityCenterPage from './SecurityCenterPage';
 import ProformaInvoicePage from './ProformaInvoicePage';
 import ServiceOrderPage from './ServiceOrderPage';
+import ServiceInfoPage from './ServiceInfoPage';
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
 import { Button } from '@/components/ui/button';
@@ -236,6 +237,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onRenewDomain={handleRenewService}
         onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
       />;
+    case 'service-info':
+      return <ServiceInfoPage />;
     case 'domain-management':
       return selectedService ? 
         <DomainManagement 
