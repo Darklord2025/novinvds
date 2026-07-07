@@ -39,8 +39,6 @@ import { SidebarProps, SidebarItem } from './interfaces';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { userServices } from "@/data/userServices";
-import { toPersianDigits } from "@/lib/numberUtils";
 
 interface ExtendedSidebarProps extends SidebarProps {
   isMobile?: boolean;
@@ -219,59 +217,6 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
         </ul>
       </div>
       
-
-      {/* Latest purchased service summary — mirrors the confirmation email */}
-      {(() => {
-        const latest = [...userServices].sort((a, b) =>
-          (b.registrationDate || '').localeCompare(a.registrationDate || '')
-        )[0];
-        if (!latest) return null;
-        return (
-          <div className="mx-3 mb-2 rounded-xl border border-blue-100 dark:border-blue-900/50 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/40 dark:to-transparent p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300">آخرین سرویس فعال</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">
-                {latest.status === 'active' ? 'فعال' : latest.status}
-              </span>
-            </div>
-            <div className="text-xs font-semibold text-foreground truncate" title={latest.productName}>
-              {latest.productName}
-            </div>
-            <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground leading-5">
-              <li className="flex justify-between gap-2">
-                <span>شناسه:</span>
-                <span className="font-medium text-foreground" dir="ltr">{latest.id}</span>
-              </li>
-              {latest.ip && (
-                <li className="flex justify-between gap-2">
-                  <span>IP:</span>
-                  <span className="font-medium text-foreground" dir="ltr">{latest.ip}</span>
-                </li>
-              )}
-              {latest.os && (
-                <li className="flex justify-between gap-2">
-                  <span>سیستم‌عامل:</span>
-                  <span className="font-medium text-foreground truncate max-w-[130px]" dir="ltr">{latest.os}</span>
-                </li>
-              )}
-              <li className="flex justify-between gap-2">
-                <span>ثبت:</span>
-                <span className="font-medium text-foreground">{toPersianDigits(latest.registrationDate)}</span>
-              </li>
-              <li className="flex justify-between gap-2">
-                <span>سررسید:</span>
-                <span className="font-medium text-foreground">{toPersianDigits(latest.expiry)}</span>
-              </li>
-            </ul>
-            <button
-              onClick={() => handleItemClick('services')}
-              className="mt-2 w-full text-[11px] rounded-md bg-blue-600 hover:bg-blue-700 text-white py-1.5 transition-colors"
-            >
-              مدیریت سرویس‌های من
-            </button>
-          </div>
-        );
-      })()}
 
       <div className="p-4 border-t mt-auto">
         <button

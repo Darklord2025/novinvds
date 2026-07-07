@@ -156,6 +156,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   const handlePrintInvoice = () => {
     const el = document.getElementById('invoice-template');
     if (!el) return;
+
+    // Collect all page styles so the invoice keeps its formatting when printed.
+    const styleNodes = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((n) => n.outerHTML)
+      .join('\n');
+
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.right = '0';
@@ -167,27 +173,34 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!doc) return;
     doc.open();
-    doc.write(`<!doctype html><html dir="rtl" lang="fa"><head><meta charset="utf-8"><title>چاپ فاکتور - ${el.querySelector('[data-invoice-id]')?.textContent || ''}</title>
+    doc.write(`<!doctype html><html dir="rtl" lang="fa" class="light"><head><meta charset="utf-8">
+      <title>چاپ فاکتور - ${selectedInvoice?.id ?? ''}</title>
+      ${styleNodes}
       <style>
         @page { size: A4; margin: 12mm; }
-        * { box-sizing: border-box; }
-        body { font-family: Vazirmatn, Tahoma, Arial, sans-serif; color: #0f172a; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #e2e8f0; }
-        thead { background: #f1f5f9; }
-        .invoice-wrap { padding: 8px; }
-      </style></head><body><div class="invoice-wrap">${el.outerHTML}</div></body></html>`);
+        html, body { background: #ffffff !important; color: #0f172a !important; font-family: Vazirmatn, Tahoma, Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; padding: 0; }
+        .invoice-wrap { padding: 0; }
+        .invoice-wrap * { box-shadow: none !important; }
+      </style>
+    </head><body><div class="invoice-wrap">${el.outerHTML}</div></body></html>`);
     doc.close();
-    const cleanup = () => setTimeout(() => document.body.removeChild(iframe), 500);
-    iframe.onload = () => {
-      try {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-      } finally {
-        cleanup();
-      }
+    const cleanup = () => setTimeout(() => document.body.removeChild(iframe), 800);
+    // Give stylesheets a moment to load before printing.
+    const doPrint = () => {
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } finally {
+          cleanup();
+        }
+      }, 400);
     };
+    if ((iframe as any).contentDocument?.readyState === 'complete') doPrint();
+    else iframe.onload = doPrint;
   };
+
 
   const handlePayInvoice = (invoice: any) => {
     setSelectedInvoice(invoice);

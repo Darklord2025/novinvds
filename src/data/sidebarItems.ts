@@ -101,6 +101,7 @@ export const sidebarItems: SidebarItem[] = [
   { id: 'cart', label: 'سبد خرید', icon: 'shopping-cart' },
   { id: 'servers', label: 'سرویس‌های من', icon: 'server' },
   { id: 'domains', label: 'دامنه‌ها', icon: 'globe' },
+  { id: 'service-info', label: 'اطلاعات سرویس‌ها', icon: 'file-text' },
   { 
     id: 'financial', 
     label: 'امور مالی', 
