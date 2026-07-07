@@ -39,6 +39,8 @@ import { SidebarProps, SidebarItem } from './interfaces';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { userServices } from "@/data/userServices";
+import { toPersianDigits } from "@/lib/numberUtils";
 
 interface ExtendedSidebarProps extends SidebarProps {
   isMobile?: boolean;
