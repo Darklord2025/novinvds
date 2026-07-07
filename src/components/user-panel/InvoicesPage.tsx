@@ -198,7 +198,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
     if (!selectedInvoice) return;
     const labels: Record<string, string> = {
       wallet: 'کیف پول', gateway: 'درگاه بانکی آنلاین', crypto: 'ارز دیجیتال',
-      card: 'کارت به کارت', transfer: 'حواله بانکی',
+      card2card: 'کارت به کارت', transfer: 'حواله بانکی', perfectmoney: 'Perfect Money',
     };
     toast({
       title: 'انتقال به روش پرداخت',
