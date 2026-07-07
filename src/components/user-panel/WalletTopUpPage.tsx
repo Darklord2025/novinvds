@@ -16,7 +16,9 @@ import {
   CheckCircle,
   Info,
   Plus,
-  ArrowRight
+  ArrowRight,
+  Landmark,
+  Building2
 } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
 
