@@ -22,7 +22,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'view' | 'pay' | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'gateway' | 'crypto' | 'card' | 'transfer'>('gateway');
+  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'gateway' | 'crypto' | 'card2card' | 'transfer' | 'perfectmoney'>('gateway');
 
 
   const allInvoices = [
