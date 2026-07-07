@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Search, Download, Eye, CreditCard, Filter, ArrowRight, Wallet, Building2, Bitcoin, Printer, Landmark } from 'lucide-react';
+import { Search, Download, Eye, CreditCard, Filter, ArrowRight, Wallet, Building2, Bitcoin, Printer, Landmark, Coins } from 'lucide-react';
 import { toPersianDigits } from '@/lib/numberUtils';
 import { toast } from '@/components/ui/use-toast';
 import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface InvoicesPageProps {
   onBack?: () => void;
