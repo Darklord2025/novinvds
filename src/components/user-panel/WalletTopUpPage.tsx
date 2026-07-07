@@ -45,6 +45,22 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
       processingTime: 'فوری'
     },
     {
+      id: 'card2card',
+      name: 'کارت به کارت',
+      icon: CreditCard,
+      fee: 0,
+      description: 'واریز مستقیم به کارت شرکت و ارسال رسید',
+      processingTime: '۵ تا ۳۰ دقیقه پس از تأیید'
+    },
+    {
+      id: 'transfer',
+      name: 'حواله بانکی',
+      icon: Landmark,
+      fee: 0,
+      description: 'انتقال از طریق شماره شبا یا حساب بانکی',
+      processingTime: '۱ تا ۲۴ ساعت کاری'
+    },
+    {
       id: 'crypto',
       name: 'ارز دیجیتال',
       icon: Coins,
