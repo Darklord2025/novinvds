@@ -35,6 +35,7 @@ import DedicatedServices from "./pages/DedicatedServices";
 import DomainServices from "./pages/DomainServices";
 import NetworkServices from "./pages/NetworkServices";
 import NetworkStore from "./pages/NetworkStore";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               <Route path="/user-panel" element={<UserPanel />} />
               <Route path="/hosting-plans" element={<HostingPlans />} />
               <Route path="/vps-plans" element={<VpsPlans />} />
