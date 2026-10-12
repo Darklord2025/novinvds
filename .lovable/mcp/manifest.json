@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.5",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://dfigrglqpxanqcpuykbu.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "novinvds",
+      "version": "0.1.0",
+      "title": "novinvds"
+    },
+    "tools": [
+      {
+        "name": "list_hosting_services",
+        "title": "List my hosting services",
+        "description": "List the signed-in user's hosting services with domain, status, panel, usage and expiry.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
