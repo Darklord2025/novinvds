@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { useTheme } from '@/contexts/ThemeContext';
+import { oauthReturnPath } from '@/lib/oauth-return-path';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +18,9 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const rawNext = new URLSearchParams(window.location.search).get('next');
+  const nextPath = rawNext ? oauthReturnPath(rawNext) : '/user-panel';
+  const goNext = () => { if (nextPath.startsWith('/.lovable/')) window.location.href = nextPath; else navigate(nextPath); };
 
   // Login state
   const [email, setEmail] = useState('');
@@ -35,18 +39,18 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        navigate('/user-panel');
+        goNext();
       }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        navigate('/user-panel');
+        goNext();
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFlip = (toLogin: boolean) => {
     setIsFlipping(true);
@@ -82,7 +86,7 @@ const Auth = () => {
           title: "ورود موفق",
           description: "به پنل کاربری خوش آمدید",
         });
-        navigate('/user-panel');
+        goNext();
       }
     } catch (error: any) {
       toast({
@@ -119,7 +123,7 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = new URL(rawNext ? nextPath : '/', window.location.origin).href;
       
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
@@ -151,7 +155,7 @@ const Auth = () => {
           title: "ثبت نام موفق",
           description: "حساب کاربری شما با موفقیت ایجاد شد",
         });
-        navigate('/user-panel');
+        goNext();
       }
     } catch (error: any) {
       toast({
