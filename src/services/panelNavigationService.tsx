@@ -170,6 +170,8 @@ export const createNavigationHandlers = (
     } else if (serviceLink && (serviceLink.startsWith('/vps-management/') || 
                                serviceLink.startsWith('/dedicated-management/') || 
                                serviceLink.startsWith('/cloud-management/') || 
+                               serviceLink.startsWith('/hourly-management/') ||
+                               serviceLink.startsWith('/multilocation-management/') ||
                                serviceLink.startsWith('/hosting-management/') || 
                                serviceLink.startsWith('/domain-management/'))) {
       const parts = serviceLink.split('/');

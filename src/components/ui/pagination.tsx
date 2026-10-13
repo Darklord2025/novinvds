@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -20,7 +21,7 @@ const PaginationContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn("flex flex-row items-center gap-1", className)}
+    className={cn("flex flex-row items-center gap-1 flex-wrap justify-center", className)}
     {...props}
   />
 ))
@@ -62,33 +63,41 @@ PaginationLink.displayName = "PaginationLink"
 const PaginationPrevious = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const { t, language } = useLanguage()
+  const Icon = language === 'fa' ? ChevronRight : ChevronLeft
+  return (
   <PaginationLink
-    aria-label="Go to previous page"
+    aria-label={t('previous')}
     size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    className={cn("gap-2 border border-border bg-background h-9 px-3 text-sm rounded-md", className)}
     {...props}
   >
-    <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <Icon className="h-4 w-4" />
+    <span>{t('previous')}</span>
   </PaginationLink>
 )
+}
 PaginationPrevious.displayName = "PaginationPrevious"
 
 const PaginationNext = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const { t, language } = useLanguage()
+  const Icon = language === 'fa' ? ChevronLeft : ChevronRight
+  return (
   <PaginationLink
-    aria-label="Go to next page"
+    aria-label={t('next')}
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-2 border border-border bg-background h-9 px-3 text-sm rounded-md", className)}
     {...props}
   >
-    <span>Next</span>
-    <ChevronRight className="h-4 w-4" />
+    <span>{t('next')}</span>
+    <Icon className="h-4 w-4" />
   </PaginationLink>
 )
+}
 PaginationNext.displayName = "PaginationNext"
 
 const PaginationEllipsis = ({

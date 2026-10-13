@@ -31,7 +31,6 @@ import ServiceCalculatorPage from './ServiceCalculatorPage';
 import SecurityCenterPage from './SecurityCenterPage';
 import ProformaInvoicePage from './ProformaInvoicePage';
 import ServiceOrderPage from './ServiceOrderPage';
-import ServiceInfoPage from './ServiceInfoPage';
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
 import { Button } from '@/components/ui/button';
@@ -147,7 +146,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     case 'recommendations':
       return <RecommendationSection />;
     case 'cart':
-      return <CartPage onCheckout={() => navigationHandlers.handleSidebarClick('checkout')} />;
+      return <CartPage onCheckout={() => navigationHandlers.handleSidebarClick('checkout')} onBrowseServices={() => navigationHandlers.handleSidebarClick('order-vps')} />;
     case 'checkout':
       return <ProformaInvoicePage onBack={() => navigationHandlers.handleSidebarClick('cart')} />;
     case 'order-hosting':
@@ -238,7 +237,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
       />;
     case 'service-info':
-      return <ServiceInfoPage />;
+      return <WHMCSServicesPage onManageService={handleManageService} onRenewService={handleRenewService} />;
     case 'domain-management':
       return selectedService ? 
         <DomainManagement 
