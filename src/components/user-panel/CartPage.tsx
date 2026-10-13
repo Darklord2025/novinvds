@@ -11,6 +11,7 @@ import { useCart } from '@/contexts/CartContext';
 
 interface CartPageProps {
   onCheckout?: () => void;
+  onBrowseServices?: () => void;
 }
 
 const typeIconMap: Record<string, React.ReactNode> = {
@@ -22,7 +23,7 @@ const typeIconMap: Record<string, React.ReactNode> = {
   addon: <Server size={20} />,
 };
 
-const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
+const CartPage: React.FC<CartPageProps> = ({ onCheckout, onBrowseServices }) => {
   const { items, removeItem, updateQuantity } = useCart();
 
   
@@ -106,7 +107,7 @@ const CartPage: React.FC<CartPageProps> = ({ onCheckout }) => {
             <p className="text-muted-foreground mb-6">
               برای شروع، از بخش سفارش سرویس جدید استفاده کنید
             </p>
-            <Button>
+            <Button onClick={onBrowseServices}>
               <ArrowRight className="w-4 h-4 ml-2" />
               مشاهده سرویس‌ها
             </Button>

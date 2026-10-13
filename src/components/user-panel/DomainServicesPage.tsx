@@ -101,7 +101,6 @@ const DomainServicesPage: React.FC<Props> = ({ onManageDomain, onRenewDomain, on
                   <div className="flex flex-wrap gap-1 pt-1">
                     {d.autoRenew && <Badge variant="outline" className="text-[10px]">تمدید خودکار</Badge>}
                     {d.privacyProtection && <Badge variant="outline" className="text-[10px]">حریم خصوصی</Badge>}
-                    {d.dnsManagement && <Badge variant="outline" className="text-[10px]">DNS</Badge>}
                   </div>
                   <div className="flex gap-2 pt-2">
                     <Button size="sm" className="flex-1 text-xs" onClick={() => onManageDomain(d.id, 'domain')}>

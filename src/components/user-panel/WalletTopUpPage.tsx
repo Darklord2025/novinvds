@@ -228,11 +228,6 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                             <span>زمان پردازش: {method.processingTime}</span>
                           </div>
                         </div>
-                        {method.fee === 0 && (
-                          <Badge variant="secondary" className="text-xs">
-                            بدون کارمزد
-                          </Badge>
-                        )}
                       </Label>
                     </div>
                   ))}
@@ -281,8 +276,8 @@ const WalletTopUpPage: React.FC<WalletTopUpPageProps> = ({ onBack }) => {
                     <span className="font-bold">{toPersianDigits(amount)} تومان</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>کارمزد:</span>
-                    <span className="font-bold">{toPersianDigits(fee.toLocaleString())} تومان</span>
+                    <span>کارمزد بانک یا شبکه:</span>
+                    <span className="text-sm text-muted-foreground">طبق تعرفه ارائه‌دهنده پرداخت</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between text-lg font-bold">
                     <span>مبلغ قابل پرداخت:</span>
