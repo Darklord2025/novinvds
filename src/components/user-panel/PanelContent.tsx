@@ -1,43 +1,43 @@
 import React from 'react';
-import Dashboard from './Dashboard';
-import WHMCSServicesPage from './WHMCSServicesPage';
-import WHMCSInvoicesPage from './WHMCSInvoicesPage';
-import TicketsPage from './TicketsPage';
-import WalletPage from './WalletPage';
-import NotificationsPage from './NotificationsPage';
-import ImportantAnnouncementsPage from './ImportantAnnouncementsPage';
-import DownloadsPage from './DownloadsPage';
-import ProfileSettingsPage from './ProfileSettingsPage';
-import NotificationDetails from './NotificationDetails';
-import TicketDetail from './TicketDetail';
-import DomainManagement from './DomainManagement';
-import CreateTicketForm from './CreateTicketForm';
-import DomainServicesPage from './DomainServicesPage';
-import AffiliateCenter from './AffiliateCenter';
-import KnowledgeBase from './KnowledgeBase';
-import NetworkStoreSection from './NetworkStoreSection';
-import RecommendationSection from './RecommendationSection';
-import ServerManagementDetail from './ServerManagementDetail';
-import HostingManagementDetail from './HostingManagementDetail';
-import HostingManagementPanel from './HostingManagementPanel';
-import HostingGateway from './HostingGateway';
-import CartPage from './CartPage';
-import BillingOverviewPage from './BillingOverviewPage';
-import TransactionsPage from './TransactionsPage';
-import InvoicesPage from './InvoicesPage';
-import WalletTopUpPage from './WalletTopUpPage';
-import ServerManagementPage from './ServerManagementPage';
-import ServiceCalculatorPage from './ServiceCalculatorPage';
-import SecurityCenterPage from './SecurityCenterPage';
-import ProformaInvoicePage from './ProformaInvoicePage';
-import ServiceOrderPage from './ServiceOrderPage';
+const Dashboard = React.lazy(() => import('./Dashboard'));
+const WHMCSServicesPage = React.lazy(() => import('./WHMCSServicesPage'));
+const WHMCSInvoicesPage = React.lazy(() => import('./WHMCSInvoicesPage'));
+const TicketsPage = React.lazy(() => import('./TicketsPage'));
+const WalletPage = React.lazy(() => import('./WalletPage'));
+const NotificationsPage = React.lazy(() => import('./NotificationsPage'));
+const ImportantAnnouncementsPage = React.lazy(() => import('./ImportantAnnouncementsPage'));
+const DownloadsPage = React.lazy(() => import('./DownloadsPage'));
+const ProfileSettingsPage = React.lazy(() => import('./ProfileSettingsPage'));
+const NotificationDetails = React.lazy(() => import('./NotificationDetails'));
+const TicketDetail = React.lazy(() => import('./TicketDetail'));
+const DomainManagement = React.lazy(() => import('./DomainManagement'));
+const CreateTicketForm = React.lazy(() => import('./CreateTicketForm'));
+const DomainServicesPage = React.lazy(() => import('./DomainServicesPage'));
+const AffiliateCenter = React.lazy(() => import('./AffiliateCenter'));
+const KnowledgeBase = React.lazy(() => import('./KnowledgeBase'));
+const NetworkStoreSection = React.lazy(() => import('./NetworkStoreSection'));
+const RecommendationSection = React.lazy(() => import('./RecommendationSection'));
+const ServerManagementDetail = React.lazy(() => import('./ServerManagementDetail'));
+const HostingManagementDetail = React.lazy(() => import('./HostingManagementDetail'));
+const HostingManagementPanel = React.lazy(() => import('./HostingManagementPanel'));
+const HostingGateway = React.lazy(() => import('./HostingGateway'));
+const CartPage = React.lazy(() => import('./CartPage'));
+const BillingOverviewPage = React.lazy(() => import('./BillingOverviewPage'));
+const TransactionsPage = React.lazy(() => import('./TransactionsPage'));
+const InvoicesPage = React.lazy(() => import('./InvoicesPage'));
+const WalletTopUpPage = React.lazy(() => import('./WalletTopUpPage'));
+const ServerManagementPage = React.lazy(() => import('./ServerManagementPage'));
+const ServiceCalculatorPage = React.lazy(() => import('./ServiceCalculatorPage'));
+const SecurityCenterPage = React.lazy(() => import('./SecurityCenterPage'));
+const ProformaInvoicePage = React.lazy(() => import('./ProformaInvoicePage'));
+const ServiceOrderPage = React.lazy(() => import('./ServiceOrderPage'));
 import { NavigationHandlers } from '@/services/panelNavigationService';
 import { PanelContentProps } from './interfaces';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
-import DevelopmentMessage from './DevelopmentMessage';
+const DevelopmentMessage = React.lazy(() => import('./DevelopmentMessage'));
 
 const PanelContent: React.FC<PanelContentProps> = ({
   activeTab,
@@ -68,53 +68,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
     setResetDialogOpen(true);
   };
   
-  const confirmReset = () => {
-    setResetDialogOpen(false);
-    if (handleResetServer) {
-      handleResetServer(serverToReset.type, serverToReset.id);
-    }
-    
-    // Show progress toast
-    toast({
-      title: "در حال ریست سرور",
-      description: `لطفاً صبر کنید... سرور ${serverToReset.id} در حال ریست است.`
-    });
-    
-    // Simulate reset process
-    setTimeout(() => {
-      toast({
-        title: "ریست سرور انجام شد",
-        description: `ریست سرور ${serverToReset.id} با موفقیت انجام شد.`,
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      });
-    }, 3000);
-  };
-
-  // WHMCS-specific handlers
-  const handleSuspendService = (serviceId: string) => {
-    toast({
-      title: "تعلیق خدمت",
-      description: `خدمت ${serviceId} با موفقیت تعلیق شد.`,
-    });
-  };
-
-  const handleUnsuspendService = (serviceId: string) => {
-    toast({
-      title: "فعال‌سازی خدمت",
-      description: `خدمت ${serviceId} با موفقیت فعال شد.`,
-    });
-  };
-
-  const handleTerminateService = (serviceId: string) => {
-    toast({
-      title: "خاتمه خدمت",
-      description: `درخواست خاتمه خدمت ${serviceId} ثبت شد.`,
-    });
-  };
+  const confirmReset = () => { setResetDialogOpen(false); handleResetServer?.(serverToReset.type, serverToReset.id); };
+  const unavailable = () => toast({ title: 'عملیات متصل نیست', description: 'درخواستی ذخیره یا اجرا نشده است.' });
+  const handleSuspendService = unavailable;
+  const handleUnsuspendService = unavailable;
+  const handleTerminateService = unavailable;
 
   switch (activeTab) {
     case 'dashboard':
@@ -221,7 +179,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
       const kindMap: Record<string, any> = { servers: 'all', dedicated: 'dedicated', cloud: 'cloud', hosting: 'hosting' };
       return <WHMCSServicesPage 
         onManageService={handleManageService}
-        onRenewService={handleRenewService}
+        onRenewService={(id, kind) => handleRenewService(kind, id)}
         onSuspendService={handleSuspendService}
         onUnsuspendService={handleUnsuspendService}
         onTerminateService={handleTerminateService}
@@ -236,8 +194,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
         onRenewDomain={handleRenewService}
         onBack={() => navigationHandlers.handleSidebarClick('dashboard')}
       />;
-    case 'service-info':
-      return <WHMCSServicesPage onManageService={handleManageService} onRenewService={handleRenewService} />;
+    case 'service-unavailable':
+      return <div className="space-y-4"><p>سرویس در دسترس نیست / Service unavailable</p><Button variant="outline" onClick={() => navigationHandlers.handleSidebarClick('servers')}>بازگشت به سرویس‌ها</Button></div>;
     case 'domain-management':
       return selectedService ? 
         <DomainManagement 
@@ -265,6 +223,8 @@ const PanelContent: React.FC<PanelContentProps> = ({
           serverType="cloud"
           onBack={() => navigationHandlers.handleSidebarClick('servers')} 
         /> : null;
+    case 'multilocation-management':
+      return selectedService ? <ServerManagementDetail key={selectedService} serverId={selectedService} serverType="multilocation" onBack={() => navigationHandlers.handleSidebarClick('servers')} /> : null;
     case 'hourly-management':
       return selectedService ? 
         <ServerManagementDetail 
@@ -315,6 +275,9 @@ const PanelContent: React.FC<PanelContentProps> = ({
       />;
     case 'transactions':
       return <TransactionsPage onBack={() => navigationHandlers.navigateToServiceOrderPage('/financial-overview')} />;
+    case 'invoice-detail':
+    case 'invoice-payment':
+      return <InvoicesPage key={`${activeTab}-${selectedService}`} initialInvoiceId={selectedService ?? undefined} initialMode={activeTab === 'invoice-payment' ? 'pay' : 'view'} onBack={() => navigationHandlers.handleSidebarClick('invoices')} />;
     case 'invoices':
       return <InvoicesPage onBack={() => navigationHandlers.navigateToServiceOrderPage('/financial-overview')} />;
     case 'wallet-topup':

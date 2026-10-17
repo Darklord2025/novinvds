@@ -10,32 +10,32 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Chatbot from "./components/Chatbot";
-import Index from "./pages/Index";
-import Vps from "./pages/Vps";
-import Dedicated from "./pages/Dedicated";
-import Hosting from "./pages/Hosting";
-import Domain from "./pages/Domain";
-import Network from "./pages/Network";
-import License from "./pages/License";
-import SSL from "./pages/SSL";
-import Datacenter from "./pages/Datacenter";
-import Blog from "./pages/Blog";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import UserPanel from "./pages/UserPanel";
-import NotFound from "./pages/NotFound";
-import HostingPlans from "./pages/HostingPlans";
-import VpsPlans from "./pages/VpsPlans";
-import DedicatedPlans from "./pages/DedicatedPlans";
-import HostingServices from "./pages/HostingServices";
-import VpsServices from "./pages/VpsServices";
-import VpsCustomOrder from "./pages/VpsCustomOrder";
-import DedicatedServices from "./pages/DedicatedServices";
-import DomainServices from "./pages/DomainServices";
-import NetworkServices from "./pages/NetworkServices";
-import NetworkStore from "./pages/NetworkStore";
-import OAuthConsent from "./pages/OAuthConsent";
+const Index = React.lazy(() => import("./pages/Index"));
+const Vps = React.lazy(() => import("./pages/Vps"));
+const Dedicated = React.lazy(() => import("./pages/Dedicated"));
+const Hosting = React.lazy(() => import("./pages/Hosting"));
+const Domain = React.lazy(() => import("./pages/Domain"));
+const Network = React.lazy(() => import("./pages/Network"));
+const License = React.lazy(() => import("./pages/License"));
+const SSL = React.lazy(() => import("./pages/SSL"));
+const Datacenter = React.lazy(() => import("./pages/Datacenter"));
+const Blog = React.lazy(() => import("./pages/Blog"));
+const About = React.lazy(() => import("./pages/About"));
+const Contact = React.lazy(() => import("./pages/Contact"));
+const Auth = React.lazy(() => import("./pages/Auth"));
+const UserPanel = React.lazy(() => import("./pages/UserPanel"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const HostingPlans = React.lazy(() => import("./pages/HostingPlans"));
+const VpsPlans = React.lazy(() => import("./pages/VpsPlans"));
+const DedicatedPlans = React.lazy(() => import("./pages/DedicatedPlans"));
+const HostingServices = React.lazy(() => import("./pages/HostingServices"));
+const VpsServices = React.lazy(() => import("./pages/VpsServices"));
+const VpsCustomOrder = React.lazy(() => import("./pages/VpsCustomOrder"));
+const DedicatedServices = React.lazy(() => import("./pages/DedicatedServices"));
+const DomainServices = React.lazy(() => import("./pages/DomainServices"));
+const NetworkServices = React.lazy(() => import("./pages/NetworkServices"));
+const NetworkStore = React.lazy(() => import("./pages/NetworkStore"));
+const OAuthConsent = React.lazy(() => import("./pages/OAuthConsent"));
 
 const queryClient = new QueryClient();
 
@@ -49,6 +49,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <React.Suspense fallback={<p className="p-6" role="status">در حال بارگذاری…</p>}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/vps" element={<Vps />} />
@@ -78,6 +79,7 @@ const App = () => (
               <Route path="/network-services" element={<NetworkServices />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </React.Suspense>
             <Chatbot />
           </BrowserRouter>
         </TooltipProvider>

@@ -1,30 +1,18 @@
-import React from 'react';
 import { getServiceById } from '@/data/userServices';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { toPersianDigits } from '@/lib/numberUtils';
-import { FileText } from 'lucide-react';
-
+import { localize, formatMoney } from '@/lib/billing';
+import { serviceIPs } from '@/lib/serviceIdentity';
 export default function ServiceDeliveryInfo({ serviceId }: { serviceId: string }) {
-  const service = getServiceById(serviceId);
-  const { language } = useLanguage();
-  if (!service) return <p className="text-sm text-muted-foreground">اطلاعات این سرویس در دسترس نیست.</p>;
-  const fa = language === 'fa';
-  const format = (value: string | number) => fa ? toPersianDigits(value) : String(value);
-  const rows = [
-    [fa ? 'شناسه سرویس' : 'Service ID', service.id],
-    [fa ? 'محصول' : 'Product', service.productName],
-    [fa ? 'پلن' : 'Plan', service.plan],
-    [fa ? 'دیتاسنتر' : 'Datacenter', service.location],
-    [fa ? 'تاریخ ثبت' : 'Registered', service.registrationDate],
-    [fa ? 'سررسید' : 'Due date', service.expiry],
-    [fa ? 'دوره صورتحساب' : 'Billing cycle', fa ? ({ Monthly: 'ماهانه', Quarterly: 'سه‌ماهه', Annually: 'سالانه', Hourly: 'ساعتی' }[service.billingCycle]) : service.billingCycle],
-    [fa ? 'مبلغ تمدید' : 'Renewal amount', `${service.amount.toLocaleString('en-US')} ${fa ? 'تومان' : 'Toman'}`],
-  ];
-  return <section className="space-y-4 py-4">
-    <h2 className="text-base font-bold flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />{fa ? 'اطلاعات تحویل سرویس' : 'Service delivery details'}</h2>
-    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-      {rows.filter(([, value]) => value).map(([label, value]) => <div key={label} className="py-3 border-b flex flex-wrap justify-between gap-2 text-sm"><dt className="text-muted-foreground">{label}</dt><dd className="font-medium break-words">{format(value ?? '')}</dd></div>)}
-    </dl>
-    <p className="text-xs text-muted-foreground">{fa ? 'رمز عبور در این خلاصه ذخیره یا نمایش داده نمی‌شود.' : 'Passwords are not stored or shown in this summary.'}</p>
+  const { language } = useLanguage(); const fa = language === 'fa'; const service = getServiceById(serviceId);
+  const unknown = fa ? 'ارائه نشده' : 'Not provided';
+  if (!service) return <p role="status">{fa ? 'اطلاعات این سرویس در دسترس نیست.' : 'Service unavailable.'}</p>;
+  const rows = [[fa ? 'شناسه سرویس' : 'Service ID', service.id], [fa ? 'محصول' : 'Product', service.productName], [fa ? 'پلن' : 'Plan', service.plan], [fa ? 'منطقه' : 'Region', service.location ?? unknown], [fa ? 'ثبت' : 'Registered', service.registrationDate], [fa ? 'سررسید نمونه' : 'Sample due date', service.expiry], [fa ? 'مبلغ کاتالوگ' : 'Catalog amount', formatMoney(service.amount,service.currency,fa)]];
+  return <section className="space-y-4 py-4 min-w-0"><h2 className="text-base font-bold">{fa ? 'اطلاعات تحویل سرویس' : 'Service delivery details'}</h2><p className="text-sm text-muted-foreground">{fa ? 'کاتالوگ نمونه / تأییدنشده؛ وضعیت و مصرف منابع زنده نیست. مبالغ مرجع به ریال، نمایش به تومان (هر تومان = ۱۰ ریال).' : 'Demo / unverified catalog; status and usage are not live. Canonical amounts are IRR, displayed as Toman (1 Toman = 10 IRR).'}</p>
+    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">{rows.map(([label,value]) => <div key={label} className="py-3 border-b flex flex-wrap justify-between gap-2 text-sm min-w-0"><dt className="text-muted-foreground">{label}</dt><dd className="font-medium break-words" dir={service.kind === 'hosting' && label === (fa ? 'محصول' : 'Product') ? 'ltr' : undefined}>{localize(value,fa)}</dd></div>)}</dl>
+    <h3 className="font-medium">{fa ? 'آدرس‌های نمونه' : 'Sample addresses'}</h3>
+    {service.kind === 'multilocation' && <p className="text-sm">{fa ? 'یک سرور با چند IP؛ محل هر IP مشخص نشده و وجود چند سرور فیزیکی تأیید نشده است.' : 'One server with multiple IPs; per-IP locations and multiple physical servers are not established.'}</p>}
+    {serviceIPs(service).map(ip => <div key={ip.address} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-2 border-b py-3 text-sm min-w-0"><span dir="ltr" className="break-all">{localize(ip.address,fa)}</span><span>{localize(ip.family,fa)}</span><span className="text-muted-foreground">{ip.location ? localize(ip.location,fa) : (fa ? 'مکان ارائه نشده' : 'Location not provided')}</span></div>)}
+    {!serviceIPs(service).length && <p className="text-sm text-muted-foreground">{unknown}</p>}
+    <p className="text-xs text-muted-foreground">{fa ? 'اطلاعات ورود، رمز، سخت‌افزار واقعی و وضعیت شبکه از دستگاه تأییدشده دریافت نشده است.' : 'Credentials, assigned hardware and actual network status have not been supplied by a verified device.'}</p>
   </section>;
 }

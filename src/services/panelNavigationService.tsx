@@ -1,3 +1,4 @@
+import { managementTab } from '@/lib/serviceIdentity';
 
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export const createNavigationHandlers = (
         });
         
         // For different management pages
-        handleManageService(serviceId);
+        handleManageService(serviceId, serviceType);
       }
     } else if (serviceLink === '/tickets/new') {
       setIsNewTicket(true);
@@ -316,148 +317,26 @@ export const createNavigationHandlers = (
   };
   
   const handleManageService = (serviceId: string, serviceType?: string) => {
-    if (!serviceId) return;
-    
-    toast({
-      title: `مدیریت سرویس`,
-      description: `در حال بارگیری پنل مدیریت سرویس ${serviceId}...`,
-    });
-    
-    // Determine management page based on service type
-    setSelectedService(serviceId);
-    
-    // Default to VPS management if type not specified
-    if (!serviceType) {
-      setActiveTab('vps-management');
-      return;
-    }
-    
-    // Route to appropriate management page
-    switch (serviceType.toLowerCase()) {
-      case 'domain':
-        setActiveTab('domain-management');
-        break;
-      case 'hosting':
-      case 'host':
-        setActiveTab('hosting-management');
-        break;
-      case 'vps':
-      case 'server':
-        setActiveTab('vps-management');
-        break;
-      case 'dedicated':
-        setActiveTab('dedicated-management');
-        break;
-      case 'cloud':
-        setActiveTab('cloud-management');
-        break;
-      case 'hourly':
-        setActiveTab('hourly-management');
-        break;
-      default:
-        setActiveTab('vps-management');
-    }
+    // Older callers passed (kind, id); normalize, then trust catalog identity only.
+    const kinds = ['hosting','host','vps','dedicated','cloud','hourly','multilocation','domain'];
+    const id = kinds.includes(serviceId) && serviceType ? serviceType : serviceId;
+    if (!id) return;
+    setSelectedService(id);
+    setActiveTab(managementTab(id));
   };
-  
-  const handleResetServer = (serviceType: string, serviceId: string) => {
-    if (!serviceType || !serviceId) return;
-    
-    toast({
-      title: `ریست سرور`,
-      description: `در حال ریست سرور ${serviceType} با شناسه ${serviceId}. لطفاً صبر کنید...`,
-    });
-    
-    // Simulate reset process
-    setTimeout(() => {
-      const resetToast = {
-        title: "ریست سرور انجام شد",
-        description: `سرور ${serviceId} با موفقیت ریست شد.`,
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      };
-      toast(resetToast);
-    }, 3000);
+  const handleResetServer = (_type: string, _id: string) => {
+    toast({ title: 'عملیات متصل نیست', description: 'هیچ عملیات دستگاهی اجرا نشد.' });
   };
-  
-  const handleRenewService = (serviceType: string, serviceId: string) => {
-    if (!serviceType || !serviceId) return;
-    
-    toast({
-      title: `تمدید سرویس`,
-      description: `درخواست تمدید سرویس ${serviceType} با شناسه ${serviceId} ثبت شد.`,
-    });
-    
-    // Simulate renewal process
-    setTimeout(() => {
-      const renewalToast = {
-        title: "انتقال به صفحه پرداخت",
-        description: "در حال انتقال به صفحه پرداخت برای تمدید سرویس...",
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "پرداخت موفق" })}>
-            ادامه
-          </Button>
-        )
-      };
-      toast(renewalToast);
-    }, 1000);
+  const handleRenewService = (type: string, id: string) => {
+    handleManageService(id, type);
+    toast({ title: 'تمدید متصل نیست', description: 'هیچ درخواست یا پرداختی ثبت نشد.' });
   };
-
-  const handleViewInvoice = (invoiceId: string, isPaid: boolean = false) => {
-    toast({
-      title: isPaid ? "مشاهده فاکتور پرداخت شده" : "مشاهده فاکتور پرداخت نشده",
-      description: `در حال بارگیری فاکتور شماره ${invoiceId}...`,
-    });
-    
-    setTimeout(() => {
-      setActiveTab('invoices');
-      // Additional logic for viewing specific invoice could be added here
-    }, 500);
+  const openInvoice = (id: string, mode: 'view' | 'pay') => {
+    setSelectedService(id); setActiveTab(mode === 'pay' ? 'invoice-payment' : 'invoice-detail');
   };
-  
-  const handleDownloadInvoice = (invoiceId: string) => {
-    toast({
-      title: "دانلود فاکتور",
-      description: "فاکتور در حال دانلود است...",
-    });
-    
-    // Simulate download process
-    setTimeout(() => {
-      toast({
-        title: "دانلود انجام شد",
-        description: "فاکتور با موفقیت دانلود شد.",
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      });
-    }, 1500);
-  };
-
-  const handlePayInvoice = (invoiceId: string) => {
-    toast({
-      title: "پرداخت فاکتور",
-      description: "در حال انتقال به درگاه پرداخت...",
-    });
-    
-    setTimeout(() => {
-      toast({
-        title: "انتقال به درگاه پرداخت",
-        description: "در حال اتصال به درگاه پرداخت، لطفاً صبر کنید...",
-        action: (
-          <Button variant="outline" onClick={() => toast({ 
-            title: "پرداخت موفق", 
-            description: "پرداخت با موفقیت انجام شد."
-          })}>
-            تکمیل پرداخت
-          </Button>
-        )
-      });
-    }, 1000);
-  };
+  const handleViewInvoice = (id: string, _paid = false) => openInvoice(id, 'view');
+  const handleDownloadInvoice = (id: string) => openInvoice(id, 'view');
+  const handlePayInvoice = (id: string) => openInvoice(id, 'pay');
 
   return {
     navigateToServiceOrderPage,
