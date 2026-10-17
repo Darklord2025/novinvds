@@ -10,6 +10,8 @@ import {
   Search, Settings, ArrowRight, Server, HardDrive, Clock, Cloud, Database, Globe, RefreshCw, CreditCard, MapPin,
 } from 'lucide-react';
 import { userServices, ServiceKind } from '@/data/userServices';
+import { localize } from '@/lib/billing';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toPersianDigits } from '@/lib/numberUtils';
 
 interface Props {
@@ -46,6 +48,8 @@ const statusMeta = (s: string) => {
 const WHMCSServicesPage: React.FC<Props> = ({
   onManageService, onRenewService, onBack, initialKind = 'all',
 }) => {
+  const { language } = useLanguage(); const fa = language === 'fa';
+  const number = (value: string | number) => localize(value, fa);
   const [kind, setKind] = useState<ServiceKind | 'all'>(initialKind);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -76,7 +80,7 @@ const WHMCSServicesPage: React.FC<Props> = ({
           )}
           <div>
             <h1 className="text-xl md:text-2xl font-bold">سرویس‌های من</h1>
-            <p className="text-xs text-muted-foreground">مجموع {toPersianDigits(userServices.length)} سرویس ثبت‌شده</p>
+            <p className="text-xs text-muted-foreground">{fa ? 'کاتالوگ نمونه / تأییدنشده — درصدها مصرف نمونه‌اند، نه ظرفیت منابع.' : 'Demo / unverified catalog — percentages are sample usage, not capacities.'}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-1 md:flex-none md:min-w-[400px]">
@@ -105,7 +109,7 @@ const WHMCSServicesPage: React.FC<Props> = ({
               <TabsTrigger key={k} value={k} className="shrink-0 gap-1.5 text-xs md:text-sm">
                 <Icon className="w-3.5 h-3.5" />
                 {M.label}
-                <span className="text-[10px] opacity-70 mr-1">({toPersianDigits(counts[k])})</span>
+                <span className="text-[10px] opacity-70 mr-1">({number(counts[k])})</span>
               </TabsTrigger>
             );
           })}
@@ -128,9 +132,9 @@ const WHMCSServicesPage: React.FC<Props> = ({
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             {(() => { const I = KIND_META[s.kind].icon; return <I className="w-4 h-4 text-primary shrink-0" />; })()}
-                            <CardTitle className="text-sm md:text-base truncate">{s.name}</CardTitle>
+                            <CardTitle className="text-sm md:text-base truncate">{number(s.name)}</CardTitle>
                           </div>
-                          <p className="text-[11px] text-muted-foreground mt-0.5">{s.productName}</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">{number(s.productName)}</p>
                         </div>
                         <Badge className={`text-[10px] border ${st.cls}`} variant="outline">{st.label}</Badge>
                       </div>
@@ -138,12 +142,12 @@ const WHMCSServicesPage: React.FC<Props> = ({
                     <CardContent className="space-y-2.5">
                       {(s.ip || s.ips) && (
                         <div className="text-xs text-muted-foreground flex flex-col gap-0.5">
-                          {s.ip && <span className="font-mono" dir="ltr">{s.ip}</span>}
-                          {s.ips && s.ips.map((ip) => <span key={ip} className="font-mono" dir="ltr">{ip}</span>)}
+                          {s.ip && <span className="font-mono" dir="ltr">{number(s.ip)}</span>}
+                          {s.ips && s.ips.map((ip) => <span key={ip} className="font-mono" dir="ltr">{number(ip)}</span>)}
                         </div>
                       )}
                       <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-                        {s.os && <span>سیستم: {s.os}</span>}
+                        {s.os && <span>سیستم: {number(s.os)}</span>}
                         {s.panel && <span>پنل: {s.panel}</span>}
                         {s.location && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{s.location}</span>}
                       </div>
@@ -152,25 +156,25 @@ const WHMCSServicesPage: React.FC<Props> = ({
                         <div className="grid grid-cols-2 gap-2 pt-1">
                           {s.cpu != null && (
                             <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>CPU</span><span>{toPersianDigits(s.cpu)}٪</span></div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>CPU</span><span>{number(s.cpu)}٪</span></div>
                               <Progress value={s.cpu} className="h-1" />
                             </div>
                           )}
                           {s.ram != null && (
                             <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>RAM</span><span>{toPersianDigits(s.ram)}٪</span></div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>RAM</span><span>{number(s.ram)}٪</span></div>
                               <Progress value={s.ram} className="h-1" />
                             </div>
                           )}
                           {s.disk != null && (
                             <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>دیسک</span><span>{toPersianDigits(s.disk)}٪</span></div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>دیسک</span><span>{number(s.disk)}٪</span></div>
                               <Progress value={s.disk} className="h-1" />
                             </div>
                           )}
                           {s.bandwidth != null && (
                             <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>ترافیک</span><span>{toPersianDigits(s.bandwidth)}٪</span></div>
+                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>ترافیک</span><span>{number(s.bandwidth)}٪</span></div>
                               <Progress value={s.bandwidth} className="h-1" />
                             </div>
                           )}
@@ -179,12 +183,12 @@ const WHMCSServicesPage: React.FC<Props> = ({
 
                       <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t">
                         <span>پلن: {s.plan}</span>
-                        <span>انقضا: {toPersianDigits(s.expiry)}</span>
+                        <span>انقضا: {number(s.expiry)}</span>
                       </div>
                       {s.hourlyCost && <div className="text-[11px] text-amber-600 font-medium">{s.hourlyCost}</div>}
 
                       <div className="flex gap-2 pt-1">
-                        <Button size="sm" className="flex-1 text-xs" onClick={() => onManageService(s.id, s.kind === 'hosting' ? 'hosting' : s.kind === 'dedicated' ? 'dedicated' : s.kind === 'cloud' ? 'cloud' : s.kind === 'hourly' ? 'hourly' : 'vps')}>
+                        <Button size="sm" className="flex-1 text-xs" onClick={() => onManageService(s.id, s.kind)}>
                           <Settings className="w-3.5 h-3.5 ml-1" /> مدیریت
                         </Button>
                         <Button size="sm" variant="outline" className="text-xs" onClick={() => onRenewService(s.id, s.kind)}>

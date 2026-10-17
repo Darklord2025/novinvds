@@ -51,7 +51,7 @@ const UserPanelLayout: React.FC = () => {
   
   return (
     <TooltipProvider>
-      <div className="flex h-screen bg-background w-full">
+      <div className="flex min-h-screen bg-background w-full items-start">
         {/* Desktop Sidebar */}
         <Sidebar 
           items={sidebarItems} 
@@ -71,15 +71,16 @@ const UserPanelLayout: React.FC = () => {
           onClose={() => setIsMobileSidebarOpen(false)}
         />
         
-        <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+        <div className="flex flex-col flex-1 min-w-0">
           <Header 
             activeTab={activeTab}
             onNavigate={handleSidebarItemClick}
             onToggleMobileSidebar={toggleMobileSidebar}
           />
           
-          <main className="flex-1 overflow-auto bg-background p-3 md:p-4 lg:p-6">
+          <main className="bg-background p-3 md:p-4 lg:p-6 min-w-0">
             <div className="container mx-auto max-w-full px-2 md:px-0">
+              <React.Suspense fallback={<p role="status">در حال بارگذاری…</p>}>
               <PanelContent
                 activeTab={activeTab}
                 selectedService={selectedService}
@@ -89,6 +90,7 @@ const UserPanelLayout: React.FC = () => {
                 isNewTicket={isNewTicket}
                 navigationHandlers={navigationHandlers}
               />
+              </React.Suspense>
             </div>
           </main>
           

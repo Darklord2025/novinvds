@@ -12,6 +12,9 @@ export interface UnifiedService {
   groupName: string;
   status: 'active' | 'suspended' | 'expired' | 'expiring' | 'pending';
   ip?: string;
+  ipLocations?: Record<string, string>;
+  capacities?: { cpuModel?: string; cores?: number; ramGB?: number; diskGB?: number; networkMbps?: number };
+  // cpu/ram/disk/bandwidth are sample usage percentages, never capacities.
   ips?: string[];
   os?: string;
   panel?: string;
@@ -49,39 +52,38 @@ export interface UnifiedDomain {
 export const userServices: UnifiedService[] = [
   {
     id: 'VPS-1234', kind: 'vps', name: 'سرور لینوکس ۱', productName: 'VPS Linux Professional', groupName: 'سرورهای مجازی',
-    status: 'active', ip: '185.123.45.67', os: 'Ubuntu 22.04', location: 'دیتاسنتر آسیاتک',
+    status: 'active', ip: '192.0.2.10', os: 'Ubuntu 22.04', location: 'دیتاسنتر آسیاتک',
     plan: 'پلن حرفه‌ای', cpu: 45, ram: 62, disk: 35, bandwidth: 20,
     registrationDate: '1402/03/15', expiry: '1403/06/15', amount: 2500000, currency: 'IRR', billingCycle: 'Monthly',
   },
   {
     id: 'VPS-5678', kind: 'vps', name: 'سرور ویندوز ۱', productName: 'VPS Windows VIP', groupName: 'سرورهای مجازی',
-    status: 'active', ip: '185.123.45.68', os: 'Windows Server 2022', location: 'Frankfurt, Germany',
+    status: 'active', ip: '192.0.2.11', os: 'Windows Server 2022', location: 'Frankfurt, Germany',
     plan: 'پلن ویژه', cpu: 78, ram: 85, disk: 60, bandwidth: 45,
     registrationDate: '1402/05/20', expiry: '1403/08/20', amount: 3800000, currency: 'IRR', billingCycle: 'Monthly',
   },
   {
     id: 'DED-9012', kind: 'dedicated', name: 'سرور اختصاصی ایران', productName: 'E3-1270v6 Iran', groupName: 'سرورهای اختصاصی',
-    status: 'active', ip: '185.220.10.5', os: 'CentOS 8', location: 'دیتاسنتر پارس‌آنلاین',
+    status: 'active', ip: '198.51.100.10', os: 'CentOS 8', location: 'دیتاسنتر پارس‌آنلاین',
     plan: 'E3-1270v6', cpu: 30, ram: 40, disk: 25, bandwidth: 15,
     registrationDate: '1402/06/01', expiry: '1403/09/01', amount: 12500000, currency: 'IRR', billingCycle: 'Monthly',
   },
   {
     id: 'HRL-3456', kind: 'hourly', name: 'سرور ساعتی ۱', productName: 'VPS Hourly Advanced', groupName: 'سرورهای ساعتی',
-    status: 'active', ip: '185.150.20.10', os: 'Debian 12', location: 'Amsterdam, NL',
+    status: 'active', ip: '198.51.100.20', os: 'Debian 12', location: 'Amsterdam, NL',
     plan: 'ساعتی پیشرفته', cpu: 55, ram: 70, disk: 40, bandwidth: 30,
     registrationDate: '1402/06/15', expiry: 'فعال', amount: 2500, currency: 'IRR', billingCycle: 'Hourly',
-    hourlyCost: '۲,۵۰۰ تومان/ساعت',
+    hourlyCost: '۲۵۰ تومان/ساعت',
   },
   {
     id: 'CLD-2211', kind: 'cloud', name: 'سرور ابری تجاری', productName: 'Cloud Business', groupName: 'سرورهای ابری',
-    status: 'active', ip: '185.99.12.44', os: 'Ubuntu 24.04', location: 'دیتاسنتر افرانت',
+    status: 'active', ip: '192.0.2.30', os: 'Ubuntu 24.04', location: 'دیتاسنتر افرانت',
     plan: 'ابری تجاری', cpu: 22, ram: 38, disk: 18, bandwidth: 12,
     registrationDate: '1402/04/10', expiry: '1403/07/10', amount: 1800000, currency: 'IRR', billingCycle: 'Monthly',
   },
   {
     id: 'MUL-7745', kind: 'multilocation', name: 'سرور مولتی‌لوکیشن', productName: 'Multi-Location VPS', groupName: 'سرورهای مولتی‌لوکیشن',
-    status: 'active', ips: ['185.150.20.10', '51.89.12.44', '203.45.67.89'], os: 'Ubuntu 22.04',
-    location: 'چند لوکیشن',
+    status: 'active', ips: ['198.51.100.20', '203.0.113.20', '2001:db8::20'], os: 'Ubuntu 22.04',
     plan: 'مولتی حرفه‌ای', cpu: 40, ram: 55, disk: 30, bandwidth: 25,
     registrationDate: '1402/05/01', expiry: '1403/08/01', amount: 4500000, currency: 'IRR', billingCycle: 'Monthly',
   },
