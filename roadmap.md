@@ -1,8 +1,7 @@
-# Panel corrections
-- [ ] Localize and restyle pagination.
-- [ ] Redesign invoice document and verify PDF/print.
-- [ ] Remove fee-free claims and standalone service-information navigation.
-- [ ] Remove firewall/DNS service controls and integrate safe service information.
-- [ ] Separate dedicated compatible hardware requests from VPS scaling; complete multi-location IPs.
-- [ ] Fix cart service navigation and dashboard empty space.
-- [ ] Verify changed flows and hardware rules.
+# Completion review
+- [ ] Integrate shared invoice/cart/payment preview and safe PDF/print.
+- [ ] Consolidate selected catalog service panels; remove unsafe controls/data.
+- [ ] Add dedicated reference hardware selection with dependent validation.
+- [ ] Complete multi-IP identity and routing without inferred locations/capacities.
+- [ ] Replace dashboard blank/stretch layout with catalog summary and wired links.
+- [ ] Split route/panel/export loading; run isolated and browser validation; document limitations.
