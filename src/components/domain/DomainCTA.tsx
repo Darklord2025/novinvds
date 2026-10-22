@@ -1,8 +1,9 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 
 const DomainCTA: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-6">امروز دامنه مورد نظر خود را ثبت کنید</h2>
@@ -19,7 +20,7 @@ const DomainCTA: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainCTA;

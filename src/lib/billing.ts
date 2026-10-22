@@ -1,9 +1,12 @@
+import {localizedDigits} from './localized-number';
 export type InvoiceStatus = 'Paid' | 'Unpaid' | 'Overdue' | 'Cancelled';
 export type Currency = 'IRR' | 'TOMAN';
 export interface InvoiceData {
   id: string; issueDate: string; dueDate: string; status: InvoiceStatus;
   items: { name: string; description?: string; quantity: number; price: number; period?: string }[];
   currency: Currency; tax?: number; discount?: number; customer?: string; proforma?: boolean; demo?: boolean;
+  buyer?: {kind:'personal'|'company';name:string;company:string;nationalId:string;economicCode:string;registrationNumber:string;postalCode:string;address:string};
+  officialNumber?: string;
 }
 export function invoiceTotals(invoice: InvoiceData) {
   const subtotal = invoice.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -18,10 +21,7 @@ export const canPayInvoice = (status: InvoiceStatus) => status === 'Unpaid' || s
 export const statusLabels: Record<InvoiceStatus, [string, string]> = {
   Paid: ['پرداخت شده', 'Paid'], Unpaid: ['پرداخت نشده', 'Unpaid'], Overdue: ['معوقه', 'Overdue'], Cancelled: ['لغو شده', 'Cancelled'],
 };
-export function localize(value: string | number, fa: boolean) {
-  const latin = String(value).replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
-  return fa ? latin.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]) : latin;
-}
+export const localize=localizedDigits;
 export function formatMoney(amount: number, currency: Currency, fa: boolean) {
   return `${localize(inToman(amount, currency).toLocaleString('en-US', { maximumFractionDigits: 1 }), fa)}\u00a0${fa ? 'تومان' : 'Toman'}`;
 }

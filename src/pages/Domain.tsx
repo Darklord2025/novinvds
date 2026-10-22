@@ -1,3 +1,5 @@
+import PublicDomainOrder from '@/components/domain/PublicDomainOrder';
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
@@ -14,28 +16,7 @@ const Domain = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  const [searchResult, setSearchResult] = useState<null | { available: boolean, domain: string, price: string }>(null);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearch = (domain: string, extension: string) => {
-    if (!domain) return;
-    
-    setIsSearching(true);
-    setSearchResult(null);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const available = Math.random() > 0.3; // 70% chance domain is available
-      setSearchResult({
-        available,
-        domain: domain + extension,
-        price: '390,000'
-      });
-      setIsSearching(false);
-    }, 1500);
-  };
-
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -48,8 +29,7 @@ const Domain = () => {
               بیش از 50 پسوند مختلف با قیمت‌های مناسب و تحویل آنی
             </p>
             
-            <DomainSearchForm onSearch={handleSearch} isSearching={isSearching} />
-            <DomainSearchResult searchResult={searchResult} />
+            <PublicDomainOrder/>
           </div>
         </div>
       </section>
@@ -79,7 +59,7 @@ const Domain = () => {
       
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Domain;

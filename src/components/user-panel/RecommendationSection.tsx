@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import React from 'react';
 import { Star, ShoppingCart, TrendingUp, Heart, Eye, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +126,7 @@ const RecommendationSection = () => {
     </Card>
   );
 
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-8">
       {/* Header */}
       <div>
@@ -233,7 +234,7 @@ const RecommendationSection = () => {
         </CardContent>
       </Card>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default RecommendationSection;

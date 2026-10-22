@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Check, X, Globe, Server, Wifi, Cloud, Gauge, LucideIcon } from 'lucide-react';
@@ -107,7 +108,7 @@ const datacenters: Datacenter[] = [
 ];
 
 const DatacenterComparison: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {datacenters.map((dc) => (
@@ -187,11 +188,11 @@ const DatacenterComparison: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 const Shield: React.FC<{ size?: number; className?: string }> = ({ size = 24, className = "" }) => {
-  return (
+  return <LegacyLocale>{(
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
@@ -206,11 +207,11 @@ const Shield: React.FC<{ size?: number; className?: string }> = ({ size = 24, cl
     >
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
     </svg>
-  );
+  )}</LegacyLocale>;
 };
 
 const Headset: React.FC<{ size?: number; className?: string }> = ({ size = 24, className = "" }) => {
-  return (
+  return <LegacyLocale>{(
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
@@ -229,7 +230,7 @@ const Headset: React.FC<{ size?: number; className?: string }> = ({ size = 24, c
       <line x1="10" y1="22" x2="14" y2="22"></line>
       <line x1="12" y1="18" x2="12" y2="22"></line>
     </svg>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DatacenterComparison;

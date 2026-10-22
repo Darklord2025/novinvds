@@ -1,3 +1,6 @@
+import LegacyLocale from '@/components/LegacyLocale';
+import BrandLogo from '@/components/BrandLogo';
+import LanguageControl from '@/components/LanguageControl';
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -30,7 +33,7 @@ const Navbar = () => {
     };
   }, []);
 
-  return (
+  return <LegacyLocale>{(
     <nav 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
@@ -39,14 +42,9 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">N</span>
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">NovinVDS</span>
-        </Link>
+        <Link to="/" className="flex items-center gap-3"><BrandLogo/></Link>
 
-        {/* Desktop Navigation */}
+        <LanguageControl/>{/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8" dir="rtl">
           <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
             صفحه اصلی
@@ -91,10 +89,7 @@ const Navbar = () => {
           </Link>
           
           <div className="flex items-center gap-4 mr-4">
-            <a href="tel:02112345678" className="flex items-center text-primary hover:text-primary/80 transition-colors">
-              <Phone size={18} className="ml-2" />
-              <span className="font-medium">021-12345678</span>
-            </a>
+
             
             <Link to="/auth" className="px-6 py-2 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:from-primary/90 hover:to-blue-600/90 transition-all duration-300 shadow-md hover:shadow-lg">
               ورود / ثبت نام
@@ -171,10 +166,7 @@ const Navbar = () => {
             </Link>
             
             <div className="flex justify-between items-center py-3 px-2 border-t mt-4 pt-4">
-              <a href="tel:02112345678" className="flex items-center text-primary">
-                <Phone size={18} className="ml-2" />
-                <span className="font-medium">021-12345678</span>
-              </a>
+
               
             </div>
             
@@ -189,7 +181,7 @@ const Navbar = () => {
         </div>
       )}
     </nav>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Navbar;

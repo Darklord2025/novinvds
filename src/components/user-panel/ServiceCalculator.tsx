@@ -1,3 +1,6 @@
+import BackButton from "./BackButton";
+import DedicatedHardwareReview from './DedicatedHardwareReview';
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -189,7 +192,8 @@ const ServiceCalculator = ({ operatingSystems }: ServiceCalculatorProps) => {
     return new Intl.NumberFormat('fa-IR').format(num);
   };
   
-  return (
+  if(serviceType==='dedicated')return <LegacyLocale><div className="space-y-5"><div className="flex flex-wrap gap-2"><BackButton onClick={()=>setServiceType('vps')}>بازگشت</BackButton><h1 className="text-xl font-bold">بررسی ارتقای سخت‌افزار اختصاصی</h1></div><DedicatedHardwareReview serviceId="DEDICATED-QUOTE"/></div></LegacyLocale>;
+  return <LegacyLocale>{(
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">محاسبه هزینه سرویس</h1>
       
@@ -411,7 +415,7 @@ const ServiceCalculator = ({ operatingSystems }: ServiceCalculatorProps) => {
         </div>
       </Tabs>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ServiceCalculator;

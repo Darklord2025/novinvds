@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type Language = 'fa' | 'en';
 
@@ -130,7 +130,8 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('fa');
+  const [language, setLanguage] = useState<Language>(()=>{try{return localStorage.getItem('novin.language')==='en'?'en':'fa';}catch{return 'fa';}});
+  useEffect(()=>{document.documentElement.lang=language;document.documentElement.dir=language==='fa'?'rtl':'ltr';try{localStorage.setItem('novin.language',language);}catch{}},[language]);
 
   const t = (key: string): string => {
     return translations[language][key] || key;

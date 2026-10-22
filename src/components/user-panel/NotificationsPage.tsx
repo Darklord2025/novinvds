@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -172,16 +173,16 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
   const getNotificationIcon = (type: string, read: boolean) => {
     switch (type) {
       case 'alert':
-        return <AlertCircle className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-red-500'}`} />;
+        return <LegacyLocale>{<AlertCircle className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-red-500'}`} />}</LegacyLocale>;
       case 'success':
-        return <Check className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-green-500'}`} />;
+        return <LegacyLocale>{<Check className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-green-500'}`} />}</LegacyLocale>;
       case 'info':
       default:
-        return <Info className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-blue-500'}`} />;
+        return <LegacyLocale>{<Info className={`h-5 w-5 ${read ? 'text-gray-400' : 'text-blue-500'}`} />}</LegacyLocale>;
     }
   };
 
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -353,7 +354,7 @@ const NotificationsPage: React.FC<NotificationsPageProps> = ({ onViewNotificatio
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NotificationsPage;

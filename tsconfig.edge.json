@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "lib": ["ES2022", "DOM"],
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "https://esm.sh/@supabase/supabase-js@2.75.0": [
+        "node_modules/@supabase/supabase-js"
+      ]
+    }
+  },
+  "files": [
+    "scripts/edge-runtime.d.ts",
+    "supabase/functions/_shared/panel.ts",
+    "supabase/functions/account-security/index.ts",
+    "supabase/functions/panel-action/index.ts"
+  ]
+}

@@ -1,210 +1,231 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
+import BackButton from "./BackButton";
+import { useState } from "react";
+import { useServiceCatalog } from "@/contexts/PanelDataContext";
+import type { ServiceKind } from "@/data/userServices";
 import {
-  Search, Settings, ArrowRight, Server, HardDrive, Clock, Cloud, Database, Globe, RefreshCw, CreditCard, MapPin,
-} from 'lucide-react';
-import { userServices, ServiceKind } from '@/data/userServices';
-import { localize } from '@/lib/billing';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { toPersianDigits } from '@/lib/numberUtils';
-
+  Server,
+  ShieldCheck,
+  Calendar,
+  AlertTriangle,
+  Settings,
+  RefreshCw,
+  Globe,
+  Search,
+} from "lucide-react";
+import { PanelHeading, ColorStat, usePanelCopy } from "./PanelPrimitives";
+import { cycleLabel } from "@/lib/service-labels";
+import { categoryLabel } from "@/lib/panel-model";
+import { serviceIPs } from "@/lib/serviceIdentity";
+import { formatMoney } from "@/lib/billing";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 interface Props {
-  onManageService: (serviceId: string, serviceType?: string) => void;
-  onRenewService: (serviceId: string, serviceType?: string) => void;
-  onSuspendService?: (serviceId: string) => void;
-  onUnsuspendService?: (serviceId: string) => void;
-  onTerminateService?: (serviceId: string) => void;
-  onViewInvoice?: (invoiceId: string) => void;
+  onManageService: (id: string, kind?: string) => void;
+  onRenewService: (id: string, kind?: string) => void;
+  onSuspendService?: (id: string) => void;
+  onUnsuspendService?: (id: string) => void;
+  onTerminateService?: (id: string) => void;
+  onViewInvoice?: (id: string) => void;
   onBack?: () => void;
-  initialKind?: ServiceKind | 'all';
+  initialKind?: ServiceKind | "all";
 }
-
-const KIND_META: Record<ServiceKind | 'all', { label: string; icon: any }> = {
-  all: { label: 'همه', icon: Server },
-  vps: { label: 'سرور مجازی', icon: Server },
-  dedicated: { label: 'اختصاصی', icon: HardDrive },
-  hourly: { label: 'ساعتی', icon: Clock },
-  cloud: { label: 'ابری', icon: Cloud },
-  multilocation: { label: 'مولتی‌لوکیشن', icon: Globe },
-  hosting: { label: 'هاست', icon: Database },
-};
-
-const statusMeta = (s: string) => {
-  switch (s) {
-    case 'active': return { label: 'فعال', cls: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30' };
-    case 'expiring': return { label: 'در حال انقضا', cls: 'bg-amber-500/15 text-amber-600 border-amber-500/30' };
-    case 'suspended': return { label: 'تعلیق', cls: 'bg-red-500/15 text-red-600 border-red-500/30' };
-    case 'expired': return { label: 'منقضی', cls: 'bg-red-500/15 text-red-600 border-red-500/30' };
-    default: return { label: s, cls: 'bg-muted text-muted-foreground border-border' };
-  }
-};
-
-const WHMCSServicesPage: React.FC<Props> = ({
-  onManageService, onRenewService, onBack, initialKind = 'all',
-}) => {
-  const { language } = useLanguage(); const fa = language === 'fa';
-  const number = (value: string | number) => localize(value, fa);
-  const [kind, setKind] = useState<ServiceKind | 'all'>(initialKind);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-
-  const services = userServices.filter((s) => {
-    if (kind !== 'all' && s.kind !== kind) return false;
-    if (statusFilter !== 'all' && s.status !== statusFilter) return false;
-    const q = search.toLowerCase();
-    if (q && !s.name.toLowerCase().includes(q) && !s.id.toLowerCase().includes(q) && !s.productName.toLowerCase().includes(q)) return false;
-    return true;
-  });
-
-  const kinds: (ServiceKind | 'all')[] = ['all', 'vps', 'dedicated', 'hourly', 'cloud', 'multilocation', 'hosting'];
-
-  const counts = kinds.reduce<Record<string, number>>((acc, k) => {
-    acc[k] = k === 'all' ? userServices.length : userServices.filter((s) => s.kind === k).length;
-    return acc;
-  }, {});
-
+export default function WHMCSServicesPage({
+  onManageService,
+  onRenewService,
+  onBack,
+  initialKind = "all",
+}: Props) {
+  const { userServices, preview } = useServiceCatalog(),
+    { fa, s, n } = usePanelCopy();
+  const [kind, setKind] = useState(initialKind),
+    [status, setStatus] = useState("all"),
+    [query, setQuery] = useState("");
+  const states: Record<string, string> = {
+    active: s("فعال", "Active"),
+    expiring: s("در حال انقضا", "Expiring"),
+    expired: s("منقضی", "Expired"),
+    suspended: s("تعلیق‌شده", "Suspended"),
+    pending: s("در انتظار", "Pending"),
+  };
+  const filtered = userServices.filter(
+    (v) =>
+      (kind === "all" || kind === v.kind) &&
+      (status === "all" || status === v.status) &&
+      (v.id + " " + v.name + " " + v.productName)
+        .toLowerCase()
+        .includes(query.toLowerCase()),
+  );
   return (
-    <div className="space-y-4" dir="rtl">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div className="flex items-center gap-3">
-          {onBack && (
-            <Button variant="outline" size="sm" onClick={onBack}>
-              <ArrowRight className="w-4 h-4 ml-1" /> بازگشت
-            </Button>
+    <div className="space-y-6" dir={fa ? "rtl" : "ltr"}>
+      <PanelHeading
+        title={s("مدیریت سرویس‌ها", "Service management")}
+        subtitle={s(
+          "وضعیت، صورتحساب و تمدید همه سرویس‌ها",
+          "Status, billing and renewal for every service",
+        )}
+        action={
+          onBack && (
+            <BackButton variant="outline" onClick={onBack}>
+              {s("بازگشت", "Back")}
+            </BackButton>
+          )
+        }
+      />
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <ColorStat
+          title={s("همه سرویس‌ها", "All services")}
+          value={n(userServices.length)}
+          icon={Server}
+        />
+        <ColorStat
+          title={s("سرویس فعال", "Active services")}
+          value={n(userServices.filter((v) => v.status === "active").length)}
+          icon={ShieldCheck}
+          color="green"
+        />
+        <ColorStat
+          title={s("در حال انقضا", "Expiring")}
+          value={n(userServices.filter((v) => v.status === "expiring").length)}
+          icon={Calendar}
+          color="amber"
+        />
+        <ColorStat
+          title={s("نیازمند بررسی", "Needs attention")}
+          value={n(
+            userServices.filter((v) =>
+              ["expired", "suspended"].includes(v.status),
+            ).length,
           )}
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold">سرویس‌های من</h1>
-            <p className="text-xs text-muted-foreground">{fa ? 'کاتالوگ نمونه / تأییدنشده — درصدها مصرف نمونه‌اند، نه ظرفیت منابع.' : 'Demo / unverified catalog — percentages are sample usage, not capacities.'}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-1 md:flex-none md:min-w-[400px]">
-          <div className="relative flex-1">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="جستجو در سرویس‌ها…" value={search} onChange={(e) => setSearch(e.target.value)} className="pr-10" />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32"><SelectValue placeholder="وضعیت" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">همه وضعیت‌ها</SelectItem>
-              <SelectItem value="active">فعال</SelectItem>
-              <SelectItem value="expiring">در حال انقضا</SelectItem>
-              <SelectItem value="suspended">تعلیق</SelectItem>
-              <SelectItem value="expired">منقضی</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          icon={AlertTriangle}
+          color="rose"
+        />
       </div>
-
-      <Tabs value={kind} onValueChange={(v) => setKind(v as any)} dir="rtl">
-        <TabsList className="w-full flex-nowrap overflow-x-auto justify-start h-auto p-1 scrollbar-hide">
-          {kinds.map((k) => {
-            const M = KIND_META[k]; const Icon = M.icon;
-            return (
-              <TabsTrigger key={k} value={k} className="shrink-0 gap-1.5 text-xs md:text-sm">
-                <Icon className="w-3.5 h-3.5" />
-                {M.label}
-                <span className="text-[10px] opacity-70 mr-1">({number(counts[k])})</span>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
-
-        <TabsContent value={kind} className="mt-4">
-          {services.length === 0 ? (
-            <div className="text-center py-16 text-muted-foreground">
-              <Server className="w-10 h-10 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">سرویسی یافت نشد</p>
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            "all",
+            "vps",
+            "dedicated",
+            "hosting",
+            "hourly",
+            "cloud",
+            "multilocation",
+            "license",
+            "network",
+            "addon",
+            "support",
+          ] as const
+        ).map((k) => (
+          <Button
+            key={k}
+            variant={kind === k ? "default" : "outline"}
+            size="sm"
+            className="rounded-full"
+            onClick={() => setKind(k)}
+          >
+            {k === "all" ? s("همه", "All") : categoryLabel(k, fa)}
+          </Button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <Input
+          className="flex-1 min-w-40"
+          placeholder={s("جستجوی سرویس…", "Search services…")}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <select
+          className="rounded-xl border p-3 bg-card"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label={s("وضعیت سرویس", "Service status")}
+        >
+          <option value="all">{s("همه وضعیت‌ها", "All statuses")}</option>
+          {Object.entries(states).map(([id, label]) => (
+            <option key={id} value={id}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {filtered.map((v) => (
+          <article
+            key={v.id}
+            className={
+              "rounded-2xl border border-t-4 bg-card p-5 space-y-4 " +
+              (v.kind === "dedicated"
+                ? "border-t-amber-500"
+                : v.kind === "hosting"
+                  ? "border-t-violet-500"
+                  : "border-t-blue-500")
+            }
+          >
+            <div className="flex gap-3 items-start">
+              <span className="rounded-xl bg-blue-500/10 text-blue-500 p-3">
+                <Server size={20} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-bold text-sm break-words">{n(v.name)}</h2>
+                <p className="text-xs text-muted-foreground mt-2" dir="ltr">
+                  {n(v.id)}
+                </p>
+              </div>
+              <span className="bg-emerald-500/10 text-emerald-600 rounded-full p-1.5 text-[10px]">
+                {states[v.status]}
+              </span>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {services.map((s) => {
-                const st = statusMeta(s.status);
-                return (
-                  <Card key={s.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            {(() => { const I = KIND_META[s.kind].icon; return <I className="w-4 h-4 text-primary shrink-0" />; })()}
-                            <CardTitle className="text-sm md:text-base truncate">{number(s.name)}</CardTitle>
-                          </div>
-                          <p className="text-[11px] text-muted-foreground mt-0.5">{number(s.productName)}</p>
-                        </div>
-                        <Badge className={`text-[10px] border ${st.cls}`} variant="outline">{st.label}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-2.5">
-                      {(s.ip || s.ips) && (
-                        <div className="text-xs text-muted-foreground flex flex-col gap-0.5">
-                          {s.ip && <span className="font-mono" dir="ltr">{number(s.ip)}</span>}
-                          {s.ips && s.ips.map((ip) => <span key={ip} className="font-mono" dir="ltr">{number(ip)}</span>)}
-                        </div>
-                      )}
-                      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-                        {s.os && <span>سیستم: {number(s.os)}</span>}
-                        {s.panel && <span>پنل: {s.panel}</span>}
-                        {s.location && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{s.location}</span>}
-                      </div>
-
-                      {(s.cpu != null || s.disk != null) && (
-                        <div className="grid grid-cols-2 gap-2 pt-1">
-                          {s.cpu != null && (
-                            <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>CPU</span><span>{number(s.cpu)}٪</span></div>
-                              <Progress value={s.cpu} className="h-1" />
-                            </div>
-                          )}
-                          {s.ram != null && (
-                            <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>RAM</span><span>{number(s.ram)}٪</span></div>
-                              <Progress value={s.ram} className="h-1" />
-                            </div>
-                          )}
-                          {s.disk != null && (
-                            <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>دیسک</span><span>{number(s.disk)}٪</span></div>
-                              <Progress value={s.disk} className="h-1" />
-                            </div>
-                          )}
-                          {s.bandwidth != null && (
-                            <div>
-                              <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5"><span>ترافیک</span><span>{number(s.bandwidth)}٪</span></div>
-                              <Progress value={s.bandwidth} className="h-1" />
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t">
-                        <span>پلن: {s.plan}</span>
-                        <span>انقضا: {number(s.expiry)}</span>
-                      </div>
-                      {s.hourlyCost && <div className="text-[11px] text-amber-600 font-medium">{s.hourlyCost}</div>}
-
-                      <div className="flex gap-2 pt-1">
-                        <Button size="sm" className="flex-1 text-xs" onClick={() => onManageService(s.id, s.kind)}>
-                          <Settings className="w-3.5 h-3.5 ml-1" /> مدیریت
-                        </Button>
-                        <Button size="sm" variant="outline" className="text-xs" onClick={() => onRenewService(s.id, s.kind)}>
-                          <CreditCard className="w-3.5 h-3.5 ml-1" /> تمدید
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <p className="text-xs text-muted-foreground">
+              {n(v.productName)} · {categoryLabel(v.kind, fa)}
+            </p>
+            <div className="text-xs bg-muted/40 p-3 rounded-xl space-y-2">
+              {serviceIPs(v).map((ip) => (
+                <p key={n(ip.address)} dir="ltr" className="break-all">
+                  {n(ip.address)}
+                </p>
+              ))}
+              <p>
+                {s("سررسید", "Due date")}: {n(v.expiry)}
+              </p>
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
+            <p className="font-bold text-sm">
+              {formatMoney(v.amount, v.currency, fa)}{" "}
+              <span className="font-normal text-xs text-muted-foreground">
+                / {cycleLabel(v.billingCycle, fa)}
+              </span>
+            </p>
+            {preview && (
+              <p className="text-[11px] text-muted-foreground">
+                {s(
+                  "اطلاعات نمونه؛ مصرف و وضعیت زنده نیست.",
+                  "Sample data; usage and status are not live.",
+                )}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={() => onManageService(v.id, v.kind)}
+              >
+                <Settings size={15} />
+                {s("مدیریت", "Manage")}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => onRenewService(v.id, v.kind)}
+              >
+                <RefreshCw size={15} />
+                {s("تمدید", "Renew")}
+              </Button>
+            </div>
+          </article>
+        ))}
+      </div>
+      {!filtered.length && (
+        <p className="rounded-2xl border p-8 text-sm text-muted-foreground">
+          {s("سرویسی یافت نشد.", "No services found.")}
+        </p>
+      )}
     </div>
   );
-};
-
-export default WHMCSServicesPage;
+}

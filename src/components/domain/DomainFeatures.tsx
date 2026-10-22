@@ -1,9 +1,10 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Globe, Shield, RefreshCw } from 'lucide-react';
 
 const DomainFeatures: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -46,7 +47,7 @@ const DomainFeatures: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainFeatures;

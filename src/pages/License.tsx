@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -110,7 +111,7 @@ const License = () => {
     }
   ];
 
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -443,7 +444,7 @@ const License = () => {
       
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default License;

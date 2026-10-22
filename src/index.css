@@ -249,3 +249,59 @@
   .invoice-line { grid-template-columns: minmax(0, 1.4fr) .35fr .8fr .8fr; gap: 6px; font-size: 10px; }
   .invoice-bottom { grid-template-columns: 1fr; gap: 16px; }
 }
+
+/* Branded invoice, identical on screen and export. */
+.invoice-v2 { background:#fff !important; color:#172554 !important; border:1px solid #dbe4f0; border-top:5px solid #2458ed; border-radius:16px; box-shadow:0 8px 35px #1e3a8a08; padding:34px; }
+.invoice-v2 .invoice-heading { border-bottom:0; padding-bottom:20px; align-items:flex-start; }
+.invoice-v2 .invoice-heading img { width:200px; height:40px; object-fit:contain; }
+.invoice-v2 .invoice-heading h2 { color:#1e40af; font-size:22px; }
+.invoice-v2 .invoice-heading p { margin-top:10px; }
+.invoice-v2 .invoice-state { background:#fff7ed; color:#c2410c; border-color:#fed7aa; border-radius:20px; }
+.invoice-v2 .invoice-state.is-paid { background:#ecfdf5; color:#047857; border-color:#a7f3d0; }
+.invoice-reference { display:block; font-size:10px; color:#64748b; margin-top:8px; }
+.invoice-demo { font-size:10px; color:#64748b; padding:8px 12px; background:#f8fafc; border-radius:7px; }
+.invoice-v2 .invoice-parties { border-top:1px solid #e2e8f0; margin-top:14px; }
+.invoice-v2 .invoice-parties p { font-size:11px; color:#64748b; }
+.invoice-v2 .invoice-metadata { border:0; border-radius:10px; background:#eff6ff; padding:16px; }
+.invoice-v2 .invoice-column-labels { background:#1e40af; color:#fff; padding:12px 8px; border-radius:8px; }
+.invoice-v2 .invoice-grand-total { background:#eff6ff; border-radius:9px; border:0; padding:13px; }
+@media(max-width:600px){.invoice-v2{padding:16px;border-radius:12px}.invoice-v2 .invoice-heading img{width:145px;height:29px}.invoice-v2 .invoice-heading h2{font-size:15px}.invoice-v2 .invoice-heading{gap:10px}.invoice-v2 .invoice-column-labels{padding:8px 4px}}
+
+/* Export geometry is fixed before both measurement and rasterization, including
+   when a customer downloads from a narrow mobile viewport. */
+.invoice-export-host .invoice-v2 { padding:34px; border-radius:0; }
+.invoice-export-host .invoice-v2 .invoice-heading { gap:20px; }
+.invoice-export-host .invoice-v2 .invoice-heading img { width:200px; height:40px; }
+.invoice-export-host .invoice-v2 .invoice-heading h2 { font-size:22px; }
+.invoice-export-host .invoice-brand { font-size:24px; }
+.invoice-export-host .invoice-metadata { grid-template-columns:1.4fr 1fr 1fr .6fr; }
+.invoice-export-host .invoice-line { grid-template-columns:minmax(0,2.6fr) .5fr 1fr 1fr; gap:12px; font-size:13px; }
+.invoice-export-host .invoice-column-labels { font-size:10px; }
+.invoice-export-host .invoice-v2 .invoice-column-labels { padding:12px 8px; }
+.invoice-export-host .invoice-bottom { grid-template-columns:1fr 1fr; gap:30px; }
+/* Soft motion never delays navigation or runs in exported invoices. */
+@keyframes panel-enter {from{opacity:.55;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes submenu-enter {from{opacity:.5;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes auth-drift {0%,100%{transform:translate(0,0)}50%{transform:translate(25px,-20px)}}
+.panel-content-motion {animation:panel-enter .28s cubic-bezier(.22,1,.36,1)}
+.panel-content-motion > div > :is(header,section,article) {animation:panel-enter .32s both}
+.panel-content-motion > div > :nth-child(2){animation-delay:30ms}
+.panel-content-motion > div > :nth-child(3){animation-delay:55ms}
+.panel-content-motion > div > :nth-child(4){animation-delay:80ms}
+.panel-shell :is(button,a,input,select,textarea){transition:background-color .18s,color .18s,border-color .18s,box-shadow .18s,transform .18s}
+.panel-shell button:active:not(:disabled){transform:scale(.98)}
+.panel-shell button:hover .menu-service-icon{transform:translateY(-1px) scale(1.05)}
+.menu-service-icon{transition:transform .2s;will-change:auto}
+.sidebar-submenu{animation:submenu-enter .2s ease-out}
+.panel-back-toolbar{min-height:40px}
+.panel-back-button svg{transition:transform .18s}
+.panel-back-button:hover svg{transform:translateX(-2px)}
+[dir=rtl] .panel-back-button:hover svg{transform:translateX(2px)}
+.auth-orb{position:absolute;width:36rem;height:36rem;border-radius:50%;filter:blur(90px);opacity:.18;pointer-events:none;animation:auth-drift 16s ease-in-out infinite}
+.auth-orb-one{background:#2563eb;top:-15rem;inset-inline-start:-12rem}
+.auth-orb-two{background:#7c3aed;bottom:-18rem;inset-inline-end:-10rem;animation-delay:-8s}
+.auth-dot-pattern{background-image:radial-gradient(white 1px,transparent 1px);background-size:20px 20px}
+.auth-classic-card{animation:panel-enter .35s ease-out}
+.auth-feature{transition:transform .2s,background-color .2s}
+.auth-feature:hover{transform:translateY(-3px);background:rgb(255 255 255 / .08)}
+@media(prefers-reduced-motion:reduce){.panel-shell *,.auth-classic *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.panel-shell button:active,.auth-feature:hover{transform:none!important}}

@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Check } from 'lucide-react';
@@ -28,7 +29,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
   buttonText = "سفارش",
   onClick,
 }) => {
-  return (
+  return <LegacyLocale>{(
     <div 
       className={`relative rounded-2xl transition-all duration-500 h-full
         ${popular 
@@ -93,7 +94,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         </button>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default PricingCard;

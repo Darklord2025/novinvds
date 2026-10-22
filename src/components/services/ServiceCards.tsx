@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -8,31 +9,31 @@ interface ServiceCardProps {
 }
 
 export const VpsCard: React.FC<ServiceCardProps> = ({ service }) => {
-  return (
+  return <LegacyLocale>{(
     <div className="flex items-center">
       <div className="mr-2 font-medium">{service.id}</div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export const DedicatedCard: React.FC<ServiceCardProps> = ({ service }) => {
-  return (
+  return <LegacyLocale>{(
     <div className="flex items-center">
       <div className="mr-2 font-medium">{service.id}</div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export const CloudCard: React.FC<ServiceCardProps> = ({ service }) => {
-  return (
+  return <LegacyLocale>{(
     <div className="flex items-center">
       <div className="mr-2 font-medium">{service.id}</div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export const DomainCard: React.FC<ServiceCardProps> = ({ service }) => {
-  return (
+  return <LegacyLocale>{(
     <div className="flex items-center">
       <div className="mr-2 font-medium">{service.id}</div>
       {service.expiryDate && (
@@ -41,13 +42,13 @@ export const DomainCard: React.FC<ServiceCardProps> = ({ service }) => {
         </Badge>
       )}
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export const HostingCard: React.FC<ServiceCardProps> = ({ service }) => {
-  return (
+  return <LegacyLocale>{(
     <div className="flex items-center">
       <div className="mr-2 font-medium">{service.id}</div>
     </div>
-  );
+  )}</LegacyLocale>;
 };

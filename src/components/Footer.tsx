@@ -1,3 +1,6 @@
+import LegacyLocale from '@/components/LegacyLocale';
+import BrandLogo from '@/components/BrandLogo';
+import LanguageControl from '@/components/LanguageControl';
 
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -12,14 +15,14 @@ import {
 } from 'lucide-react';
 
 const Footer = () => {
-  return (
+  return <LegacyLocale>{(
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold mb-4">NovinVDS</h3>
+            <BrandLogo/>
             <p className="text-gray-300 leading-relaxed">
               ارائه دهنده خدمات تخصصی هاستینگ، سرور مجازی، سرور اختصاصی و راهکارهای شبکه با بالاترین کیفیت و پشتیبانی 24/7
             </p>
@@ -59,7 +62,7 @@ const Footer = () => {
                 <Link to="/faq" className="text-gray-300 hover:text-white transition-colors">سوالات متداول</Link>
               </li>
               <li>
-                <Link to="/login" className="text-gray-300 hover:text-white transition-colors">ورود / ثبت نام</Link>
+                <Link to="/auth" className="text-gray-300 hover:text-white transition-colors">ورود / ثبت نام</Link>
               </li>
             </ul>
           </div>
@@ -93,16 +96,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">اطلاعات تماس</h3>
             <ul className="space-y-3">
-              <li className="flex items-start">
-                <MapPin size={20} className="ml-2 text-gray-400 mt-1" />
-                <span className="text-gray-300">تهران، خیابان ولیعصر، ساختمان نوین، پلاک 144</span>
-              </li>
-              <li className="flex items-center">
-                <Phone size={20} className="ml-2 text-gray-400" />
-                <a href="tel:09335732119" className="text-gray-300 hover:text-white transition-colors">
-                  09335732119
-                </a>
-              </li>
+
               <li className="flex items-center">
                 <Mail size={20} className="ml-2 text-gray-400" />
                 <a href="mailto:info@novinvds.ir" className="text-gray-300 hover:text-white transition-colors">
@@ -141,7 +135,7 @@ const Footer = () => {
         
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} NovinVDS. تمامی حقوق محفوظ است.
+            © {String(new Date().getFullYear())} NovinVDS. تمامی حقوق محفوظ است.
           </p>
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-4 rtl:space-x-reverse text-sm">
@@ -159,7 +153,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Footer;

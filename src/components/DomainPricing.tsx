@@ -1,100 +1,187 @@
-
-import React from 'react';
-import { Check, X } from 'lucide-react';
-
-type DomainPriceProps = {
-  extension: string;
-  register: string;
-  renew: string;
-  transfer: string;
-  features?: {
-    whois: boolean;
-    dns: boolean;
-    email: boolean;
-  };
-};
-
-const DomainPrice: React.FC<DomainPriceProps> = ({ 
-  extension, 
-  register, 
-  renew, 
-  transfer,
-  features = { whois: true, dns: true, email: false }
-}) => {
-  return (
-    <tr className="border-b hover:bg-gray-50 transition-colors">
-      <td className="py-4 px-4 font-medium text-lg text-blue-600">{extension}</td>
-      <td className="py-4 px-4">{register} تومان</td>
-      <td className="py-4 px-4">{renew} تومان</td>
-      <td className="py-4 px-4">{transfer} تومان</td>
-      <td className="py-4 px-4 text-center">
-        {features.whois ? <Check className="inline text-green-500" size={18} /> : <X className="inline text-red-500" size={18} />}
-      </td>
-      <td className="py-4 px-4 text-center">
-        {features.dns ? <Check className="inline text-green-500" size={18} /> : <X className="inline text-red-500" size={18} />}
-      </td>
-      <td className="py-4 px-4 text-center">
-        <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm">
-          افزودن به سبد
-        </button>
-      </td>
-    </tr>
+import { useMarketRates } from "@/hooks/useMarketRates";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
+import { usePanelCopy } from "./user-panel/PanelPrimitives";
+import PublicDomainOrder from "./domain/PublicDomainOrder";
+const prices = [
+  { ext: "ir", register: 75000, renew: 85000, transfer: null },
+  { ext: "com", register: 890000, renew: 940000, transfer: 890000 },
+  { ext: "net", register: 1050000, renew: 1090000, transfer: 1050000 },
+  { ext: "org", register: 980000, renew: 1040000, transfer: 980000 },
+  { ext: "dev", register: 1350000, renew: 1400000, transfer: 1350000 },
+  { ext: "shop", register: 790000, renew: 2150000, transfer: 2150000 },
+  { ext: "io", register: 4200000, renew: 4450000, transfer: 4200000 },
+];
+export default function DomainPricing({
+  panelMode = false,
+  onSelect,
+  onRenew,
+}: {
+  panelMode?: boolean;
+  onSelect?: (extension: string, mode: string) => void;
+  onRenew?: () => void;
+}) {
+  const { rates } = useMarketRates();
+  const livePrices = (rates?.domainPrices || []).filter(
+    (p) => Date.now() - Date.parse(p.asOf) < 3600000,
   );
-};
-
-const DomainPricing = () => {
-  const domains = [
-    { extension: '.com', register: '390,000', renew: '420,000', transfer: '390,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.net', register: '450,000', renew: '480,000', transfer: '450,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.org', register: '490,000', renew: '520,000', transfer: '490,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.ir', register: '120,000', renew: '120,000', transfer: '120,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.co.ir', register: '80,000', renew: '80,000', transfer: '80,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.info', register: '350,000', renew: '380,000', transfer: '350,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.io', register: '1,250,000', renew: '1,300,000', transfer: '1,250,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.dev', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.app', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.blog', register: '780,000', renew: '810,000', transfer: '780,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.shop', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.store', register: '1,490,000', renew: '1,520,000', transfer: '1,490,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.tech', register: '1,190,000', renew: '1,220,000', transfer: '1,190,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.online', register: '990,000', renew: '1,020,000', transfer: '990,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.site', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.website', register: '690,000', renew: '720,000', transfer: '690,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.biz', register: '590,000', renew: '620,000', transfer: '590,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.co', register: '890,000', renew: '920,000', transfer: '890,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.me', register: '790,000', renew: '820,000', transfer: '790,000', features: { whois: true, dns: true, email: false } },
-    { extension: '.tv', register: '990,000', renew: '1,020,000', transfer: '990,000', features: { whois: true, dns: true, email: false } },
-  ];
-
+  const displayPrices = prices.map((p) => {
+    const live = livePrices.find((v) => v.extension === p.ext);
+    return {
+      ...p,
+      ...(live
+        ? {
+            register: live.register,
+            renew: live.renew,
+            transfer: live.transfer,
+          }
+        : {}),
+      live,
+    };
+  });
+  for (const live of livePrices)
+    if (!displayPrices.some((p) => p.ext === live.extension))
+      displayPrices.push({
+        ext: live.extension,
+        register: live.register,
+        renew: live.renew,
+        transfer: live.transfer,
+        live,
+      });
+  const { s, money } = usePanelCopy();
+  const [query, setQuery] = useState("");
+  const [order, setOrder] = useState<{ ext: string; mode: string } | null>(
+    null,
+  );
+  function pick(ext: string, mode: string) {
+    if (panelMode && onSelect) onSelect(ext, mode);
+    else setOrder({ ext, mode });
+  }
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-      <table className="min-w-full">
-        <thead>
-          <tr className="bg-gray-50 border-b">
-            <th className="py-3 px-4 text-right">پسوند</th>
-            <th className="py-3 px-4 text-right">ثبت</th>
-            <th className="py-3 px-4 text-right">تمدید</th>
-            <th className="py-3 px-4 text-right">انتقال</th>
-            <th className="py-3 px-4 text-center">Whois محافظت</th>
-            <th className="py-3 px-4 text-center">مدیریت DNS</th>
-            <th className="py-3 px-4 text-center">عملیات</th>
-          </tr>
-        </thead>
-        <tbody>
-          {domains.map((domain) => (
-            <DomainPrice 
-              key={domain.extension}
-              extension={domain.extension}
-              register={domain.register}
-              renew={domain.renew}
-              transfer={domain.transfer}
-              features={domain.features}
+    <div className="space-y-4">
+      <p className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm">
+        {s(
+          "تعرفه‌های مرجع یک‌ساله، بدون مالیات؛ قیمت تمدید می‌تواند با ثبت متفاوت باشد. موجودی، پرمیوم بودن دامنه و مبلغ نهایی از ثبت‌کننده تایید می‌شود.",
+          "Reference one-year rates before tax. Renewal can differ from registration. Availability, premium status and final amounts require registrar confirmation.",
+        )}
+      </p>
+      <p className="text-xs leading-6 text-muted-foreground">
+        {s(
+          "کاهش ۱٫۵٪ فقط با قیمت روز مستند رقبا و رعایت کف هزینه فعال می‌شود. بدون اتصال منبع، قیمت نمونه تخفیف آنلاین محسوب نمی‌شود.",
+          "The 1.5% reduction requires current documented competitor prices and respects the cost floor. Without that feed, sample prices are not an online discount.",
+        )}
+      </p>
+      <Input
+        aria-label={s("جستجوی پسوند", "Search extension")}
+        placeholder={s(
+          "پسوند مورد نظر؛ مانند com",
+          "Find an extension, e.g. com",
+        )}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <div className="overflow-x-auto rounded-2xl border bg-card">
+        <table className="w-full text-sm text-start min-w-[560px]">
+          <thead className="bg-blue-500/5">
+            <tr>
+              {[
+                "پسوند|Extension",
+                "ثبت سال اول|First year",
+                "تمدید|Renewal",
+                "انتقال|Transfer",
+                "عملیات|Actions",
+              ].map((t) => (
+                <th key={t} className="text-start p-4">
+                  {s(...(t.split("|") as [string, string]))}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {displayPrices
+              .filter((p) =>
+                p.ext.includes(query.toLowerCase().replace(/^\./, "")),
+              )
+              .map((p) => (
+                <tr key={p.ext} className="border-t">
+                  <td className="p-4 font-bold text-blue-600" dir="ltr">
+                    .{p.ext}
+                  </td>
+                  <td className="p-4">
+                    {money(p.register)}
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {p.live ? (
+                        <a
+                          href={p.live.source}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {s(
+                            "مقایسه آنلاین؛ هدف ۱٫۵٪ کمتر تا کف هزینه",
+                            "Online comparison; target 1.5% below, subject to cost floor",
+                          )}
+                        </a>
+                      ) : (
+                        s(
+                          "قیمت نمونه؛ آنلاین تأیید نشده",
+                          "Sample; online rate unverified",
+                        )
+                      )}
+                    </p>
+                  </td>
+                  <td className="p-4">{money(p.renew)}</td>
+                  <td className="p-4">
+                    {p.transfer === null
+                      ? s("نیازمند بررسی", "Review required")
+                      : money(p.transfer)}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => pick(p.ext, "register")}>
+                        {s("ثبت", "Register")}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => pick(p.ext, "transfer")}
+                      >
+                        {s("انتقال", "Transfer")}
+                      </Button>
+                      {onRenew ? (
+                        <Button size="sm" variant="ghost" onClick={onRenew}>
+                          {s("تمدید دامنه من", "Renew owned domain")}
+                        </Button>
+                      ) : (
+                        <Button asChild size="sm" variant="ghost">
+                          <Link to="/user-panel?tab=domains">
+                            {s("تمدید", "Renew")}
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+      <Dialog open={!!order} onOpenChange={(v) => !v && setOrder(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogTitle>
+            {s("درخواست دامنه", "Domain request")} .{order?.ext}
+          </DialogTitle>
+          {order && (
+            <PublicDomainOrder
+              key={order.ext + order.mode}
+              initialMode={order.mode}
+              initialTld={order.ext}
             />
-          ))}
-        </tbody>
-      </table>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
-
-export default DomainPricing;
+}

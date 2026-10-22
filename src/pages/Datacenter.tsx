@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
@@ -48,7 +49,7 @@ const Datacenter = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -213,7 +214,7 @@ const Datacenter = () => {
       
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Datacenter;

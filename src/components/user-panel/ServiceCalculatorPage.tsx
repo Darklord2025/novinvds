@@ -1,3 +1,7 @@
+import BackButton from "./BackButton";
+import HostingCatalog from '@/components/HostingCatalog';
+import DedicatedHardwareReview from './DedicatedHardwareReview';
+import LegacyLocale from '@/components/LegacyLocale';
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -90,10 +94,10 @@ const ServiceCalculatorPage = () => {
 
   const getServiceIcon = () => {
     switch (serviceType) {
-      case 'vps': return <Server className="w-6 h-6" />;
-      case 'dedicated': return <HardDrive className="w-6 h-6" />;
-      case 'hosting': return <Globe className="w-6 h-6" />;
-      default: return <Server className="w-6 h-6" />;
+      case 'vps': return <LegacyLocale>{<Server className="w-6 h-6" />}</LegacyLocale>;
+      case 'dedicated': return <LegacyLocale>{<HardDrive className="w-6 h-6" />}</LegacyLocale>;
+      case 'hosting': return <LegacyLocale>{<Globe className="w-6 h-6" />}</LegacyLocale>;
+      default: return <LegacyLocale>{<Server className="w-6 h-6" />}</LegacyLocale>;
     }
   };
 
@@ -117,7 +121,9 @@ const ServiceCalculatorPage = () => {
     }
   };
 
-  return (
+  if(serviceType==='hosting')return <div className="space-y-5"><BackButton onClick={()=>setServiceType('vps')}>بازگشت</BackButton><HostingCatalog inPanel/></div>;
+  if(serviceType==='dedicated')return <LegacyLocale><div className="space-y-5"><div className="flex flex-wrap gap-2"><BackButton onClick={()=>setServiceType('vps')}>بازگشت</BackButton><h1 className="text-xl font-bold">بررسی ارتقای سخت‌افزار اختصاصی</h1></div><DedicatedHardwareReview serviceId="DEDICATED-QUOTE"/></div></LegacyLocale>;
+  return <LegacyLocale>{(
     <div className="p-6" dir="rtl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
@@ -347,7 +353,7 @@ const ServiceCalculatorPage = () => {
         </div>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ServiceCalculatorPage;

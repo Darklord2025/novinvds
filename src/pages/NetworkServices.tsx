@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import Footer from '@/components/Footer';
 const NetworkServices = () => {
   const navigate = useNavigate();
 
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen" dir="rtl">
       <Navbar />
       <div className="container mx-auto px-4 py-8 mt-20">
@@ -30,7 +31,7 @@ const NetworkServices = () => {
       </div>
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NetworkServices;

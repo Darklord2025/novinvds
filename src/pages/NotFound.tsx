@@ -1,10 +1,11 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="text-center max-w-md mx-auto">
         <h1 className="text-9xl font-bold text-blue-600 mb-4">404</h1>
@@ -21,7 +22,7 @@ const NotFound = () => {
         </Link>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NotFound;

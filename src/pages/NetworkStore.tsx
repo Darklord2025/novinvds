@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -148,7 +149,7 @@ const NetworkStore = () => {
     </div>
   );
 
-  return (
+  return <LegacyLocale>{(
     <>
       <Helmet>
         <title>فروشگاه تجهیزات شبکه - نوین وی دی اس | خرید آنلاین</title>
@@ -344,7 +345,7 @@ const NetworkStore = () => {
         <Footer />
       </div>
     </>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NetworkStore;

@@ -1,8 +1,9 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 
 const DomainFAQ: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -43,7 +44,7 @@ const DomainFAQ: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainFAQ;

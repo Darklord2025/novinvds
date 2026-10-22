@@ -311,7 +311,7 @@ export const mockWHMCSDomains: WHMCSDomain[] = [
         state: 'تهران',
         postcode: '1234567890',
         country: 'IR',
-        phoneNumber: '+98-21-12345678'
+        phoneNumber: ''
       },
       admin: {
         firstName: 'احمد',
@@ -322,7 +322,7 @@ export const mockWHMCSDomains: WHMCSDomain[] = [
         state: 'تهران',
         postcode: '1234567890',
         country: 'IR',
-        phoneNumber: '+98-21-12345678'
+        phoneNumber: ''
       },
       tech: {
         firstName: 'احمد',
@@ -333,7 +333,7 @@ export const mockWHMCSDomains: WHMCSDomain[] = [
         state: 'تهران',
         postcode: '1234567890',
         country: 'IR',
-        phoneNumber: '+98-21-12345678'
+        phoneNumber: ''
       },
       billing: {
         firstName: 'احمد',
@@ -344,7 +344,7 @@ export const mockWHMCSDomains: WHMCSDomain[] = [
         state: 'تهران',
         postcode: '1234567890',
         country: 'IR',
-        phoneNumber: '+98-21-12345678'
+        phoneNumber: ''
       }
     }
   }

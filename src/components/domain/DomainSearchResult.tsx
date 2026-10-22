@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Check } from 'lucide-react';
@@ -13,7 +14,7 @@ interface DomainSearchResultProps {
 const DomainSearchResult: React.FC<DomainSearchResultProps> = ({ searchResult }) => {
   if (!searchResult) return null;
   
-  return (
+  return <LegacyLocale>{(
     <div className={`p-6 rounded-xl shadow-md mb-8 ${searchResult.available ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
       <div className="flex items-center justify-between">
         <div>
@@ -58,7 +59,7 @@ const DomainSearchResult: React.FC<DomainSearchResultProps> = ({ searchResult })
         )}
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainSearchResult;

@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -13,7 +14,6 @@ interface SupportEmail {
 }
 
 interface ContactInfo {
-  phone: string;
   email: string;
   supportEmails: SupportEmail;
 }
@@ -23,7 +23,7 @@ interface CTASectionProps {
 }
 
 const CTASection: React.FC<CTASectionProps> = ({ contactInfo }) => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-6">آماده همکاری با ما هستید؟</h2>
@@ -42,9 +42,7 @@ const CTASection: React.FC<CTASectionProps> = ({ contactInfo }) => {
         {contactInfo && (
           <div className="mt-8 text-white">
             <div className="flex justify-center items-center gap-6 flex-wrap">
-              <a href={`tel:${contactInfo.phone}`} className="flex items-center opacity-90 hover:opacity-100">
-                <span>{contactInfo.phone}</span>
-              </a>
+
               <a href={`mailto:${contactInfo.email}`} className="flex items-center opacity-90 hover:opacity-100">
                 <span>{contactInfo.email}</span>
               </a>
@@ -53,7 +51,7 @@ const CTASection: React.FC<CTASectionProps> = ({ contactInfo }) => {
         )}
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default CTASection;

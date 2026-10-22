@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Server, Globe, FileText, MessageSquare, Check } from 'lucide-react';
@@ -39,11 +40,11 @@ const DashboardCards = () => {
     },
   ];
 
-  return (
+  return <LegacyLocale>{(
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
       {cards.map((card, i) => {
         const Icon = card.icon;
-        return (
+        return <LegacyLocale key={i}>{(
           <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-4 lg:p-6 shadow-sm">
             <div className="flex justify-between items-start gap-2">
               <div className="min-w-0 flex-1">
@@ -58,10 +59,10 @@ const DashboardCards = () => {
               {card.footer}
             </div>
           </div>
-        );
+        )}</LegacyLocale>;
       })}
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DashboardCards;

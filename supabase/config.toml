@@ -2,3 +2,13 @@ project_id = "dfigrglqpxanqcpuykbu"
 
 [functions.chat]
 verify_jwt = false
+
+[functions.panel-action]
+verify_jwt = false # JWT is verified with auth.getUser, then both MFA checks are enforced.
+
+[functions.account-security]
+verify_jwt = false # Public recovery is rate-limited; all other actions require auth.getUser.
+
+
+[functions.market-rates]
+verify_jwt = false

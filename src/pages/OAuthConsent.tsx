@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,7 +64,7 @@ export default function OAuthConsent() {
   const clientName = details?.client?.name ?? details?.client?.client_name ?? "یک برنامه";
   const scopes: string[] = String(details?.scope ?? details?.scopes ?? "").split(/[\s,]+/).filter(Boolean);
 
-  return (
+  return <LegacyLocale>{(
     <main dir="rtl" className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-6 space-y-4">
         {error ? (
@@ -92,5 +93,5 @@ export default function OAuthConsent() {
         )}
       </Card>
     </main>
-  );
+  )}</LegacyLocale>;
 }

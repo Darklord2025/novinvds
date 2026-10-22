@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
@@ -12,21 +13,9 @@ import CTASection from '../components/home/CTASection';
 import { Helmet } from "react-helmet-async";
 
 const Index = () => {
-  useEffect(() => {
-    document.documentElement.dir = 'rtl';
-    document.documentElement.lang = 'fa';
-    
-    // پاکسازی تنظیمات خاص پنل کاربری اگر قبلاً روی آن بودیم
-    document.body.classList.remove('rtl');
-    
-    return () => {
-      // پاکسازی در صورت خروج
-      document.documentElement.dir = 'ltr';
-      document.documentElement.lang = 'en';
-    };
-  }, []);
 
-  return (
+
+  return <LegacyLocale>{(
     <div className="min-h-screen overflow-hidden">
       <Helmet>
         <title>NovinVDS - میزبانی وب، سرور مجازی و اختصاصی | خدمات هاستینگ حرفه‌ای</title>
@@ -40,7 +29,6 @@ const Index = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="NovinVDS - میزبانی وب، سرور مجازی و اختصاصی" />
         <meta name="twitter:description" content="ارائه دهنده خدمات تخصصی هاستینگ، سرور مجازی، سرور اختصاصی و راهکارهای شبکه با بالاترین کیفیت" />
-        <meta name="contact" content="09335732119" />
         <meta name="email" content="info@novinvds.ir" />
         <style>
           {`
@@ -60,7 +48,7 @@ const Index = () => {
       <DomainPricingSection />
       <HostingSection />
       <CTASection contactInfo={{
-        phone: "09335732119",
+
         email: "info@novinvds.ir",
         supportEmails: {
           sales: "sales@novinvds.ir",
@@ -74,7 +62,7 @@ const Index = () => {
       }} />
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Index;

@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useEffect } from 'react';
 import { Award, Users, Briefcase, Target, CheckCircle } from 'lucide-react';
@@ -33,7 +34,7 @@ const About = () => {
     },
   ];
 
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -225,7 +226,7 @@ const About = () => {
       
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default About;
