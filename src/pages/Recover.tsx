@@ -4,12 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { accountApi } from "@/lib/account-api";
 import BrandLogo from "@/components/BrandLogo";
 import LanguageControl from "@/components/LanguageControl";
+import AuthCaptcha from "@/components/AuthCaptcha";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePanelCopy } from "@/components/user-panel/PanelPrimitives";
 export default function Recover({ reset = false }: { reset?: boolean }) {
-  const { s } = usePanelCopy();
+  const { s, fa } = usePanelCopy();
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   const [params] = useSearchParams();
   const [kind, setKind] = useState(params.get("kind") || "password"),
     [email, setEmail] = useState(""),
@@ -42,6 +45,7 @@ export default function Recover({ reset = false }: { reset?: boolean }) {
   }, [reset]);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (busy || (!reset && kind === "password" && !captchaToken)) return;
     setBusy(true);
     setMessage("");
     try {
@@ -68,6 +72,7 @@ export default function Recover({ reset = false }: { reset?: boolean }) {
       } else if (kind === "password") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: location.origin + "/reset-password",
+          captchaToken,
         });
         if (error) throw error;
         setMessage(
@@ -88,11 +93,16 @@ export default function Recover({ reset = false }: { reset?: boolean }) {
     } catch (e) {
       setMessage((e as Error).message);
     } finally {
+      setCaptchaToken("");
+      setCaptchaReset((v) => v + 1);
       setBusy(false);
     }
   }
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-background to-indigo-50 dark:from-slate-950 dark:to-slate-900 p-5 grid place-items-center">
+    <main
+      dir={fa ? "rtl" : "ltr"}
+      className="min-h-screen bg-gradient-to-br from-blue-50 via-background to-indigo-50 dark:from-slate-950 dark:to-slate-900 p-5 grid place-items-center"
+    >
       <div className="max-w-lg w-full rounded-3xl border bg-card p-6 md:p-9 space-y-6">
         <div className="flex justify-between">
           <Link to="/">
@@ -206,7 +216,13 @@ export default function Recover({ reset = false }: { reset?: boolean }) {
               )}
             </>
           )}
-          <Button className="w-full rounded-xl" disabled={busy}>
+          {!reset && kind === "password" && (
+            <AuthCaptcha onToken={setCaptchaToken} reset={captchaReset} />
+          )}
+          <Button
+            className="w-full rounded-xl"
+            disabled={busy || (!reset && kind === "password" && !captchaToken)}
+          >
             {reset
               ? s("ذخیره رمز جدید", "Save new password")
               : s("ارسال درخواست بازیابی", "Send recovery request")}

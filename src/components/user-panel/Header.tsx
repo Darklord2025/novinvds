@@ -1,16 +1,8 @@
 import CurrencyControl from "@/components/CurrencyControl";
+import HeaderMenus from "./HeaderMenus";
 import { usePanelData } from "@/contexts/PanelDataContext";
 import React, { useState } from "react";
-import {
-  Bell,
-  Menu,
-  Clock,
-  Sun,
-  Moon,
-  LogOut,
-  Search,
-  User,
-} from "lucide-react";
+import { Menu, Clock, Sun, Moon, Search } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +20,7 @@ export default function Header({
   onToggleMobileSidebar?: () => void;
   sessionTimeLeft?: string;
 }) {
-  const { data } = usePanelData();
+  const { data, preview } = usePanelData();
   const { s, n } = usePanelCopy(),
     { theme, toggleTheme } = useTheme(),
     navigate = useNavigate();
@@ -106,35 +98,21 @@ export default function Header({
         >
           {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onNavigate?.("notifications")}
-          aria-label={s("اعلان‌ها", "Notifications")}
-        >
-          <Bell size={18} />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onNavigate?.("profile")}
-          aria-label={s("حساب کاربری", "Account")}
-        >
-          <User size={18} />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={s("خروج", "Sign out")}
-          onClick={async () => {
-            const { supabase } = await import("@/integrations/supabase/client");
+        <HeaderMenus
+          activeTab={activeTab}
+          onNavigate={onNavigate}
+          onSignOut={async () => {
+            if (!preview) {
+              const { supabase } = await import(
+                "@/integrations/supabase/client"
+              );
+              const { error } = await supabase.auth.signOut();
+              if (error) throw error;
+            }
             sessionStorage.removeItem("novin.panel.deadline");
-            await supabase.auth.signOut();
-            navigate("/auth");
+            navigate("/auth", { replace: true });
           }}
-        >
-          <LogOut size={18} />
-        </Button>
+        />
       </div>
     </header>
   );

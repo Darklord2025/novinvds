@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>فعال‌سازی حساب | Activate your account</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      background: #f1f5fb;
+      font-family: Tahoma, Arial, sans-serif;
+      color: #152342;
+    "
+  >
+    <table role="presentation" style="width: 100%; padding: 32px 12px">
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            style="
+              width: 100%;
+              max-width: 520px;
+              border-radius: 20px;
+              background: white;
+              overflow: hidden;
+            "
+          >
+            <tr>
+              <td style="padding: 32px">
+                <p
+                  dir="ltr"
+                  style="
+                    color: #2563eb;
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin: 0 0 28px;
+                  "
+                >
+                  NOVINVDS
+                </p>
+                <h1 style="font-size: 22px">حساب شما آمادهٔ فعال‌سازی است</h1>
+                <p style="font-size: 14px; line-height: 2">
+                  کد زیر را در صفحهٔ فعال‌سازی حساب وارد کنید. پس از تأیید، وارد
+                  پنل می‌شوید.
+                </p>
+                <p
+                  dir="ltr"
+                  style="
+                    background: #eff6ff;
+                    border: 1px solid #dbeafe;
+                    border-radius: 12px;
+                    text-align: center;
+                    letter-spacing: 10px;
+                    font-size: 32px;
+                    font-weight: bold;
+                    padding: 22px;
+                    color: #1d4ed8;
+                  "
+                >
+                  {{ .Token }}
+                </p>
+                <p style="font-size: 12px; line-height: 2; color: #64748b">
+                  این کد یک‌بارمصرف است و پس از ۱۰ دقیقه منقضی می‌شود. آن را در
+                  اختیار کسی قرار ندهید. اگر این درخواست از طرف شما نبوده، این
+                  پیام را نادیده بگیرید.
+                </p>
+                <hr
+                  style="
+                    border: 0;
+                    border-top: 1px solid #e2e8f0;
+                    margin: 24px 0;
+                  "
+                />
+                <div
+                  lang="en"
+                  dir="ltr"
+                  style="font-size: 13px; line-height: 1.8"
+                >
+                  <strong>Activate your NovinVDS account</strong>
+                  <p>
+                    Enter the code above on the activation page. This one-time
+                    code expires in 10 minutes. Never share it. If you did not
+                    request an account, ignore this email.
+                  </p>
+                </div>
+                <p style="font-size: 12px">
+                  <a
+                    href="{{ .SiteURL }}/activate-account"
+                    style="color: #2563eb"
+                    >صفحهٔ فعال‌سازی / Activation page</a
+                  >
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

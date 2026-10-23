@@ -90,6 +90,22 @@ Implement provider POST `hosting-upgrade-quote` with `userId`, owned `serviceId`
 At checkout, reject expired upgrade quotes and recheck current plan, billing period and resource version. The adapter must coordinate `panel_settle_invoice` with an idempotent upgrade outbox/provisioning operation and reconcile failures. Settlement alone does not resize hosting. Keep the original due date and apply only the quoted target once. No live supplier upgrade was attempted during this review.
 
 
+## CAPTCHA and first-signup activation (October 23)
+
+Configure these on the hosted Supabase project before releasing this frontend:
+
+1. Create a Cloudflare Turnstile widget for the actual application domains. Set its public site key as `VITE_TURNSTILE_SITE_KEY` at frontend build time. Enable Turnstile in Supabase Auth Bot Protection and store the corresponding secret there, never in Vite variables or committed files.
+2. Enable email confirmations, use six-digit email OTPs with a 600-second expiry, and copy `supabase/templates/confirmation.html` into the Confirm signup email template. The local `config.toml` settings do not change hosted Auth settings. This template sends `{{ .Token }}`, not an automatic sign-in link.
+3. Configure a real SMTP sender and verified sender domain, the application Site URL and allowed password-reset/OAuth callback URLs. Test delivery to a new mailbox, incorrect/expired/already-used codes, resend throttling and the existing account MFA gate in staging.
+
+The widget uses Cloudflare's public test key only on a local Vite development origin and labels that state. Remote previews and production reject known test keys; missing configuration leaves login/signup/reset requests disabled. Login, signup, activation resends and password-reset email requests pass the token to native Supabase Auth. Native email OTP verification does not use the deprecated CAPTCHA option; Auth validates code expiry, rate limits and the returned session. Widget errors, expiry and retries clear the token.
+
+Pending activation stores only email, destination and timestamps in session storage, never password, OTP or CAPTCHA token. It expires after 24 hours and is not authentication authority. If hosted Auth returns an immediately confirmed signup session because email confirmation is disabled, the frontend signs that local session out and explains the missing activation configuration. Successful code verification preserves the existing account-security challenge before panel access.
+
+The header bell now shows recent notifications, unread count and read actions through the same account-owned `notifications-read` action as the full center. Opening the bell does not navigate or mark items read. The account dropdown exposes profile, security, support, wallet and sign-out; wallet balance uses the ledger after withdrawal holds. Preview data and mutations remain isolated from real accounts.
+
+Primary integration references: [Supabase CAPTCHA](https://supabase.com/docs/guides/auth/auth-captcha), [email templates](https://supabase.com/docs/guides/auth/auth-email-templates), [email OTP verification](https://supabase.com/docs/reference/javascript/auth-verifyotp) and [Turnstile widget lifecycle](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/).
+
 ## Display currency and custom price proposals (October 23)
 
 `novin.displayCurrency` is a per-browser display preference. USD estimates divide Toman display amounts by a fresh, positive `usdToman` reference snapshot (receipt within three minutes, source within 48 hours). This is not a payment conversion quote. Native catalog IRR, cart Toman, invoice/ledger Toman and payment payloads remain unchanged; the invoice document and reports retain canonical amounts. The market-rates edge function must be deployed for production USD estimates. Use the trusted conversion-quote/checkout flow for actual currency payments.

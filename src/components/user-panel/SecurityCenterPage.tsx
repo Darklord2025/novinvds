@@ -14,6 +14,7 @@ import { usePanelData } from "@/contexts/PanelDataContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePanelCopy } from "./PanelPrimitives";
 import AccountSecuritySettings from "./AccountSecuritySettings";
+import AuthCaptcha from "@/components/AuthCaptcha";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,6 +30,8 @@ export default function SecurityCenterPage() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   useEffect(() => {
     if (preview) return;
     let active = true;
@@ -188,8 +191,13 @@ export default function SecurityCenterPage() {
                 </p>
               </div>
             </div>
+            {!preview && session?.email && (
+              <AuthCaptcha onToken={setCaptchaToken} reset={captchaReset} />
+            )}
             <Button
-              disabled={busy || (!preview && !session?.email)}
+              disabled={
+                busy || (!preview && (!session?.email || !captchaToken))
+              }
               variant="outline"
               onClick={() =>
                 run(async () => {
@@ -202,11 +210,19 @@ export default function SecurityCenterPage() {
                     );
                     return;
                   }
-                  const { error } = await supabase.auth.resetPasswordForEmail(
-                    session!.email!,
-                    { redirectTo: location.origin + "/reset-password" },
-                  );
-                  if (error) throw error;
+                  try {
+                    const { error } = await supabase.auth.resetPasswordForEmail(
+                      session!.email!,
+                      {
+                        redirectTo: location.origin + "/reset-password",
+                        captchaToken,
+                      },
+                    );
+                    if (error) throw error;
+                  } finally {
+                    setCaptchaToken("");
+                    setCaptchaReset((v) => v + 1);
+                  }
                   setMessage(
                     s(
                       "لینک تعیین رمز جدید به ایمیل حساب ارسال شد.",
