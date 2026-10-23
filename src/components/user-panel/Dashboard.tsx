@@ -20,7 +20,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 import { serviceIPs } from "@/lib/serviceIdentity";
-import { accountWallet, categoryLabel } from "@/lib/panel-model";
+import { accountWallet } from "@/lib/panel-model";
+import {
+  matchesServiceFilter,
+  type ServiceFilter,
+} from "@/lib/service-filters";
+import ServiceFilters from "./ServiceFilters";
 import { usePanelData } from "@/contexts/PanelDataContext";
 import {
   ColorStat,
@@ -38,24 +43,9 @@ export default function Dashboard({
   const { userServices, userDomains } = useServiceCatalog();
   const { data, preview } = usePanelData();
   const { fa, s, n, money } = usePanelCopy();
-  const [kind, setKind] = useState("all");
+  const [kind, setKind] = useState<ServiceFilter>("all");
   const wallet = accountWallet(data);
-  const choices = [
-    "all",
-    "vps",
-    "dedicated",
-    "hourly",
-    "cloud",
-    "multilocation",
-    "hosting",
-    "license",
-    "network",
-    "addon",
-    "support",
-  ];
-  const services = userServices.filter(
-    (v) => kind === "all" || v.kind === kind,
-  );
+  const services = userServices.filter((v) => matchesServiceFilter(v, kind));
   return (
     <div className="space-y-6 min-w-0" dir={fa ? "rtl" : "ltr"}>
       <ReferralReward />
@@ -185,21 +175,14 @@ export default function Dashboard({
               {s("مشاهده همه", "View all")}
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {choices.map((k) => (
-              <Button
-                key={k}
-                size="sm"
-                variant={k === kind ? "default" : "outline"}
-                className="rounded-full text-xs"
-                onClick={() => setKind(k)}
-              >
-                {k === "all" ? s("همه", "All") : categoryLabel(k, fa)}
-              </Button>
-            ))}
-          </div>
+          <ServiceFilters value={kind} onChange={setKind} />
         </CardHeader>
         <CardContent className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {!services.length && (
+            <p className="col-span-full py-6 text-sm text-muted-foreground">
+              {s("سرویسی یافت نشد.", "No services found.")}
+            </p>
+          )}
           {services.map((v) => (
             <article
               key={v.id}

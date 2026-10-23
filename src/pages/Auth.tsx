@@ -41,7 +41,7 @@ import {
 import { localizedDigits } from "@/lib/localized-number";
 
 const field =
-  "mt-1.5 h-11 rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white dark:border-slate-700 dark:bg-slate-950/50 dark:focus:bg-slate-950 text-sm";
+  "mt-1.5 h-10 rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white dark:border-slate-700 dark:bg-slate-950/50 dark:focus:bg-slate-950 text-sm";
 export default function Auth({ activation = false }: { activation?: boolean }) {
   const { s, fa } = usePanelCopy(),
     navigate = useNavigate(),
@@ -67,8 +67,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
   const [now, setNow] = useState(Date.now());
   const [showResend, setShowResend] = useState(false);
   const submittingSignup = useRef(false),
-    verifying = useRef(false),
-    formArea = useRef<HTMLFieldSetElement>(null);
+    verifying = useRef(false);
   const next =
     activation && pending
       ? pending.next
@@ -111,13 +110,6 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
     if (activation) setEmail(pending?.email || "");
   }, [activation]);
   useEffect(() => {
-    if (showResend)
-      formArea.current?.scrollTo({
-        top: formArea.current.scrollHeight,
-        behavior: "smooth",
-      });
-  }, [showResend]);
-  useEffect(() => {
     if (!activation) return;
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
@@ -133,7 +125,6 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
     setNotice("");
     setCaptchaToken("");
     setCaptchaReset((v) => v + 1);
-    formArea.current?.scrollTo({ top: 0 });
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -321,21 +312,21 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
       <div className="relative z-10 mx-auto max-w-6xl px-3 pb-5 sm:px-5 lg:pt-3">
         <div
           data-auth-shell
-          className="auth-access-card grid h-[760px] md:h-[min(790px,calc(100dvh-112px))] md:min-h-[640px] md:grid-cols-[1.05fr_.95fr] overflow-hidden rounded-[28px] border border-white bg-white shadow-[0_24px_90px_-35px_rgba(30,64,175,.24)] dark:border-slate-800 dark:bg-slate-900"
+          className="auth-access-card grid min-h-[800px] min-[360px]:min-h-[720px] md:min-h-[700px] md:grid-cols-[1.05fr_.95fr] overflow-hidden rounded-[28px] border border-white bg-white shadow-[0_24px_90px_-35px_rgba(30,64,175,.24)] dark:border-slate-800 dark:bg-slate-900"
         >
-          <section className="flex min-h-0 min-w-0 flex-col px-5 py-6 sm:px-9 md:px-6 lg:px-10 lg:py-8">
+          <section className="flex min-w-0 flex-col px-5 py-5 sm:px-9 md:px-6 lg:px-10 lg:py-6">
             <div data-auth-heading className="shrink-0">
               <Link
                 to="/"
                 aria-label="NovinVDS"
-                className="inline-flex rounded-lg bg-white p-1"
+                className="flex w-fit rounded-lg bg-white p-1"
               >
-                <BrandLogo className="h-8 w-auto" />
+                <BrandLogo className="h-7 w-auto" />
               </Link>
-              <h1 className="mt-4 text-2xl font-extrabold leading-relaxed sm:text-[26px]">
+              <h1 className="mt-3 text-xl font-extrabold leading-relaxed sm:text-2xl">
                 {s("به نوین وی‌دی‌اس خوش آمدید", "Welcome to NovinVDS")}
               </h1>
-              <p className="mt-1 text-xs leading-6 text-muted-foreground">
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 {s(
                   "یک حساب برای مدیریت همهٔ سرویس‌های شما.",
                   "One account for all your services.",
@@ -343,7 +334,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
               </p>
             </div>
             <div
-              className="mt-5 mb-4 grid h-11 shrink-0 grid-cols-2 rounded-xl bg-slate-100 p-1 dark:bg-slate-800"
+              className="mt-4 mb-3 grid h-10 shrink-0 grid-cols-2 rounded-xl bg-slate-100 p-1 dark:bg-slate-800"
               role="group"
               aria-label={s("ورود یا ثبت‌نام", "Sign in or register")}
             >
@@ -378,21 +369,14 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
                 ))
               )}
             </div>
-            <div
-              data-auth-form-area
-              className="min-h-0 flex-1 overflow-y-auto overscroll-contain pe-1 pb-1"
-            >
+            <div data-auth-form-area className="flex flex-1 flex-col">
               {signed ? (
                 <AccountChallenge onVerified={go} />
               ) : (
-                <form
-                  onSubmit={submit}
-                  className="flex h-full min-h-0 flex-col"
-                >
+                <form onSubmit={submit} className="flex flex-1 flex-col">
                   <fieldset
-                    ref={formArea}
                     disabled={busy}
-                    className="min-h-0 min-w-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pe-1 disabled:opacity-75"
+                    className="min-w-0 flex-1 space-y-2 disabled:opacity-75"
                   >
                     {activation ? (
                       <>
@@ -501,7 +485,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
                             />
                             <Mail
                               size={16}
-                              className="pointer-events-none absolute start-3 top-3.5 text-slate-400"
+                              className="pointer-events-none absolute start-3 top-3 text-slate-400"
                             />
                           </div>
                         </Label>
@@ -528,7 +512,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
                               />
                               <button
                                 type="button"
-                                className="absolute end-0 top-0 flex h-11 w-10 items-center justify-center rounded-xl text-slate-400 hover:text-blue-600"
+                                className="absolute end-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:text-blue-600"
                                 onClick={() => setShow((v) => !v)}
                                 aria-label={s(
                                   "نمایش یا پنهان‌کردن رمز",
@@ -619,7 +603,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
                   <div className="shrink-0 space-y-2 pt-3">
                     <Button
                       type="submit"
-                      className="h-12 w-full gap-2 rounded-xl bg-blue-600 font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700"
+                      className="h-11 w-full gap-2 rounded-xl bg-blue-600 font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700"
                       disabled={
                         busy ||
                         (!activation && !captchaToken) ||
@@ -693,7 +677,7 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
                 </form>
               )}
             </div>
-            <div className="mt-4 flex shrink-0 items-center gap-2 border-t border-slate-100 pt-3 text-[10px] leading-5 text-muted-foreground dark:border-slate-800">
+            <div className="mt-3 flex shrink-0 items-center gap-2 border-t border-slate-100 pt-3 text-[10px] leading-5 text-muted-foreground dark:border-slate-800">
               <ShieldCheck size={15} className="shrink-0 text-emerald-500" />
               {s(
                 "رمز عبور و کد ورودتان را در اختیار دیگران قرار ندهید.",
@@ -703,84 +687,86 @@ export default function Auth({ activation = false }: { activation?: boolean }) {
           </section>
           <aside
             data-auth-aside
-            className="relative hidden min-h-0 flex-col justify-between overflow-hidden bg-[#0e245a] p-7 text-white md:flex lg:p-10"
+            className="relative hidden min-h-0 overflow-hidden bg-[#0e245a] text-white md:block"
           >
-            <div
-              aria-hidden="true"
-              className="absolute -end-32 -top-28 h-[490px] w-[490px] rounded-full bg-blue-500/25 blur-3xl"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-32 -start-24 h-80 w-80 rounded-full border-[60px] border-blue-400/10"
-            />
-            <div className="relative">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/20 bg-white/5 px-3 py-2 text-[10px]">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
-                {s(
-                  "از یک شروع ساده، تا یک زیرساخت بزرگ",
-                  "FROM YOUR FIRST IDEA TO YOUR NEXT BIG THING",
-                )}
-              </span>
-              <h2 className="mt-7 text-3xl font-extrabold leading-[1.7] lg:text-[38px]">
-                {s("فضای رشد شما،", "Room to grow.")}
-                <br />
-                <span className="text-blue-300">
-                  {s("همیشه در دسترس.", "Always within reach.")}
+            <div className="absolute inset-0 flex flex-col justify-between p-7 lg:p-10">
+              <div
+                aria-hidden="true"
+                className="absolute -end-32 -top-28 h-[490px] w-[490px] rounded-full bg-blue-500/25 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-32 -start-24 h-80 w-80 rounded-full border-[60px] border-blue-400/10"
+              />
+              <div className="relative">
+                <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/20 bg-white/5 px-3 py-2 text-[10px]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+                  {s(
+                    "از یک شروع ساده، تا یک زیرساخت بزرگ",
+                    "FROM YOUR FIRST IDEA TO YOUR NEXT BIG THING",
+                  )}
                 </span>
-              </h2>
-              <p className="mt-3 max-w-sm text-xs leading-7 text-blue-100/70">
-                {s(
-                  "سرویس‌ها، پرداخت‌ها و پشتیبانی؛ همه در یک فضای مرتب و ساده، برای تمرکز روی کارهای مهم‌تر.",
-                  "Services, billing and support in one clear workspace. More room to focus on what matters.",
-                )}
-              </p>
-            </div>
-            <div className="relative flex min-h-0 flex-1 items-center justify-center py-2 [&>svg]:h-full [&>svg]:max-h-full [&>svg]:w-full">
-              <AuthScene />
-            </div>
-            <div className="relative space-y-2">
-              {[
-                [
-                  Server,
-                  s("زیرساخت و میزبانی", "Infrastructure & hosting"),
-                  "text-blue-300 bg-blue-400/15",
-                ],
-                [
-                  Globe,
-                  s("دامنه‌های کسب‌وکار شما", "Your business domains"),
-                  "text-cyan-300 bg-cyan-400/15",
-                ],
-                [
-                  Headphones,
-                  s(
-                    "پشتیبانی در کنار سرویس‌ها",
-                    "Support alongside your services",
-                  ),
-                  "text-violet-300 bg-violet-400/15",
-                ],
-              ].map(([Icon, label, color], i) => {
-                const I = Icon as typeof Server;
-                return (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.035] px-3 py-2"
-                  >
-                    <span className={"rounded-lg p-2 " + color}>
-                      <I size={16} />
-                    </span>
-                    <span className="text-xs text-blue-50">
-                      {String(label)}
-                    </span>
-                    <ChevronRight
-                      size={14}
-                      className="ms-auto text-blue-200/40"
-                    />
-                  </div>
-                );
-              })}
-              <p className="pt-3 text-[9px] tracking-[.22em] text-blue-200/40">
-                NOVINVDS · YOUR CLOUD SPACE
-              </p>
+                <h2 className="mt-7 text-3xl font-extrabold leading-[1.7] lg:text-[38px]">
+                  {s("فضای رشد شما،", "Room to grow.")}
+                  <br />
+                  <span className="text-blue-300">
+                    {s("همیشه در دسترس.", "Always within reach.")}
+                  </span>
+                </h2>
+                <p className="mt-3 max-w-sm text-xs leading-7 text-blue-100/70">
+                  {s(
+                    "سرویس‌ها، پرداخت‌ها و پشتیبانی؛ همه در یک فضای مرتب و ساده، برای تمرکز روی کارهای مهم‌تر.",
+                    "Services, billing and support in one clear workspace. More room to focus on what matters.",
+                  )}
+                </p>
+              </div>
+              <div className="relative flex min-h-0 flex-1 items-center justify-center py-2 [&>svg]:h-full [&>svg]:max-h-full [&>svg]:w-full">
+                <AuthScene />
+              </div>
+              <div className="relative space-y-2">
+                {[
+                  [
+                    Server,
+                    s("زیرساخت و میزبانی", "Infrastructure & hosting"),
+                    "text-blue-300 bg-blue-400/15",
+                  ],
+                  [
+                    Globe,
+                    s("دامنه‌های کسب‌وکار شما", "Your business domains"),
+                    "text-cyan-300 bg-cyan-400/15",
+                  ],
+                  [
+                    Headphones,
+                    s(
+                      "پشتیبانی در کنار سرویس‌ها",
+                      "Support alongside your services",
+                    ),
+                    "text-violet-300 bg-violet-400/15",
+                  ],
+                ].map(([Icon, label, color], i) => {
+                  const I = Icon as typeof Server;
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.035] px-3 py-2"
+                    >
+                      <span className={"rounded-lg p-2 " + color}>
+                        <I size={16} />
+                      </span>
+                      <span className="text-xs text-blue-50">
+                        {String(label)}
+                      </span>
+                      <ChevronRight
+                        size={14}
+                        className="ms-auto text-blue-200/40"
+                      />
+                    </div>
+                  );
+                })}
+                <p className="pt-3 text-[9px] tracking-[.22em] text-blue-200/40">
+                  NOVINVDS · YOUR CLOUD SPACE
+                </p>
+              </div>
             </div>
           </aside>
         </div>

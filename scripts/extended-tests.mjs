@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { crc32 } from "node:zlib";
+import { matchesServiceFilter } from "../src/lib/service-filters.ts";
 import { csvText } from "../src/lib/report-export.ts";
+
 import { zipFiles } from "../src/lib/zip-store.ts";
 import { bannerSizes, marketingBanner } from "../src/lib/marketing-banners.ts";
 import {
@@ -23,6 +25,23 @@ import { invoiceTotals } from "../src/lib/billing.ts";
 import { sessionPhase, SESSION_GRACE } from "../src/hooks/usePanelSession.ts";
 import { createNavigationHandlers } from "../src/services/panelNavigationService.tsx";
 import { addonsFor } from "../src/data/serviceAddons.ts";
+
+test("daily service filtering follows provider billing periods without relabeling monthly cloud contracts", () => {
+  const dailyVps = { kind: "vps", billingCycle: "Daily", amount: 100000 };
+  const monthlyCloud = {
+    kind: "cloud",
+    billingCycle: "Monthly",
+    amount: 1800000,
+  };
+  const dailyBefore = { ...dailyVps },
+    cloudBefore = { ...monthlyCloud };
+  assert.equal(matchesServiceFilter(dailyVps, "daily"), true);
+  assert.equal(matchesServiceFilter(monthlyCloud, "daily"), false);
+  assert.equal(matchesServiceFilter(dailyVps, "vps"), true);
+  assert.equal(matchesServiceFilter(monthlyCloud, "all"), true);
+  assert.deepEqual(dailyVps, dailyBefore);
+  assert.deepEqual(monthlyCloud, cloudBefore);
+});
 
 test("Persian and Arabic-Indic input roundtrips to canonical numbers", () => {
   assert.equal(normalizeDigits("۱۲۳٬۴۵۶٫۷"), "123,456.7");
@@ -438,62 +457,213 @@ test("finance overview, transactions and wallet keep distinct navigation destina
   nav.navigateToServiceOrderPage("/order/support");
   assert.equal(tab, "order-support");
 });
-import {proratedHostingUpgrade} from '../supabase/functions/_shared/hosting-upgrade.ts';
-import {countries,datacenters,validDatacenter,countryFromCategory} from '../src/data/datacenters.ts';
-import {sidebarItems} from '../src/data/sidebarItems.ts';
-test('hosting upgrade charges only the remaining fraction before VAT and rejects invalid periods',()=>{
- const start='2026-10-01T00:00:00Z',end='2026-11-01T00:00:00Z',half=Date.parse(start)+(Date.parse(end)-Date.parse(start))/2;
- const q=proratedHostingUpgrade(89000,189000,start,end,half);assert.equal(q.subtotal,50000);assert.equal(q.tax,5000);assert.equal(q.total,55000);assert.equal(q.fraction,.5);
- assert.equal(proratedHostingUpgrade(89000,189000,start,end,Date.parse(start)).subtotal,100000);
- assert.throws(()=>proratedHostingUpgrade(189000,89000,start,end,half));assert.throws(()=>proratedHostingUpgrade(89000,189000,start,end,Date.parse(end)));assert.throws(()=>proratedHostingUpgrade(89000,189000,start,end,Date.parse(start)-1));assert.throws(()=>proratedHostingUpgrade(89000,189000,'1405/07/01',end,half));
+import { proratedHostingUpgrade } from "../supabase/functions/_shared/hosting-upgrade.ts";
+import {
+  countries,
+  datacenters,
+  validDatacenter,
+  countryFromCategory,
+} from "../src/data/datacenters.ts";
+import { sidebarItems } from "../src/data/sidebarItems.ts";
+test("hosting upgrade charges only the remaining fraction before VAT and rejects invalid periods", () => {
+  const start = "2026-10-01T00:00:00Z",
+    end = "2026-11-01T00:00:00Z",
+    half = Date.parse(start) + (Date.parse(end) - Date.parse(start)) / 2;
+  const q = proratedHostingUpgrade(89000, 189000, start, end, half);
+  assert.equal(q.subtotal, 50000);
+  assert.equal(q.tax, 5000);
+  assert.equal(q.total, 55000);
+  assert.equal(q.fraction, 0.5);
+  assert.equal(
+    proratedHostingUpgrade(89000, 189000, start, end, Date.parse(start))
+      .subtotal,
+    100000,
+  );
+  assert.throws(() => proratedHostingUpgrade(189000, 89000, start, end, half));
+  assert.throws(() =>
+    proratedHostingUpgrade(89000, 189000, start, end, Date.parse(end)),
+  );
+  assert.throws(() =>
+    proratedHostingUpgrade(89000, 189000, start, end, Date.parse(start) - 1),
+  );
+  assert.throws(() =>
+    proratedHostingUpgrade(89000, 189000, "1405/07/01", end, half),
+  );
 });
-test('country-specific datacenters cannot be mixed and every country has a reference location',()=>{
- assert.equal(countryFromCategory('order-dedicated-dc-ir-asiatech'),'ir');assert.equal(countryFromCategory('order-dedicated-dc-ir-afranet'),'ir');assert.equal(countryFromCategory('order-dedicated-asia'),'sg');
- assert.ok(validDatacenter('fr','fr-gra'));assert.ok(!validDatacenter('de','fr-gra'));assert.equal(countryFromCategory('order-dedicated-country-ca'),'ca');assert.equal(countryFromCategory('order-hosting-country-sg'),'sg');
- for(const c of countries)assert.ok(datacenters.some(dc=>dc.country===c.id));assert.ok(datacenters.every(dc=>dc.inventoryVerified===false));
+test("country-specific datacenters cannot be mixed and every country has a reference location", () => {
+  assert.equal(countryFromCategory("order-dedicated-dc-ir-asiatech"), "ir");
+  assert.equal(countryFromCategory("order-dedicated-dc-ir-afranet"), "ir");
+  assert.equal(countryFromCategory("order-dedicated-asia"), "sg");
+  assert.ok(validDatacenter("fr", "fr-gra"));
+  assert.ok(!validDatacenter("de", "fr-gra"));
+  assert.equal(countryFromCategory("order-dedicated-country-ca"), "ca");
+  assert.equal(countryFromCategory("order-hosting-country-sg"), "sg");
+  for (const c of countries)
+    assert.ok(datacenters.some((dc) => dc.country === c.id));
+  assert.ok(datacenters.every((dc) => dc.inventoryVerified === false));
 });
-test('sidebar country branches have unique IDs and fully English labels',()=>{
- const all=[];function visit(items){for(const item of items){all.push(item);if(item.submenu)visit(item.submenu);}}visit(sidebarItems);assert.equal(new Set(all.map(i=>i.id)).size,all.length);assert.ok(all.every(i=>i.en&&!/[\u0600-\u06ff]/.test(i.en)));assert.ok(all.find(i=>i.id==='dedicated-international-group').submenu.find(i=>i.id==='dedicated-region-eu').submenu.some(i=>i.id==='order-dedicated-country-fr'));
+test("sidebar country branches have unique IDs and fully English labels", () => {
+  const all = [];
+  function visit(items) {
+    for (const item of items) {
+      all.push(item);
+      if (item.submenu) visit(item.submenu);
+    }
+  }
+  visit(sidebarItems);
+  assert.equal(new Set(all.map((i) => i.id)).size, all.length);
+  assert.ok(all.every((i) => i.en && !/[\u0600-\u06ff]/.test(i.en)));
+  assert.ok(
+    all
+      .find((i) => i.id === "dedicated-international-group")
+      .submenu.find((i) => i.id === "dedicated-region-eu")
+      .submenu.some((i) => i.id === "order-dedicated-country-fr"),
+  );
 });
 
-import {sidebarPath,toggleSidebarBranch} from '../src/lib/sidebar-navigation.ts';
-import {customVpsEstimate,customVpsRates,locations as vpsLocations} from '../src/data/vpsCatalog.ts';
-import {dedicatedDriveLimit} from '../src/data/dedicatedCatalog.ts';
-test('sidebar accordion closes sibling and descendant branches while retaining ancestry',()=>{
- const a=toggleSidebarBranch(sidebarItems,[],'hosting-international-group');
- assert.deepEqual(a,['order-services','order-hosting','hosting-international-group']);
- const b=toggleSidebarBranch(sidebarItems,a,'hosting-custom-group');assert.ok(b.includes('hosting-international-group'));
- const c=toggleSidebarBranch(sidebarItems,b,'hosting-trial-group');assert.ok(!c.includes('hosting-custom-group'));assert.ok(!c.includes('hosting-international-group'));assert.ok(c.includes('order-hosting'));
- assert.deepEqual(toggleSidebarBranch(sidebarItems,c,'financial'),['financial']);
- assert.deepEqual(toggleSidebarBranch(sidebarItems,b,'hosting-international-group'),['order-services','order-hosting']);
- assert.ok(sidebarPath(sidebarItems,'order-hosting-custom-country-de').includes('hosting-international-group'));
+import {
+  sidebarPath,
+  toggleSidebarBranch,
+} from "../src/lib/sidebar-navigation.ts";
+import {
+  customVpsEstimate,
+  customVpsRates,
+  locations as vpsLocations,
+} from "../src/data/vpsCatalog.ts";
+import { dedicatedDriveLimit } from "../src/data/dedicatedCatalog.ts";
+test("sidebar accordion closes sibling and descendant branches while retaining ancestry", () => {
+  const a = toggleSidebarBranch(
+    sidebarItems,
+    [],
+    "hosting-international-group",
+  );
+  assert.deepEqual(a, [
+    "order-services",
+    "order-hosting",
+    "hosting-international-group",
+  ]);
+  const b = toggleSidebarBranch(sidebarItems, a, "hosting-custom-group");
+  assert.ok(b.includes("hosting-international-group"));
+  const c = toggleSidebarBranch(sidebarItems, b, "hosting-trial-group");
+  assert.ok(!c.includes("hosting-custom-group"));
+  assert.ok(!c.includes("hosting-international-group"));
+  assert.ok(c.includes("order-hosting"));
+  assert.deepEqual(toggleSidebarBranch(sidebarItems, c, "financial"), [
+    "financial",
+  ]);
+  assert.deepEqual(
+    toggleSidebarBranch(sidebarItems, b, "hosting-international-group"),
+    ["order-services", "order-hosting"],
+  );
+  assert.ok(
+    sidebarPath(sidebarItems, "order-hosting-custom-country-de").includes(
+      "hosting-international-group",
+    ),
+  );
 });
-test('hosting custom line items reconcile and arbitrary half-GB memory and site quantities affect price',()=>{
- const r={cpu:3,ramGB:3.5,diskGB:12.5,trafficGB:100,sites:4};
- for(const location of ['ir','eu']){const lines=hostingCostLines(r,location);assert.equal(hostingEstimate(r,location),lines.reduce((sum,l)=>sum+l.total,0));
- assert.equal(hostingEstimate(r,location)-hostingEstimate({...r,sites:1},location),hostingRates[location].siteMonth*3);}
- assert.ok(validHostingResources(r));assert.ok(!validHostingResources({...r,ramGB:3.25}));
+test("hosting custom line items reconcile and arbitrary half-GB memory and site quantities affect price", () => {
+  const r = { cpu: 3, ramGB: 3.5, diskGB: 12.5, trafficGB: 100, sites: 4 };
+  for (const location of ["ir", "eu"]) {
+    const lines = hostingCostLines(r, location);
+    assert.equal(
+      hostingEstimate(r, location),
+      lines.reduce((sum, l) => sum + l.total, 0),
+    );
+    assert.equal(
+      hostingEstimate(r, location) -
+        hostingEstimate({ ...r, sites: 1 }, location),
+      hostingRates[location].siteMonth * 3,
+    );
+  }
+  assert.ok(validHostingResources(r));
+  assert.ok(!validHostingResources({ ...r, ramGB: 3.25 }));
 });
-test('DL360 reference models cover each generation and reject DL380 drive cages',()=>{
- for(const generation of [8,9,10,11,12]){const model=dedicatedModels.find(m=>m.family==='DL360'&&m.generation===generation);assert.ok(model);const c=newDedicatedConfig(model.id);assert.deepEqual(dedicatedErrors(c),[]);
- c.chassis='LFF4';c.drives=[{type:'SATA HDD',capacityGB:1000,count:4}];assert.equal(dedicatedDriveLimit(c),4);assert.deepEqual(dedicatedErrors(c),[]);c.drives[0].count=5;assert.ok(dedicatedErrors(c).includes('drives'));
- c.chassis='LFF12';assert.ok(dedicatedErrors(c).includes('drives'));assert.ok(!model.profile.inventoryVerified);}
+test("DL360 reference models cover each generation and reject DL380 drive cages", () => {
+  for (const generation of [8, 9, 10, 11, 12]) {
+    const model = dedicatedModels.find(
+      (m) => m.family === "DL360" && m.generation === generation,
+    );
+    assert.ok(model);
+    const c = newDedicatedConfig(model.id);
+    assert.deepEqual(dedicatedErrors(c), []);
+    c.chassis = "LFF4";
+    c.drives = [{ type: "SATA HDD", capacityGB: 1000, count: 4 }];
+    assert.equal(dedicatedDriveLimit(c), 4);
+    assert.deepEqual(dedicatedErrors(c), []);
+    c.drives[0].count = 5;
+    assert.ok(dedicatedErrors(c).includes("drives"));
+    c.chassis = "LFF12";
+    assert.ok(dedicatedErrors(c).includes("drives"));
+    assert.ok(!model.profile.inventoryVerified);
+  }
 });
-test('custom VPS estimates use shared per-resource rates and reject unsupported allocations',()=>{
- const r={cpu:3,ram:7,disk:90,trafficGB:1300};assert.equal(customVpsEstimate(r),3*customVpsRates.cpu+7*customVpsRates.ram+90*customVpsRates.disk+300*customVpsRates.extraTrafficGB);
- assert.throws(()=>customVpsEstimate({...r,cpu:1.5}));assert.throws(()=>customVpsEstimate({...r,ram:129}));assert.equal(new Set(vpsLocations.map(l=>l.id)).size,vpsLocations.length);
+test("custom VPS estimates use shared per-resource rates and reject unsupported allocations", () => {
+  const r = { cpu: 3, ram: 7, disk: 90, trafficGB: 1300 };
+  assert.equal(
+    customVpsEstimate(r),
+    3 * customVpsRates.cpu +
+      7 * customVpsRates.ram +
+      90 * customVpsRates.disk +
+      300 * customVpsRates.extraTrafficGB,
+  );
+  assert.throws(() => customVpsEstimate({ ...r, cpu: 1.5 }));
+  assert.throws(() => customVpsEstimate({ ...r, ram: 129 }));
+  assert.equal(
+    new Set(vpsLocations.map((l) => l.id)).size,
+    vpsLocations.length,
+  );
 });
 
-import {referenceUsdRate,displayCurrencyValue} from '../src/lib/display-currency.ts';
-test('display currency converts only with fresh positive reference FX and never changes accounting values',()=>{
- const at=Date.parse('2026-10-23T00:00:00Z'),snapshot={receivedAt:'2026-10-22T23:59:00Z',fxAsOf:'2026-10-22T00:00:00Z',usdToman:100000,crypto:[],errors:[]};
- assert.equal(referenceUsdRate(snapshot,at),100000);assert.equal(displayCurrencyValue(250000,'USD',100000),2.5);assert.equal(displayCurrencyValue(-250000,'USD',100000),-2.5);assert.equal(displayCurrencyValue(250000,'TOMAN',null),250000);assert.equal(snapshot.usdToman,100000);
- assert.equal(displayCurrencyValue(250000,'USD',null),null);assert.equal(referenceUsdRate({...snapshot,usdToman:0},at),null);assert.equal(referenceUsdRate({...snapshot,receivedAt:'2026-10-22T23:50:00Z'},at),null);assert.equal(referenceUsdRate({...snapshot,fxAsOf:'2026-10-19T00:00:00Z'},at),null);assert.equal(referenceUsdRate({...snapshot,fxAsOf:'2026-10-24T00:00:00Z'},at),null);assert.throws(()=>displayCurrencyValue(NaN,'USD',100000));
+import {
+  referenceUsdRate,
+  displayCurrencyValue,
+} from "../src/lib/display-currency.ts";
+test("display currency converts only with fresh positive reference FX and never changes accounting values", () => {
+  const at = Date.parse("2026-10-23T00:00:00Z"),
+    snapshot = {
+      receivedAt: "2026-10-22T23:59:00Z",
+      fxAsOf: "2026-10-22T00:00:00Z",
+      usdToman: 100000,
+      crypto: [],
+      errors: [],
+    };
+  assert.equal(referenceUsdRate(snapshot, at), 100000);
+  assert.equal(displayCurrencyValue(250000, "USD", 100000), 2.5);
+  assert.equal(displayCurrencyValue(-250000, "USD", 100000), -2.5);
+  assert.equal(displayCurrencyValue(250000, "TOMAN", null), 250000);
+  assert.equal(snapshot.usdToman, 100000);
+  assert.equal(displayCurrencyValue(250000, "USD", null), null);
+  assert.equal(referenceUsdRate({ ...snapshot, usdToman: 0 }, at), null);
+  assert.equal(
+    referenceUsdRate({ ...snapshot, receivedAt: "2026-10-22T23:50:00Z" }, at),
+    null,
+  );
+  assert.equal(
+    referenceUsdRate({ ...snapshot, fxAsOf: "2026-10-19T00:00:00Z" }, at),
+    null,
+  );
+  assert.equal(
+    referenceUsdRate({ ...snapshot, fxAsOf: "2026-10-24T00:00:00Z" }, at),
+    null,
+  );
+  assert.throws(() => displayCurrencyValue(NaN, "USD", 100000));
 });
-test('custom hosting is reachable under both Iran and international branches',()=>{
- assert.ok(sidebarPath(sidebarItems,'order-hosting-custom-country-ir').includes('hosting-iran-group'));
- assert.ok(sidebarPath(sidebarItems,'order-hosting-custom-country-de').includes('hosting-international-group'));
+test("custom hosting is reachable under both Iran and international branches", () => {
+  assert.ok(
+    sidebarPath(sidebarItems, "order-hosting-custom-country-ir").includes(
+      "hosting-iran-group",
+    ),
+  );
+  assert.ok(
+    sidebarPath(sidebarItems, "order-hosting-custom-country-de").includes(
+      "hosting-international-group",
+    ),
+  );
 });
 
-import {displayUsdNumber} from '../src/lib/display-currency.ts';
-test('sub-cent hourly USD estimates are not rounded into a free service',()=>{assert.equal(displayUsdNumber(250/176324.3),'0.00142');assert.equal(displayUsdNumber(2.5),'2.50');assert.equal(displayUsdNumber(0),'0.00');});
+import { displayUsdNumber } from "../src/lib/display-currency.ts";
+test("sub-cent hourly USD estimates are not rounded into a free service", () => {
+  assert.equal(displayUsdNumber(250 / 176324.3), "0.00142");
+  assert.equal(displayUsdNumber(2.5), "2.50");
+  assert.equal(displayUsdNumber(0), "0.00");
+});

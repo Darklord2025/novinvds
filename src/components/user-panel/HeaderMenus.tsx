@@ -4,12 +4,8 @@ import {
   BellRing,
   CheckCheck,
   ChevronDown,
-  Headphones,
-  LayoutDashboard,
   LogOut,
   MailOpen,
-  Settings,
-  ShieldCheck,
   User,
   Wallet,
 } from "lucide-react";
@@ -338,48 +334,6 @@ export default function HeaderMenus({
               {money(accountWallet(data).balance)}
             </bdi>
           </DropdownMenuItem>
-          {[
-            [
-              "dashboard",
-              LayoutDashboard,
-              "نمای کلی پنل",
-              "Panel overview",
-              "text-blue-500",
-            ],
-            [
-              "profile",
-              Settings,
-              "تنظیمات حساب کاربری",
-              "Account settings",
-              "text-violet-500",
-            ],
-            [
-              "security",
-              ShieldCheck,
-              "امنیت و ورود دومرحله‌ای",
-              "Security & two-step access",
-              "text-emerald-500",
-            ],
-            [
-              "tickets",
-              Headphones,
-              "تیکت‌های پشتیبانی",
-              "Support tickets",
-              "text-amber-500",
-            ],
-          ].map(([tab, Icon, f, en, color]) => {
-            const I = Icon as typeof User;
-            return (
-              <DropdownMenuItem
-                key={String(tab)}
-                onSelect={() => navigate(String(tab))}
-                className="cursor-pointer gap-2.5 rounded-lg px-3 py-2.5 text-xs"
-              >
-                <I size={16} className={String(color)} />
-                {s(String(f), String(en))}
-              </DropdownMenuItem>
-            );
-          })}
           <DropdownMenuSeparator />
           {message && (
             <p

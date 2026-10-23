@@ -16,6 +16,11 @@ import {
 import { PanelHeading, ColorStat, usePanelCopy } from "./PanelPrimitives";
 import { cycleLabel } from "@/lib/service-labels";
 import { categoryLabel } from "@/lib/panel-model";
+import {
+  matchesServiceFilter,
+  type ServiceFilter,
+} from "@/lib/service-filters";
+import ServiceFilters from "./ServiceFilters";
 import { serviceIPs } from "@/lib/serviceIdentity";
 import { formatMoney } from "@/lib/billing";
 import { Button } from "@/components/ui/button";
@@ -38,7 +43,9 @@ export default function WHMCSServicesPage({
 }: Props) {
   const { userServices, preview } = useServiceCatalog(),
     { fa, s, n, money } = usePanelCopy();
-  const [kind, setKind] = useState(initialKind),
+  const [kind, setKind] = useState<ServiceFilter>(
+      initialKind === "cloud" ? "daily" : initialKind,
+    ),
     [status, setStatus] = useState("all"),
     [query, setQuery] = useState("");
   const states: Record<string, string> = {
@@ -50,7 +57,7 @@ export default function WHMCSServicesPage({
   };
   const filtered = userServices.filter(
     (v) =>
-      (kind === "all" || kind === v.kind) &&
+      matchesServiceFilter(v, kind) &&
       (status === "all" || status === v.status) &&
       (v.id + " " + v.name + " " + v.productName)
         .toLowerCase()
@@ -101,33 +108,7 @@ export default function WHMCSServicesPage({
           color="rose"
         />
       </div>
-      <div className="flex flex-wrap gap-2">
-        {(
-          [
-            "all",
-            "vps",
-            "dedicated",
-            "hosting",
-            "hourly",
-            "cloud",
-            "multilocation",
-            "license",
-            "network",
-            "addon",
-            "support",
-          ] as const
-        ).map((k) => (
-          <Button
-            key={k}
-            variant={kind === k ? "default" : "outline"}
-            size="sm"
-            className="rounded-full"
-            onClick={() => setKind(k)}
-          >
-            {k === "all" ? s("همه", "All") : categoryLabel(k, fa)}
-          </Button>
-        ))}
-      </div>
+      <ServiceFilters value={kind} onChange={setKind} />
       <div className="flex flex-wrap gap-3">
         <Input
           className="flex-1 min-w-40"
