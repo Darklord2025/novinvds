@@ -80,16 +80,6 @@ export default function BillingOverviewPage({
             <h2 className="font-bold">
               {s("تراکنش‌های اخیر", "Recent transactions")}
             </h2>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                onNavigateToTransactions
-                  ? onNavigateToTransactions()
-                  : go("/transactions")
-              }
-            >
-              {s("همه تراکنش‌ها", "All transactions")}
-            </Button>
           </header>
           {data.ledger.slice(0, 5).map((r) => (
             <div
@@ -124,14 +114,6 @@ export default function BillingOverviewPage({
             <h2 className="font-bold">
               {s("فاکتورهای اخیر", "Recent invoices")}
             </h2>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                onNavigateToInvoices ? onNavigateToInvoices() : go("/invoices")
-              }
-            >
-              {s("همه فاکتورها", "All invoices")}
-            </Button>
           </header>
           {data.invoices.slice(0, 5).map((i) => (
             <button
@@ -148,14 +130,6 @@ export default function BillingOverviewPage({
               </p>
             </button>
           ))}
-          <div className="flex flex-wrap gap-2 pt-3">
-            <Button variant="outline" onClick={() => go("/wallet")}>
-              {s("مدیریت کیف پول", "Wallet management")}
-            </Button>
-            <Button variant="outline" onClick={() => go("/wallet-usage")}>
-              {s("گزارش مصرف", "Usage report")}
-            </Button>
-          </div>
         </section>
       </div>
     </div>

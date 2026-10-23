@@ -15,7 +15,7 @@ export interface VpsPlan {
 export const virtualPlans: VpsPlan[] = [
   {
     id: "vp1",
-    name: "VPS-1",
+    name: "Compute C1-R1-D20",
     cpu: 1,
     ram: 1,
     disk: 20,
@@ -27,7 +27,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp2",
-    name: "VPS-2",
+    name: "Compute C1-R2-D30",
     cpu: 1,
     ram: 2,
     disk: 30,
@@ -39,7 +39,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp3",
-    name: "VPS-3",
+    name: "Compute C2-R2-D40",
     cpu: 2,
     ram: 2,
     disk: 40,
@@ -52,7 +52,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp4",
-    name: "VPS-4",
+    name: "Compute C2-R4-D60",
     cpu: 2,
     ram: 4,
     disk: 60,
@@ -64,7 +64,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp5",
-    name: "VPS-5",
+    name: "Compute C4-R8-D100",
     cpu: 4,
     ram: 8,
     disk: 100,
@@ -76,7 +76,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp6",
-    name: "VPS-6",
+    name: "Compute C4-R12-D150",
     cpu: 4,
     ram: 12,
     disk: 150,
@@ -88,7 +88,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp7",
-    name: "VPS-7",
+    name: "Compute C6-R16-D200",
     cpu: 6,
     ram: 16,
     disk: 200,
@@ -100,7 +100,7 @@ export const virtualPlans: VpsPlan[] = [
   },
   {
     id: "vp8",
-    name: "VPS-8",
+    name: "Compute C8-R32-D300",
     cpu: 8,
     ram: 32,
     disk: 300,
@@ -115,7 +115,7 @@ export const virtualPlans: VpsPlan[] = [
 export const hourlyPlans: VpsPlan[] = [
   {
     id: "hp1",
-    name: "Hourly-1",
+    name: "Hourly C1-R1-D20",
     cpu: 1,
     ram: 1,
     disk: 20,
@@ -127,7 +127,7 @@ export const hourlyPlans: VpsPlan[] = [
   },
   {
     id: "hp2",
-    name: "Hourly-2",
+    name: "Hourly C1-R2-D30",
     cpu: 1,
     ram: 2,
     disk: 30,
@@ -139,7 +139,7 @@ export const hourlyPlans: VpsPlan[] = [
   },
   {
     id: "hp3",
-    name: "Hourly-3",
+    name: "Hourly C2-R2-D40",
     cpu: 2,
     ram: 2,
     disk: 40,
@@ -152,7 +152,7 @@ export const hourlyPlans: VpsPlan[] = [
   },
   {
     id: "hp4",
-    name: "Hourly-4",
+    name: "Hourly C2-R4-D60",
     cpu: 2,
     ram: 4,
     disk: 60,
@@ -164,7 +164,7 @@ export const hourlyPlans: VpsPlan[] = [
   },
   {
     id: "hp5",
-    name: "Hourly-5",
+    name: "Hourly C4-R8-D100",
     cpu: 4,
     ram: 8,
     disk: 100,
@@ -176,7 +176,7 @@ export const hourlyPlans: VpsPlan[] = [
   },
   {
     id: "hp6",
-    name: "Hourly-6",
+    name: "Hourly C8-R16-D200",
     cpu: 8,
     ram: 16,
     disk: 200,
@@ -240,7 +240,7 @@ export const locations = [
 export const multilocationPlans: VpsPlan[] = [
   {
     id: "ml1",
-    name: "Multi-1",
+    name: "Multi C2-R2-D40",
     cpu: 2,
     ram: 2,
     disk: 40,
@@ -252,7 +252,7 @@ export const multilocationPlans: VpsPlan[] = [
   },
   {
     id: "ml2",
-    name: "Multi-2",
+    name: "Multi C2-R4-D60",
     cpu: 2,
     ram: 4,
     disk: 60,
@@ -265,7 +265,7 @@ export const multilocationPlans: VpsPlan[] = [
   },
   {
     id: "ml3",
-    name: "Multi-3",
+    name: "Multi C4-R8-D100",
     cpu: 4,
     ram: 8,
     disk: 100,
@@ -277,7 +277,7 @@ export const multilocationPlans: VpsPlan[] = [
   },
   {
     id: "ml4",
-    name: "Multi-4",
+    name: "Multi C6-R16-D200",
     cpu: 6,
     ram: 16,
     disk: 200,
@@ -289,7 +289,7 @@ export const multilocationPlans: VpsPlan[] = [
   },
   {
     id: "ml5",
-    name: "Multi-5",
+    name: "Multi C8-R32-D300",
     cpu: 8,
     ram: 32,
     disk: 300,
@@ -307,3 +307,41 @@ export const billingPeriods = [
   { id: "semiannual", name: "شش‌ماهه", multiplier: 5.1, discount: 15 },
   { id: "yearly", name: "سالانه", multiplier: 9.6, discount: 20 },
 ];
+
+export const customVpsRates = {
+  cpu: 90000,
+  ram: 45000,
+  disk: 1500,
+  extraTrafficGB: 500,
+  includedTrafficGB: 1000,
+};
+export function customVpsEstimate(r: {
+  cpu: number;
+  ram: number;
+  disk: number;
+  trafficGB?: number;
+}) {
+  const traffic = r.trafficGB ?? 1000;
+  if (
+    !Number.isInteger(r.cpu) ||
+    r.cpu < 1 ||
+    r.cpu > 32 ||
+    !Number.isInteger(r.ram) ||
+    r.ram < 1 ||
+    r.ram > 128 ||
+    !Number.isInteger(r.disk) ||
+    r.disk < 20 ||
+    r.disk > 2000 ||
+    !Number.isInteger(traffic) ||
+    traffic < 1 ||
+    traffic > 10000
+  )
+    throw Error("Invalid custom VPS resources");
+  return (
+    r.cpu * customVpsRates.cpu +
+    r.ram * customVpsRates.ram +
+    r.disk * customVpsRates.disk +
+    Math.max(0, traffic - customVpsRates.includedTrafficGB) *
+      customVpsRates.extraTrafficGB
+  );
+}

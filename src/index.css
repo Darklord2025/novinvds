@@ -305,3 +305,15 @@
 .auth-feature{transition:transform .2s,background-color .2s}
 .auth-feature:hover{transform:translateY(-3px);background:rgb(255 255 255 / .08)}
 @media(prefers-reduced-motion:reduce){.panel-shell *,.auth-classic *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.panel-shell button:active,.auth-feature:hover{transform:none!important}}
+
+/* Monetary values stay atomic; currency may wrap independently. */
+.invoice-money{display:inline-flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;max-width:100%;font-variant-numeric:tabular-nums}
+.invoice-money bdi{white-space:nowrap;overflow-wrap:normal}
+.invoice-money small{white-space:nowrap;font-size:.75em}
+.invoice-list-amount{min-width:9.5rem}
+
+.auth-welcome-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 15% 0%,#dbeafe80,transparent 45%),radial-gradient(ellipse at 90% 100%,#e0e7ff70,transparent 50%)}
+.dark .auth-welcome-glow{opacity:.12}
+.auth-server-stack{animation:authServerFloat 7s ease-in-out infinite;transform-origin:center}
+@keyframes authServerFloat{50%{transform:translateY(-7px)}}
+@media(prefers-reduced-motion:reduce){.auth-server-stack{animation:none}}

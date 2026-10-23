@@ -26,7 +26,7 @@ export default function VpsPlansSection() {
               className="rounded-2xl border bg-card p-6 space-y-5"
             >
               <Server className="text-blue-500" />
-              <h3 className="text-xl font-bold">Novin {p.name}</h3>
+              <h3 className="text-xl font-bold">{p.name}</h3>
               <p className="text-2xl font-extrabold text-blue-600">
                 {money(p.price)}
                 <small className="block mt-2 text-xs font-normal text-muted-foreground">

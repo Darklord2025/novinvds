@@ -1,6 +1,7 @@
 import BackButton from "./BackButton";
 import {
   virtualPlans,
+  customVpsEstimate,
   hourlyPlans,
   multilocationPlans,
   locations,
@@ -63,7 +64,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
   initialFamily = "linux",
   initialProfile = "order-vps",
 }) => {
-  const { s, n } = usePanelCopy();
+  const { s, n, money } = usePanelCopy();
   const [mode, setMode] = useState<"virtual" | "hourly" | "multilocation">(
     initialMode === "multilocation"
       ? "multilocation"
@@ -91,7 +92,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
           diskType: "NVMe",
           bandwidth: "1 TB",
           port: "1 Gbps",
-          price: custom.cpu * 90000 + custom.ram * 45000 + custom.disk * 1500,
+          price: customVpsEstimate(custom),
           period: "ماهانه",
         },
       ]
@@ -103,24 +104,26 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
   const plans = basePlans.map((p, i) => ({
     ...p,
     id: initialProfile + "-" + p.id,
-    name:
-      (initialProfile.includes("windows")
-        ? "Windows"
-        : initialProfile.includes("storage")
-          ? s("ذخیره‌سازی", "Storage")
-          : initialProfile.includes("managed")
-            ? s("مدیریت‌شده", "Managed")
-            : initialProfile.includes("daily")
-              ? s("روزانه", "Daily")
-              : initialProfile.includes("mikrotik")
-                ? "MikroTik"
-                : initialProfile.includes("ubuntu-desktop")
-                  ? "Desktop"
-                  : initialProfile.includes("custom")
-                    ? "Flex"
-                    : p.name) +
-      " " +
-      (i + 1),
+    name: customMode
+      ? s("سرور مجازی سفارشی", "Custom VPS")
+      : (initialProfile.includes("windows")
+          ? "Windows"
+          : initialProfile.includes("storage")
+            ? "Storage"
+            : initialProfile.includes("managed")
+              ? "Managed"
+              : initialProfile.includes("daily")
+                ? "Daily"
+                : initialProfile.includes("mikrotik")
+                  ? "MikroTik"
+                  : p.name) +
+        (initialProfile.includes("windows") ||
+        initialProfile.includes("storage") ||
+        initialProfile.includes("managed") ||
+        initialProfile.includes("daily") ||
+        initialProfile.includes("mikrotik")
+          ? " C" + p.cpu + "-R" + p.ram + "-D" + p.disk
+          : ""),
     ram:
       initialProfile.includes("windows") ||
       initialProfile.includes("ubuntu-desktop")
@@ -223,7 +226,6 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
                 onClick={onBack}
                 className="flex items-center gap-2"
               >
-
                 بازگشت
               </BackButton>
             )}
@@ -451,10 +453,10 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
                       </div>
                       <div className="pt-2 border-t">
                         <span className="text-xl font-bold text-primary">
-                          {toPersianDigits(plan.price.toLocaleString())}
+                          {money(plan.price)}
                         </span>
                         <span className="text-sm text-muted-foreground mr-1">
-                          تومان / {plan.period}
+                          / {plan.period}
                         </span>
                       </div>
                     </CardContent>
@@ -592,10 +594,10 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
                         مبلغ قابل پرداخت
                       </p>
                       <p className="text-3xl font-bold text-primary">
-                        {toPersianDigits(finalPrice.toLocaleString())}
+                        {money(finalPrice)}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        تومان /{" "}
+                        /{" "}
                         {initialProfile.includes("daily")
                           ? "روزانه"
                           : mode === "hourly"

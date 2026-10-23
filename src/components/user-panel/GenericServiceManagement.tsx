@@ -1,3 +1,4 @@
+import { inToman } from "@/lib/billing";
 import BackButton from "./BackButton";
 import { useServiceCatalog } from "@/contexts/PanelDataContext";
 import { PanelHeading, ColorStat, usePanelCopy } from "./PanelPrimitives";
@@ -16,7 +17,7 @@ export default function GenericServiceManagement({
   onRenew: () => void;
 }) {
   const { getServiceById } = useServiceCatalog(),
-    { fa, s, n } = usePanelCopy();
+    { fa, s, n, money } = usePanelCopy();
   const service = getServiceById(id);
   if (!service)
     return <p>{s("سرویس در دسترس نیست.", "Service unavailable.")}</p>;
@@ -51,7 +52,7 @@ export default function GenericServiceManagement({
         />
         <ColorStat
           title={s("مبلغ مرجع", "Reference amount")}
-          value={formatMoney(service.amount, service.currency, fa)}
+          value={money(inToman(service.amount, service.currency))}
           icon={Receipt}
           color="green"
         />

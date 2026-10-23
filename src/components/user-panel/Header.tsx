@@ -1,3 +1,4 @@
+import CurrencyControl from "@/components/CurrencyControl";
 import { usePanelData } from "@/contexts/PanelDataContext";
 import React, { useState } from "react";
 import {
@@ -87,7 +88,7 @@ export default function Header({
           <Search size={16} />
         </button>
       </form>
-      <div className="flex gap-1 items-center ms-auto">
+      <div className="flex flex-wrap justify-end gap-1 items-center ms-auto">
         <span
           className="flex items-center gap-1 text-xs rounded-lg bg-blue-500/10 text-blue-600 p-2 tabular-nums"
           aria-label={s("زمان نشست", "Session time")}
@@ -96,6 +97,7 @@ export default function Header({
           {n(sessionTimeLeft)}
         </span>
         <LanguageControl />
+        <CurrencyControl />
         <Button
           variant="ghost"
           size="icon"

@@ -5,6 +5,7 @@ import {
   invoiceTotals,
   localize,
   formatMoney,
+  inToman,
   statusLabels,
 } from "@/lib/billing";
 import BrandLogo from "@/components/BrandLogo";
@@ -18,7 +19,18 @@ export const InvoiceDocument: React.FC<{
   const fa = (override ?? language) === "fa",
     s = (f: string, e: string) => (fa ? f : e),
     n = (v: string | number) => localize(v, fa),
-    money = (v: number) => formatMoney(v, invoice.currency, fa);
+    money = (v: number) => (
+      <span className="invoice-money">
+        <bdi dir="ltr">
+          {n(
+            inToman(v, invoice.currency).toLocaleString("en-US", {
+              maximumFractionDigits: 1,
+            }),
+          )}
+        </bdi>
+        <small>{s("تومان", "Toman")}</small>
+      </span>
+    );
   const { subtotal, total } = invoiceTotals(invoice),
     buyer = invoice.buyer,
     company = buyer?.kind === "company",

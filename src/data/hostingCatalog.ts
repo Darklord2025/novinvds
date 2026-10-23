@@ -10,8 +10,8 @@ export interface HostingResources {
 export const hostingPlans = [
   {
     id: "novin-seed",
-    fa: "نوین بذر",
-    en: "Novin Seed",
+    fa: "پایه",
+    en: "Starter",
     cpu: 1,
     ramGB: 1,
     diskGB: 5,
@@ -22,8 +22,8 @@ export const hostingPlans = [
   },
   {
     id: "novin-sprout",
-    fa: "نوین رویش",
-    en: "Novin Sprout",
+    fa: "استاندارد",
+    en: "Standard",
     cpu: 2,
     ramGB: 2,
     diskGB: 15,
@@ -34,8 +34,8 @@ export const hostingPlans = [
   },
   {
     id: "novin-bloom",
-    fa: "نوین شکوفا",
-    en: "Novin Bloom",
+    fa: "تجاری",
+    en: "Business",
     cpu: 3,
     ramGB: 4,
     diskGB: 30,
@@ -46,8 +46,8 @@ export const hostingPlans = [
   },
   {
     id: "novin-horizon",
-    fa: "نوین گستره",
-    en: "Novin Horizon",
+    fa: "سازمانی",
+    en: "Enterprise",
     cpu: 4,
     ramGB: 8,
     diskGB: 60,
@@ -59,8 +59,20 @@ export const hostingPlans = [
 ] as const;
 // Proposed NovinVDS Toman tariffs, not imported competitor prices or verified sale quotes.
 export const hostingRates = {
-  ir: { cpuHour: 30, ramGBHour: 12, diskGBMonth: 1100, trafficGB: 550 },
-  eu: { cpuHour: 38, ramGBHour: 16, diskGBMonth: 1400, trafficGB: 750 },
+  ir: {
+    cpuHour: 30,
+    ramGBHour: 12,
+    diskGBMonth: 1100,
+    trafficGB: 550,
+    siteMonth: 8000,
+  },
+  eu: {
+    cpuHour: 38,
+    ramGBHour: 16,
+    diskGBMonth: 1400,
+    trafficGB: 750,
+    siteMonth: 10000,
+  },
 };
 export const hostingTrial: HostingResources = {
   cpu: 1,
@@ -74,7 +86,10 @@ export function validHostingResources(r: HostingResources) {
     Number.isInteger(r.cpu) &&
     r.cpu >= 1 &&
     r.cpu <= 8 &&
-    [0.5, 1, 2, 4, 8, 16].includes(r.ramGB) &&
+    Number.isFinite(r.ramGB) &&
+    r.ramGB >= 0.5 &&
+    r.ramGB <= 16 &&
+    Number.isInteger(r.ramGB * 2) &&
     Number.isFinite(r.diskGB) &&
     r.diskGB >= 0.5 &&
     r.diskGB <= 200 &&
@@ -99,10 +114,54 @@ export function hostingEstimate(
     hours > 744
   )
     throw Error("Invalid hosting resources");
-  const rate = hostingRates[location];
-  return Math.round(
-    (r.cpu * rate.cpuHour + r.ramGB * rate.ramGBHour) * hours +
-      r.diskGB * rate.diskGBMonth +
-      r.trafficGB * rate.trafficGB,
+  return hostingCostLines(r, location, hours).reduce(
+    (sum, line) => sum + line.total,
+    0,
   );
+}
+export function hostingCostLines(
+  r: HostingResources,
+  location: HostingLocation,
+  hours = 730,
+) {
+  if (
+    !validHostingResources(r) ||
+    !Number.isFinite(hours) ||
+    hours < 0 ||
+    hours > 744
+  )
+    throw Error("Invalid hosting resources");
+  const rate = hostingRates[location];
+  return [
+    {
+      key: "cpu",
+      quantity: r.cpu,
+      unitPrice: rate.cpuHour * hours,
+      total: Math.round(r.cpu * rate.cpuHour * hours),
+    },
+    {
+      key: "ramGB",
+      quantity: r.ramGB,
+      unitPrice: rate.ramGBHour * hours,
+      total: Math.round(r.ramGB * rate.ramGBHour * hours),
+    },
+    {
+      key: "diskGB",
+      quantity: r.diskGB,
+      unitPrice: rate.diskGBMonth,
+      total: Math.round(r.diskGB * rate.diskGBMonth),
+    },
+    {
+      key: "trafficGB",
+      quantity: r.trafficGB,
+      unitPrice: rate.trafficGB,
+      total: Math.round(r.trafficGB * rate.trafficGB),
+    },
+    {
+      key: "sites",
+      quantity: Math.max(0, r.sites - 1),
+      unitPrice: rate.siteMonth,
+      total: Math.max(0, r.sites - 1) * rate.siteMonth,
+    },
+  ];
 }

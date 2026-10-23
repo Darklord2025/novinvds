@@ -1,3 +1,4 @@
+import CurrencyControl from "@/components/CurrencyControl";
 import { normalizeDigits } from "@/lib/localized-number";
 import AccountConversion from "./AccountConversion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -68,7 +69,20 @@ export default function ProfileSettingsPage({
               <TabsTrigger
                 key={String(key)}
                 value={String(key)}
-                className={"border rounded-xl px-4 py-3 gap-2 transition-all "+({profile:"border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white",security:"border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 data-[state=active]:bg-emerald-600 data-[state=active]:text-white",notifications:"border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300 data-[state=active]:bg-amber-500 data-[state=active]:text-white",bank:"border-violet-500/20 bg-violet-500/10 text-violet-700 dark:text-violet-300 data-[state=active]:bg-violet-600 data-[state=active]:text-white",theme:"border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-300 data-[state=active]:bg-rose-600 data-[state=active]:text-white"})[String(key)]}
+                className={
+                  "border rounded-xl px-4 py-3 gap-2 transition-all " +
+                  {
+                    profile:
+                      "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white",
+                    security:
+                      "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 data-[state=active]:bg-emerald-600 data-[state=active]:text-white",
+                    notifications:
+                      "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300 data-[state=active]:bg-amber-500 data-[state=active]:text-white",
+                    bank: "border-violet-500/20 bg-violet-500/10 text-violet-700 dark:text-violet-300 data-[state=active]:bg-violet-600 data-[state=active]:text-white",
+                    theme:
+                      "border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-300 data-[state=active]:bg-rose-600 data-[state=active]:text-white",
+                  }[String(key)]
+                }
               >
                 <I size={17} />
                 {s(String(f), String(en))}
@@ -301,6 +315,9 @@ export default function ProfileSettingsPage({
           </form>
         </TabsContent>
         <TabsContent value="theme">
+          <div className="mb-5">
+            <CurrencyControl detailed />
+          </div>
           <section className="rounded-2xl border bg-card p-5 space-y-5">
             <h2 className="font-bold">
               {s("پوسته و زمان‌بندی", "Theme and schedule")}

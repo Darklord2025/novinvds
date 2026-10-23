@@ -140,7 +140,7 @@ export default function InternationalDedicatedPlans({
                   "Demo plan; not ready for delivery",
                 )}
               </span>
-              <h2 className="text-xl font-extrabold mt-2">Novin {p.name}</h2>
+              <h2 className="text-xl font-extrabold mt-2">{p.name}</h2>
               <p className="text-3xl font-bold mt-4" dir="ltr">
                 ${n(p.usd + regionExtra)}
                 <small className="text-sm"> / {s("ماه", "month")}</small>
@@ -182,7 +182,7 @@ export default function InternationalDedicatedPlans({
                 onClick={() => {
                   onAddToCart?.({
                     plan: {
-                      name: "Novin " + p.name + " " + region,
+                      name: p.name + " " + region,
                       cpu: p.cpu,
                       ram: p.ram + " GB",
                       disk: p.drives,

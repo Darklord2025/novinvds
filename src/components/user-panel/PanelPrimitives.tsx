@@ -1,3 +1,5 @@
+import { displayUsdNumber } from "@/lib/display-currency";
+import { useDisplayCurrency } from "@/contexts/DisplayCurrencyContext";
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatMoney, localize } from "@/lib/billing";
@@ -8,11 +10,25 @@ import {
 } from "@/lib/panel-model";
 export function usePanelCopy() {
   const { language } = useLanguage();
+  const display = useDisplayCurrency();
   return {
     fa: language === "fa",
     s: (fa: string, en: string) => (language === "fa" ? fa : en),
     n: (v: string | number) => localize(v, language === "fa"),
-    money: (v: number) => formatMoney(v, "TOMAN", language === "fa"),
+    rawMoney: (v: number) => formatMoney(v, "TOMAN", language === "fa"),
+    money: (v: number) => {
+      const value = display.value(v);
+      if (display.currency === "TOMAN")
+        return formatMoney(v, "TOMAN", language === "fa");
+      return value === null
+        ? language === "fa"
+          ? "— دلار"
+          : "— USD"
+        : "≈ " +
+            localize(displayUsdNumber(value), language === "fa") +
+            " " +
+            (language === "fa" ? "دلار" : "USD");
+    },
   };
 }
 export function PanelHeading({

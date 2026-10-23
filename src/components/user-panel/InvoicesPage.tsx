@@ -1,3 +1,6 @@
+import { useDisplayCurrency } from "@/contexts/DisplayCurrencyContext";
+import { panelDate } from "@/lib/panel-date";
+import MoneyAmount from "./MoneyAmount";
 import BackButton from "./BackButton";
 import React, { useState } from "react";
 import {
@@ -46,6 +49,7 @@ export default function InvoicesPage({
   initialMode?: "view" | "pay";
 }) {
   const { data, preview, action } = usePanelData();
+  const display = useDisplayCurrency();
   const { fa, s, n, money } = usePanelCopy();
   const [selectedId, setSelectedId] = useState<string | null>(
       initialInvoiceId ?? null,
@@ -119,7 +123,6 @@ export default function InvoicesPage({
           <div className="flex gap-2">
             {onBack && (
               <BackButton variant="outline" onClick={onBack}>
-
                 {s("بازگشت", "Back")}
               </BackButton>
             )}
@@ -147,6 +150,14 @@ export default function InvoicesPage({
           </div>
         }
       />
+      {display.currency === "USD" && (
+        <p className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 text-xs leading-7">
+          {s(
+            "معادل دلاری فقط برای نمایش است؛ سند اصلی، فایل PDF و مبلغ قابل پرداخت بر مبنای تومان باقی می‌مانند.",
+            "USD equivalents are for display only. Original documents, PDFs and payable amounts remain in Toman.",
+          )}
+        </p>
+      )}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <ColorStat
           title={s("همه فاکتورها", "All invoices")}
@@ -155,19 +166,19 @@ export default function InvoicesPage({
         />
         <ColorStat
           title={s("پرداخت شده", "Paid")}
-          value={money(amount("Paid"))}
+          value={<MoneyAmount value={amount("Paid")} stacked />}
           icon={CheckCircle}
           color="green"
         />
         <ColorStat
           title={s("در انتظار پرداخت", "Unpaid")}
-          value={money(amount("Unpaid"))}
+          value={<MoneyAmount value={amount("Unpaid")} stacked />}
           icon={Clock}
           color="purple"
         />
         <ColorStat
           title={s("سررسید گذشته", "Overdue")}
-          value={money(amount("Overdue"))}
+          value={<MoneyAmount value={amount("Overdue")} stacked />}
           icon={AlertTriangle}
           color="amber"
         />
@@ -201,7 +212,7 @@ export default function InvoicesPage({
           {rows.map((i) => (
             <article
               key={i.id}
-              className="flex flex-wrap items-center justify-between gap-4 p-4"
+              className="invoice-list-row grid grid-cols-[minmax(0,1fr)_auto] xl:grid-cols-[minmax(0,1fr)_12rem_21rem] items-center gap-4 p-4"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span
@@ -222,19 +233,24 @@ export default function InvoicesPage({
                     {n(i.items[0]?.name || "")}
                   </p>
                   <span className="text-xs text-muted-foreground">
-                    {n(i.dueDate)}
+                    {panelDate(i.dueDate, fa)}
                   </span>
                 </div>
               </div>
-              <div>
-                <strong>
-                  {formatMoney(invoiceTotals(i).total, i.currency, fa)}
+              <div className="invoice-list-amount text-end tabular-nums whitespace-nowrap">
+                <strong className="text-sm sm:text-base">
+                  {
+                    <MoneyAmount
+                      value={invoiceTotals(i).total}
+                      currency={i.currency}
+                    />
+                  }
                 </strong>
                 <p className="text-xs mt-2 text-muted-foreground">
                   {statusLabels[i.status][fa ? 0 : 1]}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="col-span-2 xl:col-span-1 flex flex-wrap gap-2 xl:justify-end">
                 <Button
                   size="sm"
                   variant="outline"

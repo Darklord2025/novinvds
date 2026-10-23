@@ -8,7 +8,12 @@ export type DriveType =
 export const dedicatedModels = hardwareProfiles.map((p) => ({
   id: p.id,
   generation: p.generation,
-  name: `HPE ${p.generation === 8 ? "DL380p" : "DL380"} Gen${p.generation} · ${p.cpuFamily}`,
+  family: p.id.startsWith("dl360") ? "DL360" : "DL380",
+  name: `HPE ${p.id.startsWith("dl360") ? "DL360" : "DL380"}${p.generation === 8 ? "p" : ""} Gen${p.generation} · ${p.cpuFamily}`,
+  chassisOptions: p.id.startsWith("dl360")
+    ? (["SFF8", "LFF4"] as const)
+    : (["SFF8", "LFF12"] as const),
+  maxGpuCount: p.id.startsWith("dl360") ? 1 : 2,
   profile: p,
   sockets: 2,
   dimmsPerCpu: p.generation >= 11 ? 16 : 12,
@@ -19,7 +24,7 @@ export const dedicatedModels = hardwareProfiles.map((p) => ({
         ? [16, 32]
         : p.generation === 10
           ? [16, 32, 64]
-          : [16, 32, 64, 128],
+          : p.generation === 12 ? [32, 64, 128] : [16, 32, 64, 128],
   driveTypes: (p.generation < 10
     ? ["SAS HDD", "SATA HDD", "SAS SSD", "SATA SSD"]
     : [
@@ -39,7 +44,7 @@ export interface DedicatedConfig {
   cpuCount: number;
   ramGB: number;
   ramCount: number;
-  chassis: "SFF8" | "LFF12";
+  chassis: "SFF8" | "LFF4" | "LFF12";
   drives: { type: DriveType; capacityGB: number; count: number }[];
   nicGbps: number;
   nicCount: number;
@@ -79,7 +84,7 @@ export function driveCapacities(
   chassis: DedicatedConfig["chassis"],
 ) {
   return type === "SATA HDD"
-    ? chassis === "LFF12"
+    ? chassis.startsWith("LFF")
       ? [1000, 2000, 4000, 8000, 16000]
       : []
     : type === "SAS HDD"
@@ -109,13 +114,13 @@ export function dedicatedErrors(c: DedicatedConfig) {
   if (
     !c.drives.length ||
     c.drives.length > 4 ||
-    drives > (c.chassis === "SFF8" ? 8 : 12) ||
-    !["SFF8", "LFF12"].includes(c.chassis) ||
+    drives > dedicatedDriveLimit(c) ||
+    !(m.chassisOptions as readonly string[]).includes(c.chassis) ||
     c.drives.some(
       (d) =>
         !m.driveTypes.includes(d.type) ||
         !driveCapacities(d.type, c.chassis).includes(d.capacityGB) ||
-        !integer(d.count, 1, 12) ||
+        !integer(d.count, 1, dedicatedDriveLimit(c)) ||
         (d.type === "NVMe SSD" && c.chassis !== "SFF8"),
     )
   )
@@ -139,7 +144,7 @@ export function dedicatedErrors(c: DedicatedConfig) {
     ].includes(c.nicGbps) ||
     !integer(c.nicCount, 1, 2) ||
     !["none", "16GB", "24GB", "48GB"].includes(c.gpu) ||
-    !integer(c.gpuCount, 0, 2) ||
+    !integer(c.gpuCount, 0, m.maxGpuCount) ||
     (c.gpu === "none") !== (c.gpuCount === 0) ||
     !integer(c.psuCount, 1, 2) ||
     !integer(c.ipCount, 1, 16) ||
@@ -208,3 +213,6 @@ export function dedicatedEstimate(c: DedicatedConfig) {
     p.bandwidth
   );
 }
+
+export const dedicatedDriveLimit = (c: DedicatedConfig) =>
+  c.chassis === "SFF8" ? 8 : c.chassis === "LFF4" ? 4 : 12;

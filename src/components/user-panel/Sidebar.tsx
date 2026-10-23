@@ -1,3 +1,4 @@
+import { sidebarPath, toggleSidebarBranch } from "@/lib/sidebar-navigation";
 import ServiceMenuIcon from "./ServiceMenuIcon";
 import React, { useState, useEffect } from "react";
 import {
@@ -75,14 +76,22 @@ export default function Sidebar({
   className,
 }: Props) {
   const { fa, s } = usePanelCopy();
-  const activeParents=(nodes:SidebarItem[],parents:string[]=[]):string[]=>nodes.flatMap(node=>node.id===activeTab?parents:node.submenu?activeParents(node.submenu,[...parents,node.id]):[]);
-  const [expanded, setExpanded] = useState<string[]>(()=>activeParents(items));
-  useEffect(()=>{setExpanded(v=>Array.from(new Set([...v,...activeParents(items)])));},[activeTab,items]);
+  const [expanded, setExpanded] = useState<string[]>(() =>
+    sidebarPath(items, activeTab).slice(0, -1),
+  );
+  useEffect(() => {
+    setExpanded(sidebarPath(items, activeTab).slice(0, -1));
+  }, [activeTab, items]);
+  const toggle = (id: string) =>
+    setExpanded((v) => toggleSidebarBranch(items, v, id));
   function row(item: SidebarItem, depth = 0) {
     const Icon = iconMap[item.icon as keyof typeof iconMap] || Circle;
     const open = expanded.includes(item.id);
     const select = () => {
-      if(item.submenu){setExpanded(v=>open?v.filter(id=>id!==item.id):[...v,item.id]);return;}
+      if (item.submenu) {
+        toggle(item.id);
+        return;
+      }
       (onItemClick || setActiveTab)?.(item.id);
       onClose?.();
     };
@@ -101,7 +110,7 @@ export default function Sidebar({
             className="flex flex-1 min-w-0 items-center gap-3 px-3 py-2.5 text-start text-sm"
             style={{ paddingInlineStart: 12 + depth * 10 }}
           >
-            <ServiceMenuIcon id={item.id} icon={Icon} size={depth?16:18}/>
+            <ServiceMenuIcon id={item.id} icon={Icon} size={depth ? 16 : 18} />
             <span>
               {fa ? item.label : item.en || translateLegacy(item.label)}
             </span>
@@ -111,12 +120,8 @@ export default function Sidebar({
               aria-label={s("باز کردن زیرمنو", "Expand submenu")}
               aria-expanded={open}
               className="p-2 shrink-0"
-              title={s("باز و بسته کردن زیرمنو","Toggle submenu")}
-              onClick={() =>
-                setExpanded((v) =>
-                  open ? v.filter((id) => id !== item.id) : [...v, item.id],
-                )
-              }
+              title={s("باز و بسته کردن زیرمنو", "Toggle submenu")}
+              onClick={() => toggle(item.id)}
             >
               <ChevronDown size={14} className={open ? "rotate-180" : ""} />
             </button>

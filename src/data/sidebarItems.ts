@@ -1,4 +1,4 @@
-import {countries,datacenters} from "./datacenters";
+import { countries, datacenters } from "./datacenters";
 export interface SidebarItem {
   id: string;
   label: string;
@@ -20,11 +20,101 @@ export const sidebarItems: SidebarItem[] = [
         en: "Web hosting",
         icon: "database",
         submenu: [
-          {id:'hosting-iran-group',label:'ایران',en:'Iran',icon:'globe',submenu:[{id:'order-hosting-linux-ir',label:'هاست لینوکس ایران',en:'Iran Linux hosting',icon:'server'},{id:'order-hosting-wordpress-ir',label:'هاست وردپرس ایران',en:'Iran WordPress hosting',icon:'database'},{id:'order-hosting-windows-ir',label:'هاست ویندوز ایران',en:'Iran Windows hosting',icon:'monitor'},{id:'order-hosting-custom-ir',label:'هاست سفارشی ایران',en:'Custom Iran hosting',icon:'settings'}]},
-          {id:'hosting-international-group',label:'خارج از ایران',en:'International',icon:'globe',submenu:countries.filter(c=>c.id!=='ir').map(c=>({id:'order-hosting-country-'+c.id,label:c.fa,en:c.en,icon:'globe'}))},
-          {id:'order-hosting-custom',label:'هاست سفارشی',en:'Custom hosting',icon:'settings'},
-          {id:'order-hosting-usage',label:'پرداخت بر اساس مصرف',en:'Pay as you go',icon:'calculator'},
-          {id:'order-hosting-trial',label:'تست رایگان ۲۴ ساعته',en:'Free 24-hour trial',icon:'clock'},
+          {
+            id: "hosting-iran-group",
+            label: "ایران",
+            en: "Iran",
+            icon: "globe",
+            submenu: [
+              {
+                id: "order-hosting-linux-ir",
+                label: "هاست لینوکس",
+                en: "Linux hosting",
+                icon: "server",
+              },
+              {
+                id: "order-hosting-wordpress-ir",
+                label: "هاست وردپرس",
+                en: "WordPress hosting",
+                icon: "database",
+              },
+              {
+                id: "order-hosting-windows-ir",
+                label: "هاست ویندوز",
+                en: "Windows hosting",
+                icon: "monitor",
+              },
+              {
+                id: "order-hosting-custom-country-ir",
+                label: "هاست سفارشی",
+                en: "Custom hosting",
+                icon: "settings",
+              },
+            ],
+          },
+          {
+            id: "hosting-international-group",
+            label: "خارج از ایران",
+            en: "International",
+            icon: "globe",
+            submenu: [
+              ...countries
+                .filter((c) => c.id !== "ir")
+                .map((c) => ({
+                  id: "order-hosting-country-" + c.id,
+                  label: c.fa,
+                  en: c.en,
+                  icon: "globe",
+                })),
+              {
+                id: "hosting-custom-group",
+                label: "هاست سفارشی",
+                en: "Custom hosting",
+                icon: "settings",
+                submenu: countries
+                  .filter((c) => c.id !== "ir")
+                  .map((c) => ({
+                    id: "order-hosting-custom-country-" + c.id,
+                    label: c.fa,
+                    en: c.en,
+                    icon: "globe",
+                  })),
+              },
+            ],
+          },
+          ...(
+            [
+              ["usage", "پرداخت بر اساس مصرف", "Pay as you go", "calculator"],
+              ["trial", "تست رایگان ۲۴ ساعته", "Free 24-hour trial", "clock"],
+            ] as const
+          ).map(([mode, label, en, icon]) => ({
+            id: "hosting-" + mode + "-group",
+            label,
+            en,
+            icon,
+            submenu: [
+              {
+                id: "order-hosting-" + mode + "-country-ir",
+                label: "ایران",
+                en: "Iran",
+                icon: "globe",
+              },
+              {
+                id: "hosting-" + mode + "-international",
+                label: "خارج از ایران",
+                en: "International",
+                icon: "globe",
+                submenu: countries
+                  .filter((c) => c.id !== "ir")
+                  .map((c) => ({
+                    id: "order-hosting-" + mode + "-country-" + c.id,
+                    label: c.fa,
+                    en: c.en,
+                    icon: "globe",
+                  })),
+              },
+            ],
+          })),
         ],
       },
       {
@@ -107,12 +197,61 @@ export const sidebarItems: SidebarItem[] = [
         en: "Dedicated servers",
         icon: "hard-drive",
         submenu: [
-          {id:'dedicated-iran-group',label:'ایران',en:'Iran',icon:'globe',submenu:datacenters.filter(dc=>dc.country==='ir').map(dc=>({id:'order-dedicated-dc-'+dc.id,label:dc.fa,en:dc.en,icon:'database'}))},
-          {id:'dedicated-international-group',label:'خارج از ایران',en:'International',icon:'globe',submenu:[
-            ...([['eu','اروپا','Europe'],['na','آمریکای شمالی','North America'],['asia','آسیا','Asia'],['oceania','اقیانوسیه','Oceania']] as const).map(([region,fa,en])=>({id:'dedicated-region-'+region,label:fa,en,icon:'globe',submenu:countries.filter(c=>c.region===region).map(c=>({id:'order-dedicated-country-'+c.id,label:c.fa,en:c.en,icon:'globe'}))})),
-            {id:'order-dedicated-gpu',label:'پلن‌های GPU',en:'GPU plans',icon:'cpu'},
-            {id:'order-dedicated-storage',label:'پلن‌های ذخیره‌سازی',en:'Storage plans',icon:'hard-drive'},
-          ]},
+          {
+            id: "dedicated-iran-group",
+            label: "ایران",
+            en: "Iran",
+            icon: "globe",
+            submenu: datacenters
+              .filter((dc) => dc.country === "ir")
+              .map((dc) => ({
+                id: "order-dedicated-dc-" + dc.id,
+                label: dc.fa,
+                en: dc.en,
+                icon: "database",
+              })),
+          },
+          {
+            id: "dedicated-international-group",
+            label: "خارج از ایران",
+            en: "International",
+            icon: "globe",
+            submenu: [
+              ...(
+                [
+                  ["eu", "اروپا", "Europe"],
+                  ["na", "آمریکای شمالی", "North America"],
+                  ["asia", "آسیا", "Asia"],
+                  ["oceania", "اقیانوسیه", "Oceania"],
+                ] as const
+              ).map(([region, fa, en]) => ({
+                id: "dedicated-region-" + region,
+                label: fa,
+                en,
+                icon: "globe",
+                submenu: countries
+                  .filter((c) => c.region === region)
+                  .map((c) => ({
+                    id: "order-dedicated-country-" + c.id,
+                    label: c.fa,
+                    en: c.en,
+                    icon: "globe",
+                  })),
+              })),
+              {
+                id: "order-dedicated-gpu",
+                label: "پلن‌های GPU",
+                en: "GPU plans",
+                icon: "cpu",
+              },
+              {
+                id: "order-dedicated-storage",
+                label: "پلن‌های ذخیره‌سازی",
+                en: "Storage plans",
+                icon: "hard-drive",
+              },
+            ],
+          },
         ],
       },
       {

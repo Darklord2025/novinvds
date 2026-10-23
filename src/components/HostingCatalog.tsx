@@ -1,5 +1,10 @@
+import HostingCostBreakdown from "./user-panel/HostingCostBreakdown";
 import DatacenterPicker from "./user-panel/DatacenterPicker";
-import {countries,countryFromCategory,validDatacenter} from "@/data/datacenters";
+import {
+  countries,
+  countryFromCategory,
+  validDatacenter,
+} from "@/data/datacenters";
 import React from "react";
 import { normalizeDigits } from "@/lib/localized-number";
 import { useRef, useState } from "react";
@@ -34,10 +39,12 @@ export default function HostingCatalog({
   inPanel = false,
   initialCategory = "",
   onCart,
+  configurationOnly = false,
 }: {
   inPanel?: boolean;
   initialCategory?: string;
   onCart?: () => void;
+  configurationOnly?: boolean;
 }) {
   const { s, n, money, fa } = usePanelCopy();
   const navigate = useNavigate();
@@ -53,21 +60,45 @@ export default function HostingCatalog({
         ? "trial"
         : (initial.id as string),
   );
-  const initialCountry=countryFromCategory(initialCategory,params.get('location')==='eu'?'de':'ir');
-  const [country,setCountry]=useState(countries.some(c=>c.id===params.get('country'))?params.get('country')!:initialCountry);
-  const [datacenter,setDatacenter]=useState(params.get('datacenterId')||params.get('datacenter')||'');
-  const region:HostingLocation=country==='ir'?'ir':'eu';
-  const setRegion=(r:HostingLocation)=>{setCountry(r==='ir'?'ir':'de');setDatacenter('');};
+  const initialCountry = countryFromCategory(
+    initialCategory,
+    initialCategory.includes("custom")
+      ? "de"
+      : params.get("location") === "eu"
+        ? "de"
+        : "ir",
+  );
+  const locationLocked =
+    initialCategory.includes("country-") || initialCategory.endsWith("-ir");
+  const configurator =
+    configurationOnly || /custom|usage|trial/.test(initialCategory);
+  const fixedBilling = /usage|trial/.test(initialCategory);
+  const [country, setCountry] = useState(
+    locationLocked
+      ? initialCountry
+      : countries.some((c) => c.id === params.get("country"))
+        ? params.get("country")!
+        : initialCountry,
+  );
+  const [datacenter, setDatacenter] = useState(
+    params.get("datacenterId") || params.get("datacenter") || "",
+  );
+  const region: HostingLocation = country === "ir" ? "ir" : "eu";
+
   const [billing, setBilling] = useState<HostingBilling>(
-    ["monthly", "yearly", "usage", "trial"].includes(
-      params.get("billing") || "",
-    )
-      ? (params.get("billing") as HostingBilling)
-      : initialCategory.includes("usage")
-        ? "usage"
-        : initialCategory.includes("trial")
-          ? "trial"
-          : "monthly",
+    initialCategory.includes("usage")
+      ? "usage"
+      : initialCategory.includes("trial")
+        ? "trial"
+        : ["monthly", "yearly", "usage", "trial"].includes(
+              params.get("billing") || "",
+            )
+          ? (params.get("billing") as HostingBilling)
+          : initialCategory.includes("usage")
+            ? "usage"
+            : initialCategory.includes("trial")
+              ? "trial"
+              : "monthly",
   );
   const [resources, setResources] = useState<HostingResources>(() => {
     const r = {
@@ -93,16 +124,20 @@ export default function HostingCatalog({
               : "linux"),
   );
   const [message, setMessage] = useState("");
+  const [hours, setHours] = useState(730);
   const trial = billing === "trial",
     custom = selected === "custom" || billing === "usage";
   const current = trial ? hostingTrial : resources;
   const preset = hostingPlans.find((p) => p.id === selected);
   const valid =
     validHostingResources(current) &&
+    Number.isFinite(hours) &&
+    hours >= 0 &&
+    hours <= 744 &&
     (!trial || ["linux", "wordpress"].includes(workload));
   const monthly = valid
     ? custom
-      ? hostingEstimate(current, region)
+      ? hostingEstimate(current, region, billing === "usage" ? hours : 730)
       : preset?.[region] || hostingEstimate(current, region)
     : 0;
   const amount = trial ? 0 : billing === "yearly" ? monthly * 12 : monthly;
@@ -118,12 +153,14 @@ export default function HostingCatalog({
     form.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   function submit() {
-    if (!valid||!validDatacenter(country,datacenter)) return;
+    if (!valid || !validDatacenter(country, datacenter)) return;
     if (!inPanel) {
       const q = new URLSearchParams({
         tab: "order-hosting",
         plan: selected,
-        location: region, country, datacenterId:datacenter,
+        location: region,
+        country,
+        datacenterId: datacenter,
         billing,
         cpu: String(current.cpu),
         ram: String(current.ramGB),
@@ -139,10 +176,10 @@ export default function HostingCatalog({
       id: `hosting-${Date.now()}`,
       type: "hosting",
       name: trial
-        ? s("نوین تجربه — تست ۲۴ ساعته", "Novin Experience — 24-hour trial")
+        ? s("هاست آزمایشی — ۲۴ ساعت", "Trial hosting — 24 hours")
         : preset
           ? s(preset.fa, preset.en)
-          : s("نوین انعطاف — هاست سفارشی", "Novin Flex — custom hosting"),
+          : s("هاست سفارشی", "Custom hosting"),
       price: amount,
       period: trial
         ? s("۲۴ ساعت", "24 hours")
@@ -154,13 +191,19 @@ export default function HostingCatalog({
       specs: [
         `${current.cpu} vCPU · ${current.ramGB} GB RAM · ${current.diskGB} GB NVMe`,
         `${current.trafficGB} GB · ${current.sites} ${s("وب‌سایت", "sites")}`,
-        s(countries.find(c=>c.id===country)!.fa,countries.find(c=>c.id===country)!.en),
+        s(
+          countries.find((c) => c.id === country)!.fa,
+          countries.find((c) => c.id === country)!.en,
+        ),
         workload,
       ],
       meta: {
         catalogId: trial ? "novin-trial" : selected,
-        location: region, country, datacenterId:datacenter,
+        location: region,
+        country,
+        datacenterId: datacenter,
         billing,
+        estimatedAllocationHours: billing === "usage" ? hours : undefined,
         resources: current,
         workload,
         trialHours: trial ? 24 : undefined,
@@ -189,26 +232,21 @@ export default function HostingCatalog({
       <div className="flex flex-wrap gap-3 justify-between items-center">
         <div>
           <h2 className="text-2xl font-extrabold">
-            {s("میزبانی وب، به اندازه رشد شما", "Hosting that grows with you")}
+            {trial
+              ? s("هاست آزمایشی ۲۴ ساعته", "24-hour hosting trial")
+              : custom
+                ? s("پیکربندی هاست سفارشی", "Custom hosting configurator")
+                : s(
+                    "میزبانی وب، به اندازه رشد شما",
+                    "Hosting that grows with you",
+                  )}
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
             {s(
-              "یک کاتالوگ مشترک برای انتخاب پلن و سفارش؛ نام‌ها و تعرفه‌های پیشنهادی نوین",
-              "One catalog for plans and ordering, with original Novin names and proposed tariffs",
+              "منابع موردنیازتان را انتخاب کنید و جزئیات هزینه را ببینید.",
+              "Choose your resources and review the itemized estimate.",
             )}
           </p>
-        </div>
-        <div className="flex rounded-xl border p-1 gap-1">
-          {(["ir", "eu"] as const).map((r) => (
-            <Button
-              key={r}
-              variant={region === r ? "default" : "ghost"}
-              onClick={() => setRegion(r)}
-            >
-              <Globe size={16} className="me-2" />
-              {r === "ir" ? s("ایران", "Iran") : s("خارج از ایران", "International")}
-            </Button>
-          ))}
         </div>
       </div>
       <p className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 text-sm">
@@ -217,103 +255,107 @@ export default function HostingCatalog({
           "Tariffs are Novin proposals before tax. Location availability, resources and final pricing require provider confirmation.",
         )}
       </p>
-      <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {hostingPlans.map((p, i) => (
-          <article
-            key={p.id}
-            className={
-              "rounded-2xl border bg-card p-5 space-y-4 relative overflow-hidden " +
-              (selected === p.id ? "ring-2 ring-blue-500" : "")
-            }
-          >
-            <div
+      {!configurator && (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {hostingPlans.map((p, i) => (
+            <article
+              key={p.id}
               className={
-                "absolute top-0 inset-x-0 h-1 " +
-                [
-                  "bg-blue-500",
-                  "bg-emerald-500",
-                  "bg-violet-500",
-                  "bg-amber-500",
-                ][i]
+                "rounded-2xl border bg-card p-5 space-y-4 relative overflow-hidden " +
+                (selected === p.id ? "ring-2 ring-blue-500" : "")
               }
-            />
-            <Sprout className="text-emerald-500" />
-            <h3 className="font-bold text-lg">{s(p.fa, p.en)}</h3>
-            <p className="text-2xl font-extrabold">
-              {money(p[region])}
-              <small className="text-xs block font-normal text-muted-foreground mt-2">
-                {s("پیشنهادی / ماهانه", "Proposed / month")}
-              </small>
-            </p>
-            <ul className="space-y-2 text-sm">
-              {[
-                `${n(p.cpu)} vCPU`,
-                `${n(p.ramGB)} GB RAM`,
-                `${n(p.diskGB)} GB NVMe`,
-                `${n(p.trafficGB)} GB ${s("ترافیک", "transfer")}`,
-                `${n(p.sites)} ${s("وب‌سایت", "websites")}`,
-              ].map((t) => (
-                <li key={t} className="flex items-center gap-2">
-                  <Check size={14} className="text-emerald-500" />
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <Button className="w-full" onClick={() => pick(p.id)}>
-              {s("انتخاب و سفارش", "Select and order")}
-            </Button>
-          </article>
-        ))}
-      </div>
-      <div className="grid md:grid-cols-3 gap-3">
-        {[
-          [
-            "custom",
-            SlidersHorizontal,
-            s("نوین انعطاف", "Novin Flex"),
-            s("منابع را خودتان تعیین کنید", "Choose your own resources"),
-          ],
-          [
-            "usage",
-            Gauge,
-            s("نوین سنجش", "Novin Meter"),
-            s(
-              "پرداخت بر اساس مصرف اندازه‌گیری‌شده",
-              "Pay for measured consumption",
-            ),
-          ],
-          [
-            "trial",
-            Timer,
-            s(
-              "نوین تجربه — ۲۴ ساعت رایگان",
-              "Novin Experience — 24 hours free",
-            ),
-            s(
-              "۵۱۲ مگابایت رم و فضا، یک وب‌سایت",
-              "512 MB memory and storage, one website",
-            ),
-          ],
-        ].map(([id, Icon, title, desc]) => {
-          const I = Icon as typeof Timer;
-          return (
-            <button
-              key={String(id)}
-              className="rounded-2xl border bg-card p-5 text-start hover:border-blue-500"
-              onClick={() => {
-                pick(id === "usage" ? "custom" : String(id));
-                if (id === "usage") setBilling("usage");
-              }}
             >
-              <I className="text-blue-500 mb-3" />
-              <strong>{String(title)}</strong>
-              <p className="text-sm text-muted-foreground mt-2">
-                {String(desc)}
+              <div
+                className={
+                  "absolute top-0 inset-x-0 h-1 " +
+                  [
+                    "bg-blue-500",
+                    "bg-emerald-500",
+                    "bg-violet-500",
+                    "bg-amber-500",
+                  ][i]
+                }
+              />
+              <Sprout className="text-emerald-500" />
+              <h3 className="font-bold text-lg">{s(p.fa, p.en)}</h3>
+              <p className="text-2xl font-extrabold">
+                {money(p[region])}
+                <small className="text-xs block font-normal text-muted-foreground mt-2">
+                  {s("پیشنهادی / ماهانه", "Proposed / month")}
+                </small>
               </p>
-            </button>
-          );
-        })}
-      </div>
+              <ul className="space-y-2 text-sm">
+                {[
+                  `${n(p.cpu)} vCPU`,
+                  `${n(p.ramGB)} GB RAM`,
+                  `${n(p.diskGB)} GB NVMe`,
+                  `${n(p.trafficGB)} GB ${s("ترافیک", "transfer")}`,
+                  `${n(p.sites)} ${s("وب‌سایت", "websites")}`,
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-2">
+                    <Check size={14} className="text-emerald-500" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <Button className="w-full" onClick={() => pick(p.id)}>
+                {s("انتخاب و سفارش", "Select and order")}
+              </Button>
+            </article>
+          ))}
+        </div>
+      )}
+      {!inPanel && !configurator && (
+        <div className="grid md:grid-cols-3 gap-3">
+          {[
+            [
+              "custom",
+              SlidersHorizontal,
+              s("هاست سفارشی", "Custom hosting"),
+              s("منابع را خودتان تعیین کنید", "Choose your own resources"),
+            ],
+            [
+              "usage",
+              Gauge,
+              s("هاست مصرفی", "Metered hosting"),
+              s(
+                "پرداخت بر اساس مصرف اندازه‌گیری‌شده",
+                "Pay for measured consumption",
+              ),
+            ],
+            [
+              "trial",
+              Timer,
+              s(
+                "هاست آزمایشی — ۲۴ ساعت رایگان",
+                "Trial hosting — 24 hours free",
+              ),
+              s(
+                "۵۱۲ مگابایت رم و فضا، یک وب‌سایت",
+                "512 MB memory and storage, one website",
+              ),
+            ],
+          ].map(([id, Icon, title, desc]) => {
+            const I = Icon as typeof Timer;
+            return (
+              <button
+                key={String(id)}
+                className="rounded-2xl border bg-card p-5 text-start hover:border-blue-500"
+                onClick={() => {
+                  pick(id === "usage" ? "custom" : String(id));
+                  if (id === "usage") setBilling("usage");
+                }}
+              >
+                <I className="text-blue-500 mb-3" />
+                <strong>{String(title)}</strong>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {String(desc)}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      )}
       <section
         ref={form}
         className="scroll-mt-28 rounded-2xl border bg-card p-5 md:p-7 space-y-5"
@@ -321,12 +363,45 @@ export default function HostingCatalog({
         <h3 className="text-xl font-bold">
           {s("پیکربندی و بررسی سفارش هاست", "Configure and review hosting")}
         </h3>
-        {country!=='ir'&&<label className="block text-sm font-semibold">{s('کشور محل میزبانی','Hosting country')}<select aria-label={s('کشور محل میزبانی','Hosting country')} className="mt-2 block w-full rounded-xl border bg-card p-3" value={country} onChange={e=>{setCountry(e.target.value);setDatacenter('');}}>{countries.filter(c=>c.id!=='ir').map(c=><option key={c.id} value={c.id}>{s(c.fa,c.en)}</option>)}</select></label>}
-        <DatacenterPicker country={country} value={datacenter} onChange={setDatacenter}/>
+        {!locationLocked && (
+          <label className="block text-sm font-semibold">
+            {s("کشور محل میزبانی", "Hosting country")}
+            <select
+              aria-label={s("کشور محل میزبانی", "Hosting country")}
+              className="mt-2 block w-full rounded-xl border bg-card p-3"
+              value={country}
+              onChange={(e) => {
+                setCountry(e.target.value);
+                setDatacenter("");
+              }}
+            >
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {s(c.fa, c.en)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        {locationLocked && (
+          <p className="text-sm font-semibold">
+            {s("کشور محل میزبانی", "Hosting country")}:{" "}
+            {s(
+              countries.find((c) => c.id === country)!.fa,
+              countries.find((c) => c.id === country)!.en,
+            )}
+          </p>
+        )}
+        <DatacenterPicker
+          country={country}
+          value={datacenter}
+          onChange={setDatacenter}
+        />
         <div className="grid sm:grid-cols-2 gap-4">
           <label className="space-y-2 text-sm block">
             {s("مدل پرداخت", "Billing model")}
             <select
+              disabled={fixedBilling}
               className="block border p-3 rounded-xl bg-background w-full"
               value={billing}
               onChange={(e) => {
@@ -382,53 +457,72 @@ export default function HostingCatalog({
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {fields.map(([key, label, min, max, step]) => (
-            <label key={key} className="text-sm space-y-2">
-              {label}
-              {key === "ramGB" && !trial ? (
-                <select
-                  aria-label={label}
-                  value={current[key]}
-                  className="block w-full border bg-background p-3 rounded-xl"
-                  onChange={(e) => {
-                    setResources({
-                      ...resources,
-                      [key]: Number(
-                        normalizeDigits(e.target.value).replace(/,/g, ""),
-                      ),
-                    });
-                    setSelected("custom");
-                  }}
-                >
-                  {[0.5, 1, 2, 4, 8, 16].map((v) => (
-                    <option key={v} value={v}>
-                      {n(v)}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <Input
-                  aria-label={label}
-                  type="text"
-                  inputMode="decimal"
+            <label key={key} className="text-sm space-y-3 block">
+              <span>{label}</span>
+              <Input
+                aria-label={label}
+                type="text"
+                inputMode="decimal"
+                disabled={trial}
+                value={n(current[key])}
+                onChange={(e) => {
+                  setResources({
+                    ...resources,
+                    [key]: Number(
+                      normalizeDigits(e.target.value).replace(/,/g, ""),
+                    ),
+                  });
+                  setSelected("custom");
+                }}
+              />
+              {!trial && (
+                <input
+                  aria-label={label + " " + s("لغزنده", "slider")}
+                  type="range"
                   min={min}
                   max={max}
                   step={step}
-                  disabled={trial}
-                  value={n(current[key])}
+                  value={current[key]}
+                  className="w-full accent-blue-600"
                   onChange={(e) => {
                     setResources({
                       ...resources,
-                      [key]: Number(
-                        normalizeDigits(e.target.value).replace(/,/g, ""),
-                      ),
+                      [key]: Number(e.target.value),
                     });
                     setSelected("custom");
                   }}
                 />
               )}
+              <small className="block text-muted-foreground">
+                {s("محدوده", "Range")}: {n(min)}–{n(max)}
+              </small>
             </label>
           ))}
         </div>
+        {billing === "usage" && (
+          <label className="text-sm block space-y-2">
+            {s("ساعت تخصیص منابع در برآورد", "Estimated allocation hours")}
+            <Input
+              aria-label={s(
+                "ساعت تخصیص منابع در برآورد",
+                "Estimated allocation hours",
+              )}
+              inputMode="decimal"
+              value={n(hours)}
+              onChange={(e) =>
+                setHours(Number(normalizeDigits(e.target.value)))
+              }
+            />
+          </label>
+        )}
+        {custom && !trial && valid && (
+          <HostingCostBreakdown
+            resources={current}
+            location={region}
+            hours={billing === "usage" ? hours : 730}
+            months={billing === "yearly" ? 12 : 1}
+          />
+        )}
         {billing === "usage" && (
           <div className="rounded-xl bg-blue-500/5 p-4 text-sm space-y-2">
             <p>
@@ -481,10 +575,18 @@ export default function HostingCatalog({
           </div>
           {inPanel && trial ? (
             <React.Suspense fallback={null}>
-              <HostingTrialRequest location={region} workload={workload} country={country} datacenterId={datacenter} />
+              <HostingTrialRequest
+                location={region}
+                workload={workload}
+                country={country}
+                datacenterId={datacenter}
+              />
             </React.Suspense>
           ) : (
-            <Button disabled={!valid||!validDatacenter(country,datacenter)} onClick={submit}>
+            <Button
+              disabled={!valid || !validDatacenter(country, datacenter)}
+              onClick={submit}
+            >
               <ShoppingCart size={17} className="me-2" />
               {inPanel
                 ? s("افزودن پیش‌نویس به سبد", "Add draft to cart")

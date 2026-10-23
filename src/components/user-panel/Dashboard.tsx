@@ -1,3 +1,4 @@
+import { inToman } from "@/lib/billing";
 import MarketRates from "./MarketRates";
 import ReferralReward from "./ReferralReward";
 import { useServiceCatalog } from "@/contexts/PanelDataContext";
@@ -231,7 +232,7 @@ export default function Dashboard({
                 ))}
               </div>
               <p className="text-sm font-bold">
-                {formatMoney(v.amount, v.currency, fa)}
+                {money(inToman(v.amount, v.currency))}
               </p>
               <div className="flex gap-2">
                 <Button

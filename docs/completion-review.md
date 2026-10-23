@@ -1,6 +1,6 @@
 # NovinVDS completion review
 
-Reviewed 2026-10-22 (Asia/Tehran). This report supersedes the earlier October 18 handoff.
+Reviewed 2026-10-23 (Asia/Tehran). This report supersedes the earlier October 18 handoff.
 
 ## Delivery state
 
@@ -31,7 +31,7 @@ Reviewed 2026-10-22 (Asia/Tehran). This report supersedes the earlier October 18
 ## Local verification
 
 - Frontend and edge TypeScript checks.
-- 50 review tests covering totals/currencies, invoice pagination, physical reference/evidence gating, catalog identity, renewal kinds, domain validation, wallet holds, session boundaries, CSV safety, ZIP correctness and 576 banner variants.
+- 57 review tests covering totals/currencies, invoice pagination, physical reference/evidence gating, catalog identity, renewal kinds, domain validation, wallet holds, session boundaries, CSV safety, ZIP correctness and 576 banner variants.
 - All five SQL migrations exercised in isolated PGlite: ownership/RLS, withdrawal holds, OTP expiry/attempt/replay checks, official and identity tickets, one-way approval evidence, reward threshold/reservation/settlement idempotency.
 - Browser checks: desktop/mobile panel geometry, bilingual notifications/domain/settings, domain menu, ticket report/survey/close, invoice close and downloaded PDF; long 70-line export is six A4 pages without blank trailing page or cut final row. Banner ZIP validated as 16 SVG files.
 - Security restoration checked visibly in the full panel, including preview guards and session sign-out confirmation; no real credentials or MFA settings changed.
@@ -73,3 +73,22 @@ Public `/vps`, plan/service/custom/hourly aliases and dedicated plan/service pag
 Additional checks: all five migrations ran successfully in isolated PGlite, including immutable first trial location and geographic scope. Frontend and edge type checks and all 50 tests passed. Browser checks covered submenu expansion without navigation, the Iran datacenter route, physical-resource fields, English security/account content, instant auth mode switching and a 390px auth layout without horizontal overflow. This is local verification; the existing Lovable preview is not proof of these edits being deployed.
 
 Final locked release build passed with Vite 5.4.10: initial application chunk 598.19 kB raw / 201.73 kB gzip; lazy user panel 70.18 kB raw / 22.99 kB gzip. The build still warns about the initial chunk exceeding 500 kB and outdated Browserslist data. These are recorded performance limits; no production Lighthouse result is claimed.
+
+
+## October 23 custom resources, currency and login follow-up
+
+This section supersedes earlier appearance and plan-label descriptions.
+
+- Removed hosting location switch buttons. Hosting menu leaves lock the selected country; usage/trial are country trees. Custom hosting is available under BOTH Iran and International. It opens resources directly, with editable CPU, half-GB RAM/storage, transfer and site counts, paired sliders/inputs and itemized rates.
+- Hosting calculator and order form share `hostingCostLines` / `hostingEstimate`; extra websites now have an explicit proposed unit rate after the included first site. VPS calculator reuses every VPS datacenter and the shared custom resource rates. Both legacy calculator entry points now use the same implementation. Removed the consultation placeholder and plan-page redirects.
+- Dedicated Iran menu leaves retain their datacenter and omit the redundant selector. The calculator stays Iran-only with its own datacenter selector. Shortened Asiatech/Afranet labels and renamed the model section to Model. Added separate DL360 Gen8–Gen12 references alongside DL380, with 8-SFF/4-LFF chassis options, per-model GPU count and validation rejecting DL380's 12-LFF cage. Actual SKU/controller/cooling checks remain required. Manufacturer references are stored with profiles.
+- Invoice rows use fixed amount columns; currency labels wrap independently from atomic, tabular monetary digits. Removed the four requested finance-overview shortcut buttons. General affiliate terms now cover enrollment, attribution, commission calculation, wallet credit, payout, marketing, abuse, privacy, rewards, disputes and contract changes, including an account-specific contract section. Actual approved rates and eligibility still come from the operator.
+- Sidebar expansion now keeps one ancestry open at a time. Hosting labels are Starter / Standard / Business / Enterprise (Persian: پایه / استاندارد / تجاری / سازمانی); internal IDs remain unchanged. VPS names describe resource tiers without a repeated Novin prefix.
+- Added a persisted browser display preference for Toman / USD in the header and Appearance settings. The shared formatter updates service cards, resource estimates, wallet summaries and cart displays. USD is marked approximate; source/receipt timestamps must be fresh, nonpositive or stale FX is rejected, and missing rates show no invented conversion. Sub-cent hourly charges retain significant digits instead of appearing free. Source exchange-rate boards, invoice documents/PDFs, exports and checkout accounting retain their explicitly stated Toman units. No stored price, wallet entry or payment payload is converted.
+- Replaced the rejected login appearance with a light/dark split layout, original supplied logo, clearer form hierarchy, compact mode controls and a lightweight vector server illustration. Mobile prioritizes the form; authentication/MFA/recovery behavior is preserved and no artificial transition delay is added.
+
+Browser checks: custom Germany order with 3 vCPU, 3.5 GB RAM and four sites reconciled to 198,600 Toman plus 10% VAT; custom Iran order with 3 vCPU and 3.5 GB RAM remained exactly 129,360 Toman in cart after USD/Toman switching (142,296 with VAT). Actual public reference FX responses were observed, not a verified checkout exchange quote. Display preference survived reload. Login checked at 1280px and 390px with no horizontal overflow, immediate mode switching and English system copy. Earlier in this follow-up the revised long invoice exported as six A4 pages, with no leftover export hosts. All 57 automated checks cover the new accordion, per-resource totals, DL360 constraints, FX freshness and small USD values in addition to existing billing/security/report checks.
+
+Primary hardware references: [DL360 Gen8](https://www.hpe.com/psnow/doc/c04123167), [Gen9](https://support.hpe.com/hpesc/public/api/document/c04441974), [Gen10](https://support.hpe.com/hpesc/public/docDisplay?docId=a00018801en_us), [Gen11](https://www.hpe.com/us/en/collaterals/collateral.a50004306enw.html), [Gen12](https://www.hpe.com/psnow/doc/a50006984enw). Public Hostiran navigation was consulted for category conventions; no private checkout or exact custom-hosting workflow was accessible.
+
+Latest October 23 locked production build: Vite 5.4.10 succeeded; initial application chunk 607.15 kB raw / 204.67 kB gzip, lazy panel 70.58 kB / 23.05 kB gzip, auth 13.44 kB / 5.52 kB gzip. The initial-size warning remains. No live deployment, verified inventory, production speed benchmark or real settlement is implied.

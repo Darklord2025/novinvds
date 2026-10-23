@@ -1,3 +1,79 @@
-import {useMarketRates} from '@/hooks/useMarketRates';
-import {usePanelCopy} from './PanelPrimitives';
-export default function MarketRates(){const {rates,error,stale}=useMarketRates();const {s,money,n,fa}=usePanelCopy();return <section className="rounded-2xl border bg-card p-5 space-y-4"><header className="flex flex-wrap justify-between gap-2"><h2 className="font-bold">{s('تابلوی نرخ ارز و رمزارز','Currency and crypto rates')}</h2><span className={'text-xs '+(error||stale?'text-amber-600':'text-emerald-600')}>{error?s('دریافت نرخ ممکن نیست','Rates unavailable'):stale?s('نرخ قبلی؛ نیازمند تازه‌سازی','Previous rates; refresh required'):rates?s('دریافت آنلاین','Online feed'):s('در انتظار منبع نرخ','Waiting for rate source')}</span></header><div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">{[['USD',rates?.usdToman],['EUR',rates?.eurToman],...(rates?.crypto||['USDT','BTC','ETH'].map(symbol=>({symbol,toman:undefined,usd:undefined}))).map(c=>[c.symbol,c.toman,c.usd])].map(([symbol,toman,usd])=><div key={String(symbol)} className="rounded-xl bg-blue-500/5 p-4"><strong dir="ltr">{String(symbol)}</strong><p className="text-sm mt-2">{typeof toman==='number'?money(toman):s('نرخ در دسترس نیست','Rate unavailable')}</p>{typeof usd==='number'&&<p className="text-xs text-muted-foreground mt-2">${n(usd.toLocaleString('en-US',{maximumFractionDigits:4}))}</p>}</div>)}</div><p className="text-xs leading-6 text-muted-foreground">{s('USD و EUR: نرخ مرجع ExchangeRate-API، نه دلار نقدی بازار آزاد. رمزارزها: CoinGecko و بازار تومانی والکس. نرخ نمایش برای اطلاع و برآورد است؛ نرخ معتبر درگاه هنگام پرداخت جداگانه تایید می‌شود.','USD/EUR use ExchangeRate-API reference rates, not Iran cash-market USD. Crypto uses CoinGecko and Wallex Toman markets. Display rates are informational; checkout uses a separately verified provider quote.')}</p>{rates&&<p className="text-xs text-muted-foreground">{s('زمان دریافت: ','Retrieved: ')}{new Date(rates.receivedAt).toLocaleString(fa?'fa-IR':'en-GB')}{rates.fxAsOf&&<> · {s('زمان منبع ارز: ','FX source time: ')}{new Date(rates.fxAsOf).toLocaleString(fa?'fa-IR':'en-GB')}</>}</p>}</section>}
+import { useMarketRates } from "@/hooks/useMarketRates";
+import { usePanelCopy } from "./PanelPrimitives";
+export default function MarketRates() {
+  const { rates, error, stale } = useMarketRates();
+  const { s, rawMoney, n, fa } = usePanelCopy();
+  return (
+    <section className="rounded-2xl border bg-card p-5 space-y-4">
+      <header className="flex flex-wrap justify-between gap-2">
+        <h2 className="font-bold">
+          {s("تابلوی نرخ ارز و رمزارز", "Currency and crypto rates")}
+        </h2>
+        <span
+          className={
+            "text-xs " +
+            (error || stale ? "text-amber-600" : "text-emerald-600")
+          }
+        >
+          {error
+            ? s("دریافت نرخ ممکن نیست", "Rates unavailable")
+            : stale
+              ? s(
+                  "نرخ قبلی؛ نیازمند تازه‌سازی",
+                  "Previous rates; refresh required",
+                )
+              : rates
+                ? s("دریافت آنلاین", "Online feed")
+                : s("در انتظار منبع نرخ", "Waiting for rate source")}
+        </span>
+      </header>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {[
+          ["USD", rates?.usdToman],
+          ["EUR", rates?.eurToman],
+          ...(
+            rates?.crypto ||
+            ["USDT", "BTC", "ETH"].map((symbol) => ({
+              symbol,
+              toman: undefined,
+              usd: undefined,
+            }))
+          ).map((c) => [c.symbol, c.toman, c.usd]),
+        ].map(([symbol, toman, usd]) => (
+          <div key={String(symbol)} className="rounded-xl bg-blue-500/5 p-4">
+            <strong dir="ltr">{String(symbol)}</strong>
+            <p className="text-sm mt-2">
+              {typeof toman === "number"
+                ? rawMoney(toman)
+                : s("نرخ در دسترس نیست", "Rate unavailable")}
+            </p>
+            {typeof usd === "number" && (
+              <p className="text-xs text-muted-foreground mt-2">
+                ${n(usd.toLocaleString("en-US", { maximumFractionDigits: 4 }))}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs leading-6 text-muted-foreground">
+        {s(
+          "USD و EUR: نرخ مرجع ExchangeRate-API، نه دلار نقدی بازار آزاد. رمزارزها: CoinGecko و بازار تومانی والکس. نرخ نمایش برای اطلاع و برآورد است؛ نرخ معتبر درگاه هنگام پرداخت جداگانه تایید می‌شود.",
+          "USD/EUR use ExchangeRate-API reference rates, not Iran cash-market USD. Crypto uses CoinGecko and Wallex Toman markets. Display rates are informational; checkout uses a separately verified provider quote.",
+        )}
+      </p>
+      {rates && (
+        <p className="text-xs text-muted-foreground">
+          {s("زمان دریافت: ", "Retrieved: ")}
+          {new Date(rates.receivedAt).toLocaleString(fa ? "fa-IR" : "en-GB")}
+          {rates.fxAsOf && (
+            <>
+              {" "}
+              · {s("زمان منبع ارز: ", "FX source time: ")}
+              {new Date(rates.fxAsOf).toLocaleString(fa ? "fa-IR" : "en-GB")}
+            </>
+          )}
+        </p>
+      )}
+    </section>
+  );
+}

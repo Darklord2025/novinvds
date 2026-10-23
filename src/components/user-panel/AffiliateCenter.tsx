@@ -1,3 +1,4 @@
+import AffiliateTerms from "./AffiliateTerms";
 import MarketingBanners from "./MarketingBanners";
 import ReferralReward from "./ReferralReward";
 import { useState } from "react";
@@ -319,17 +320,30 @@ export default function AffiliateCenter({
             </section>
           )}
           {tab === "terms" && (
-            <section className="rounded-2xl border bg-card p-6 text-sm leading-8 whitespace-pre-wrap">
-              {program?.terms ||
-                s(
-                  "شرایط تاییدشده همکاری هنوز ارائه نشده است.",
-                  "Approved program terms have not been supplied.",
-                )}
-            </section>
+            <AffiliateTerms
+              rate={program?.ratePercent}
+              contract={preview?undefined:program?.terms}
+            />
           )}
         </>
       )}
-      {!code && <MarketingBanners url="" />}
+      {!code && (
+        <>
+          <Button
+            variant="outline"
+            onClick={() => setTab(tab === "terms" ? "overview" : "terms")}
+          >
+            {s("شرایط همکاری", "Program terms")}
+          </Button>
+          {tab === "terms" && (
+            <AffiliateTerms
+              rate={program?.ratePercent}
+              contract={preview?undefined:program?.terms}
+            />
+          )}
+          <MarketingBanners url="" />
+        </>
+      )}
       <p role="status" className="text-sm">
         {message}
       </p>

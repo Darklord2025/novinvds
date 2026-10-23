@@ -1,3 +1,4 @@
+import { inToman } from "@/lib/billing";
 import BackButton from "./BackButton";
 import { useState } from "react";
 import { useServiceCatalog } from "@/contexts/PanelDataContext";
@@ -36,7 +37,7 @@ export default function WHMCSServicesPage({
   initialKind = "all",
 }: Props) {
   const { userServices, preview } = useServiceCatalog(),
-    { fa, s, n } = usePanelCopy();
+    { fa, s, n, money } = usePanelCopy();
   const [kind, setKind] = useState(initialKind),
     [status, setStatus] = useState("all"),
     [query, setQuery] = useState("");
@@ -189,7 +190,7 @@ export default function WHMCSServicesPage({
               </p>
             </div>
             <p className="font-bold text-sm">
-              {formatMoney(v.amount, v.currency, fa)}{" "}
+              {money(inToman(v.amount, v.currency))}{" "}
               <span className="font-normal text-xs text-muted-foreground">
                 / {cycleLabel(v.billingCycle, fa)}
               </span>

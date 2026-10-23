@@ -41,10 +41,10 @@ const fixtureEnglish: Record<string, string> = {
   دامنه: "Domain",
   ایرنیک: "IRNIC",
   بین‌المللی: "International",
-  "نوین بذر": "Novin Seed",
-  "نوین رویش": "Novin Sprout",
-  "نوین شکوفا": "Novin Bloom",
-  "نوین گستره": "Novin Horizon",
+  "نوین بذر": "Starter",
+  "نوین رویش": "Standard",
+  "نوین شکوفا": "Business",
+  "نوین گستره": "Enterprise",
 };
 // Only presentation fixtures are translated. Real names and customer messages remain as entered.
 export function localizedPreviewSnapshot(

@@ -44,7 +44,7 @@ const CartPage: React.FC<CartPageProps> = ({
   onBrowseServices,
 }) => {
   const { items, removeItem, updateQuantity, reward, setReward } = useCart();
-  const { s, n } = usePanelCopy();
+  const { money, s, n } = usePanelCopy();
   const { action } = usePanelData();
   const [discountMessage, setDiscountMessage] = useState("");
 
@@ -236,6 +236,10 @@ const CartPage: React.FC<CartPageProps> = ({
                           {/* Quantity */}
                           <div className="flex items-center gap-2">
                             <button
+                              aria-label={
+                                s("کاهش تعداد ", "Decrease quantity ") +
+                                item.name
+                              }
                               onClick={() => updateQuantity(item.id, -1)}
                               className="w-8 h-8 rounded-lg bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
                             >
@@ -245,6 +249,10 @@ const CartPage: React.FC<CartPageProps> = ({
                               {toPersianDigits(item.quantity.toString())}
                             </span>
                             <button
+                              aria-label={
+                                s("افزایش تعداد ", "Increase quantity ") +
+                                item.name
+                              }
                               onClick={() => updateQuantity(item.id, 1)}
                               className="w-8 h-8 rounded-lg bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
                             >
@@ -255,17 +263,13 @@ const CartPage: React.FC<CartPageProps> = ({
                           {/* Price */}
                           <div className="text-center">
                             <p className="font-bold text-lg">
-                              {toPersianDigits(
-                                (item.price * item.quantity).toLocaleString(),
-                              )}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              تومان
+                              {money(item.price * item.quantity)}
                             </p>
                           </div>
 
                           {/* Remove */}
                           <button
+                            aria-label={s("حذف ", "Remove ") + item.name}
                             onClick={() => removeItem(item.id)}
                             className="w-8 h-8 text-destructive hover:bg-destructive/10 rounded-lg flex items-center justify-center transition-colors"
                           >
@@ -342,17 +346,13 @@ const CartPage: React.FC<CartPageProps> = ({
                         <span className="text-muted-foreground">
                           جمع سبد خرید:
                         </span>
-                        <span className="font-medium">
-                          {toPersianDigits(subtotal.toLocaleString())} تومان
-                        </span>
+                        <span className="font-medium">{money(subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">
                           مالیات ({toPersianDigits("10")}٪):
                         </span>
-                        <span className="font-medium">
-                          {toPersianDigits(tax.toLocaleString())} تومان
-                        </span>
+                        <span className="font-medium">{money(tax)}</span>
                       </div>
                       {discountApplied && (
                         <div className="flex justify-between text-sm text-green-600">
@@ -361,8 +361,7 @@ const CartPage: React.FC<CartPageProps> = ({
                             تخفیف:
                           </span>
                           <span className="font-medium">
-                            - {toPersianDigits(discountAmount.toLocaleString())}{" "}
-                            تومان
+                            - {money(discountAmount)}
                           </span>
                         </div>
                       )}
@@ -379,9 +378,7 @@ const CartPage: React.FC<CartPageProps> = ({
                           ? s("برآورد با مالیات:", "Estimate incl. tax:")
                           : s("مبلغ قابل پرداخت:", "Amount payable:")}
                       </span>
-                      <span className="text-primary">
-                        {toPersianDigits(total.toLocaleString())} تومان
-                      </span>
+                      <span className="text-primary">{money(total)}</span>
                     </div>
 
                     <Button

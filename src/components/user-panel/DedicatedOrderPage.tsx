@@ -17,6 +17,7 @@ import {
   newDedicatedConfig,
   dedicatedErrors,
   dedicatedEstimate,
+  dedicatedDriveLimit,
   dedicatedUnitPrices,
   driveCapacities,
   driveUnitPrice,
@@ -203,7 +204,7 @@ export default function DedicatedOrderPage({
         </nav>
       )}
       <div hidden={!reviewOnly && step !== 1} className="space-y-5">
-        {!reviewOnly && (
+        {!reviewOnly && !validDatacenter("ir", initialDatacenter) && (
           <DatacenterPicker
             country="ir"
             value={datacenter}
@@ -213,7 +214,7 @@ export default function DedicatedOrderPage({
         <section className="rounded-2xl border bg-card p-5 space-y-5">
           <h2 className="font-bold flex gap-2">
             <Server className="text-blue-500" />
-            {s("مدل و محل استقرار", "Server model and location")}
+            {s("مدل", "Model")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2 grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -249,16 +250,15 @@ export default function DedicatedOrderPage({
             {select(
               s("محفظه درایو درخواستی", "Requested drive chassis"),
               c.chassis,
-              [
-                {
-                  value: "SFF8",
-                  label: s("۸ جایگاه ۲٫۵ اینچ", "8 × 2.5-inch bays"),
-                },
-                {
-                  value: "LFF12",
-                  label: s("۱۲ جایگاه ۳٫۵ اینچ", "12 × 3.5-inch bays"),
-                },
-              ],
+              model.chassisOptions.map((value) => ({
+                value,
+                label:
+                  value === "SFF8"
+                    ? s("۸ جایگاه ۲.۵ اینچ", "8 × 2.5-inch bays")
+                    : value === "LFF4"
+                      ? s("۴ جایگاه ۳.۵ اینچ", "4 × 3.5-inch bays")
+                      : s("۱۲ جایگاه ۳.۵ اینچ", "12 × 3.5-inch bays"),
+              })),
               (v) =>
                 patch({
                   chassis: v as DedicatedConfig["chassis"],
@@ -399,7 +399,7 @@ export default function DedicatedOrderPage({
               {qty(
                 s("تعداد درایو", "Drive count") + " " + n(index + 1),
                 d.count,
-                c.chassis === "SFF8" ? 8 : 12,
+                dedicatedDriveLimit(c),
                 (v) =>
                   patch({
                     drives: c.drives.map((x, i) =>
@@ -439,7 +439,7 @@ export default function DedicatedOrderPage({
           <p className="text-sm">
             {s("جایگاه استفاده‌شده: ", "Requested bays: ")}
             {n(c.drives.reduce((a, d) => a + d.count, 0))} /{" "}
-            {n(c.chassis === "SFF8" ? 8 : 12)}
+            {n(dedicatedDriveLimit(c))}
           </p>
           {select(
             s("آرایش RAID درخواستی", "Requested RAID layout"),
@@ -494,7 +494,7 @@ export default function DedicatedOrderPage({
               {qty(
                 s("تعداد GPU", "GPU count"),
                 c.gpuCount,
-                c.gpu === "none" ? 0 : 2,
+                c.gpu === "none" ? 0 : model.maxGpuCount,
                 (v) => patch({ gpuCount: v }),
                 c.gpu === "none" ? 0 : 1,
               )}
