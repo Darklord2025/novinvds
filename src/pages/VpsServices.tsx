@@ -1,1 +1,1 @@
-export {default} from './Vps';
+export { default } from "./Vps";

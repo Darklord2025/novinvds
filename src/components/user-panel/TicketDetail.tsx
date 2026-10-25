@@ -1,3 +1,7 @@
+import {
+  supportDepartments,
+  technicalTeam,
+} from "../../../supabase/functions/_shared/support-routing";
 import BackButton from "./BackButton";
 import TicketSurvey from "./TicketSurvey";
 import React, { useState } from "react";
@@ -70,6 +74,15 @@ export default function TicketDetail({
           {s("تیکت شماره", "Ticket number")} {n(ticket.number)}
         </p>
         <h1 className="text-xl font-bold mt-2">{ticket.subject}</h1>
+        <p className="text-sm mt-3">
+          {(ticket.department === "technical"
+            ? technicalTeam(ticket.context?.resourceKind)
+            : supportDepartments.find((v) => v.id === ticket.department)
+                ?.title)?.[fa ? 0 : 1] || ticket.department}
+          {ticket.context?.resourceName
+            ? " · " + ticket.context.resourceName
+            : ""}
+        </p>
         <p className="text-sm mt-3 opacity-80">
           {ticket.status === "closed"
             ? s("بسته شده", "Closed")

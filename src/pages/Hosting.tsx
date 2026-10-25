@@ -1,5 +1,4 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import HostingCatalog from '@/components/HostingCatalog';
-import { usePanelCopy } from '@/components/user-panel/PanelPrimitives';
-export default function Hosting(){const {s,fa}=usePanelCopy();return <div className="min-h-screen bg-background" dir={fa?'rtl':'ltr'}><Navbar/><main className="container mx-auto px-4 pt-28 pb-16 space-y-9"><header className="rounded-3xl bg-gradient-to-l from-blue-600 to-violet-700 p-7 md:p-12 text-white"><p className="text-blue-100 mb-3">NOVINVDS / WEB HOSTING</p><h1 className="text-3xl md:text-5xl font-extrabold">{s('خانه تازه وب‌سایت شما','A new home for your website')}</h1><p className="text-blue-100 mt-5 max-w-2xl leading-8">{s('ایران یا اروپا؛ پلن مشخص، منابع سفارشی یا پرداخت بر اساس مصرف. با تست ۲۴ ساعته کم‌منبع شروع کنید و سرویس مناسب رشدتان را انتخاب کنید.','Iran or Europe. Choose a preset plan, configure your resources or request metered hosting. Start with a small 24-hour trial.')}</p></header><HostingCatalog/></main><Footer/></div>;}
+import { PublicProduct } from "@/components/public/PublicProducts";
+export default function Hosting() {
+  return <PublicProduct family="hosting" />;
+}

@@ -49,7 +49,7 @@ export const usePanelState = () => {
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
-  const [isNewTicket, setIsNewTicket] = useState(false);
+  const [isNewTicket, setIsNewTicket] = useState(() => new URLSearchParams(location.search).get("tab")==="tickets" && new URLSearchParams(location.search).get("newTicket")==="1");
 
   const handleSidebarItemClick = (itemId: string) => {
     // Reset sub-states when changing main tab

@@ -32,6 +32,7 @@ await db.exec(
   ),
 );
 await db.exec(await readFile('supabase/migrations/20261022120000_order_locations.sql','utf8'));
+await db.exec(await readFile('supabase/migrations/20261026120000_ticket_context.sql','utf8'));
 const u = "00000000-0000-0000-0000-000000000001",
   v = "00000000-0000-0000-0000-000000000002",
   session = "00000000-0000-0000-0000-000000000011";
@@ -456,4 +457,15 @@ assert.equal(await scalar("select datacenter_id from panel_hosting_trials where 
 assert.equal(await scalar("select panel_request_hosting_trial($1,'ir','linux','ir','ir-asiatech')",[locationUser]),located);
 assert.equal(await scalar("select datacenter_id from panel_hosting_trials where id=$1",[located]),'de-fsn');
 console.log('Location SQL passed: paired country/datacenter, geographic scope and immutable first trial preference.');
+
+
+await db.exec(`insert into panel_tickets(user_id,subject,department) values('${u}','Legacy ticket','billing')`);
+const legacyContext=await db.query("select context from panel_tickets where subject='Legacy ticket'");
+assert.deepEqual(legacyContext.rows[0].context,{});
+await db.exec(`insert into panel_tickets(user_id,subject,department,context) values('${u}','Routed ticket','technical','{"resourceId":"demo","resourceKind":"hosting","issueId":"website"}')`);
+const routedContext=await db.query("select context from panel_tickets where subject='Routed ticket'");
+assert.equal(routedContext.rows[0].context.resourceKind,'hosting');
+await assert.rejects(()=>db.exec(`update panel_tickets set context='[]' where subject='Routed ticket'`));
+console.log('Ticket routing migration: legacy default, structured context and object constraint passed.');
+
 await db.close();

@@ -1,3 +1,4 @@
+import type {TicketContext} from "../../supabase/functions/_shared/support-routing";
 import type { UnifiedService, UnifiedDomain } from "@/data/userServices";
 import type { InvoiceData } from "./billing";
 export type TicketState = "open" | "answered" | "closed";
@@ -6,6 +7,7 @@ export interface PanelTicket {
   number: number;
   subject: string;
   department: string;
+  context?: TicketContext;
   status: TicketState;
   createdAt: string;
   survey?: { rating: number; comment: string; at: string };

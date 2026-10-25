@@ -1,3 +1,4 @@
+import { resolveSupportContext } from "../_shared/support-routing.ts";
 import {proratedHostingUpgrade} from "../_shared/hosting-upgrade.ts";
 import { check, cors, guard, json, provider, text } from "../_shared/panel.ts";
 const amount = (v: unknown) => {
@@ -183,6 +184,7 @@ Deno.serve(async (req: Request) => {
             number: t.number,
             subject: t.subject,
             department: t.department,
+            context: t.context,
             status: t.status,
             createdAt: t.created_at,
             messages: t.messages,
@@ -258,11 +260,11 @@ Deno.serve(async (req: Request) => {
         body = text(b.body);
       if (subject.length < 3 || body.length < 5)
         throw Error("Complete ticket details");
-      const department = ["technical", "billing", "sales", "security"].includes(
-        b.department,
-      )
-        ? b.department
-        : "technical";
+      const department = text(b.department, 32);
+      const context = await resolveSupportContext(department, b.context, async id => {
+        const resource = await own("panel_inventory", id);
+        return {id:resource.id,kind:resource.kind,name:text(resource.kind === "domain" ? resource.data.domain : resource.data.name,253)};
+      });
       const { data } = check(
         await db
           .from("panel_tickets")
@@ -270,6 +272,7 @@ Deno.serve(async (req: Request) => {
             user_id: uid,
             subject,
             department,
+            context,
             messages: [{ body, at: now, sender: "customer" }],
           })
           .select("*")
@@ -280,6 +283,7 @@ Deno.serve(async (req: Request) => {
         number: data.number,
         subject: data.subject,
         department: data.department,
+        context: data.context,
         status: data.status,
         createdAt: data.created_at,
         messages: data.messages,

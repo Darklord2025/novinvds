@@ -1,1 +1,1 @@
-export {default} from './Dedicated';
+export { default } from "./Dedicated";

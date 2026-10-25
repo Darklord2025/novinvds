@@ -1,4 +1,4 @@
-import PublicServerCatalog from "@/components/PublicServerCatalog";
+import { PublicProduct } from "@/components/public/PublicProducts";
 export default function Dedicated() {
-  return <PublicServerCatalog kind="dedicated" />;
+  return <PublicProduct family="dedicated" />;
 }

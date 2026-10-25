@@ -8,8 +8,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Chatbot from "./components/Chatbot";
 import Index from "./pages/Index";
+const Chatbot = React.lazy(() => import("./components/Chatbot"));
 const Vps = React.lazy(() => import("./pages/Vps"));
 const Dedicated = React.lazy(() => import("./pages/Dedicated"));
 const Hosting = React.lazy(() => import("./pages/Hosting"));
@@ -36,6 +36,14 @@ const NetworkStore = React.lazy(() => import("./pages/NetworkStore"));
 const OAuthConsent = React.lazy(() => import("./pages/OAuthConsent"));
 
 const Recover = React.lazy(() => import("./pages/Recover"));
+const Services = React.lazy(() => import("./pages/Services"));
+const Addons = React.lazy(() => import("./pages/Addons"));
+const Support = React.lazy(() => import("./pages/Support"));
+const Knowledge = React.lazy(() => import("./pages/Knowledge"));
+const FAQ = React.lazy(() => import("./pages/FAQ"));
+const Downloads = React.lazy(() => import("./pages/Downloads"));
+const Affiliate = React.lazy(() => import("./pages/Affiliate"));
+const Calculator = React.lazy(() => import("./pages/Calculator"));
 const routes = import.meta.glob(["./pages/*.tsx", "!./pages/Index.tsx"]);
 function RoutePreload() {
   React.useEffect(() => {
@@ -57,6 +65,16 @@ function RoutePreload() {
           "/dedicated": "Dedicated",
           "/hosting": "Hosting",
           "/domain": "Domain",
+          "/services": "Services",
+          "/addons": "Addons",
+          "/support": "Support",
+          "/knowledge": "Knowledge",
+          "/faq": "FAQ",
+          "/calculator": "Calculator",
+          "/datacenter": "Datacenter",
+          "/contact": "Contact",
+          "/downloads": "Downloads",
+          "/affiliate": "Affiliate",
         } as Record<string, string>
       )[url.pathname];
       if (name) void routes["./pages/" + name + ".tsx"]?.();
@@ -97,6 +115,14 @@ const App = () => (
                 >
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/addons" element={<Addons />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/knowledge" element={<Knowledge />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/downloads" element={<Downloads />} />
+                    <Route path="/affiliate" element={<Affiliate />} />
+                    <Route path="/calculator" element={<Calculator />} />
                     <Route path="/vps" element={<Vps />} />
                     <Route path="/dedicated" element={<Dedicated />} />
                     <Route path="/hosting" element={<Hosting />} />
@@ -151,7 +177,9 @@ const App = () => (
                   </Routes>
                 </React.Suspense>
 
-                <Chatbot />
+                <React.Suspense fallback={null}>
+                  <Chatbot />
+                </React.Suspense>
               </BrowserRouter>
             </TooltipProvider>
           </CartProvider>

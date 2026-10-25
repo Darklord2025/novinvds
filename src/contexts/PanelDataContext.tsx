@@ -1,3 +1,4 @@
+import {validateSupportContext, type TicketContext} from "../../supabase/functions/_shared/support-routing";
 import {useLanguage} from "./LanguageContext";
 import {localizedPreviewSnapshot} from "@/lib/preview-locale";
 import React, {
@@ -26,6 +27,7 @@ interface PanelData {
     subject: string,
     department: string,
     body: string,
+    context?: TicketContext,
   ) => Promise<PanelTicket>;
   closeTicket: (id: string) => Promise<void>;
   reply: (id: string, body: string) => Promise<void>;
@@ -111,11 +113,16 @@ export function PanelDataProvider({
       };
     }
     if (name === "ticket-create") {
+      const incoming = (payload.context || {}) as TicketContext;
+      const resource = [...data.services.map(v=>({id:v.id,kind:v.kind,name:v.name})),...data.domains.map(v=>({id:v.id,kind:"domain",name:v.domain}))].find(v=>v.id===incoming.resourceId);
+      if(incoming.resourceId && !resource) throw Error("Service not found on this account");
+      const context = validateSupportContext(String(payload.department),{issueId:incoming.issueId,...(resource?{resourceId:resource.id,resourceKind:resource.kind,resourceName:resource.name}:{})});
       const t: PanelTicket = {
         id,
         number: Math.max(1000, ...data.tickets.map((t) => t.number)) + 1,
         subject: String(payload.subject),
         department: String(payload.department),
+        context,
         status: "open",
         createdAt: new Date().toISOString(),
         messages: [
@@ -228,8 +235,8 @@ export function PanelDataProvider({
         ready,
         refresh,
         action,
-        createTicket: (subject, department, body) =>
-          action("ticket-create", { subject, department, body }),
+        createTicket: (subject, department, body, context) =>
+          action("ticket-create", { subject, department, body, context }),
         closeTicket: (id) => action("ticket-close", { id }),
         reply: (id, body) => action("ticket-reply", { id, body }),
         saveProfile: (profile) => action("profile", { profile }),

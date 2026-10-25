@@ -1,4 +1,4 @@
-import PublicServerCatalog from "@/components/PublicServerCatalog";
+import { PublicProduct } from "@/components/public/PublicProducts";
 export default function Vps() {
-  return <PublicServerCatalog kind="vps" />;
+  return <PublicProduct family="vps" />;
 }

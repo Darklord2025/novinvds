@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "test:review": "node --import ./scripts/register-review-loader.mjs --test scripts/review-tests.mjs scripts/extended-tests.mjs scripts/market-tests.mjs scripts/auth-tests.mjs",
+    "test:review": "node --import ./scripts/register-review-loader.mjs --test scripts/review-tests.mjs scripts/extended-tests.mjs scripts/market-tests.mjs scripts/auth-tests.mjs scripts/public-site-tests.mjs scripts/experience-tests.mjs",
     "preview": "vite preview",
     "typecheck:edge": "tsc --noEmit -p tsconfig.edge.json"
   },

@@ -141,6 +141,11 @@ export default function TicketsPage({
                   <strong className="block text-sm">
                     {n(t.number)} · {t.subject}
                   </strong>
+                  {t.context?.resourceName && (
+                    <small className="block text-muted-foreground mt-1">
+                      {t.context.resourceName}
+                    </small>
+                  )}
                   <span className="text-xs text-muted-foreground mt-2 block">
                     {new Date(t.createdAt).toLocaleDateString(
                       s("fa-IR", "en-US"),
