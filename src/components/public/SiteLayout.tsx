@@ -1,3 +1,5 @@
+import { useTheme } from "@/contexts/ThemeContext";
+import { Moon, Sun, ShoppingBag } from "lucide-react";
 import {
   PublicBack,
   DepartmentContact,
@@ -35,6 +37,9 @@ import {
 } from "@/data/publicCatalog";
 import { useSiteCopy } from "./site-copy";
 import "./public-site.css";
+import "./catalog-experience.css";
+import "./equipment-store.css";
+import "./public-dark.css";
 
 const icons = {
   vps: Server,
@@ -60,11 +65,15 @@ export function DirectionArrow({ size = 17 }: { size?: number }) {
   return fa ? <ArrowLeft size={size} /> : <ArrowRight size={size} />;
 }
 export function SiteHeader() {
+  const theme = useTheme();
   const { s, text } = useSiteCopy(),
     location = useLocation(),
     [menu, setMenu] = useState<string | null>(null),
     [mobile, setMobile] = useState(false),
     ref = useRef<HTMLElement>(null);
+  const inShop =
+    location.pathname.startsWith("/network-store") ||
+    location.pathname.startsWith("/shop/");
   useEffect(() => {
     setMenu(null);
     setMobile(false);
@@ -186,15 +195,36 @@ export function SiteHeader() {
             </div>
           ))}
           <Link to="/datacenter">{s("موقعیت‌ها", "Locations")}</Link>
+          <Link to="/network-store" className="nv-store-nav">
+            <ShoppingBag size={16} />
+            {s("فروشگاه", "Shop")}
+          </Link>
           <Link to="/blog">{s("یاد بگیرید", "Learn")}</Link>
         </nav>
         <div className="nv-header-actions">
+          <button
+            className="nv-theme-toggle"
+            type="button"
+            onClick={theme.toggleTheme}
+            aria-label={
+              theme.theme === "dark"
+                ? s("تم روشن", "Light theme")
+                : s("تم تیره", "Dark theme")
+            }
+          >
+            {theme.theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           <LanguageControl />
           <span className="nv-header-currency">
             <CurrencyControl />
           </span>
-          <Link className="nv-button nv-button-small" to="/user-panel">
-            {s("ورود به پنل", "Client area")}
+          <Link
+            className="nv-button nv-button-small"
+            to={inShop ? "/shop/account" : "/user-panel"}
+          >
+            {inShop
+              ? s("پنل فروشگاه", "Shop account")
+              : s("ورود به پنل", "Client area")}
             <DirectionArrow size={14} />
           </Link>
           <button
@@ -222,6 +252,10 @@ export function SiteHeader() {
               <DirectionArrow size={14} />
             </Link>
           ))}
+          <Link to="/network-store">
+            <ShoppingBag size={19} />
+            {s("فروشگاه تجهیزات شبکه", "Network equipment shop")}
+          </Link>
           <Link to="/services">{s("همهٔ خدمات", "All services")}</Link>
           <Link to="/datacenter">{s("موقعیت‌ها", "Locations")}</Link>
           <Link to="/blog">{s("بلاگ و راهنما", "Blog & guides")}</Link>
@@ -269,6 +303,9 @@ export function SiteFooter() {
           </div>
           <div>
             <h3>{s("همراه شما", "Resources")}</h3>
+            <Link to="/network-store">
+              {s("فروشگاه تجهیزات شبکه", "Network equipment shop")}
+            </Link>
             <Link to="/knowledge">{s("مرکز دانش", "Knowledge center")}</Link>
             <Link to="/faq">{s("سؤالات متداول", "FAQ")}</Link>
             <Link to="/blog">{s("بلاگ", "Blog")}</Link>
@@ -397,6 +434,13 @@ export function PageHero({
 }) {
   return (
     <section className="nv-page-hero">
+      <div className="nv-page-illustration" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <i />
+        <i />
+      </div>
       <div className="nv-container">
         <span className="nv-eyebrow">{eyebrow}</span>
         <h1>{title}</h1>

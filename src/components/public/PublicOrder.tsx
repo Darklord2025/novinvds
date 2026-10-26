@@ -1,4 +1,10 @@
-import { lazy, Suspense } from "react";
+import OfferExplorer from "./OfferExplorer";
+import {
+  offerCountry,
+  countriesForOffers,
+  offerMode,
+} from "@/data/publicGeography";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SiteLayout, { PageHero, PricingNote } from "./SiteLayout";
 import { useSiteCopy } from "./site-copy";
@@ -24,6 +30,7 @@ export default function PublicOrder({
   kind: OrderFamily;
   calculator?: boolean;
 }) {
+  const [selectionPending, setSelectionPending] = useState(false);
   const { s, text } = useSiteCopy(),
     route = useLocation(),
     navigate = useNavigate(),
@@ -51,6 +58,14 @@ export default function PublicOrder({
     dc = profile.startsWith("order-dedicated-dc-")
       ? profile.slice("order-dedicated-dc-".length)
       : "";
+  const requestedCountry = params.get("country") || "",
+    selectedCountry = countriesForOffers([selected], offerMode(selected)).some(
+      (c) => c.id === requestedCountry,
+    )
+      ? requestedCountry
+      : offerCountry(selected),
+    canConfigure = !!selectedCountry;
+  useEffect(() => setSelectionPending(false), [route.search]);
   function order(it: any) {
     addItem({
       id: kind + "-" + (it.supplierPlanId || it.plan?.id || Date.now()),
@@ -110,73 +125,68 @@ export default function PublicOrder({
             ))}
           </nav>
         )}
-        <div className="nv-profile-select">
-          <label htmlFor="nv-order-profile">
-            {s("انتخاب سرویس و موقعیت", "Service and location")}
-          </label>
-          <select
-            id="nv-order-profile"
-            value={profile}
-            onChange={(e) => {
-              const q = new URLSearchParams({ profile: e.target.value });
-              if (calculator) q.set("kind", kind);
-              navigate(route.pathname + "?" + q.toString());
-            }}
-          >
-            {options.map((o) => (
-              <option key={o.id} value={o.id}>
-                {text(o.title)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <Suspense
-          fallback={<div className="nv-form-skeleton" aria-busy="true" />}
-        >
-          <LegacyLocale>
-            {kind === "hosting" ? (
-              <HostingOrder
-                key={route.search}
-                profile={profile}
-              />
-            ) : kind === "vps" ? (
-              <VpsOrder
-                key={profile}
-                initialProfile={profile}
-                initialFamily={
-                  profile.includes("windows")
-                    ? "windows"
-                    : profile.includes("mikrotik")
-                      ? "appliance"
-                      : "linux"
-                }
-                initialMode={
-                  profile.includes("hourly")
-                    ? "hourly"
-                    : profile.includes("multilocation")
-                      ? "multilocation"
-                      : "virtual"
-                }
-                onAddToCart={order}
-              />
-            ) : (
-              <DedicatedOrder
-                key={profile}
-                initialProfile={
-                  profile.includes("gpu")
-                    ? "gpu"
-                    : profile.includes("storage")
-                      ? "storage"
-                      : "standard"
-                }
-                initialRegion={country === "ir" ? "iran" : "international"}
-                initialCountry={country}
-                initialDatacenter={dc}
-                onAddToCart={order}
-              />
-            )}
-          </LegacyLocale>
-        </Suspense>
+        <OfferExplorer
+          key={profile + "-" + selectedCountry}
+          items={options}
+          initialId={profile}
+          initialCountry={selectedCountry}
+          onSelectionChange={() => setSelectionPending(true)}
+          onChoose={(href) => {
+            setSelectionPending(false);
+            const q = new URLSearchParams(href.split("?")[1]);
+            if (calculator) q.set("kind", kind);
+            navigate(route.pathname + "?" + q.toString());
+          }}
+        />
+        {canConfigure && !selectionPending && (
+          <div className="nv-configure-area">
+            <Suspense
+              fallback={<div className="nv-form-skeleton" aria-busy="true" />}
+            >
+              <LegacyLocale>
+                {kind === "hosting" ? (
+                  <HostingOrder key={route.search} profile={profile} />
+                ) : kind === "vps" ? (
+                  <VpsOrder
+                    key={profile + selectedCountry}
+                    countryFilter={selectedCountry}
+                    initialProfile={profile}
+                    initialFamily={
+                      profile.includes("windows")
+                        ? "windows"
+                        : profile.includes("mikrotik")
+                          ? "appliance"
+                          : "linux"
+                    }
+                    initialMode={
+                      profile.includes("hourly")
+                        ? "hourly"
+                        : profile.includes("multilocation")
+                          ? "multilocation"
+                          : "virtual"
+                    }
+                    onAddToCart={order}
+                  />
+                ) : (
+                  <DedicatedOrder
+                    key={profile}
+                    initialProfile={
+                      profile.includes("gpu")
+                        ? "gpu"
+                        : profile.includes("storage")
+                          ? "storage"
+                          : "standard"
+                    }
+                    initialRegion={country === "ir" ? "iran" : "international"}
+                    initialCountry={country}
+                    initialDatacenter={dc}
+                    onAddToCart={order}
+                  />
+                )}
+              </LegacyLocale>
+            </Suspense>
+          </div>
+        )}
         <PricingNote />
       </section>
     </SiteLayout>

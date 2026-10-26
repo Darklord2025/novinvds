@@ -1,3 +1,4 @@
+import {networkOfferings} from "./networkOfferings";
 import { sidebarItems, type SidebarItem } from "./sidebarItems";
 import { serviceAddons } from "./serviceAddons";
 
@@ -75,10 +76,10 @@ export const publicFamilies: {
   {
     id: "network",
     path: "/network",
-    title: ["شبکه و IP", "Networking & IP"],
+    title: ["خدمات شبکه", "Network services"],
     description: [
-      "گزینه‌های IP، چند لوکیشن و ابزارهای شبکه متناسب با سرویس.",
-      "IP options, multiple locations and networking tools for your service.",
+      "راه‌اندازی، عیب‌یابی و مدیریت شبکه از راه دور، با محدودهٔ کار مشخص.",
+      "Remote network configuration, troubleshooting and management with a defined scope.",
     ],
     tag: "NETWORK",
     color: "cyan",
@@ -158,15 +159,13 @@ const orderVariants: PublicVariant[] = (
 ).flatMap((item) => collect(item, familyFor[item.id]));
 export const publicVariants: PublicVariant[] = [
   ...orderVariants,
+  ...networkOfferings.map(v=>({id:v.id,family:"network" as const,title:v.title,href:"/network?service="+v.id})),
   ...serviceAddons.map(
     (addon): PublicVariant => ({
       id: "addon-" + addon.id,
-      family: addon.category === "network" ? "network" : "addons",
+      family: "addons",
       title: [addon.name, addon.name],
-      href:
-        addon.category === "network"
-          ? "/network"
-          : "/addons?category=" + encodeURIComponent(addon.category),
+      href: '/addons?category='+encodeURIComponent(addon.category),
     }),
   ),
 ];

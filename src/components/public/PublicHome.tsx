@@ -1,3 +1,4 @@
+import CountryFlag from "./CountryFlag";
 import { WorkloadShowcase } from "./PublicExperience";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -687,7 +688,7 @@ export default function PublicHome() {
                     : "/hosting-plans?profile=order-hosting-country-" + c.id
                 }
               >
-                <span aria-hidden="true">{c.flag}</span>
+                <span aria-hidden="true"><CountryFlag code={c.id}/></span>
                 <span>{s(c.fa, c.en)}</span>
               </Link>
             ))}

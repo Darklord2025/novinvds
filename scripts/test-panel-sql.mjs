@@ -468,4 +468,15 @@ assert.equal(routedContext.rows[0].context.resourceKind,'hosting');
 await assert.rejects(()=>db.exec(`update panel_tickets set context='[]' where subject='Routed ticket'`));
 console.log('Ticket routing migration: legacy default, structured context and object constraint passed.');
 
+await db.exec(await readFile('supabase/migrations/20261026130000_shop_account.sql','utf8'));
+const shopRequest=(await db.query("insert into shop_orders(user_id,description,quantity) values($1,'Equipment enquiry only',2) returning id,status,total_toman",[u])).rows[0];
+assert.equal(shopRequest.status,'requested');assert.equal(shopRequest.total_toman,null);
+await db.query("insert into shop_addresses(user_id,data) values($1,'{\"city\":\"Example\"}')",[u]);
+await db.exec('set role authenticated');
+for(const table of ['shop_orders','shop_addresses','shop_products','shop_favorites'])await assert.rejects(()=>db.query('select * from '+table));
+await db.exec('reset role');
+assert.equal((await db.query('select count(*)::int as n from shop_orders where user_id=$1',[v])).rows[0].n,0);
+await assert.rejects(()=>db.query("update shop_orders set status='made-up' where id=$1",[shopRequest.id]));
+await assert.rejects(()=>db.query('update shop_orders set quantity=0 where id=$1',[shopRequest.id]));
+console.log('Shop SQL passed: shared auth user IDs, quote-only default, no direct client table access and separate equipment order namespace.');
 await db.close();

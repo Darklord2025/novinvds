@@ -1,3 +1,7 @@
+import CountryFlag from "./CountryFlag";
+import { offerCountry } from "@/data/publicGeography";
+import OfferExplorer from "./OfferExplorer";
+import PublicNetwork from "./PublicNetwork";
 import { useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import {
@@ -41,7 +45,11 @@ export function VariantLinks({ items }: { items: PublicVariant[] }) {
               publicFamilies.find((f) => f.id === v.family)!.color
             }
           >
-            <FamilyIcon family={v.family} size={19} />
+            {offerCountry(v) ? (
+              <CountryFlag code={offerCountry(v)} />
+            ) : (
+              <FamilyIcon family={v.family} size={19} />
+            )}
           </span>
           <span>{text(v.title)}</span>
           <DirectionArrow size={15} />
@@ -51,93 +59,101 @@ export function VariantLinks({ items }: { items: PublicVariant[] }) {
   );
 }
 export function PublicServices() {
-  const { s, text, n } = useSiteCopy(),
+  const { s, text } = useSiteCopy(),
     [query, setQuery] = useState(""),
-    [selected, setSelected] = useState("all");
-  const rows = publicVariants.filter(
-    (v) =>
-      (selected === "all" || selected === v.family) &&
-      (text(v.title) + v.id).toLowerCase().includes(query.toLowerCase().trim()),
+    [selected, setSelected] = useState("");
+  const rows = publicVariants.filter((v) =>
+    (text(v.title) + " " + v.id)
+      .toLowerCase()
+      .includes(query.toLowerCase().trim()),
   );
   return (
-    <SiteLayout title={s("همهٔ خدمات", "All services")}>
+    <SiteLayout title={s("خدمات نوین وی‌دی‌اس", "NovinVDS services")}>
       <PageHero
-        eyebrow="THE COMPLETE TOOLKIT"
+        eyebrow="FIND YOUR FIT"
         title={s(
-          "زیرساخت مناسب شما، همین‌جاست.",
-          "Find the right infrastructure for you.",
+          "انتخاب درست، قدم به قدم.",
+          "Find your fit. One step at a time.",
         )}
         description={s(
-          "تمام گزینه‌های سفارش پنل، حالا در سایت اصلی. نوع سرویس را انتخاب کنید یا در میان خدمات جستجو کنید.",
-          "Every ordering option from the client area, now on the main website. Pick a family or search the complete catalog.",
+          "اول سرویس را انتخاب کنید، سپس منطقه و کشور را ببینید.",
+          "Choose a service first, then explore its regions and countries.",
         )}
       />
       <section className="nv-section">
         <div className="nv-container">
-          <div className="nv-catalog-tools">
-            <div className="nv-search">
-              <Search size={18} />
-              <input
-                aria-label={s("جستجوی خدمات", "Search services")}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={s(
-                  "نام سرویس، کشور یا مرکز داده…",
-                  "Service, country or datacenter…",
-                )}
-              />
-            </div>
-            <div
-              className="nv-filter-buttons"
-              role="group"
-              aria-label={s("دسته‌بندی خدمات", "Service categories")}
-            >
-              <button
-                aria-pressed={selected === "all"}
-                onClick={() => setSelected("all")}
-              >
-                {s("همه", "All")}
-              </button>
-              {publicFamilies.map((f) => (
-                <button
-                  key={f.id}
-                  aria-pressed={selected === f.id}
-                  onClick={() => setSelected(f.id)}
-                >
-                  {text(f.title)}
-                </button>
-              ))}
-            </div>
+          <div className="nv-search mb-7">
+            <Search size={18} />
+            <input
+              aria-label={s("جستجوی خدمات", "Search services")}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={s(
+                "دنبال چه سرویسی هستید؟",
+                "What are you looking for?",
+              )}
+            />
           </div>
-          <p className="text-sm text-slate-500 mb-6" role="status">
-            {n(rows.length)} {s("گزینه در کاتالوگ", "catalog options")}
-          </p>
-          {publicFamilies.map((f) => {
-            const group = rows.filter((v) => v.family === f.id);
-            return (
-              !!group.length && (
-                <section className="nv-catalog-group" key={f.id}>
-                  <h2>
-                    <FamilyIcon family={f.id} />
-                    {text(f.title)}
-                    <small>
-                      {n(group.length)} {s("گزینه", "options")}
-                    </small>
-                  </h2>
-                  <VariantLinks items={group} />
-                </section>
-              )
-            );
-          })}
-          {!rows.length && (
-            <div className="nv-empty">
-              {s(
-                "نتیجه‌ای پیدا نشد. عبارت دیگری را امتحان کنید.",
-                "No results. Try another search.",
+          {query ? (
+            <div className="nv-search-results">
+              {publicFamilies.map((f) => {
+                const group = rows.filter((v) => v.family === f.id);
+                return (
+                  !!group.length && (
+                    <section key={f.id}>
+                      <h2>{text(f.title)}</h2>
+                      <VariantLinks items={group} />
+                    </section>
+                  )
+                );
+              })}
+              {!rows.length && (
+                <p>{s("نتیجه‌ای پیدا نشد.", "No results found.")}</p>
               )}
             </div>
+          ) : (
+            <>
+              <div
+                className="nv-family-picker"
+                role="group"
+                aria-label={s("دسته‌بندی خدمات", "Service categories")}
+              >
+                {publicFamilies.map((f) => (
+                  <button
+                    type="button"
+                    key={f.id}
+                    aria-pressed={selected === f.id}
+                    onClick={() => setSelected(f.id)}
+                  >
+                    <span className={"nv-icon nv-" + f.color}>
+                      <FamilyIcon family={f.id} />
+                    </span>
+                    <strong>{text(f.title)}</strong>
+                  </button>
+                ))}
+              </div>
+              {selected && (
+                <div className="mt-8">
+                  {["vps", "hosting", "dedicated"].includes(selected) ? (
+                    <OfferExplorer
+                      key={selected}
+                      items={publicVariants.filter(
+                        (v) => v.family === selected,
+                      )}
+                    />
+                  ) : (
+                    <Link
+                      className="nv-button"
+                      to={publicFamilies.find((f) => f.id === selected)!.path}
+                    >
+                      {s("مشاهده خدمات این بخش", "Explore this category")}
+                      <DirectionArrow />
+                    </Link>
+                  )}
+                </div>
+              )}
+            </>
           )}
-          <PricingNote />
         </div>
       </section>
       <ServiceCta />
@@ -257,6 +273,7 @@ export function PublicProduct({ family }: { family: PublicFamily }) {
     [query, setQuery] = useState(""),
     [expanded, setExpanded] = useState(false);
   const f = publicFamilies.find((f) => f.id === family)!;
+  if (family === "network") return <PublicNetwork />;
   const all = variantsFor(family).filter((v) =>
       text(v.title).toLowerCase().includes(query.toLowerCase().trim()),
     ),
@@ -370,65 +387,9 @@ export function PublicProduct({ family }: { family: PublicFamily }) {
             }
           />
           {(["vps", "dedicated", "hosting"] as string[]).includes(family) && (
-            <>
-              <div className="nv-search mb-6">
-                <Search size={18} />
-                <input
-                  aria-label={s("جستجو در گزینه‌ها", "Search options")}
-                  placeholder={s(
-                    "نوع سرویس یا موقعیت را جستجو کنید…",
-                    "Search a service type or location…",
-                  )}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </div>
-              <VariantLinks items={items} />
-              {all.length > 12 && !query && (
-                <button
-                  className="nv-button nv-button-outline mt-6"
-                  onClick={() => setExpanded(!expanded)}
-                >
-                  {expanded
-                    ? s("نمایش خلاصه", "Show fewer")
-                    : s("نمایش تمام گزینه‌ها", "Show all options")}
-                </button>
-              )}
-              {!items.length && (
-                <p className="nv-empty">
-                  {s("گزینه‌ای پیدا نشد.", "No options found.")}
-                </p>
-              )}
-            </>
+            <OfferExplorer key={family} items={variantsFor(family)} />
           )}
           {family === "addons" && <AddonProducts />}
-          {family === "network" && (
-            <>
-              <div className="nv-variant-grid mb-7">
-                {[
-                  "order-vps-multilocation",
-                  "order-vps-mikrotik",
-                  "order-vps-storage",
-                ].map((id) => {
-                  const v = publicVariants.find((v) => v.id === id)!;
-                  return (
-                    <Link to={v.href} className="nv-variant" key={id}>
-                      <FamilyIcon family="network" />
-                      <span>{text(v.title)}</span>
-                      <DirectionArrow />
-                    </Link>
-                  );
-                })}
-              </div>
-              <AddonProducts networkOnly />
-              <div className="nv-reference-note">
-                {s(
-                  "IP و محل تحویل باید برای سرویس تأیید شوند. چند آدرس IP به‌معنای چند سرور فیزیکی نیست.",
-                  "IP allocation and delivery location must be verified for the service. Multiple IPs do not establish multiple physical servers.",
-                )}
-              </div>
-            </>
-          )}
           {family === "support" && (
             <div className="nv-addons-grid">
               {[

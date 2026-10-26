@@ -32,6 +32,7 @@ const VpsCustomOrder = React.lazy(() => import("./pages/VpsCustomOrder"));
 const DedicatedServices = React.lazy(() => import("./pages/DedicatedServices"));
 const DomainServices = React.lazy(() => import("./pages/DomainServices"));
 const NetworkServices = React.lazy(() => import("./pages/NetworkServices"));
+const ShopAccount = React.lazy(() => import("./pages/ShopAccount"));
 const NetworkStore = React.lazy(() => import("./pages/NetworkStore"));
 const OAuthConsent = React.lazy(() => import("./pages/OAuthConsent"));
 
@@ -66,6 +67,8 @@ function RoutePreload() {
           "/hosting": "Hosting",
           "/domain": "Domain",
           "/services": "Services",
+          "/network-store": "NetworkStore",
+          "/shop/account": "ShopAccount",
           "/addons": "Addons",
           "/support": "Support",
           "/knowledge": "Knowledge",
@@ -128,6 +131,7 @@ const App = () => (
                     <Route path="/hosting" element={<Hosting />} />
                     <Route path="/domain" element={<Domain />} />
                     <Route path="/network" element={<Network />} />
+                    <Route path="/shop/account" element={<ShopAccount />} />
                     <Route path="/network-store" element={<NetworkStore />} />
                     <Route path="/license" element={<License />} />
                     <Route path="/datacenter" element={<Datacenter />} />

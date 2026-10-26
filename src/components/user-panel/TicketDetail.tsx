@@ -1,6 +1,7 @@
 import {
   supportDepartments,
   technicalTeam,
+  baseDepartment,
 } from "../../../supabase/functions/_shared/support-routing";
 import BackButton from "./BackButton";
 import TicketSurvey from "./TicketSurvey";
@@ -75,7 +76,7 @@ export default function TicketDetail({
         </p>
         <h1 className="text-xl font-bold mt-2">{ticket.subject}</h1>
         <p className="text-sm mt-3">
-          {(ticket.department === "technical"
+          {(baseDepartment(ticket.department) === "technical"
             ? technicalTeam(ticket.context?.resourceKind)
             : supportDepartments.find((v) => v.id === ticket.department)
                 ?.title)?.[fa ? 0 : 1] || ticket.department}

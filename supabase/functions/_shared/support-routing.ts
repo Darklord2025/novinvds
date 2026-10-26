@@ -31,6 +31,32 @@ export const supportDepartments = [
   },
 ] as const;
 export type SupportDepartment = (typeof supportDepartments)[number]["id"];
+export const supportResourceCategories = [
+  { id: "vps", title: ["سرور مجازی", "Virtual servers"] },
+  { id: "dedicated", title: ["سرور اختصاصی", "Dedicated servers"] },
+  { id: "hosting", title: ["میزبانی وب", "Web hosting"] },
+  { id: "domain", title: ["دامنه", "Domains"] },
+  { id: "license", title: ["لایسنس و افزونه", "Licenses & add-ons"] },
+  { id: "network", title: ["خدمات شبکه", "Network services"] },
+  { id: "support", title: ["پشتیبانی مدیریت‌شده", "Managed support"] },
+  { id: "general", title: ["عمومی و حساب کاربری", "General & account"] },
+] as const;
+export function supportCategoryForKind(kind?: string) {
+  if (["vps", "cloud", "hourly", "multilocation"].includes(kind || ""))
+    return "vps";
+  if (["license", "ssl", "addon"].includes(kind || "")) return "license";
+  return supportResourceCategories.some((v) => v.id === kind)
+    ? kind!
+    : "general";
+}
+export function routedDepartment(base: string, kind?: string) {
+  return base === "technical" && kind
+    ? "technical-" + supportCategoryForKind(kind)
+    : base;
+}
+export function baseDepartment(id: string) {
+  return id.startsWith("technical-") ? "technical" : id;
+}
 export interface TicketContext {
   resourceId?: string;
   resourceKind?: string;
@@ -63,16 +89,22 @@ export async function resolveSupportContext(
   return validateSupportContext(department, context);
 }
 export function technicalTeam(kind?: string): readonly string[] {
-  if (kind === "domain")
+  const category = supportCategoryForKind(kind);
+  if (category === "vps")
+    return ["پشتیبانی سرور مجازی", "Virtual server support"];
+  if (category === "dedicated")
+    return ["پشتیبانی سرور اختصاصی", "Dedicated server support"];
+  if (category === "domain")
     return ["پشتیبانی دامنه و DNS", "Domains & DNS support"];
-  if (kind === "hosting") return ["پشتیبانی میزبانی وب", "Web hosting support"];
-  if (["license", "addon", "ssl"].includes(kind || ""))
+  if (category === "hosting")
+    return ["پشتیبانی میزبانی وب", "Web hosting support"];
+  if (category === "license")
     return ["پشتیبانی لایسنس و افزونه", "Licenses & add-ons support"];
-  if (["network", "multilocation"].includes(kind || ""))
-    return ["پشتیبانی شبکه", "Network support"];
-  return kind && kind !== "support"
-    ? ["پشتیبانی سرور", "Server support"]
-    : supportDepartments[0].title;
+  if (category === "network")
+    return ["پشتیبانی خدمات شبکه", "Network services support"];
+  if (category === "support")
+    return ["تیم پشتیبانی مدیریت‌شده", "Managed support team"];
+  return supportDepartments[0].title;
 }
 export const supportIssues: {
   id: string;
@@ -189,7 +221,7 @@ export const supportIssues: {
 export function issuesFor(department: string, kind?: string) {
   return supportIssues.filter(
     (v) =>
-      v.department === department &&
+      v.department === baseDepartment(department) &&
       (!v.kinds.length || v.kinds.includes(kind || "")),
   );
 }
@@ -197,8 +229,13 @@ export function validateSupportContext(
   department: string,
   context: TicketContext,
 ) {
-  if (!supportDepartments.some((v) => v.id === department))
+  if (!supportDepartments.some((v) => v.id === baseDepartment(department)))
     throw Error("Invalid support department");
+  if (
+    department.startsWith("technical-") &&
+    department !== routedDepartment("technical", context.resourceKind)
+  )
+    throw Error("Support team does not match the owned service");
   if (
     context.issueId &&
     context.issueId !== "other" &&

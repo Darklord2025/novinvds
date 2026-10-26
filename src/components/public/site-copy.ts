@@ -8,8 +8,8 @@ export function useSiteCopy() {
     fa = language === "fa";
   return {
     fa,
-    s: (f: string, en: string) => (fa ? f : en),
-    text: (v: readonly string[]) => v[fa ? 0 : 1],
+    s: (f: string, en: string) => (fa ? f.replace(/خارج از ایران/g,"خارج") : en),
+    text: (v: readonly string[]) => fa ? v[0].replace(/خارج از ایران/g,"خارج") : v[1],
     n: (v: string | number) => localize(v, fa),
     money: (value: number) => {
       if (display.currency === "TOMAN") return formatMoney(value, "TOMAN", fa);

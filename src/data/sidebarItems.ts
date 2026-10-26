@@ -54,7 +54,7 @@ export const sidebarItems: SidebarItem[] = [
           },
           {
             id: "hosting-international-group",
-            label: "خارج از ایران",
+            label: "خارج",
             en: "International",
             icon: "globe",
             submenu: [
@@ -101,7 +101,7 @@ export const sidebarItems: SidebarItem[] = [
               },
               {
                 id: "hosting-" + mode + "-international",
-                label: "خارج از ایران",
+                label: "خارج",
                 en: "International",
                 icon: "globe",
                 submenu: countries
@@ -213,7 +213,7 @@ export const sidebarItems: SidebarItem[] = [
           },
           {
             id: "dedicated-international-group",
-            label: "خارج از ایران",
+            label: "خارج",
             en: "International",
             icon: "globe",
             submenu: [

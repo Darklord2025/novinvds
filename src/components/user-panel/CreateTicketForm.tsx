@@ -17,6 +17,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { PanelHeading, usePanelCopy } from "./PanelPrimitives";
 import {
   supportDepartments,
+  supportResourceCategories,
+  supportCategoryForKind,
+  routedDepartment,
   technicalTeam,
   issuesFor,
   type SupportDepartment,
@@ -32,6 +35,7 @@ export default function CreateTicketForm({
     { s, fa, n } = usePanelCopy();
   const [step, setStep] = useState(0),
     [resourceId, setResourceId] = useState(""),
+    [category, setCategory] = useState("general"),
     [department, setDepartment] = useState<SupportDepartment>(() => {
       const d = new URLSearchParams(location.search).get("department");
       return supportDepartments.find((v) => v.id === d)?.id || "technical";
@@ -46,6 +50,9 @@ export default function CreateTicketForm({
     ...data.services.map((v) => ({ id: v.id, name: v.name, kind: v.kind })),
     ...data.domains.map((v) => ({ id: v.id, name: v.domain, kind: "domain" })),
   ];
+  const categoryResources = resources.filter(
+    (v) => supportCategoryForKind(v.kind) === category,
+  );
   const resource = resources.find((v) => v.id === resourceId),
     issues = issuesFor(department, resource?.kind),
     issue = issues.find((v) => v.id === issueId);
@@ -116,37 +123,57 @@ export default function CreateTicketForm({
         </h2>
         {step === 0 ? (
           <>
-            <Label htmlFor="ticket-service">
-              {s("سرویس مرتبط", "Related service")}
+            <Label htmlFor="ticket-category">
+              {s("دسته‌بندی سرویس", "Service category")}
             </Label>
             <select
-              id="ticket-service"
+              id="ticket-category"
               className="w-full rounded-xl border bg-background p-3"
-              value={resourceId}
+              value={category}
               onChange={(e) => {
-                setResourceId(e.target.value);
+                setCategory(e.target.value);
+                setResourceId("");
                 setIssueId("");
               }}
             >
-              <option value="">
-                {s(
-                  "درخواست عمومی / پیش از خرید / حساب کاربری",
-                  "General / pre-sales / account request",
-                )}
-              </option>
-              {resources.map((v) => (
+              {supportResourceCategories.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.name} · {v.id}
+                  {text(v.title)}
                 </option>
               ))}
             </select>
-            {!resources.length && (
-              <p className="text-sm text-muted-foreground">
-                {s(
-                  "سرویسی در حساب شما ثبت نشده؛ درخواست عمومی در دسترس است.",
-                  "There are no services on your account. You can open a general request.",
+            {category !== "general" && (
+              <>
+                <Label htmlFor="ticket-service">
+                  {s("سرویس مرتبط", "Related service")}
+                </Label>
+                <select
+                  id="ticket-service"
+                  className="w-full rounded-xl border bg-background p-3"
+                  value={resourceId}
+                  onChange={(e) => {
+                    setResourceId(e.target.value);
+                    setIssueId("");
+                  }}
+                >
+                  <option value="">
+                    {s("سرویس را انتخاب کنید", "Choose your service")}
+                  </option>
+                  {categoryResources.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} · {v.id}
+                    </option>
+                  ))}
+                </select>
+                {!categoryResources.length && (
+                  <p className="text-sm text-muted-foreground">
+                    {s(
+                      "در این دسته سرویسی ندارید؛ برای مشاوره پیش از خرید دسته عمومی را انتخاب کنید.",
+                      "No services in this category. Choose General for pre-sales advice.",
+                    )}
+                  </p>
                 )}
-              </p>
+              </>
             )}
             <fieldset>
               <legend className="mb-3 text-sm font-medium">
@@ -190,7 +217,11 @@ export default function CreateTicketForm({
                 })}
               </div>
             </fieldset>
-            <Button type="button" onClick={() => move(1)}>
+            <Button
+              type="button"
+              disabled={category !== "general" && !resource}
+              onClick={() => move(1)}
+            >
               {s("ادامه و بررسی راهنما", "Continue to troubleshooting")}
             </Button>
           </>
@@ -292,11 +323,16 @@ export default function CreateTicketForm({
               setError("");
               setBusy(true);
               try {
-                await createTicket(subject, department, body, {
-                  resourceId: resource?.id,
-                  resourceKind: resource?.kind,
-                  issueId,
-                });
+                await createTicket(
+                  subject,
+                  routedDepartment(department, resource?.kind),
+                  body,
+                  {
+                    resourceId: resource?.id,
+                    resourceKind: resource?.kind,
+                    issueId,
+                  },
+                );
                 onSubmit();
               } catch (e) {
                 setError((e as Error).message);

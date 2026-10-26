@@ -1,3 +1,5 @@
+import CountryFlag from "./CountryFlag";
+import { publicRegions } from "@/data/publicGeography";
 import { useState, type FormEvent } from "react";
 import {
   Link,
@@ -208,57 +210,66 @@ export function PublicLocations() {
               "This is a location reference. Supplier contracts, service stock, networking and IP allocation require separate order verification.",
             )}
           </div>
-          <div className="nv-location-cards">
-            {countries.map((c) => (
-              <article className="nv-location-card" key={c.id}>
-                <h2>
-                  <span aria-hidden="true">{c.flag}</span>
-                  {s(c.fa, c.en)}
-                </h2>
-                <ul>
-                  {datacenters
-                    .filter((dc) => dc.country === c.id)
-                    .map((dc) => (
-                      <li key={dc.id}>
-                        <a
-                          href={dc.source}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2"
-                        >
-                          {s(dc.fa, dc.en)}
-                          <ExternalLink size={12} />
-                        </a>
-                      </li>
-                    ))}
-                </ul>
-                <Link
-                  to={
-                    c.id === "ir"
-                      ? "/dedicated-plans"
-                      : "/dedicated-plans?profile=order-dedicated-country-" +
-                        c.id
-                  }
-                  className="nv-text-link"
-                >
-                  {s("بررسی سرور اختصاصی", "Explore dedicated servers")}
-                  <DirectionArrow />
-                </Link>
-                <Link
-                  to={
-                    "/hosting-plans?profile=" +
-                    (c.id === "ir"
-                      ? "order-hosting-linux-ir"
-                      : "order-hosting-country-" + c.id)
-                  }
-                  className="nv-text-link mt-4"
-                >
-                  {s("بررسی میزبانی وب", "Explore web hosting")}
-                  <DirectionArrow />
-                </Link>
-              </article>
-            ))}
-          </div>
+          {publicRegions.map((region) => (
+            <section className="nv-location-region" key={region.id}>
+              <h2 className="nv-region-title">
+                {s(region.title[0], region.title[1])}
+              </h2>
+              <div className="nv-location-cards">
+                {countries
+                  .filter((c) => c.region === region.id)
+                  .map((c) => (
+                    <article className="nv-location-card" key={c.id}>
+                      <h2>
+                        <CountryFlag code={c.id} />
+                        {s(c.fa, c.en)}
+                      </h2>
+                      <ul>
+                        {datacenters
+                          .filter((dc) => dc.country === c.id)
+                          .map((dc) => (
+                            <li key={dc.id}>
+                              <a
+                                href={dc.source}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2"
+                              >
+                                {s(dc.fa, dc.en)}
+                                <ExternalLink size={12} />
+                              </a>
+                            </li>
+                          ))}
+                      </ul>
+                      <Link
+                        to={
+                          c.id === "ir"
+                            ? "/dedicated-plans"
+                            : "/dedicated-plans?profile=order-dedicated-country-" +
+                              c.id
+                        }
+                        className="nv-text-link"
+                      >
+                        {s("بررسی سرور اختصاصی", "Explore dedicated servers")}
+                        <DirectionArrow />
+                      </Link>
+                      <Link
+                        to={
+                          "/hosting-plans?profile=" +
+                          (c.id === "ir"
+                            ? "order-hosting-linux-ir"
+                            : "order-hosting-country-" + c.id)
+                        }
+                        className="nv-text-link mt-4"
+                      >
+                        {s("بررسی میزبانی وب", "Explore web hosting")}
+                        <DirectionArrow />
+                      </Link>
+                    </article>
+                  ))}
+              </div>
+            </section>
+          ))}
         </div>
       </section>
       <ServiceCta />

@@ -1,3 +1,4 @@
+import AccountSpaceSwitcher from "@/components/AccountSpaceSwitcher";
 import CurrencyControl from "@/components/CurrencyControl";
 import HeaderMenus from "./HeaderMenus";
 import { usePanelData } from "@/contexts/PanelDataContext";
@@ -88,6 +89,7 @@ export default function Header({
           <Clock size={14} />
           {n(sessionTimeLeft)}
         </span>
+        <AccountSpaceSwitcher current="services" />
         <LanguageControl />
         <CurrencyControl />
         <Button

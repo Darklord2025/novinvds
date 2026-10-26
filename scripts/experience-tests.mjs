@@ -25,7 +25,7 @@ test('PWA worker never intercepts private routes, APIs, cross-origin requests or
  assert.deepEqual([...stored],['/offline.html','/brand/app-192.png']);
  await new Promise((resolve,reject)=>handlers.activate({waitUntil:p=>p.then(resolve,reject)}));
  assert.deepEqual(deleted,['novinvds-public-offline-old']);
- for(const path of ['/user-panel','/auth','/recover','/api/test','/functions/v1/panel-action','/auth/callback','/unknown']){
+ for(const path of ['/user-panel','/shop/account','/shop/account?section=orders','/auth','/recover','/api/test','/functions/v1/panel-action','/auth/callback','/unknown']){
   let intercepted=false;handlers.fetch({request:{method:'GET',mode:'navigate',url:'https://novinvds.test'+path},respondWith:()=>intercepted=true});assert.equal(intercepted,false,path);
  }
  for(const request of [{method:'POST',mode:'navigate',url:'https://novinvds.test/'},{method:'GET',mode:'cors',url:'https://novinvds.test/services'},{method:'GET',mode:'navigate',url:'https://other.test/'}]){

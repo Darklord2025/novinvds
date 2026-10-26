@@ -1,3 +1,5 @@
+import CountryFlag from "@/components/public/CountryFlag";
+import { vpsLocationCountry } from "@/data/publicGeography";
 import BackButton from "./BackButton";
 import {
   virtualPlans,
@@ -55,6 +57,7 @@ interface VpsOrderPageProps {
   initialMode?: "virtual" | "hourly" | "multilocation";
   initialFamily?: string;
   initialProfile?: string;
+  countryFilter?: string;
 }
 
 const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
@@ -63,6 +66,7 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
   initialMode = "virtual",
   initialFamily = "linux",
   initialProfile = "order-vps",
+  countryFilter,
 }) => {
   const { s, n, money } = usePanelCopy();
   const [mode, setMode] = useState<"virtual" | "hourly" | "multilocation">(
@@ -159,9 +163,11 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
       .filter(Boolean)
       .join(" ");
   const selectedOsObj = osCatalog.find((o) => o.id === selectedOs);
-  const availableLocations = initialProfile.endsWith("-ir")
-    ? locations.filter((l) => l.id.startsWith("iran"))
-    : locations;
+  const availableLocations = countryFilter
+    ? locations.filter((l) => vpsLocationCountry(l.id) === countryFilter)
+    : initialProfile.endsWith("-ir")
+      ? locations.filter((l) => l.id.startsWith("iran"))
+      : locations;
   const selectedLocationObj = locations.find((l) => l.id === selectedLocation);
 
   const finalPrice = useMemo(() => {
@@ -480,7 +486,13 @@ const VpsOrderPage: React.FC<VpsOrderPageProps> = ({
                   onClick={() => setSelectedLocation(loc.id)}
                 >
                   <CardContent className="p-4 flex items-center gap-3">
-                    <span className="text-3xl">{loc.flag}</span>
+                    <span className="text-3xl">
+                      {countryFilter ? (
+                        <CountryFlag code={vpsLocationCountry(loc.id)} />
+                      ) : (
+                        loc.flag
+                      )}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{loc.name}</p>
                       <p className="text-xs text-muted-foreground">

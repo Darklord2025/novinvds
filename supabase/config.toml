@@ -22,3 +22,5 @@ verify_jwt = false # Public recovery is rate-limited; all other actions require 
 
 [functions.market-rates]
 verify_jwt = false
+[functions.shop-account]
+verify_jwt = false # auth.getUser and shared native/email MFA guards run before all actions.
