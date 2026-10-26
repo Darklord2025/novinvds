@@ -1,3 +1,4 @@
+import { locationHref } from "@/lib/public-location";
 import CountryFlag from "./CountryFlag";
 import { WorkloadShowcase } from "./PublicExperience";
 import { useState, type FormEvent } from "react";
@@ -682,13 +683,11 @@ export default function PublicHome() {
               <Link
                 key={c.id}
                 className="nv-country-link"
-                to={
-                  c.id === "ir"
-                    ? "/vps-plans?profile=order-vps-linux-ir"
-                    : "/hosting-plans?profile=order-hosting-country-" + c.id
-                }
+                to={locationHref(c.id)}
               >
-                <span aria-hidden="true"><CountryFlag code={c.id}/></span>
+                <span aria-hidden="true">
+                  <CountryFlag code={c.id} />
+                </span>
                 <span>{s(c.fa, c.en)}</span>
               </Link>
             ))}

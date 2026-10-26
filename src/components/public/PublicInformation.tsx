@@ -1,3 +1,8 @@
+import {
+  selectedLocation,
+  locationHref,
+  locationServiceLinks,
+} from "@/lib/public-location";
 import CountryFlag from "./CountryFlag";
 import { publicRegions } from "@/data/publicGeography";
 import { useState, type FormEvent } from "react";
@@ -188,88 +193,174 @@ export function PublicDomain() {
 }
 
 export function PublicLocations() {
-  const { s } = useSiteCopy();
+  const { s } = useSiteCopy(),
+    [params, setParams] = useSearchParams(),
+    country = selectedLocation(params.get("country"));
+  const title = country
+    ? s("زیرساخت شما در " + country.fa, "Your infrastructure in " + country.en)
+    : s("نزدیک‌تر به مخاطب شما", "Closer to your audience");
+  const links = country ? locationServiceLinks(country.id) : null;
   return (
-    <SiteLayout title={s("کشورها و مراکز داده", "Countries & datacenters")}>
+    <SiteLayout title={title}>
       <PageHero
-        eyebrow="WHERE YOUR IDEAS LIVE"
-        title={s(
-          "موقعیت را بر اساس مخاطب انتخاب کنید.",
-          "Choose a location around your audience.",
+        eyebrow="LOCATIONS / NOVINVDS"
+        title={title}
+        description={
+          country
+            ? s(
+                "مراکز داده و سرویس‌های قابل بررسی در " +
+                  country.fa +
+                  "؛ انتخاب شما در تمام مراحل حفظ می‌شود.",
+                "Explore datacenters and service options in " +
+                  country.en +
+                  ". Your selected country stays with your configuration.",
+              )
+            : s(
+                "اول منطقه و کشور را انتخاب کنید؛ بعد مراکز داده و سرویس‌های همان موقعیت را ببینید.",
+                "Choose a region and country, then explore that location’s datacenters and services.",
+              )
+        }
+      >
+        {country && (
+          <span className="nv-location-hero-label">
+            <CountryFlag code={country.id} />
+            {s(country.fa, country.en)}
+          </span>
         )}
-        description={s(
-          "مرجع کشورها و مراکز دادهٔ کاتالوگ را ببینید و برای هر سرویس، ظرفیت همان موقعیت را بررسی کنید.",
-          "Explore the catalog’s country and datacenter references, then check availability for your chosen service.",
-        )}
-      />
+      </PageHero>
       <section className="nv-section">
         <div className="nv-container">
+          {country ? (
+            <>
+              <div className="nv-location-toolbar">
+                <Link className="nv-text-link" to="/datacenter">
+                  {s("همه موقعیت‌ها", "All locations")}
+                  <DirectionArrow />
+                </Link>
+                <label>
+                  {s("تغییر کشور", "Change country")}
+                  <select
+                    aria-label={s("تغییر کشور", "Change country")}
+                    value={country.id}
+                    onChange={(e) => setParams({ country: e.target.value })}
+                  >
+                    {publicRegions.map((r) => (
+                      <optgroup key={r.id} label={s(r.title[0], r.title[1])}>
+                        {countries
+                          .filter((c) => c.region === r.id)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {s(c.fa, c.en)}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div
+                className="nv-country-detail"
+                key={country.id}
+                data-country={country.id}
+              >
+                <div className="nv-country-detail-intro">
+                  <CountryFlag code={country.id} />
+                  <span className="nv-eyebrow">
+                    {s("موقعیت انتخاب‌شده", "YOUR SELECTED LOCATION")}
+                  </span>
+                  <h2>{s(country.fa, country.en)}</h2>
+                  <p>
+                    {s(
+                      "سرویس را برای همین کشور ادامه دهید.",
+                      "Continue with services for this country.",
+                    )}
+                  </p>
+                  <div className="nv-button-row">
+                    <Link className="nv-button" to={links!.hosting}>
+                      {s("هاست " + country.fa, country.en + " hosting")}
+                      <DirectionArrow />
+                    </Link>
+                    <Link
+                      className="nv-button nv-button-outline"
+                      to={links!.dedicated}
+                    >
+                      {s(
+                        "سرور اختصاصی " + country.fa,
+                        country.en + " dedicated servers",
+                      )}
+                      <DirectionArrow />
+                    </Link>
+                  </div>
+                </div>
+                <div className="nv-selected-datacenters">
+                  <h2>
+                    {s(
+                      "مراکز داده مرجع در " + country.fa,
+                      "Reference datacenters in " + country.en,
+                    )}
+                  </h2>
+                  {datacenters
+                    .filter((d) => d.country === country.id)
+                    .map((d) => (
+                      <article key={d.id} data-datacenter={d.id}>
+                        <span className="nv-dc-orbit" aria-hidden="true" />
+                        <div>
+                          <h3>{s(d.fa, d.en)}</h3>
+                          <span>
+                            {s(
+                              "نیازمند تأیید ظرفیت و امکان ارائه",
+                              "Capacity and availability require confirmation",
+                            )}
+                          </span>
+                        </div>
+                        <a
+                          href={d.source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={
+                            s("منبع مرکز داده: ", "Datacenter source: ") +
+                            s(d.fa, d.en)
+                          }
+                        >
+                          <ExternalLink size={17} />
+                        </a>
+                      </article>
+                    ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            publicRegions.map((r) => (
+              <section className="nv-location-region" key={r.id}>
+                <h2 className="nv-region-title">{s(r.title[0], r.title[1])}</h2>
+                <div className="nv-location-overview">
+                  {countries
+                    .filter((c) => c.region === r.id)
+                    .map((c) => (
+                      <Link key={c.id} to={locationHref(c.id)}>
+                        <CountryFlag code={c.id} />
+                        <div>
+                          <h3>{s(c.fa, c.en)}</h3>
+                          <span>
+                            {s(
+                              "مراکز داده و سرویس‌ها",
+                              "Datacenters & services",
+                            )}
+                          </span>
+                        </div>
+                        <DirectionArrow />
+                      </Link>
+                    ))}
+                </div>
+              </section>
+            ))
+          )}
           <div className="nv-reference-note">
             {s(
-              "این فهرست، مرجع موقعیت است؛ قرارداد تأمین، موجودی سرویس، شبکه و IP هر سفارش باید جداگانه تأیید شوند.",
-              "This is a location reference. Supplier contracts, service stock, networking and IP allocation require separate order verification.",
+              "موقعیت‌ها و مراکز داده مرجع‌اند. موجودی، قیمت و زمان تحویل باید پیش از پرداخت تأیید شوند.",
+              "Locations and datacenters are references. Stock, pricing and delivery timing must be confirmed before payment.",
             )}
           </div>
-          {publicRegions.map((region) => (
-            <section className="nv-location-region" key={region.id}>
-              <h2 className="nv-region-title">
-                {s(region.title[0], region.title[1])}
-              </h2>
-              <div className="nv-location-cards">
-                {countries
-                  .filter((c) => c.region === region.id)
-                  .map((c) => (
-                    <article className="nv-location-card" key={c.id}>
-                      <h2>
-                        <CountryFlag code={c.id} />
-                        {s(c.fa, c.en)}
-                      </h2>
-                      <ul>
-                        {datacenters
-                          .filter((dc) => dc.country === c.id)
-                          .map((dc) => (
-                            <li key={dc.id}>
-                              <a
-                                href={dc.source}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2"
-                              >
-                                {s(dc.fa, dc.en)}
-                                <ExternalLink size={12} />
-                              </a>
-                            </li>
-                          ))}
-                      </ul>
-                      <Link
-                        to={
-                          c.id === "ir"
-                            ? "/dedicated-plans"
-                            : "/dedicated-plans?profile=order-dedicated-country-" +
-                              c.id
-                        }
-                        className="nv-text-link"
-                      >
-                        {s("بررسی سرور اختصاصی", "Explore dedicated servers")}
-                        <DirectionArrow />
-                      </Link>
-                      <Link
-                        to={
-                          "/hosting-plans?profile=" +
-                          (c.id === "ir"
-                            ? "order-hosting-linux-ir"
-                            : "order-hosting-country-" + c.id)
-                        }
-                        className="nv-text-link mt-4"
-                      >
-                        {s("بررسی میزبانی وب", "Explore web hosting")}
-                        <DirectionArrow />
-                      </Link>
-                    </article>
-                  ))}
-              </div>
-            </section>
-          ))}
         </div>
       </section>
       <ServiceCta />

@@ -27,3 +27,13 @@ PWA production needs HTTPS (localhost is suitable for development), serving the 
 Public category and support patterns informed an original design: [ParsVDS](https://parsvds.com/), [AzarOnline](https://azaronline.com/), [ArvanCloud](https://www.arvancloud.ir/en), [Hetzner](https://www.hetzner.com/) and [DigitalOcean](https://www.digitalocean.com/). No competitor copy, branding or prices were imported. Technical PWA behavior follows [MDN install prompts](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Trigger_install_prompt), [MDN caching](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching) and [web.dev caching](https://web.dev/learn/pwa/caching).
 
 Validation results and preservation exceptions are recorded in completion-review.md. Local fixtures create no real account, ticket, payment, email or device operation.
+
+## Public landing redesign and country identity
+
+Replaced the homepage with an asymmetric lavender/mint composition, a code-native layered infrastructure illustration, pointer parallax, floating components, varied service tiles, domain search, keyboard-accessible plan tabs and an illustrated region/country explorer. The original supplied brand remains. Entry reveals use IntersectionObserver and animation uses transforms/opacity; reduced-motion preferences disable decorative movement and keep all content visible. Public departments, mobile navigation, themes, currency and shared catalog offerings remain available.
+
+Country links now use canonical `/datacenter?country=xx` URLs. A selected-country page derives its hero, metadata, flag, datacenters and hosting/dedicated order URLs from that query, including when users change country without leaving the page. Other countries move into an explicit grouped selector and an all-locations return link; they are no longer mixed into the selected country's datacenter list. Invalid country values return to the location overview. Selected-country public order titles also update without repeating the country name.
+
+These location and datacenter records remain reference catalog information. The illustration is conceptual, not a live monitoring or availability display. Panel, shop account, auth, financial and backend files are unchanged by this follow-up.
+
+Validation: 84 automated tests; 160 browser route/language/theme/viewport checks across 320/390/768/1440px; all ten country journeys in both languages; country switching, order handoff, keyboard tabs, parallax/reset, section reveal and reduced-motion behavior. Browser checks found no runtime errors or page overflow. No real account, order, payment, infrastructure verification or production deployment occurred.

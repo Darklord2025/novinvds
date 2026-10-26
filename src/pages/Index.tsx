@@ -1,1 +1,1 @@
-export { default } from "@/components/public/PublicHome";
+export { default } from "@/components/public/PublicLanding";

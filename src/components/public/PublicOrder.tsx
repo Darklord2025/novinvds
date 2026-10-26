@@ -1,3 +1,5 @@
+import { withCountryHeading } from "@/lib/public-location";
+import { locationCountries } from "@/data/publicGeography";
 import OfferExplorer from "./OfferExplorer";
 import {
   offerCountry,
@@ -65,6 +67,13 @@ export default function PublicOrder({
       ? requestedCountry
       : offerCountry(selected),
     canConfigure = !!selectedCountry;
+  const countryName = locationCountries.find((c) => c.id === selectedCountry);
+  const configurationTitle = withCountryHeading(
+    calculator
+      ? s("منابع شما. انتخاب شما.", "Your resources. Your choice.")
+      : text(selected.title),
+    countryName ? s(countryName.fa, countryName.en) : undefined,
+  );
   useEffect(() => setSelectionPending(false), [route.search]);
   function order(it: any) {
     addItem({
@@ -90,19 +99,16 @@ export default function PublicOrder({
   }
   return (
     <SiteLayout
-      title={
+      title={withCountryHeading(
         calculator
           ? s("ماشین‌حساب سرویس", "Service calculator")
-          : s("پیکربندی ", "Configure ") + text(family.title)
-      }
+          : s("پیکربندی ", "Configure ") + text(family.title),
+        countryName ? s(countryName.fa, countryName.en) : undefined,
+      )}
     >
       <PageHero
         eyebrow={calculator ? "BUILD YOUR OWN" : "CONFIGURE / " + family.tag}
-        title={
-          calculator
-            ? s("منابع شما. انتخاب شما.", "Your resources. Your choice.")
-            : text(selected.title)
-        }
+        title={configurationTitle}
         description={s(
           "منابع، موقعیت و جزئیات سرویس را بررسی کنید. با ادامهٔ سفارش، انتخاب‌ها در حساب کاربری دنبال می‌شوند.",
           "Review resources, location and service details. Continue your configuration in your account.",
