@@ -1,3 +1,5 @@
+import BackButton from "./BackButton";
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -207,7 +209,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
       );
     }
     
-    return (
+    return <LegacyLocale>{(
       <div className="flex flex-wrap gap-2 mt-4">
         {actions}
         <Button 
@@ -227,18 +229,18 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
           دانلود فاکتورها
         </Button>
       </div>
-    );
+    )}</LegacyLocale>;
   };
 
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
           {onBack && (
-            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
+            <BackButton variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
               <ChevronRight className="w-4 h-4" />
               بازگشت
-            </Button>
+            </BackButton>
           )}
           <div>
             <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
@@ -342,7 +344,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ServicesPage;

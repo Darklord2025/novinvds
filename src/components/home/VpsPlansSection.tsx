@@ -1,82 +1,65 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import PricingCard from '../PricingCard';
-
-const VpsPlansSection: React.FC = () => {
+import { Link } from "react-router-dom";
+import { virtualPlans } from "@/data/vpsCatalog";
+import { usePanelCopy } from "../user-panel/PanelPrimitives";
+import { Button } from "../ui/button";
+import { Server } from "lucide-react";
+export default function VpsPlansSection() {
+  const { s, n, money } = usePanelCopy();
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4">سرورهای مجازی</h2>
-          <p className="text-gray-600 max-w-3xl mx-auto">
-            سرورهای مجازی قدرتمند با منابع اختصاصی، کنترل کامل و انعطاف‌پذیری بالا
+    <section className="py-20 bg-background">
+      <div className="container px-4 mx-auto space-y-8">
+        <header className="text-center space-y-3">
+          <h2 className="text-3xl font-bold">
+            {s("سرور مجازی برای رشد شما", "Virtual servers for your growth")}
+          </h2>
+          <p className="text-muted-foreground">
+            {s(
+              "پلن‌های نمونه؛ قیمت و موجودی پس از استعلام ارائه‌دهنده تأیید می‌شود.",
+              "Sample plans; final prices and availability require provider confirmation.",
+            )}
           </p>
+        </header>
+        <div className="grid md:grid-cols-3 gap-5">
+          {[virtualPlans[0], virtualPlans[3], virtualPlans[4]].map((p) => (
+            <article
+              key={p.id}
+              className="rounded-2xl border bg-card p-6 space-y-5"
+            >
+              <Server className="text-blue-500" />
+              <h3 className="text-xl font-bold">{p.name}</h3>
+              <p className="text-2xl font-extrabold text-blue-600">
+                {money(p.price)}
+                <small className="block mt-2 text-xs font-normal text-muted-foreground">
+                  {s(
+                    "برآورد ماهانه، بدون مالیات",
+                    "Estimated monthly, before tax",
+                  )}
+                </small>
+              </p>
+              <ul className="text-sm space-y-2">
+                <li>{n(p.cpu)} vCPU</li>
+                <li>{n(p.ram)} GB RAM</li>
+                <li>
+                  {n(p.disk)} GB {p.diskType}
+                </li>
+                <li>{n(p.bandwidth)}</li>
+              </ul>
+              <Button asChild className="w-full">
+                <Link to={"/vps?profile=order-vps-linux&plan=" + p.id}>
+                  {s("بررسی و انتخاب سرویس", "Review and select service")}
+                </Link>
+              </Button>
+            </article>
+          ))}
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <PricingCard 
-            title="پایه" 
-            price="199,000"
-            period="ماهانه"
-            description="مناسب برای وبسایت‌های کوچک و پروژه‌های شخصی"
-            features={[
-              { text: "2 هسته پردازشی", available: true },
-              { text: "2 گیگابایت رم", available: true },
-              { text: "50 گیگابایت فضای SSD NVMe", available: true },
-              { text: "ترافیک نامحدود", available: true },
-              { text: "1 آدرس IP اختصاصی", available: true },
-              { text: "پشتیبانی از پنل کنترل", available: true },
-              { text: "بکاپ هفتگی", available: false },
-              { text: "پشتیبانی اولویت‌دار", available: false },
-            ]}
-          />
-          
-          <PricingCard 
-            title="حرفه‌ای" 
-            price="399,000"
-            period="ماهانه"
-            description="مناسب برای کسب و کارهای متوسط و سایت‌های پربازدید"
-            features={[
-              { text: "4 هسته پردازشی", available: true },
-              { text: "8 گیگابایت رم", available: true },
-              { text: "100 گیگابایت فضای SSD NVMe", available: true },
-              { text: "ترافیک نامحدود", available: true },
-              { text: "1 آدرس IP اختصاصی", available: true },
-              { text: "پشتیبانی از پنل کنترل", available: true },
-              { text: "بکاپ هفتگی", available: true },
-              { text: "پشتیبانی اولویت‌دار", available: false },
-            ]}
-            popular={true}
-          />
-          
-          <PricingCard 
-            title="سازمانی" 
-            price="699,000"
-            period="ماهانه"
-            description="مناسب برای کسب و کارهای بزرگ و اپلیکیشن‌های سنگین"
-            features={[
-              { text: "8 هسته پردازشی", available: true },
-              { text: "16 گیگابایت رم", available: true },
-              { text: "200 گیگابایت فضای SSD NVMe", available: true },
-              { text: "ترافیک نامحدود", available: true },
-              { text: "2 آدرس IP اختصاصی", available: true },
-              { text: "پشتیبانی از پنل کنترل", available: true },
-              { text: "بکاپ روزانه", available: true },
-              { text: "پشتیبانی اولویت‌دار", available: true },
-            ]}
-          />
-        </div>
-        
-        <div className="text-center mt-12">
-          <Link to="/vps" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
-            مشاهده تمام پلن‌ها <ArrowRight size={16} className="mr-2" />
-          </Link>
+        <div className="text-center">
+          <Button variant="outline" asChild>
+            <Link to="/vps">
+              {s("همه انواع سرور مجازی", "All virtual server types")}
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
   );
-};
-
-export default VpsPlansSection;
+}

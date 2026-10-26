@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState } from 'react';
 import { Search, RefreshCw } from 'lucide-react';
@@ -21,7 +22,7 @@ const DomainSearchForm: React.FC<DomainSearchFormProps> = ({ onSearch, isSearchi
     setSelectedExtension(ext);
   };
 
-  return (
+  return <LegacyLocale>{(
     <div className="bg-white p-6 rounded-xl shadow-md mb-8">
       <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
@@ -91,7 +92,7 @@ const DomainSearchForm: React.FC<DomainSearchFormProps> = ({ onSearch, isSearchi
         </div>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainSearchForm;

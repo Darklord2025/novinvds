@@ -1,3 +1,5 @@
+import BackButton from "./BackButton";
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
@@ -46,12 +48,12 @@ const NotificationDetails: React.FC<NotificationDetailsProps> = ({ notification,
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'alert':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
+        return <LegacyLocale>{<AlertCircle className="h-5 w-5 text-red-500" />}</LegacyLocale>;
       case 'success':
-        return <Check className="h-5 w-5 text-green-500" />;
+        return <LegacyLocale>{<Check className="h-5 w-5 text-green-500" />}</LegacyLocale>;
       case 'info':
       default:
-        return <Info className="h-5 w-5 text-blue-500" />;
+        return <LegacyLocale>{<Info className="h-5 w-5 text-blue-500" />}</LegacyLocale>;
     }
   };
   
@@ -67,18 +69,18 @@ const NotificationDetails: React.FC<NotificationDetailsProps> = ({ notification,
     }
   };
   
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button 
+        <BackButton
           variant="ghost" 
           size="sm" 
           onClick={onBack}
           className="flex items-center"
         >
-          <ArrowLeft className="ml-2 h-4 w-4" />
+
           بازگشت به اعلان‌ها
-        </Button>
+        </BackButton>
         
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500 flex items-center gap-1">
@@ -139,7 +141,7 @@ const NotificationDetails: React.FC<NotificationDetailsProps> = ({ notification,
         </span>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NotificationDetails;

@@ -2,7 +2,7 @@
 // Mirrors what is shown in the Dashboard so "سرویس‌های من" and "دامنه‌ها"
 // contain the same items as the dashboard cards (ParsVDS-style unified view).
 
-export type ServiceKind = 'vps' | 'dedicated' | 'hourly' | 'cloud' | 'hosting' | 'multilocation';
+export type ServiceKind = 'vps' | 'dedicated' | 'hourly' | 'cloud' | 'hosting' | 'multilocation' | 'license' | 'ssl' | 'network' | 'addon' | 'support';
 
 export interface UnifiedService {
   id: string;
@@ -30,8 +30,9 @@ export interface UnifiedService {
   expiry: string;
   amount: number;
   currency: 'IRR';
-  billingCycle: 'Monthly' | 'Quarterly' | 'Annually' | 'Hourly';
+  billingCycle: 'Monthly' | 'Quarterly' | 'Annually' | 'Hourly' | 'Daily' | 'OneTime';
   hourlyCost?: string;
+  hostingPlanId?:string;country?:string;datacenterId?:string;billingPeriodStart?:string;billingPeriodEnd?:string;
 }
 
 export interface UnifiedDomain {
@@ -102,6 +103,7 @@ export const userServices: UnifiedService[] = [
 ];
 
 export const userDomains: UnifiedDomain[] = [
+  {id:'expired.example',domain:'expired.example',registrar:'Sample registrar',status:'expired',registrationDate:'1401/02/01',expiry:'1403/02/01',autoRenew:false,privacyProtection:false,dnsManagement:true,emailForwarding:false,nameservers:['ns1.example.com','ns2.example.com'],recurringAmount:320000},
   {
     id: 'example.ir', domain: 'example.ir', registrar: 'ایرنیک',
     status: 'active', registrationDate: '1402/03/20', expiry: '1403/11/20',

@@ -1,262 +1,121 @@
-
-import React, { useState } from 'react';
-import { Bell, Search, Menu, User, Clock, MegaphoneIcon, Sun, Moon } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
+import AccountSpaceSwitcher from "@/components/AccountSpaceSwitcher";
+import CurrencyControl from "@/components/CurrencyControl";
+import HeaderMenus from "./HeaderMenus";
+import { usePanelData } from "@/contexts/PanelDataContext";
+import React, { useState } from "react";
+import { Menu, Clock, Sun, Moon, Search } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { toPersianDigits } from '@/lib/numberUtils';
-import { supabase } from "@/integrations/supabase/client";
+import LanguageControl from "@/components/LanguageControl";
+import { usePanelCopy } from "./PanelPrimitives";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
-
-interface HeaderProps {
+export default function Header({
+  activeTab,
+  onNavigate,
+  onToggleMobileSidebar,
+  sessionTimeLeft = "00:00",
+}: {
   activeTab?: string;
   onNavigate?: (tab: string) => void;
   onToggleMobileSidebar?: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ 
-  activeTab, 
-  onNavigate,
-  onToggleMobileSidebar
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const sessionTimeLeft = "۶۰:۰۰";
-  const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/auth');
+  sessionTimeLeft?: string;
+}) {
+  const { data, preview } = usePanelData();
+  const { s, n } = usePanelCopy(),
+    { theme, toggleTheme } = useTheme(),
+    navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const search = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = query.toLowerCase();
+    onNavigate?.(
+      /invoice|فاکتور/.test(q)
+        ? "invoices"
+        : /ticket|تیکت/.test(q)
+          ? "tickets"
+          : /domain|دامنه/.test(q)
+            ? "domains"
+            : /wallet|کیف|موجودی/.test(q)
+              ? "wallet"
+              : "servers",
+    );
+    setQuery("");
   };
-  
-  const getPageTitle = () => {
-    const titles: Record<string, string> = {
-      'dashboard': 'داشبورد',
-      'cart': 'سبد خرید',
-      'checkout': 'پرداخت نهایی',
-      'recommendations': 'پیشنهادات ویژه',
-      'services': 'سرویس‌ها',
-      'tickets': 'تیکت‌ها',
-      'billing': 'امور مالی',
-      'downloads': 'دانلودها',
-      'profile': 'تنظیمات حساب',
-      'notifications': 'اعلان‌ها',
-      'announcements': 'اطلاعیه‌های مهم',
-      'knowledge': 'مرکز دانش',
-      'security': 'مرکز امنیت',
-      'affiliate': 'معرفی و کسب درآمد',
-    };
-    return titles[activeTab || 'dashboard'] || 'داشبورد';
-  };
-  
-  const handleNavigate = (tab: string) => {
-    if (onNavigate) {
-      onNavigate(tab);
-    }
-  };
-  
-  const handleViewAllNotifications = () => {
-    handleNavigate('notifications');
-  };
-  
-  const handleViewImportantAnnouncements = () => {
-    handleNavigate('announcements');
-  };
-  
   return (
-    <header className="bg-card border-b border-border px-4 py-3 flex justify-between items-center sticky top-0 z-10">
-      {/* Mobile Menu Button */}
-      <div className="flex items-center md:hidden">
-        <Button variant="ghost" size="icon" title="منو" onClick={onToggleMobileSidebar}>
-          <Menu className="h-5 w-5" />
-        </Button>
+    <header className="shrink-0 border-b bg-card px-3 md:px-6 py-3 flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        aria-label={s("منو", "Menu")}
+        onClick={onToggleMobileSidebar}
+      >
+        <Menu />
+      </Button>
+      <div className="hidden lg:block text-sm font-semibold">
+        {data.profile.name || s("پنل کاربری", "Client area")}
+        {data.profile.kind === "company" && (
+          <small className="block text-xs text-muted-foreground mt-1">
+            {data.profile.company}
+          </small>
+        )}
       </div>
-      
-      <div className="flex-1 md:flex-initial">
-        <h1 className="text-xl font-bold">{getPageTitle()}</h1>
-      </div>
-      
-      <div className="hidden md:flex flex-1 max-w-md mx-auto relative">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-          <Input
-            placeholder="جستجو در داشبورد... (سرویس، فاکتور، تیکت)"
-            className="pl-10 w-full"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && searchQuery.trim()) {
-                const q = searchQuery.toLowerCase();
-                if (q.includes('فاکتور') || q.includes('invoice')) handleNavigate('billing');
-                else if (q.includes('تیکت') || q.includes('ticket')) handleNavigate('tickets');
-                else if (q.includes('دامنه') || q.includes('domain')) handleNavigate('domains');
-                else if (q.includes('سرور') || q.includes('vps') || q.includes('سرویس')) handleNavigate('services');
-                else if (q.includes('کیف') || q.includes('موجودی') || q.includes('wallet')) handleNavigate('billing');
-                else if (q.includes('پروفایل') || q.includes('حساب')) handleNavigate('profile');
-                else if (q.includes('دانلود')) handleNavigate('downloads');
-                else handleNavigate('services');
-                setSearchQuery('');
-              }
-            }}
-          />
-          {searchQuery.trim().length > 1 && (
-            <div className="absolute top-full mt-1 right-0 left-0 bg-white border rounded-lg shadow-lg z-50 max-h-80 overflow-auto">
-              {[
-                { label: 'سرویس‌های من', tab: 'services', icon: '🖥️' },
-                { label: 'فاکتورها و امور مالی', tab: 'billing', icon: '💳' },
-                { label: 'تیکت‌های پشتیبانی', tab: 'tickets', icon: '🎫' },
-                { label: 'مدیریت دامنه‌ها', tab: 'domains', icon: '🌐' },
-                { label: 'سفارش سرویس جدید', tab: 'order-vps', icon: '🛒' },
-                { label: 'دانلودها', tab: 'downloads', icon: '⬇️' },
-                { label: 'پروفایل کاربری', tab: 'profile', icon: '👤' },
-                { label: 'مرکز دانش', tab: 'knowledge', icon: '📚' },
-              ]
-                .filter((s) => s.label.includes(searchQuery))
-                .map((s) => (
-                  <button
-                    key={s.tab}
-                    type="button"
-                    onClick={() => { handleNavigate(s.tab); setSearchQuery(''); }}
-                    className="w-full text-right px-3 py-2 hover:bg-muted text-sm flex items-center gap-2"
-                  >
-                    <span>{s.icon}</span>
-                    <span>{s.label}</span>
-                  </button>
-                ))}
-              <button
-                type="button"
-                onClick={() => { handleNavigate('services'); setSearchQuery(''); }}
-                className="w-full text-right px-3 py-2 hover:bg-muted text-xs text-primary border-t"
-              >
-                مشاهده همه نتایج برای «{searchQuery}»
-              </button>
-            </div>
+      <form
+        onSubmit={search}
+        className="hidden md:flex max-w-sm flex-1 mx-auto relative"
+      >
+        <Input
+          aria-label={s("جستجو", "Search")}
+          placeholder={s(
+            "جستجوی سرویس، فاکتور، تیکت…",
+            "Find services, invoices, tickets…",
           )}
-        </div>
-      </div>
-      
-      <div className="flex items-center space-x-2 md:space-x-4 space-x-reverse">
-        <Button variant="ghost" size="icon" onClick={toggleTheme} title={theme === 'dark' ? 'حالت روشن' : 'حالت تاریک'}>
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button
+          className="absolute end-3 top-3"
+          aria-label={s("جستجو", "Search")}
+        >
+          <Search size={16} />
+        </button>
+      </form>
+      <div className="flex flex-wrap justify-end gap-1 items-center ms-auto">
+        <span
+          className="flex items-center gap-1 text-xs rounded-lg bg-blue-500/10 text-blue-600 p-2 tabular-nums"
+          aria-label={s("زمان نشست", "Session time")}
+        >
+          <Clock size={14} />
+          {n(sessionTimeLeft)}
+        </span>
+        <AccountSpaceSwitcher current="services" />
+        <LanguageControl />
+        <CurrencyControl />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label={s("تغییر پوسته", "Toggle theme")}
+        >
+          {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
-
-        <div className="hidden lg:flex items-center bg-muted rounded-md px-3 py-1 text-muted-foreground">
-          <Clock className="h-4 w-4 ml-1" />
-          <span className="text-sm">{sessionTimeLeft}</span>
-        </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative"
-            >
-              <MegaphoneIcon className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
-                ۲
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>اطلاعیه‌های مهم</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="max-h-96 overflow-auto">
-              <DropdownMenuItem className="flex flex-col items-start py-3">
-                <span className="font-medium">به‌روزرسانی سرورهای ابری</span>
-                <span className="text-sm text-gray-500 mt-1">سرورهای ابری در تاریخ ۱۵ شهریور بروزرسانی خواهند شد.</span>
-                <span className="text-xs text-gray-400 mt-2">۱ روز پیش</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="flex flex-col items-start py-3">
-                <span className="font-medium">اختلال موقت سرویس DNS</span>
-                <span className="text-sm text-gray-500 mt-1">سرویس DNS ممکن است با اختلال موقت مواجه شود.</span>
-                <span className="text-xs text-gray-400 mt-2">۳ روز پیش</span>
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center text-blue-600 justify-center" onClick={handleViewImportantAnnouncements}>
-              مشاهده همه اطلاعیه‌ها
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
-                ۳
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>اعلان‌های شما</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="max-h-96 overflow-auto">
-              <DropdownMenuItem className="flex flex-col items-start py-3">
-                <span className="font-medium">تیکت جدید پاسخ داده شد</span>
-                <span className="text-sm text-gray-500 mt-1">تیکت شما با موضوع "مشکل در اتصال به سرور" پاسخ داده شد.</span>
-                <span className="text-xs text-gray-400 mt-2">۱۵ دقیقه پیش</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="flex flex-col items-start py-3">
-                <span className="font-medium">فاکتور جدید</span>
-                <span className="text-sm text-gray-500 mt-1">فاکتور جدیدی برای تمدید سرور مجازی شما صادر شده است.</span>
-                <span className="text-xs text-gray-400 mt-2">۲ ساعت پیش</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="flex flex-col items-start py-3">
-                <span className="font-medium">رویداد سیستم</span>
-                <span className="text-sm text-gray-500 mt-1">عملیات نگهداری برنامه‌ریزی شده در تاریخ ۲۵ خرداد ۱۴۰۲</span>
-                <span className="text-xs text-gray-400 mt-2">دیروز</span>
-              </DropdownMenuItem>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center text-blue-600 justify-center" onClick={handleViewAllNotifications}>
-              مشاهده همه اعلان‌ها
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/avatars/user1.png" />
-                <AvatarFallback>کا</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>حساب کاربری</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleNavigate('profile')}>
-              <User className="ml-2 h-4 w-4" />
-              <span>پروفایل کاربری</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleNavigate('tickets')}>پشتیبانی</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600" onClick={handleLogout}>
-              <LogOut className="ml-2 h-4 w-4" />
-              خروج از حساب
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <HeaderMenus
+          activeTab={activeTab}
+          onNavigate={onNavigate}
+          onSignOut={async () => {
+            if (!preview) {
+              const { supabase } = await import(
+                "@/integrations/supabase/client"
+              );
+              const { error } = await supabase.auth.signOut();
+              if (error) throw error;
+            }
+            sessionStorage.removeItem("novin.panel.deadline");
+            navigate("/auth", { replace: true });
+          }}
+        />
       </div>
     </header>
   );
-};
-
-export default Header;
+}

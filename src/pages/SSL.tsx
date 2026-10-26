@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -83,7 +84,7 @@ const SSL = () => {
     }
   ];
 
-  return (
+  return <LegacyLocale>{(
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -350,7 +351,7 @@ const SSL = () => {
       
       <Footer />
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default SSL;

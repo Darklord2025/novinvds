@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,13 +83,13 @@ const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({
   const getAnnouncementTypeIcon = (type: string) => {
     switch (type) {
       case 'maintenance':
-        return <Calendar className="h-5 w-5 text-amber-500" />;
+        return <LegacyLocale>{<Calendar className="h-5 w-5 text-amber-500" />}</LegacyLocale>;
       case 'alert':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
+        return <LegacyLocale>{<AlertCircle className="h-5 w-5 text-red-500" />}</LegacyLocale>;
       case 'update':
       case 'info':
       default:
-        return <Info className="h-5 w-5 text-blue-500" />;
+        return <LegacyLocale>{<Info className="h-5 w-5 text-blue-500" />}</LegacyLocale>;
     }
   };
 
@@ -120,7 +121,7 @@ const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({
     }
   };
 
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -220,7 +221,7 @@ const ImportantAnnouncementsPage: React.FC<ImportantAnnouncementsPageProps> = ({
         </CardContent>
       </Card>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ImportantAnnouncementsPage;

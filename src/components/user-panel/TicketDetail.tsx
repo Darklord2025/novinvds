@@ -1,181 +1,147 @@
-
-import React from 'react';
+import {
+  supportDepartments,
+  technicalTeam,
+  baseDepartment,
+} from "../../../supabase/functions/_shared/support-routing";
+import BackButton from "./BackButton";
+import TicketSurvey from "./TicketSurvey";
+import React, { useState } from "react";
+import { ArrowRight, ArrowLeft, Lock, Send, MessageSquare } from "lucide-react";
+import { usePanelData } from "@/contexts/PanelDataContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Send, Paperclip } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
-
-interface TicketDetailProps {
+import { usePanelCopy } from "./PanelPrimitives";
+export default function TicketDetail({
+  ticketId,
+  onBack,
+}: {
   ticketId: string;
   onBack: () => void;
-}
-
-const TicketDetail: React.FC<TicketDetailProps> = ({ ticketId, onBack }) => {
-  const [replyText, setReplyText] = React.useState('');
-  
-  // Mock ticket data
-  const ticketData = {
-    id: ticketId,
-    subject: `تیکت شماره ${ticketId}`,
-    department: 'پشتیبانی فنی',
-    priority: 'متوسط',
-    status: 'در انتظار پاسخ',
-    createdAt: '2023-05-12T10:30:00',
-    messages: [
-      {
-        id: '1',
-        sender: 'کاربر',
-        senderType: 'client',
-        content: 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.',
-        timestamp: '2023-05-12T10:30:00'
-      },
-      {
-        id: '2',
-        sender: 'پشتیبان',
-        senderType: 'admin',
-        content: 'سلام، درخواست شما بررسی شد. لطفا اطلاعات بیشتری ارائه دهید.',
-        timestamp: '2023-05-12T14:45:00'
-      },
-      {
-        id: '3',
-        sender: 'کاربر',
-        senderType: 'client',
-        content: 'با تشکر از پاسخ شما. اطلاعات بیشتر به شرح زیر است... لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.',
-        timestamp: '2023-05-13T09:15:00'
-      }
-    ]
-  };
-
-  const handleSendReply = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!replyText.trim()) {
-      toast({
-        title: "خطا",
-        description: "لطفاً متن پیام را وارد کنید.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Here you would send the reply to the server
-    console.log("Sending reply:", replyText);
-    
-    toast({
-      title: "پیام ارسال شد",
-      description: "پاسخ شما با موفقیت ثبت شد.",
-    });
-    
-    setReplyText('');
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('fa-IR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }).format(date);
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{ticketData.subject}</h1>
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-          ${ticketData.status === 'باز' ? 'bg-green-100 text-green-800' : 
-          ticketData.status === 'در انتظار پاسخ' ? 'bg-blue-100 text-blue-800' : 
-          ticketData.status === 'بسته شده' ? 'bg-gray-100 text-gray-800' : 
-          'bg-yellow-100 text-yellow-800'}
-        `}>
-          {ticketData.status}
-        </span>
+}) {
+  const { data, reply, closeTicket } = usePanelData();
+  const { fa, s, n } = usePanelCopy();
+  const [body, setBody] = useState(""),
+    [message, setMessage] = useState(""),
+    [busy, setBusy] = useState(false);
+  const ticket = data.tickets.find((t) => t.id === ticketId);
+  if (!ticket)
+    return (
+      <div>
+        <BackButton onClick={onBack}>
+          {s("بازگشت به تیکت‌ها", "Back to tickets")}
+        </BackButton>
+        <p>{s("تیکت در دسترس نیست.", "Ticket unavailable.")}</p>
       </div>
-
-      <Card>
-        <CardHeader className="bg-gray-50 border-b">
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-medium">جزئیات تیکت</CardTitle>
-            <Button variant="outline" size="sm" onClick={onBack}>
-              بازگشت به لیست تیکت‌ها
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="flex flex-col">
-              <span className="text-sm text-gray-500">دپارتمان</span>
-              <span className="font-medium">{ticketData.department}</span>
+    );
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    if (!body.trim()) return;
+    setBusy(true);
+    try {
+      await reply(ticketId, body);
+      setBody("");
+    } catch (e) {
+      setMessage((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="space-y-5" dir={fa ? "rtl" : "ltr"}>
+      <header className="flex justify-between flex-wrap gap-3">
+        <BackButton variant="outline" onClick={onBack} className="rounded-xl">
+          {fa ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}{" "}
+          {s("بازگشت به تیکت‌ها", "Back to tickets")}
+        </BackButton>
+        {ticket.status !== "closed" && (
+          <Button
+            variant="outline"
+            className="text-rose-500 rounded-xl"
+            onClick={async () => {
+              try {
+                await closeTicket(ticketId);
+              } catch (e) {
+                setMessage((e as Error).message);
+              }
+            }}
+          >
+            <Lock size={16} />
+            {s("بستن تیکت", "Close ticket")}
+          </Button>
+        )}
+      </header>
+      <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 p-6 text-white">
+        <p className="text-xs opacity-80">
+          {s("تیکت شماره", "Ticket number")} {n(ticket.number)}
+        </p>
+        <h1 className="text-xl font-bold mt-2">{ticket.subject}</h1>
+        <p className="text-sm mt-3">
+          {(baseDepartment(ticket.department) === "technical"
+            ? technicalTeam(ticket.context?.resourceKind)
+            : supportDepartments.find((v) => v.id === ticket.department)
+                ?.title)?.[fa ? 0 : 1] || ticket.department}
+          {ticket.context?.resourceName
+            ? " · " + ticket.context.resourceName
+            : ""}
+        </p>
+        <p className="text-sm mt-3 opacity-80">
+          {ticket.status === "closed"
+            ? s("بسته شده", "Closed")
+            : s("گفتگو با پشتیبانی", "Support conversation")}
+        </p>
+      </div>
+      <div className="space-y-4">
+        {ticket.messages.map((m, i) => (
+          <article
+            key={i}
+            className={
+              "rounded-2xl border p-5 " +
+              (m.sender === "support"
+                ? "border-emerald-500/20 bg-emerald-500/5"
+                : "bg-card")
+            }
+          >
+            <div className="flex justify-between text-xs text-muted-foreground mb-3">
+              <strong>
+                {m.sender === "support"
+                  ? s("تیم پشتیبانی", "Support team")
+                  : s("شما", "You")}
+              </strong>
+              <span>{new Date(m.at).toLocaleString(s("fa-IR", "en-US"))}</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm text-gray-500">اولویت</span>
-              <span className="font-medium">{ticketData.priority}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm text-gray-500">تاریخ ایجاد</span>
-              <span className="font-medium">{formatDate(ticketData.createdAt)}</span>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            {ticketData.messages.map((message) => (
-              <div key={message.id} className={`flex ${message.senderType === 'client' ? 'justify-end' : ''}`}>
-                <div className={`flex max-w-[80%] ${message.senderType === 'client' ? 'flex-row-reverse' : ''}`}>
-                  <Avatar className={`h-10 w-10 ${message.senderType === 'client' ? 'mr-4' : 'ml-4'}`}>
-                    <AvatarImage src={message.senderType === 'admin' ? "/images/support-avatar.png" : ""} />
-                    <AvatarFallback>{message.senderType === 'admin' ? 'SP' : 'UN'}</AvatarFallback>
-                  </Avatar>
-                  <div className={`rounded-lg p-4 ${message.senderType === 'client' ? 'bg-blue-50' : 'bg-gray-100'}`}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">{message.sender}</span>
-                      <span className="text-xs text-gray-500">{formatDate(message.timestamp)}</span>
-                    </div>
-                    <p className="text-gray-700">{message.content}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-        <CardFooter className="border-t p-4">
-          <form onSubmit={handleSendReply} className="w-full">
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <Textarea 
-                  placeholder="پاسخ خود را بنویسید..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="flex-1 focus:border-blue-400"
-                  rows={3}
-                />
-              </div>
-              <div className="flex justify-between">
-                <div className="flex items-center">
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    <Button type="button" variant="outline" size="sm" asChild>
-                      <span>
-                        <Paperclip className="ml-2 h-4 w-4" />
-                        پیوست فایل
-                      </span>
-                    </Button>
-                  </label>
-                  <input id="file-upload" type="file" className="hidden" />
-                </div>
-                <Button type="submit">
-                  <Send className="ml-2 h-4 w-4" />
-                  ارسال پاسخ
-                </Button>
-              </div>
-            </div>
-          </form>
-        </CardFooter>
-      </Card>
+            <p className="text-sm leading-7 whitespace-pre-wrap break-words">
+              {m.body}
+            </p>
+          </article>
+        ))}
+      </div>
+      {ticket.status !== "closed" ? (
+        <form
+          onSubmit={send}
+          className="rounded-2xl border bg-card p-5 space-y-3"
+        >
+          <h2 className="font-bold">{s("ارسال پاسخ", "Send a reply")}</h2>
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            required
+            rows={5}
+          />
+          <Button disabled={busy || !body.trim()}>
+            <Send size={16} />
+            {s("ارسال پاسخ", "Send reply")}
+          </Button>
+        </form>
+      ) : (
+        <p className="rounded-xl bg-muted p-4 text-sm">
+          {s(
+            "این گفتگو بسته شده است. برای موضوع تازه، تیکت جدید بسازید.",
+            "This conversation is closed. Create a new ticket for a new issue.",
+          )}
+        </p>
+      )}
+      <TicketSurvey key={ticketId} ticketId={ticketId} />
+      <p role="alert">{message}</p>
     </div>
   );
-};
-
-export default TicketDetail;
+}

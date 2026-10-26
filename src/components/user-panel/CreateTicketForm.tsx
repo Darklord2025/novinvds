@@ -1,310 +1,414 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useRef, useState } from "react";
+import {
+  BookOpen,
+  CheckCircle2,
+  ArrowLeft,
+  ArrowRight,
+  Headphones,
+  Wallet,
+  ShoppingBag,
+  ShieldCheck,
+} from "lucide-react";
+import { usePanelData } from "@/contexts/PanelDataContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { AlertCircle, ArrowLeft, PaperclipIcon, Send, Ticket } from 'lucide-react';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-
-interface CreateTicketFormProps {
-  onSubmit: () => void;
+import { PanelHeading, usePanelCopy } from "./PanelPrimitives";
+import {
+  supportDepartments,
+  supportResourceCategories,
+  supportCategoryForKind,
+  routedDepartment,
+  technicalTeam,
+  issuesFor,
+  type SupportDepartment,
+} from "../../../supabase/functions/_shared/support-routing";
+export default function CreateTicketForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (...args: any[]) => void;
   onCancel: () => void;
-}
-
-const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ onSubmit, onCancel }) => {
-  const [subject, setSubject] = useState('');
-  const [department, setDepartment] = useState('');
-  const [priority, setPriority] = useState('');
-  const [relatedService, setRelatedService] = useState('');
-  const [message, setMessage] = useState('');
-  const [attachments, setAttachments] = useState<File[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (!subject || !department || !priority || !message) {
-      toast({
-        title: "خطا در ارسال تیکت",
-        description: "لطفاً تمامی فیلدهای ضروری را تکمیل کنید.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitting(false);
-      setSuccessDialogOpen(true);
-    }, 1500);
-  };
-  
-  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
-      
-      // Check file size (max 5MB)
-      const oversizedFiles = newFiles.filter(file => file.size > 5 * 1024 * 1024);
-      if (oversizedFiles.length > 0) {
-        toast({
-          title: "خطا در آپلود فایل",
-          description: "حجم هر فایل باید کمتر از 5 مگابایت باشد.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Check total files (max 3)
-      if (attachments.length + newFiles.length > 3) {
-        toast({
-          title: "خطا در آپلود فایل",
-          description: "حداکثر 3 فایل می‌توانید آپلود کنید.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      setAttachments([...attachments, ...newFiles]);
-    }
-  };
-  
-  const removeAttachment = (index: number) => {
-    setAttachments(attachments.filter((_, i) => i !== index));
-  };
-  
-  const handleConfirmTicket = () => {
-    setSuccessDialogOpen(false);
-    
-    toast({
-      title: "تیکت با موفقیت ارسال شد",
-      description: "تیکت شما با موفقیت ثبت شد و کارشناسان ما در اسرع وقت به آن رسیدگی خواهند کرد.",
-      action: (
-        <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-          تأیید
-        </Button>
-      )
-    });
-    
-    onSubmit();
-  };
-  
-  return (
-    <>
-      <div className="space-y-6 p-4 md:p-0" dir="rtl">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Ticket className="w-6 h-6 text-primary" />
-              ارسال تیکت جدید
-            </h1>
-            <p className="text-gray-500 mt-1">از طریق فرم زیر می‌توانید درخواست پشتیبانی جدید ارسال کنید</p>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            onClick={onCancel}
-            className="flex items-center w-full md:w-auto"
-          >
-            <ArrowLeft className="ml-2 h-4 w-4" />
-            بازگشت
-          </Button>
-        </div>
-        
-        <Alert className="bg-blue-50 border-blue-200">
-          <AlertCircle className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800">
-            💡 نکته: پیش از ارسال تیکت، لطفاً بخش پرسش‌های متداول و مرکز دانش را بررسی کنید. ممکن است پاسخ سؤال شما در آنجا موجود باشد.
-          </AlertDescription>
-        </Alert>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>اطلاعات تیکت</CardTitle>
-            <CardDescription>
-              لطفاً اطلاعات خواسته شده را به دقت تکمیل نمایید تا رسیدگی به درخواست شما سریع‌تر انجام شود.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form id="ticketForm" onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="subject">موضوع <span className="text-red-500">*</span></Label>
-                  <Input
-                    id="subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    placeholder="موضوع تیکت را وارد کنید"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="department">دپارتمان <span className="text-red-500">*</span></Label>
-                  <Select value={department} onValueChange={setDepartment}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="انتخاب دپارتمان" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="technical">پشتیبانی فنی</SelectItem>
-                      <SelectItem value="billing">مالی و صورتحساب</SelectItem>
-                      <SelectItem value="sales">فروش</SelectItem>
-                      <SelectItem value="general">عمومی</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="priority">اولویت <span className="text-red-500">*</span></Label>
-                  <Select value={priority} onValueChange={setPriority}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="انتخاب اولویت" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">کم</SelectItem>
-                      <SelectItem value="medium">متوسط</SelectItem>
-                      <SelectItem value="high">زیاد</SelectItem>
-                      <SelectItem value="critical">بحرانی</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="relatedService">سرویس مرتبط (اختیاری)</Label>
-                  <Select value={relatedService} onValueChange={setRelatedService}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="انتخاب سرویس مرتبط" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="vps-linux-1">سرور مجازی لینوکس (Lx452)</SelectItem>
-                      <SelectItem value="dedicated-1">سرور اختصاصی (Dx781)</SelectItem>
-                      <SelectItem value="hosting-1">هاستینگ (Hx293)</SelectItem>
-                      <SelectItem value="domain-1">دامنه example.com</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="message">متن پیام <span className="text-red-500">*</span></Label>
-                <Textarea
-                  id="message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="توضیحات کاملی از مشکل یا درخواست خود ارائه دهید..."
-                  rows={5}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="attachments">فایل‌های پیوست (اختیاری)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                  <div className="flex flex-col items-center justify-center">
-                    <PaperclipIcon className="h-8 w-8 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">فایل‌های خود را اینجا رها کنید یا کلیک کنید</p>
-                    <p className="text-xs text-gray-500 mb-3">حداکثر 3 فایل (هر فایل حداکثر 5 مگابایت)</p>
-                    <Input
-                      id="attachments"
-                      type="file"
-                      onChange={handleAttachmentChange}
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById('attachments')?.click()}
-                    >
-                      انتخاب فایل
-                    </Button>
-                  </div>
-                  
-                  {attachments.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      <p className="text-sm font-medium">فایل‌های انتخاب شده:</p>
-                      <ul className="space-y-2">
-                        {attachments.map((file, index) => (
-                          <li key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                            <span className="text-sm">{file.name} ({(file.size / 1024).toFixed(1)} کیلوبایت)</span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeAttachment(index)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              حذف
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </form>
-          </CardContent>
-          <CardFooter className="flex flex-col md:flex-row justify-between gap-3">
-            <Button
-              variant="outline"
-              onClick={onCancel}
-              className="w-full md:w-auto"
-            >
-              انصراف
-            </Button>
-            
-            <Button
-              type="submit"
-              form="ticketForm"
-              disabled={submitting}
-              className="w-full md:w-auto"
-            >
-              {submitting ? (
-                <>
-                  <span className="animate-spin mr-2">●</span>
-                  در حال ارسال...
-                </>
-              ) : (
-                <>
-                  <Send className="ml-2 h-4 w-4" />
-                  ارسال تیکت
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-      
-      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <Ticket className="h-5 w-5 text-green-500" />
-              تیکت با موفقیت ارسال شد
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              تیکت شما با موفقیت ثبت شد و شناسه آن TICK-{Math.floor(100000 + Math.random() * 900000)} می‌باشد. کارشناسان ما در اسرع وقت به آن رسیدگی خواهند کرد و نتیجه را به شما اطلاع خواهند داد.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleConfirmTicket}>
-              تأیید
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+}) {
+  const { data, createTicket } = usePanelData(),
+    { s, fa, n } = usePanelCopy();
+  const [step, setStep] = useState(0),
+    [resourceId, setResourceId] = useState(""),
+    [category, setCategory] = useState("general"),
+    [department, setDepartment] = useState<SupportDepartment>(() => {
+      const d = new URLSearchParams(location.search).get("department");
+      return supportDepartments.find((v) => v.id === d)?.id || "technical";
+    }),
+    [issueId, setIssueId] = useState(""),
+    [subject, setSubject] = useState(""),
+    [body, setBody] = useState(""),
+    [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const resources = [
+    ...data.services.map((v) => ({ id: v.id, name: v.name, kind: v.kind })),
+    ...data.domains.map((v) => ({ id: v.id, name: v.domain, kind: "domain" })),
+  ];
+  const categoryResources = resources.filter(
+    (v) => supportCategoryForKind(v.kind) === category,
   );
-};
-
-export default CreateTicketForm;
+  const resource = resources.find((v) => v.id === resourceId),
+    issues = issuesFor(department, resource?.kind),
+    issue = issues.find((v) => v.id === issueId);
+  const text = (v: readonly string[]) => v[fa ? 0 : 1];
+  const move = (v: number) => {
+    setError("");
+    setStep(v);
+    requestAnimationFrame(() => {
+      titleRef.current?.focus();
+      titleRef.current?.scrollIntoView({ block: "nearest" });
+    });
+  };
+  const icons = [Headphones, Wallet, ShoppingBag, ShieldCheck];
+  const deptLabel = (id: string) =>
+    text(
+      id === "technical"
+        ? technicalTeam(resource?.kind)
+        : supportDepartments.find((d) => d.id === id)!.title,
+    );
+  return (
+    <div className="space-y-5 max-w-4xl">
+      <PanelHeading
+        title={s("ثبت تیکت جدید", "Open a support ticket")}
+        action={
+          <Button variant="outline" onClick={onCancel}>
+            {fa ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}{" "}
+            {s("بازگشت به تیکت‌ها", "Back to tickets")}
+          </Button>
+        }
+      />
+      <ol
+        aria-label={s("مراحل ثبت تیکت", "Ticket steps")}
+        className="grid grid-cols-3 gap-2"
+      >
+        {[
+          s("سرویس و دپارتمان", "Service & department"),
+          s("راهنمای حل مشکل", "Troubleshooting"),
+          s("ثبت درخواست", "Submit request"),
+        ].map((label, i) => (
+          <li
+            key={label}
+            aria-current={step === i ? "step" : undefined}
+            className={
+              "rounded-xl p-3 text-xs sm:text-sm border " +
+              (step === i
+                ? "bg-blue-600 text-white border-blue-600"
+                : step > i
+                  ? "bg-emerald-50 text-emerald-800"
+                  : "bg-card text-muted-foreground")
+            }
+          >
+            <span className="me-2">{n(i + 1)}</span>
+            {label}
+          </li>
+        ))}
+      </ol>
+      <div className="rounded-2xl border bg-card p-5 sm:p-7 space-y-5">
+        <h2
+          ref={titleRef}
+          tabIndex={-1}
+          className="text-lg font-bold outline-none"
+        >
+          {step === 0
+            ? s("در چه زمینه‌ای کمک می‌خواهید؟", "What do you need help with?")
+            : step === 1
+              ? s("مشکل شما چیست؟", "What is the issue?")
+              : s("جزئیات درخواست را بنویسید", "Tell us about your request")}
+        </h2>
+        {step === 0 ? (
+          <>
+            <Label htmlFor="ticket-category">
+              {s("دسته‌بندی سرویس", "Service category")}
+            </Label>
+            <select
+              id="ticket-category"
+              className="w-full rounded-xl border bg-background p-3"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setResourceId("");
+                setIssueId("");
+              }}
+            >
+              {supportResourceCategories.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {text(v.title)}
+                </option>
+              ))}
+            </select>
+            {category !== "general" && (
+              <>
+                <Label htmlFor="ticket-service">
+                  {s("سرویس مرتبط", "Related service")}
+                </Label>
+                <select
+                  id="ticket-service"
+                  className="w-full rounded-xl border bg-background p-3"
+                  value={resourceId}
+                  onChange={(e) => {
+                    setResourceId(e.target.value);
+                    setIssueId("");
+                  }}
+                >
+                  <option value="">
+                    {s("سرویس را انتخاب کنید", "Choose your service")}
+                  </option>
+                  {categoryResources.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} · {v.id}
+                    </option>
+                  ))}
+                </select>
+                {!categoryResources.length && (
+                  <p className="text-sm text-muted-foreground">
+                    {s(
+                      "در این دسته سرویسی ندارید؛ برای مشاوره پیش از خرید دسته عمومی را انتخاب کنید.",
+                      "No services in this category. Choose General for pre-sales advice.",
+                    )}
+                  </p>
+                )}
+              </>
+            )}
+            <fieldset>
+              <legend className="mb-3 text-sm font-medium">
+                {s("دپارتمان مربوطه", "Relevant department")}
+              </legend>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {supportDepartments.map((d, i) => {
+                  const Icon = icons[i];
+                  return (
+                    <label
+                      key={d.id}
+                      className={
+                        "cursor-pointer rounded-xl border p-4 flex items-start gap-3 " +
+                        (department === d.id
+                          ? "border-blue-500 bg-blue-50 text-blue-950"
+                          : "")
+                      }
+                    >
+                      <input
+                        type="radio"
+                        name="department"
+                        value={d.id}
+                        checked={department === d.id}
+                        onChange={() => {
+                          setDepartment(d.id);
+                          setIssueId("");
+                        }}
+                        className="mt-1"
+                      />
+                      <Icon size={21} className="shrink-0 text-blue-600" />
+                      <span>
+                        <strong className="block text-sm">
+                          {deptLabel(d.id)}
+                        </strong>
+                        <small className="text-muted-foreground">
+                          {text(d.description)}
+                        </small>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+            <Button
+              type="button"
+              disabled={category !== "general" && !resource}
+              onClick={() => move(1)}
+            >
+              {s("ادامه و بررسی راهنما", "Continue to troubleshooting")}
+            </Button>
+          </>
+        ) : step === 1 ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {s(
+                "موضوع نزدیک به مشکل خود را انتخاب کنید. اگر راهنما کافی نبود، درخواستتان را ارسال کنید.",
+                "Choose the closest issue. If the guide does not help, continue to submit your request.",
+              )}
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {issues.map((v) => (
+                <button
+                  type="button"
+                  key={v.id}
+                  aria-pressed={issueId === v.id}
+                  onClick={() => setIssueId(v.id)}
+                  className={
+                    "p-4 border rounded-xl text-start flex gap-3 items-center " +
+                    (issueId === v.id
+                      ? "border-blue-500 bg-blue-50 text-blue-950"
+                      : "")
+                  }
+                >
+                  <BookOpen size={20} className="shrink-0 text-blue-600" />
+                  {text(v.title)}
+                </button>
+              ))}
+              <button
+                type="button"
+                aria-pressed={issueId === "other"}
+                onClick={() => setIssueId("other")}
+                className={
+                  "p-4 border rounded-xl text-start " +
+                  (issueId === "other"
+                    ? "border-blue-500 bg-blue-50 text-blue-950"
+                    : "")
+                }
+              >
+                {s(
+                  "موضوع دیگری دارم / در فهرست نیست",
+                  "Something else / my issue is not listed",
+                )}
+              </button>
+            </div>
+            {issue && (
+              <div
+                className="rounded-xl bg-blue-50 text-blue-950 p-5 space-y-4"
+                role="region"
+                aria-label={s("راهنمای پیشنهادی", "Suggested help")}
+              >
+                <h3 className="font-bold">{text(issue.title)}</h3>
+                <p className="text-sm leading-7">{text(issue.tips)}</p>
+                <a
+                  href={"/blog/" + issue.article}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-700 underline"
+                >
+                  {s(
+                    "مطالعه راهنما در صفحه جدید",
+                    "Open the guide in a new tab",
+                  )}
+                </a>
+                <div>
+                  <Button type="button" variant="outline" onClick={onCancel}>
+                    <CheckCircle2 size={16} />
+                    {s(
+                      "مشکل حل شد؛ بازگشت به تیکت‌ها",
+                      "Solved — return to tickets",
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-3 flex-wrap">
+              <Button type="button" variant="outline" onClick={() => move(0)}>
+                {s("مرحله قبل", "Previous step")}
+              </Button>
+              <Button
+                type="button"
+                disabled={!issueId}
+                onClick={() => {
+                  if (!subject && issue) setSubject(text(issue.title));
+                  move(2);
+                }}
+              >
+                {s("نیاز به ارسال تیکت دارم", "Continue to ticket form")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <form
+            className="space-y-5"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (busy) return;
+              setError("");
+              setBusy(true);
+              try {
+                await createTicket(
+                  subject,
+                  routedDepartment(department, resource?.kind),
+                  body,
+                  {
+                    resourceId: resource?.id,
+                    resourceKind: resource?.kind,
+                    issueId,
+                  },
+                );
+                onSubmit();
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            <div className="rounded-xl bg-muted p-4 text-sm space-y-1">
+              <p>
+                <strong>{s("سرویس: ", "Service: ")}</strong>
+                {resource?.name || s("درخواست عمومی", "General request")}
+              </p>
+              <p>
+                <strong>{s("دپارتمان: ", "Department: ")}</strong>
+                {deptLabel(department)}
+              </p>
+            </div>
+            <Label className="block space-y-2">
+              {s("موضوع", "Subject")}
+              <Input
+                required
+                minLength={3}
+                maxLength={200}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+            </Label>
+            <Label className="block space-y-2">
+              {s("متن درخواست", "Your message")}
+              <Textarea
+                required
+                minLength={5}
+                maxLength={12000}
+                rows={7}
+                placeholder={s(
+                  "شرح مشکل، زمان شروع، متن خطا و کارهایی که امتحان کرده‌اید…",
+                  "Describe the issue, when it started, the error and what you tried…",
+                )}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+              />
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              {s(
+                "رمز عبور، کد یک‌بارمصرف یا کلید محرمانه را در تیکت نفرستید.",
+                "Do not include passwords, one-time codes or secret keys.",
+              )}
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              <Button
+                type="button"
+                disabled={busy}
+                variant="outline"
+                onClick={() => move(1)}
+              >
+                {s("مرحله قبل", "Previous step")}
+              </Button>
+              <Button
+                disabled={
+                  busy || subject.trim().length < 3 || body.trim().length < 5
+                }
+              >
+                {busy
+                  ? s("در حال ثبت…", "Submitting…")
+                  : s("ثبت تیکت", "Create ticket")}
+              </Button>
+            </div>
+            {error && (
+              <p role="alert" className="text-red-600">
+                {error}
+              </p>
+            )}
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,9 +1,10 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Server, CheckCircle, Award, Shield } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="relative pt-28 pb-20 md:pt-40 md:pb-28">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 to-white"></div>
       <div className="container mx-auto px-4">
@@ -93,7 +94,7 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default HeroSection;

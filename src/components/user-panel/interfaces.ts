@@ -1,4 +1,3 @@
-
 // Add any missing exports here if needed
 export interface DashboardProps {
   navigateToServiceOrderPage: (serviceLink: string) => void;
@@ -18,6 +17,7 @@ export interface PanelContentProps {
 export interface SidebarItem {
   id: string;
   label: string;
+  en?: string;
   icon: string;
   submenu?: SidebarItem[];
 }

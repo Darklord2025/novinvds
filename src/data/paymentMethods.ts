@@ -7,3 +7,4 @@ export const paymentMethods = [
   { id: 'perfectmoney', fa: 'Perfect Money', en: 'Perfect Money', icon: Wallet },
 ] as const;
 export type PaymentMethod = typeof paymentMethods[number]['id'];
+export type InvoicePaymentMethod = PaymentMethod | 'wallet';

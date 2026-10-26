@@ -1,5 +1,5 @@
-
-import { useState, useEffect } from 'react';
+import {sidebarItems} from "@/data/sidebarItems";
+import { useState, useEffect, startTransition } from "react";
 
 export interface PanelState {
   activeTab: string;
@@ -13,49 +13,43 @@ export interface PanelState {
 }
 
 export const usePanelState = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const leaves=(items:typeof sidebarItems):string[]=>items.flatMap(i=>i.submenu?leaves(i.submenu):[i.id]);
+  const [activeTab, setActiveTabState] = useState(() =>
+    [...leaves(sidebarItems),
+      "order-domain",
+      "order-hosting",
+      "security",
+      "cart",
+      "domains",
+      "wallet",
+      "financial-overview",
+      "transactions",
+      "knowledge-base",
+      "downloads",
+      "affiliate",
+      "order-support",
+      "order-dedicated-europe",
+      "order-dedicated-usa",
+      "order-dedicated-asia",
+      "order-dedicated-gpu",
+      "order-dedicated-storage",
+      "order-vps-windows",
+      "order-vps-storage",
+      "order-vps-daily",
+    ].includes(new URLSearchParams(location.search).get("tab") || "")
+      ? new URLSearchParams(location.search).get("tab")!
+      : "dashboard",
+  );
+  const setActiveTab = (tab: string) =>
+    startTransition(() => setActiveTabState(tab));
   const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+
   // State for notifications and details
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
-  const [isNewTicket, setIsNewTicket] = useState(false);
-
-  // Mock session time left
-  const [sessionTimeLeft, setSessionTimeLeft] = useState('60:00');
-
-  useEffect(() => {
-    let timer: number;
-    
-    // Simulate session countdown
-    if (sessionTimeLeft !== '00:00') {
-      timer = window.setInterval(() => {
-        const [minutes, seconds] = sessionTimeLeft.split(':').map(Number);
-        
-        let newSeconds = seconds - 1;
-        let newMinutes = minutes;
-        
-        if (newSeconds < 0) {
-          newSeconds = 59;
-          newMinutes -= 1;
-        }
-        
-        if (newMinutes < 0) {
-          newMinutes = 0;
-          newSeconds = 0;
-        }
-        
-        const newSessionTimeLeft = `${String(newMinutes).padStart(2, '0')}:${String(newSeconds).padStart(2, '0')}`;
-        setSessionTimeLeft(newSessionTimeLeft);
-      }, 1000);
-    }
-    
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [sessionTimeLeft]);
+  const [isNewTicket, setIsNewTicket] = useState(() => new URLSearchParams(location.search).get("tab")==="tickets" && new URLSearchParams(location.search).get("newTicket")==="1");
 
   const handleSidebarItemClick = (itemId: string) => {
     // Reset sub-states when changing main tab
@@ -81,7 +75,6 @@ export const usePanelState = () => {
     setSelectedTicket,
     isNewTicket,
     setIsNewTicket,
-    sessionTimeLeft,
-    handleSidebarItemClick
+    handleSidebarItemClick,
   };
-}
+};

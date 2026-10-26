@@ -1,10 +1,17 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { toast } from '@/components/ui/use-toast';
+import { useLanguage } from "./LanguageContext";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
+import { toast } from "@/components/ui/use-toast";
 
 export type CartItem = {
   id: string;
   name: string;
-  type: 'vps' | 'hosting' | 'dedicated' | 'domain' | 'license' | 'addon';
+  type: "vps" | "hosting" | "dedicated" | "domain" | "license" | "addon";
   price: number;
   period: string;
   quantity: number;
@@ -14,7 +21,11 @@ export type CartItem = {
 
 interface CartContextValue {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
+  reward: { code: string; percent: number; capToman: number } | null;
+  setReward: (
+    value: { code: string; percent: number; capToman: number } | null,
+  ) => void;
+  addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, delta: number) => void;
   clear: () => void;
@@ -24,35 +35,72 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const CartProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const { language } = useLanguage();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [reward, setReward] = useState<{
+    code: string;
+    percent: number;
+    capToman: number;
+  } | null>(null);
 
-  const addItem = useCallback((item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
-    setItems(prev => {
-      const existing = prev.find(p => p.id === item.id);
-      if (existing) {
-        return prev.map(p => p.id === item.id ? { ...p, quantity: p.quantity + (item.quantity || 1) } : p);
-      }
-      return [...prev, { ...item, quantity: item.quantity || 1 }];
-    });
-    toast({ title: 'به سبد خرید اضافه شد', description: item.name });
-  }, []);
+  const addItem = useCallback(
+    (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+      setItems((prev) => {
+        const existing = prev.find((p) => p.id === item.id);
+        if (existing) {
+          return prev.map((p) =>
+            p.id === item.id
+              ? { ...p, quantity: p.quantity + (item.quantity || 1) }
+              : p,
+          );
+        }
+        return [...prev, { ...item, quantity: item.quantity || 1 }];
+      });
+      toast({
+        title: language === "fa" ? "به سبد خرید اضافه شد" : "Added to cart",
+        description: item.name,
+      });
+    },
+    [language],
+  );
 
   const removeItem = useCallback((id: string) => {
-    setItems(prev => prev.filter(p => p.id !== id));
+    setItems((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
   const updateQuantity = useCallback((id: string, delta: number) => {
-    setItems(prev => prev.map(p => p.id === id ? { ...p, quantity: Math.max(1, p.quantity + delta) } : p));
+    setItems((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, quantity: Math.max(1, p.quantity + delta) } : p,
+      ),
+    );
   }, []);
 
-  const clear = useCallback(() => setItems([]), []);
+  const clear = useCallback(() => {
+    setItems([]);
+    setReward(null);
+  }, []);
 
   const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
   const count = items.reduce((s, i) => s + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clear, total, count }}>
+    <CartContext.Provider
+      value={{
+        reward,
+        setReward,
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clear,
+        total,
+        count,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -60,6 +108,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useCart = () => {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error('useCart must be used within CartProvider');
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
   return ctx;
 };

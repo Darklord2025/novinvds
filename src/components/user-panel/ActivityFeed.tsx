@@ -1,9 +1,10 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { CreditCard, Server, MessageSquare, Globe } from 'lucide-react';
 
 const ActivityFeed = () => {
-  return (
+  return <LegacyLocale>{(
     <div className="bg-white rounded-xl shadow-sm">
       <div className="p-6 border-b">
         <h3 className="font-semibold">فعالیت‌های اخیر</h3>
@@ -53,7 +54,7 @@ const ActivityFeed = () => {
         </div>
       </div>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ActivityFeed;

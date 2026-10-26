@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import React, { useState } from 'react';
 import { ShoppingCart, Star, Heart, Filter, Search, Package, Truck, Shield, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -168,7 +169,7 @@ const NetworkStoreSection = () => {
     </Card>
   );
 
-  return (
+  return <LegacyLocale>{(
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -185,7 +186,7 @@ const NetworkStoreSection = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {services.map((service, index) => {
           const Icon = service.icon;
-          return (
+          return <LegacyLocale key={index}>{(
             <Card key={index} className="text-center">
               <CardContent className="p-6">
                 <Icon className="w-8 h-8 mx-auto mb-3 text-primary" />
@@ -193,7 +194,7 @@ const NetworkStoreSection = () => {
                 <p className="text-sm text-muted-foreground">{service.description}</p>
               </CardContent>
             </Card>
-          );
+          )}</LegacyLocale>;
         })}
       </div>
 
@@ -280,7 +281,7 @@ const NetworkStoreSection = () => {
         </CardContent>
       </Card>
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default NetworkStoreSection;

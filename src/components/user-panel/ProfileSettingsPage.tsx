@@ -1,903 +1,379 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import CurrencyControl from "@/components/CurrencyControl";
+import { normalizeDigits } from "@/lib/localized-number";
+import AccountConversion from "./AccountConversion";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Building2, Shield, Wallet, Palette } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePanelData } from "@/contexts/PanelDataContext";
+import { PanelHeading, usePanelCopy } from "./PanelPrimitives";
+import SecurityCenterPage from "./SecurityCenterPage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Bell, Check, Eye, EyeOff, Key, Lock, Save, ShieldAlert, User, UserCog, Mail, Phone, MapPin, Building, Hash, Globe, CreditCard, Wallet, Receipt, TrendingUp, MessageSquare, Shield, ShieldCheck, Building2, Palette, Sun, Moon, Monitor, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useTheme, type ThemeMode } from '@/contexts/ThemeContext';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-
-const iranianProvinces = [
-  'آذربایجان شرقی', 'آذربایجان غربی', 'اردبیل', 'اصفهان', 'ایلام', 'بوشهر', 'تهران',
-  'چهارمحال و بختیاری', 'خراسان جنوبی', 'خراسان رضوی', 'خراسان شمالی', 'خوزستان',
-  'زنجان', 'سمنان', 'سیستان و بلوچستان', 'فارس', 'قزوین', 'قم', 'کردستان', 'کرمان',
-  'کرمانشاه', 'کهگیلویه و بویراحمد', 'گلستان', 'گیلان', 'لرستان', 'مازندران', 'مرکزی',
-  'هرمزگان', 'همدان', 'یزد'
-];
-
-const ProfileSettingsPage = () => {
-  const [activeTab, setActiveTab] = useState('personal');
-  const [showPassword, setShowPassword] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const { mode: themeMode, setMode: setThemeMode, settings: themeSettings, updateSchedule, theme } = useTheme();
-  
-  const [profileForm, setProfileForm] = useState({
-    firstName: 'محمد',
-    lastName: 'رضایی',
-    email: 'mohammad@example.com',
-    phone: '۰۹۱۲۳۴۵۶۷۸۹',
-    companyName: 'شرکت نمونه',
-    address: 'تهران، خیابان ولیعصر',
-    city: 'تهران',
-    province: 'تهران',
-    postalCode: '۱۲۳۴۵۶۷۸۹۰',
-  });
-  
-  const [securityForm, setSecurityForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-    twoFactor: false,
-    emailNotifications: true,
-    loginAlerts: true,
-    activityAlerts: false,
-    serviceAlerts: true,
-  });
-  
-  const [apiKeys, setApiKeys] = useState([
-    { id: '۱', name: 'کلید API اصلی', key: 'api_key_1234567890', created: '۱۴۰۲/۰۶/۱۵', lastUsed: '۱۴۰۲/۰۶/۲۰' },
-    { id: '۲', name: 'کلید مربوط به وب سرویس', key: 'api_key_0987654321', created: '۱۴۰۲/۰۵/۱۰', lastUsed: '۱۴۰۲/۰۶/۱۸' },
-  ]);
-  
-  const [bankCards, setBankCards] = useState([
-    { 
-      id: '۱', 
-      cardNumber: '۶۰۳۷-۹۹۷۴-۱۲۳۴-۵۶۷۸', 
-      bankName: 'بانک ملی', 
-      ownerName: 'محمد رضایی',
-      isDefault: true 
-    },
-  ]);
-  
-  const [bankAccounts, setBankAccounts] = useState([
-    { 
-      id: '۱', 
-      accountNumber: '۱۲۳۴۵۶۷۸۹۰', 
-      iban: 'IR۱۲۳۴۵۶۷۸۹۰۱۲۳۴۵۶۷۸۹۰۱۲۳۴',
-      bankName: 'بانک ملی', 
-      ownerName: 'محمد رضایی',
-      isDefault: true 
-    },
-  ]);
-  
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProfileForm((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handleProvinceChange = (value: string) => {
-    setProfileForm((prev) => ({ ...prev, province: value }));
-  };
-  
-  const handleSecurityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSecurityForm((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handleToggleChange = (name: string, checked: boolean) => {
-    setSecurityForm((prev) => ({ ...prev, [name]: checked }));
-  };
-  
-  const handleSaveProfile = () => {
-    setSaving(true);
-    
-    setTimeout(() => {
-      setSaving(false);
-      toast({
-        title: "ذخیره تغییرات",
-        description: "اطلاعات شخصی شما با موفقیت به‌روزرسانی شد.",
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      });
-    }, 1500);
-  };
-  
-  const handleChangePassword = () => {
-    if (securityForm.newPassword !== securityForm.confirmPassword) {
-      toast({
-        title: "خطا در تغییر رمز عبور",
-        description: "رمز عبور جدید و تکرار آن مطابقت ندارند.",
-        variant: "destructive",
-      });
-      return;
+import { Bell, User, Save } from "lucide-react";
+export default function ProfileSettingsPage({
+  initialTab = "profile",
+}: {
+  initialTab?: string;
+}) {
+  const { s, n, fa } = usePanelCopy();
+  const theme = useTheme();
+  const [bank, setBank] = useState({ iban: "", owner: "" });
+  const { data, saveProfile, savePreferences, preview, action } =
+    usePanelData();
+  const [profile, setProfile] = useState(data.profile),
+    [prefs, setPrefs] = useState(data.preferences),
+    [message, setMessage] = useState(""),
+    [busy, setBusy] = useState(false);
+  useEffect(() => {
+    setProfile(data.profile);
+    setPrefs(data.preferences);
+  }, [data.profile, data.preferences]);
+  async function save(kind: string) {
+    setBusy(true);
+    try {
+      if (kind === "profile") await saveProfile(profile);
+      else await savePreferences(prefs);
+      setMessage(
+        preview
+          ? s("فقط در پیش‌نمایش ذخیره شد.", "Saved in preview only.")
+          : s("تنظیمات ذخیره شد.", "Settings saved."),
+      );
+    } catch (e) {
+      setMessage((e as Error).message);
+    } finally {
+      setBusy(false);
     }
-    
-    if (securityForm.newPassword.length < 8) {
-      toast({
-        title: "خطا در تغییر رمز عبور",
-        description: "رمز عبور جدید باید حداقل ۸ کاراکتر باشد.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setSaving(true);
-    
-    setTimeout(() => {
-      setSaving(false);
-      setSecurityForm((prev) => ({
-        ...prev,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      }));
-      
-      toast({
-        title: "تغییر رمز عبور",
-        description: "رمز عبور شما با موفقیت تغییر یافت.",
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      });
-    }, 1500);
-  };
-  
-  const handleEnableTwoFactor = () => {
-    setSecurityForm((prev) => ({ ...prev, twoFactor: true }));
-    
-    toast({
-      title: "فعال‌سازی احراز هویت دو مرحله‌ای",
-      description: "کد QR برای اسکن به ایمیل شما ارسال شد.",
-    });
-  };
-  
-  const handleSaveNotificationSettings = () => {
-    setSaving(true);
-    
-    setTimeout(() => {
-      setSaving(false);
-      toast({
-        title: "ذخیره تنظیمات اعلان‌ها",
-        description: "تنظیمات اعلان‌های شما با موفقیت به‌روزرسانی شد.",
-        action: (
-          <Button variant="outline" onClick={() => toast({ title: "دریافت شد" })}>
-            تأیید
-          </Button>
-        )
-      });
-    }, 1000);
-  };
-  
-  const handleCreateApiKey = () => {
-    const newKey = {
-      id: (apiKeys.length + 1).toString(),
-      name: 'کلید API جدید',
-      key: `api_key_${Math.random().toString(36).substring(2, 15)}`,
-      created: '۱۴۰۲/۰۶/۲۱',
-      lastUsed: '-'
-    };
-    
-    setApiKeys((prev) => [...prev, newKey]);
-    
-    toast({
-      title: "ایجاد کلید API جدید",
-      description: "کلید API جدید با موفقیت ایجاد شد.",
-    });
-  };
-  
-  const handleDeleteApiKey = (id: string) => {
-    setApiKeys((prev) => prev.filter(key => key.id !== id));
-    
-    toast({
-      title: "حذف کلید API",
-      description: "کلید API با موفقیت حذف شد.",
-    });
-  };
-  
+  }
   return (
-    <div className="space-y-6" dir="rtl">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">تنظیمات حساب کاربری</h1>
-        <Badge>حساب کاربری استاندارد</Badge>
-      </div>
-      
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>نکته مهم</AlertTitle>
-        <AlertDescription>
-          برای حفظ امنیت حساب کاربری خود، رمز عبور را به صورت دوره‌ای تغییر دهید و از احراز هویت دو مرحله‌ای استفاده کنید.
-        </AlertDescription>
-      </Alert>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 gap-1 h-auto">
-          <TabsTrigger value="personal" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
-            <User className="h-4 w-4 text-blue-500" />
-            <span>اطلاعات شخصی</span>
-          </TabsTrigger>
-          <TabsTrigger value="financial" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
-            <CreditCard className="h-4 w-4 text-green-500" />
-            <span>اطلاعات مالی</span>
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
-            <ShieldAlert className="h-4 w-4 text-red-500" />
-            <span>امنیت</span>
-          </TabsTrigger>
-          <TabsTrigger value="notification" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
-            <Bell className="h-4 w-4 text-yellow-500" />
-            <span>اعلان‌ها</span>
-          </TabsTrigger>
-          <TabsTrigger value="appearance" className="flex items-center gap-1 md:gap-2 text-[11px] md:text-sm px-1 md:px-3 py-2">
-            <Palette className="h-4 w-4 text-purple-500" />
-            <span>ظاهر و تم</span>
-          </TabsTrigger>
+    <div className="space-y-6">
+      <PanelHeading
+        title={s("تنظیمات حساب کاربری", "Account settings")}
+        subtitle={s(
+          "مشخصات، اعلان‌ها و امنیت حساب",
+          "Profile, notifications and account security",
+        )}
+      />
+      <Tabs defaultValue={initialTab} dir={fa ? "rtl" : "ltr"}>
+        <TabsList className="flex h-auto flex-wrap justify-start gap-2 bg-transparent p-0 mb-5">
+          {[
+            ["profile", User, "مشخصات حساب", "Profile"],
+            ["security", Shield, "امنیت", "Security"],
+            ["notifications", Bell, "اعلان‌ها", "Notifications"],
+            ["bank", Wallet, "حساب‌های بانکی", "Bank accounts"],
+            ["theme", Palette, "ظاهر پنل", "Appearance"],
+          ].map(([key, Icon, f, en]) => {
+            const I = Icon as typeof User;
+            return (
+              <TabsTrigger
+                key={String(key)}
+                value={String(key)}
+                className={
+                  "border rounded-xl px-4 py-3 gap-2 transition-all " +
+                  {
+                    profile:
+                      "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white",
+                    security:
+                      "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 data-[state=active]:bg-emerald-600 data-[state=active]:text-white",
+                    notifications:
+                      "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300 data-[state=active]:bg-amber-500 data-[state=active]:text-white",
+                    bank: "border-violet-500/20 bg-violet-500/10 text-violet-700 dark:text-violet-300 data-[state=active]:bg-violet-600 data-[state=active]:text-white",
+                    theme:
+                      "border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-300 data-[state=active]:bg-rose-600 data-[state=active]:text-white",
+                  }[String(key)]
+                }
+              >
+                <I size={17} />
+                {s(String(f), String(en))}
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
-
-        <TabsContent value="appearance" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-purple-500" />
-                ظاهر و تم
-              </CardTitle>
-              <CardDescription>
-                حالت روشن یا تاریک را انتخاب کنید یا زمان‌بندی خودکار برای سوئیچ بین دو حالت تنظیم کنید.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label className="mb-3 block font-medium">حالت نمایش</Label>
-                <RadioGroup
-                  value={themeMode}
-                  onValueChange={(v) => {
-                    setThemeMode(v as ThemeMode);
-                    toast({ title: 'حالت نمایش تغییر کرد', description: `حالت ${
-                      v === 'light' ? 'روشن' : v === 'dark' ? 'تاریک' : v === 'system' ? 'خودکار (سیستم)' : 'زمان‌بندی'
-                    } فعال شد.` });
-                  }}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+        <TabsContent value="profile">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void save("profile");
+            }}
+            className="rounded-2xl border bg-card p-5 space-y-5"
+          >
+            <h2 className="flex gap-2 font-bold">
+              <User className="text-blue-500" />
+              {s("مشخصات حساب", "Account profile")}
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="rounded-xl bg-blue-500/10 p-4 text-sm">
+                <strong>
+                  {profile.kind === "company"
+                    ? s("حساب حقوقی", "Company account")
+                    : s("حساب حقیقی", "Individual account")}
+                </strong>
+                <p className="mt-2">
+                  {profile.kind === "company" ? profile.company : profile.name}
+                </p>
+              </div>
+              {(
+                [
+                  ["name", "نام کامل", "Full name"],
+                  ["username", "نام کاربری", "Username"],
+                  ...(profile.kind === "company"
+                    ? [
+                        ["company", "نام شرکت", "Company name"],
+                        ["nationalId", "شناسه ملی", "Company national ID"],
+                        ["economicCode", "کد اقتصادی", "Economic code"],
+                        [
+                          "registrationNumber",
+                          "شماره ثبت",
+                          "Registration number",
+                        ],
+                      ]
+                    : [["nationalId", "کد ملی", "National ID"]]),
+                  ["postalCode", "کد پستی", "Postal code"],
+                  ["address", "نشانی", "Address"],
+                ] as string[][]
+              ).map(([key, fa, en]) => (
+                <Label key={key}>
+                  {s(fa, en)}
+                  <Input
+                    className="mt-2"
+                    readOnly={
+                      profile.kind === "company" &&
+                      [
+                        "name",
+                        "company",
+                        "nationalId",
+                        "economicCode",
+                        "registrationNumber",
+                      ].includes(key)
+                    }
+                    value={
+                      [
+                        "nationalId",
+                        "postalCode",
+                        "economicCode",
+                        "registrationNumber",
+                      ].includes(key)
+                        ? n(String(profile[key as keyof typeof profile]))
+                        : String(profile[key as keyof typeof profile])
+                    }
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        [key]: [
+                          "nationalId",
+                          "postalCode",
+                          "economicCode",
+                          "registrationNumber",
+                        ].includes(key)
+                          ? normalizeDigits(e.target.value)
+                          : e.target.value,
+                      })
+                    }
+                  />
+                </Label>
+              ))}
+              <Label>
+                {s("ایمیل تاییدشده", "Verified email")}
+                <Input
+                  className="mt-2"
+                  value={profile.email}
+                  readOnly
+                  dir="ltr"
+                />
+              </Label>
+            </div>
+            <Button disabled={busy}>
+              <Save size={16} />
+              {s("ذخیره مشخصات", "Save profile")}
+            </Button>
+          </form>
+          <div className="mt-5">
+            <AccountConversion />
+          </div>
+        </TabsContent>
+        <TabsContent value="notifications">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void save("preferences");
+            }}
+            className="rounded-2xl border bg-card p-5 space-y-5"
+          >
+            <h2 className="font-bold flex gap-2">
+              <Bell className="text-amber-500" />
+              {s("تنظیمات اعلان‌ها", "Notification preferences")}
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                ["email", "اعلان ایمیلی", "Email notifications"],
+                ["inPanel", "اعلان داخل پنل", "In-app notifications"],
+                ["invoice", "فاکتور و پرداخت", "Invoices and payments"],
+                ["renewal", "یادآوری تمدید", "Renewal reminders"],
+                ["ticket", "پاسخ تیکت", "Ticket replies"],
+                ["wallet", "کاهش موجودی کیف پول", "Low wallet balance"],
+                ["marketing", "پیشنهادها و بازاریابی", "Offers and marketing"],
+                ["login", "اطلاع‌رسانی ورود جدید", "New sign-in alerts"],
+              ].map(([key, fa, en]) => (
+                <label
+                  key={key}
+                  className="border rounded-xl p-4 flex items-center gap-3"
                 >
-                  {[
-                    { id: 'light', label: 'روشن', desc: 'همیشه روشن', icon: Sun, color: 'text-amber-500' },
-                    { id: 'dark', label: 'تاریک', desc: 'همیشه تاریک', icon: Moon, color: 'text-indigo-500' },
-                    { id: 'system', label: 'خودکار (سیستم)', desc: 'مطابق تنظیمات سیستم‌عامل', icon: Monitor, color: 'text-blue-500' },
-                    { id: 'schedule', label: 'زمان‌بندی', desc: 'سوئیچ خودکار بر اساس ساعت', icon: Clock, color: 'text-emerald-500' },
-                  ].map((opt) => {
-                    const Icon = opt.icon;
-                    const active = themeMode === opt.id;
-                    return (
-                      <Label
-                        key={opt.id}
-                        htmlFor={`theme-${opt.id}`}
-                        className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-all ${
-                          active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-primary/50'
-                        }`}
-                      >
-                        <RadioGroupItem id={`theme-${opt.id}`} value={opt.id} className="mt-1" />
-                        <Icon className={`h-5 w-5 ${opt.color} shrink-0 mt-0.5`} />
-                        <div className="flex-1">
-                          <p className="font-medium text-sm">{opt.label}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                        </div>
-                      </Label>
-                    );
-                  })}
-                </RadioGroup>
-              </div>
-
-              {themeMode === 'schedule' && (
-                <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-emerald-500" />
-                    زمان‌بندی حالت تاریک
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="darkStart">شروع حالت تاریک</Label>
-                      <Input
-                        id="darkStart"
-                        type="time"
-                        dir="ltr"
-                        value={themeSettings.darkStart}
-                        onChange={(e) => updateSchedule(e.target.value, themeSettings.darkEnd)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="darkEnd">پایان حالت تاریک</Label>
-                      <Input
-                        id="darkEnd"
-                        type="time"
-                        dir="ltr"
-                        value={themeSettings.darkEnd}
-                        onChange={(e) => updateSchedule(themeSettings.darkStart, e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    در بازه‌ی انتخاب شده حالت تاریک فعال و در بقیه ساعات حالت روشن استفاده می‌شود.
-                  </p>
-                </div>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(prefs[key as keyof typeof prefs])}
+                    onChange={(e) =>
+                      setPrefs({ ...prefs, [key]: e.target.checked })
+                    }
+                  />
+                  <span className="text-sm">{s(fa, en)}</span>
+                </label>
+              ))}
+            </div>
+            <Label className="block max-w-sm">
+              {s(
+                "آستانه هشدار موجودی — تومان",
+                "Low balance threshold — Toman",
               )}
-
-              <Separator />
-
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div>
-                  <p className="text-sm font-medium">حالت جاری</p>
-                  <p className="text-xs text-muted-foreground">{theme === 'dark' ? 'تاریک' : 'روشن'}</p>
-                </div>
-                <Badge variant="outline" className="gap-1">
-                  {theme === 'dark' ? <Moon className="h-3 w-3" /> : <Sun className="h-3 w-3" />}
-                  {theme === 'dark' ? 'Dark' : 'Light'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+              <Input
+                inputMode="numeric"
+                value={n(prefs.thresholdToman)}
+                onChange={(e) =>
+                  setPrefs({
+                    ...prefs,
+                    thresholdToman: Number(
+                      normalizeDigits(e.target.value).replace(/,/g, ""),
+                    ),
+                  })
+                }
+                className="mt-2"
+              />
+            </Label>
+            <Button disabled={busy}>
+              {s("ذخیره اعلان‌ها", "Save preferences")}
+            </Button>
+          </form>
         </TabsContent>
-        
-        <TabsContent value="financial" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-green-500" />
-                اطلاعات مالی
-              </CardTitle>
-              <CardDescription>
-                اطلاعات مالی و بانکی خود را مدیریت کنید.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="cardNumber" className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-blue-500" />
-                    شماره کارت
-                  </Label>
-                  <Input
-                    id="cardNumber"
-                    name="cardNumber"
-                    placeholder="۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="accountNumber" className="flex items-center gap-2">
-                    <Receipt className="h-4 w-4 text-green-500" />
-                    شماره حساب
-                  </Label>
-                  <Input
-                    id="accountNumber"
-                    name="accountNumber"
-                    placeholder="۱۲۳-۴۵۶-۷۸۹۰۱۲-۳"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="bankName" className="flex items-center gap-2">
-                    <Building className="h-4 w-4 text-purple-500" />
-                    نام بانک
-                  </Label>
-                  <Input
-                    id="bankName"
-                    name="bankName"
-                    placeholder="بانک ملی ایران"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="shebaNumber" className="flex items-center gap-2">
-                    <Hash className="h-4 w-4 text-orange-500" />
-                    شماره شبا
-                  </Label>
-                  <Input
-                    id="shebaNumber"
-                    name="shebaNumber"
-                    placeholder="IR۱۲۳۴۵۶۷۸۹۰۱۲۳۴۵۶۷۸۹۰۱۲۳۴"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="nationalCode" className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-cyan-500" />
-                    کد ملی
-                  </Label>
-                  <Input
-                    id="nationalCode"
-                    name="nationalCode"
-                    placeholder="۱۲۳۴۵۶۷۸۹۰"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="taxCode" className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-red-500" />
-                    کد اقتصادی (اختیاری)
-                  </Label>
-                  <Input
-                    id="taxCode"
-                    name="taxCode"
-                    placeholder="۱۲۳۴۵۶۷۸۹۰۱۲"
-                    className="text-right"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button onClick={handleSaveProfile} disabled={saving}>
-                {saving ? (
-                  <>
-                    <span className="animate-spin mr-2">●</span>
-                    در حال ذخیره...
-                  </>
-                ) : (
-                  <>
-                    <Save className="ml-2 h-4 w-4" />
-                    ذخیره اطلاعات مالی
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+        <TabsContent value="security">
+          <SecurityCenterPage />
         </TabsContent>
-
-        <TabsContent value="personal" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                اطلاعات شخصی
-              </CardTitle>
-              <CardDescription>
-                اطلاعات شخصی خود را ویرایش کنید. این اطلاعات برای ارتباط با شما و صدور فاکتور استفاده می‌شود.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="space-y-2">
-                   <Label htmlFor="firstName" className="flex items-center gap-2">
-                     <User className="h-4 w-4 text-blue-500" />
-                     نام
-                   </Label>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    value={profileForm.firstName}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="lastName" className="flex items-center gap-2">
-                     <User className="h-4 w-4 text-blue-500" />
-                     نام خانوادگی
-                   </Label>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    value={profileForm.lastName}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="email" className="flex items-center gap-2">
-                     <Mail className="h-4 w-4 text-green-500" />
-                     ایمیل
-                   </Label>
-                   <Input
-                     id="email"
-                     name="email"
-                     type="email"
-                     value={profileForm.email}
-                     onChange={handleProfileChange}
-                     className="text-left"
-                     dir="ltr"
-                   />
-                  <p className="text-xs text-gray-500">این ایمیل برای ورود به سیستم استفاده می‌شود.</p>
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="phone" className="flex items-center gap-2">
-                     <Phone className="h-4 w-4 text-orange-500" />
-                     شماره تماس
-                   </Label>
-                   <Input
-                     id="phone"
-                     name="phone"
-                     value={profileForm.phone}
-                     onChange={handleProfileChange}
-                     className="text-left"
-                     dir="ltr"
-                   />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="companyName" className="flex items-center gap-2">
-                     <Building className="h-4 w-4 text-purple-500" />
-                     نام شرکت (اختیاری)
-                   </Label>
-                  <Input
-                    id="companyName"
-                    name="companyName"
-                    value={profileForm.companyName}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="address" className="flex items-center gap-2">
-                     <MapPin className="h-4 w-4 text-red-500" />
-                     آدرس
-                   </Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    value={profileForm.address}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="city" className="flex items-center gap-2">
-                     <Globe className="h-4 w-4 text-cyan-500" />
-                     شهر
-                   </Label>
-                  <Input
-                    id="city"
-                    name="city"
-                    value={profileForm.city}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="province" className="flex items-center gap-2">
-                     <MapPin className="h-4 w-4 text-teal-500" />
-                     استان
-                   </Label>
-                  <Select value={profileForm.province} onValueChange={handleProvinceChange}>
-                    <SelectTrigger className="text-right">
-                      <SelectValue placeholder="انتخاب استان" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {iranianProvinces.map(province => (
-                        <SelectItem key={province} value={province}>{province}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                 <div className="space-y-2">
-                   <Label htmlFor="postalCode" className="flex items-center gap-2">
-                     <Hash className="h-4 w-4 text-indigo-500" />
-                     کد پستی
-                   </Label>
-                  <Input
-                    id="postalCode"
-                    name="postalCode"
-                    value={profileForm.postalCode}
-                    onChange={handleProfileChange}
-                    className="text-right"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button onClick={handleSaveProfile} disabled={saving}>
-                {saving ? (
-                  <>
-                    <span className="animate-spin mr-2">●</span>
-                    در حال ذخیره...
-                  </>
-                ) : (
-                  <>
-                    <Save className="ml-2 h-4 w-4" />
-                    ذخیره تغییرات
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+        <TabsContent value="bank">
+          <form
+            className="rounded-2xl border bg-card p-5 space-y-5"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                await action("bank-save", bank);
+                setMessage(
+                  s(
+                    "مشخصات برای بررسی مالکیت ثبت شد.",
+                    "Bank details submitted for ownership review.",
+                  ),
+                );
+                setBank({ iban: "", owner: "" });
+              } catch (e) {
+                setMessage((e as Error).message);
+              }
+            }}
+          >
+            <h2 className="font-bold">
+              {s(
+                "ثبت حساب بانکی به نام خودتان",
+                "Register a bank account in your name",
+              )}
+            </h2>
+            <Label className="block">
+              {s("نام صاحب حساب", "Account holder")}
+              <Input
+                value={bank.owner}
+                onChange={(e) => setBank({ ...bank, owner: e.target.value })}
+                required
+                className="mt-2"
+              />
+            </Label>
+            <Label className="block">
+              {s("شماره شبا", "IBAN")}
+              <Input
+                dir="ltr"
+                value={bank.iban}
+                onChange={(e) =>
+                  setBank({
+                    ...bank,
+                    iban: normalizeDigits(e.target.value)
+                      .toUpperCase()
+                      .replace(/\s/g, ""),
+                  })
+                }
+                required
+                pattern="IR[0-9]{24}"
+                className="mt-2"
+              />
+            </Label>
+            <Button>
+              {s("ثبت برای بررسی مالکیت", "Submit for ownership review")}
+            </Button>
+          </form>
         </TabsContent>
-        
-        <TabsContent value="security" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5" />
-                امنیت حساب کاربری
-              </CardTitle>
-              <CardDescription>
-                تنظیمات امنیتی حساب کاربری خود را مدیریت کنید.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                  <Lock className="h-5 w-5" />
-                  تغییر رمز عبور
-                </h3>
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPassword">رمز عبور فعلی</Label>
-                    <div className="relative">
-                      <Input
-                        id="currentPassword"
-                        name="currentPassword"
-                        type={showPassword ? "text" : "password"}
-                        value={securityForm.currentPassword}
-                        onChange={handleSecurityChange}
-                        className="pl-10 text-right"
-                      />
-                      <button
-                        type="button"
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">رمز عبور جدید</Label>
-                    <Input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      value={securityForm.newPassword}
-                      onChange={handleSecurityChange}
-                      className="text-right"
-                    />
-                    <p className="text-xs text-gray-500">رمز عبور باید حداقل ۸ کاراکتر باشد و شامل حروف و اعداد باشد.</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">تکرار رمز عبور جدید</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      value={securityForm.confirmPassword}
-                      onChange={handleSecurityChange}
-                      className="text-right"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Button onClick={handleChangePassword} disabled={saving}>
-                      {saving ? (
-                        <>
-                          <span className="animate-spin mr-2">●</span>
-                          در حال اعمال تغییرات...
-                        </>
-                      ) : (
-                        <>
-                          <Lock className="ml-2 h-4 w-4" />
-                          تغییر رمز عبور
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                  <ShieldAlert className="h-5 w-5" />
-                  احراز هویت دو مرحله‌ای
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">احراز هویت دو مرحله‌ای</h4>
-                      <p className="text-sm text-gray-500">با فعال‌سازی این گزینه، علاوه بر رمز عبور، یک کد تأیید نیز برای ورود به سیستم نیاز خواهد بود.</p>
-                    </div>
-                    <Switch
-                      checked={securityForm.twoFactor}
-                      onCheckedChange={(checked) => handleToggleChange('twoFactor', checked)}
-                    />
-                  </div>
-                  
-                  {!securityForm.twoFactor && (
-                    <div>
-                      <Button variant="outline" onClick={handleEnableTwoFactor}>
-                        <ShieldAlert className="ml-2 h-4 w-4" />
-                        فعال‌سازی احراز هویت دو مرحله‌ای
-                      </Button>
-                    </div>
-                  )}
-                  
-                  {securityForm.twoFactor && (
-                    <Alert className="bg-green-50 text-green-800 border-green-200">
-                      <Check className="h-4 w-4" />
-                      <AlertTitle>احراز هویت دو مرحله‌ای فعال است</AlertTitle>
-                      <AlertDescription>
-                        احراز هویت دو مرحله‌ای برای حساب کاربری شما فعال است. برای غیرفعال‌سازی، کلید را خاموش کنید.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="notification" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5" />
-                تنظیمات اعلان‌ها
-              </CardTitle>
-              <CardDescription>
-                تنظیمات اعلان‌های خود را مدیریت کنید.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-blue-500" />
-                    <div>
-                      <h4 className="font-medium">اعلان‌های ایمیل</h4>
-                      <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق ایمیل</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={securityForm.emailNotifications}
-                    onCheckedChange={(checked) => handleToggleChange('emailNotifications', checked)}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <MessageSquare className="h-5 w-5 text-green-500" />
-                    <div>
-                      <h4 className="font-medium">اعلان‌های SMS</h4>
-                      <p className="text-sm text-gray-500">دریافت اعلان‌ها از طریق پیامک</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={false}
-                    onCheckedChange={(checked) => {/* Handle SMS toggle */}}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <ShieldAlert className="h-5 w-5 text-orange-500" />
-                    <div>
-                      <h4 className="font-medium">هشدارهای ورود</h4>
-                      <p className="text-sm text-gray-500">اطلاع از ورودهای جدید به حساب کاربری</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={securityForm.loginAlerts}
-                    onCheckedChange={(checked) => handleToggleChange('loginAlerts', checked)}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <UserCog className="h-5 w-5 text-green-500" />
-                    <div>
-                      <h4 className="font-medium">اعلان‌های فعالیت</h4>
-                      <p className="text-sm text-gray-500">اطلاع از تغییرات مهم در حساب کاربری</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={securityForm.activityAlerts}
-                    onCheckedChange={(checked) => handleToggleChange('activityAlerts', checked)}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Globe className="h-5 w-5 text-purple-500" />
-                    <div>
-                      <h4 className="font-medium">اعلان‌های سرویس</h4>
-                      <p className="text-sm text-gray-500">اطلاع از وضعیت سرورها و خدمات</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={securityForm.serviceAlerts}
-                    onCheckedChange={(checked) => handleToggleChange('serviceAlerts', checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button onClick={handleSaveNotificationSettings} disabled={saving}>
-                {saving ? (
-                  <>
-                    <span className="animate-spin mr-2">●</span>
-                    در حال ذخیره...
-                  </>
-                ) : (
-                  <>
-                    <Save className="ml-2 h-4 w-4" />
-                    ذخیره تنظیمات
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="api" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Key className="h-5 w-5" />
-                مدیریت کلیدهای API
-              </CardTitle>
-              <CardDescription>
-                کلیدهای API خود را برای اتصال به سرویس‌های خارجی مدیریت کنید.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-end">
-                <Button onClick={handleCreateApiKey}>
-                  <Key className="ml-2 h-4 w-4" />
-                  ایجاد کلید جدید
+        <TabsContent value="theme">
+          <div className="mb-5">
+            <CurrencyControl detailed />
+          </div>
+          <section className="rounded-2xl border bg-card p-5 space-y-5">
+            <h2 className="font-bold">
+              {s("پوسته و زمان‌بندی", "Theme and schedule")}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {[
+                ["light", "روشن", "Light"],
+                ["dark", "تاریک", "Dark"],
+                ["system", "سیستم", "System"],
+                ["schedule", "زمان‌بندی", "Schedule"],
+              ].map(([key, f, en]) => (
+                <Button
+                  key={key}
+                  variant={theme.mode === key ? "default" : "outline"}
+                  onClick={() => theme.setMode(key as any)}
+                >
+                  {s(f, en)}
                 </Button>
+              ))}
+            </div>
+            {theme.mode === "schedule" && (
+              <div className="flex flex-wrap gap-4">
+                <Label>
+                  {s("شروع حالت تاریک", "Dark mode starts")}
+                  <Input
+                    type="time"
+                    value={theme.settings.darkStart}
+                    onChange={(e) =>
+                      theme.updateSchedule(
+                        e.target.value,
+                        theme.settings.darkEnd,
+                      )
+                    }
+                  />
+                </Label>
+                <Label>
+                  {s("پایان حالت تاریک", "Dark mode ends")}
+                  <Input
+                    type="time"
+                    value={theme.settings.darkEnd}
+                    onChange={(e) =>
+                      theme.updateSchedule(
+                        theme.settings.darkStart,
+                        e.target.value,
+                      )
+                    }
+                  />
+                </Label>
               </div>
-              
-              <div className="space-y-3">
-                {apiKeys.map((apiKey) => (
-                  <div key={apiKey.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{apiKey.name}</h4>
-                      <p className="text-sm text-gray-500">
-                        ایجاد شده: {apiKey.created} | آخرین استفاده: {apiKey.lastUsed}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                        {apiKey.key}
-                      </code>
-                      <Button variant="destructive" size="sm" onClick={() => handleDeleteApiKey(apiKey.id)}>
-                        حذف
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+            )}
+          </section>
         </TabsContent>
       </Tabs>
+      <p role="status" className="text-sm">
+        {message}
+      </p>
     </div>
   );
-};
-
-export default ProfileSettingsPage;
+}

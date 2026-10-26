@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -58,22 +59,22 @@ const ServerList: React.FC<ServerListProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500 text-white">فعال</Badge>;
+        return <LegacyLocale>{<Badge className="bg-green-500 text-white">فعال</Badge>}</LegacyLocale>;
       case 'inactive':
-        return <Badge variant="secondary">غیرفعال</Badge>;
+        return <LegacyLocale>{<Badge variant="secondary">غیرفعال</Badge>}</LegacyLocale>;
       case 'pending':
-        return <Badge className="bg-yellow-500 text-white">در انتظار</Badge>;
+        return <LegacyLocale>{<Badge className="bg-yellow-500 text-white">در انتظار</Badge>}</LegacyLocale>;
       default:
-        return <Badge>{status}</Badge>;
+        return <LegacyLocale>{<Badge>{status}</Badge>}</LegacyLocale>;
     }
   };
 
   const renderServiceCard = (service: any) => {
-    return (
+    return <LegacyLocale>{(
       <div className="flex items-center">
         <div className="mr-2 font-medium">{service.id}</div>
       </div>
-    );
+    )}</LegacyLocale>;
   };
 
   const handleManage = (id: string) => {
@@ -115,17 +116,17 @@ const ServerList: React.FC<ServerListProps> = ({
   const services = mockData[serviceType] || [];
 
   if (!services) {
-    return (
+    return <LegacyLocale>{(
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
           خطا در بارگیری لیست {serviceType}. لطفاً بعداً دوباره امتحان کنید.
         </AlertDescription>
       </Alert>
-    );
+    )}</LegacyLocale>;
   }
 
-  return (
+  return <LegacyLocale>{(
     <TooltipProvider>
       <div className="grid gap-4">
         {services.length === 0 ? (
@@ -315,7 +316,7 @@ const ServerList: React.FC<ServerListProps> = ({
         )}
       </div>
     </TooltipProvider>
-  );
+  )}</LegacyLocale>;
 };
 
 export default ServerList;

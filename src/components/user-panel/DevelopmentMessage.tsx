@@ -1,3 +1,5 @@
+import BackButton from "./BackButton";
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { AlertCircle, ArrowRight } from 'lucide-react';
@@ -15,7 +17,7 @@ const DevelopmentMessage: React.FC<DevelopmentMessageProps> = ({
   message = "این قسمت از پنل کاربری در حال حاضر در دست ساخت است و به زودی در دسترس قرار خواهد گرفت.",
   onBack
 }) => {
-  return (
+  return <LegacyLocale>{(
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-xl">{title}</CardTitle>
@@ -39,10 +41,10 @@ const DevelopmentMessage: React.FC<DevelopmentMessageProps> = ({
             </a>
           </Button>
           {onBack ? (
-            <Button className="flex items-center gap-2" onClick={onBack}>
+            <BackButton className="flex items-center gap-2" onClick={onBack}>
               بازگشت
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+
+            </BackButton>
           ) : (
             <Button className="flex items-center gap-2" asChild>
               <a href="/" className="flex items-center gap-2">
@@ -54,7 +56,7 @@ const DevelopmentMessage: React.FC<DevelopmentMessageProps> = ({
         </div>
       </CardFooter>
     </Card>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DevelopmentMessage;

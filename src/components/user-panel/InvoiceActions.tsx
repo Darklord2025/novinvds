@@ -6,17 +6,11 @@ import { InvoiceDocument } from './InvoiceDocument';
 import { InvoiceData } from '@/lib/billing';
 import { Button } from '@/components/ui/button';
 import { Download, Printer } from 'lucide-react';
-function ExportDocument({ invoice, language }: { invoice: InvoiceData; language: 'fa' | 'en' }) {
-  const context = useLanguage();
-  // The export root gets its language before capture, without changing the app's context.
-  if (context.language !== language) context.setLanguage(language);
-  return <InvoiceDocument invoice={invoice} />;
-}
 export async function exportInvoiceData(invoice: InvoiceData, language: 'fa' | 'en', mode: 'pdf' | 'print') {
   const host = document.createElement('div'); host.className = 'invoice-export-host'; host.setAttribute('aria-hidden', 'true');
   document.body.appendChild(host); const root = createRoot(host);
   try {
-    flushSync(() => root.render(<LanguageProvider><ExportDocument invoice={invoice} language={language} /></LanguageProvider>));
+    flushSync(() => root.render(<LanguageProvider><InvoiceDocument invoice={invoice} language={language} /></LanguageProvider>));
     const element = host.querySelector<HTMLElement>('.invoice-document');
     if (!element) throw new Error('Invoice unavailable');
     const exporter = await import('@/lib/invoice-export');

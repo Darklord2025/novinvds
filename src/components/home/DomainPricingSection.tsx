@@ -1,3 +1,4 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import DomainPricing from '../DomainPricing';
 
 const DomainPricingSection: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 md:py-24 bg-white" dir="rtl">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -26,7 +27,7 @@ const DomainPricingSection: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default DomainPricingSection;

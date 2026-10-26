@@ -1,4 +1,26 @@
 project_id = "dfigrglqpxanqcpuykbu"
 
+# Local configuration. Apply the same settings/template in the hosted Auth dashboard.
+[auth.email]
+enable_confirmations = true
+otp_length = 6
+otp_expiry = 600
+
+[auth.email.template.confirmation]
+subject = "کد فعال‌سازی حساب نوین وی‌دی‌اس | Activate your NovinVDS account"
+content_path = "./supabase/templates/confirmation.html"
+
 [functions.chat]
 verify_jwt = false
+
+[functions.panel-action]
+verify_jwt = false # JWT is verified with auth.getUser, then both MFA checks are enforced.
+
+[functions.account-security]
+verify_jwt = false # Public recovery is rate-limited; all other actions require auth.getUser.
+
+
+[functions.market-rates]
+verify_jwt = false
+[functions.shop-account]
+verify_jwt = false # auth.getUser and shared native/email MFA guards run before all actions.

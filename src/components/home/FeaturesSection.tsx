@@ -1,10 +1,11 @@
+import LegacyLocale from '@/components/LegacyLocale';
 
 import React from 'react';
 import { Cpu, Shield, Clock, CheckCircle, Database, Globe } from 'lucide-react';
 import FeatureCard from '../FeatureCard';
 
 const FeaturesSection: React.FC = () => {
-  return (
+  return <LegacyLocale>{(
     <section className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -54,7 +55,7 @@ const FeaturesSection: React.FC = () => {
         </div>
       </div>
     </section>
-  );
+  )}</LegacyLocale>;
 };
 
 export default FeaturesSection;

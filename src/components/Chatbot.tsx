@@ -1,8 +1,8 @@
+import LegacyLocale from '@/components/LegacyLocale';
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ReactMarkdown from 'react-markdown';
-import { supabase } from '@/integrations/supabase/client';
+const ReactMarkdown = React.lazy(() => import('react-markdown'));
 import { toast } from '@/components/ui/use-toast';
 
 type Message = { role: 'user' | 'assistant'; content: string };
@@ -129,7 +129,7 @@ const Chatbot: React.FC = () => {
     }
   };
 
-  return (
+  return <LegacyLocale>{(
     <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50" dir="rtl">
       <button
         onClick={() => setIsOpen((v) => !v)}
@@ -184,7 +184,9 @@ const Chatbot: React.FC = () => {
                 }`}>
                   {m.content ? (
                     <div className="prose prose-sm dark:prose-invert max-w-none [&>*]:my-1">
-                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                      <React.Suspense fallback={<p>{m.content}</p>}>
+                        <ReactMarkdown>{m.content}</ReactMarkdown>
+                      </React.Suspense>
                     </div>
                   ) : (
                     <Loader2 className="w-4 h-4 animate-spin opacity-70" />
@@ -218,7 +220,7 @@ const Chatbot: React.FC = () => {
         </div>
       )}
     </div>
-  );
+  )}</LegacyLocale>;
 };
 
 export default Chatbot;

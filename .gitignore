@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Local browser QA and isolated review fixtures
+.playwright-cli/
+output/
+__review/

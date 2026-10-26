@@ -1,0 +1,7 @@
+import fs from 'node:fs';import path from 'node:path';import ts from 'typescript';
+const root='src/components/user-panel';let changed=0;
+for(const name of fs.readdirSync(root)){if(!name.endsWith('.tsx')||['BackButton.tsx'].includes(name))continue;const file=path.join(root,name);let source=fs.readFileSync(file,'utf8');const ast=ts.createSourceFile(file,source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX),edits=[];
+ function walk(node){if(ts.isJsxElement(node)&&node.openingElement.tagName.getText(ast)==='Button'){const attrs=node.openingElement.attributes.properties;const click=attrs.some(a=>ts.isJsxAttribute(a)&&a.name.getText(ast)==='onClick');const asChild=attrs.some(a=>ts.isJsxAttribute(a)&&a.name.getText(ast)==='asChild');const body=node.children.map(n=>n.getText(ast)).join('');if(click&&!asChild&&(/بازگشت|\bBack\b|\bback\b/.test(body))){edits.push([node.openingElement.tagName.getStart(ast),node.openingElement.tagName.end,'BackButton'],[node.closingElement.tagName.getStart(ast),node.closingElement.tagName.end,'BackButton']);for(const ch of node.children)if(ts.isJsxSelfClosingElement(ch)&&/^Arrow/.test(ch.tagName.getText(ast)))edits.push([ch.getStart(ast),ch.end,'']);}}
+ ts.forEachChild(node,walk);}
+ walk(ast);if(edits.length){for(const [start,end,text] of edits.sort((a,b)=>b[0]-a[0]))source=source.slice(0,start)+text+source.slice(end);source='import BackButton from "./BackButton";\n'+source;fs.writeFileSync(file,source);changed++;}}
+console.log('Standardized back controls in '+changed+' views.');
